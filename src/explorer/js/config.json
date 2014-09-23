@@ -1,0 +1,5 @@
+{
+    "debug": true,
+    "logLevel": 1,
+    "base_url": "https://api.kloudless.com"
+}

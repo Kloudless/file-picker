@@ -1,0 +1,1002 @@
+(function() {
+  'use strict';
+
+  // RequireJS configuration.
+  require.config({
+    paths: {
+      'jquery': 'vendor/jquery',
+      'jqueryui': 'vendor/jquery-ui',
+      'moxie': 'vendor/plupload/moxie',
+      'plupload': 'vendor/plupload/plupload.dev',
+      'pluploadui': 'vendor/plupload/jquery.ui.plupload/jquery.ui.plupload'
+    },
+    shim: {
+      'vendor/jquery-cookie': {
+        deps: ['jquery']
+      },
+      'vendor/jquery-placeholder': {
+        deps: ['jquery']
+      },
+      'vendor/sammy': {
+        deps: ['jquery']
+      },
+      'vendor/jqueryui': {
+        deps: ['jquery']
+      },
+      'vendor/jquery-dropdown': {
+        deps: ['jquery']
+      },
+      'vendor/jquery-scrollstop': {
+        deps: ['jquery']
+      },
+      'plupload': {
+        deps: ['jquery'],
+        exports: 'plupload'
+      },
+      'pluploadui': {
+        deps: ['jquery', 'plupload'],
+        exports: 'pluploadui'
+      }
+    },
+  });
+
+  // Load dependencies.
+  require(['jquery', 'vendor/knockout', 'vendor/sammy',
+           'vendor/loglevel', 'vendor/moment',
+           'config', 'storage', 'accounts',
+           // Imports below don't need to be assigned to variables.
+           'jqueryui', 'vendor/jquery-dropdown', 'vendor/jquery-scrollstop',
+           'moxie', 'plupload', 'pluploadui', 'vendor/jquery.finderSelect'],
+  function($, ko, sammy, logger, moment, config, storage, AccountManager) {
+
+    // Initialise and configure.
+    logger.setLevel(config.logLevel);
+
+    var service_names = {
+        'dropbox' : 'Dropbox',
+        'gdrive' : 'Google Drive',
+        'box' : 'Box',
+        'bitcasa' : 'Bitcasa',
+        'skydrive' : 'OneDrive',
+        'sugarsync' : 'SugarSync',
+        'sharefile' : 'Citrix ShareFile',
+        'copy' : 'Copy',
+        'egnyte' : 'Egnyte',
+        's3' : 'Amazon S3',
+        'sharepoint': 'SharePoint',
+        'onedrivebiz': 'OneDrive for Business',
+        'azure': 'Azure Storage',
+      },
+      services = [];
+
+    for (var i = 0; i < config.services.length; i++) {
+      var service = config.services[i];
+      services.push({
+        id: service,
+        name: service_names[service],
+        logo: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/' + service + '.png'
+      });
+    }
+
+    if (config.computer) {
+      services.unshift({
+        id: 'computer',
+        name: 'My Computer',
+        logo: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png'
+      });
+    }
+
+    // Explorer declaration.
+    var FileExplorer = function() {
+      this.manager = new AccountManager();
+
+      this.id = (function() {
+        var _id = storage.loadId();
+        if (!_id) {
+          _id = Math.floor(Math.random() * Math.pow(10, 12));
+          storage.storeId(_id);
+        }
+        return _id;
+      })();
+
+      this.exp_id = config.exp_id;
+
+      // View model setup.
+      var self = this;
+      this.view_model = {
+        // The current view: alternates between 'files' and 'accounts'
+        current: ko.observable('accounts'),
+
+        // Select a file.
+        confirm: function() {
+          // Set loading to true
+          explorer.view_model.loading(true);
+
+          // Clone the selections, removing the parent reference.
+          var current = explorer.manager.active().filesystem().current()
+            , selections = []
+            , clones = [];
+
+          var table = self.view_model.files.table;
+          if (table) {
+            var selectedElements = table.finderSelect('selected');
+            for (var i = 0; i < selectedElements.length; i++) {
+              selections.push(ko.dataFor(selectedElements[i]));
+            }
+          }
+
+          for (var i = 0; i < selections.length; i++) {
+            var selection = selections[i]
+              , clone = {};
+            for (var attr in selection) {
+              if (selection.hasOwnProperty(attr) && attr != 'parent_obs') {
+                clone[attr] = selection[attr];
+              }
+            }
+            clones.push(clone);
+          }
+          selections = clones;
+
+          // postMessage to indicate success.
+          if (selections.length > 0) {
+            logger.debug('Files selected! ', selections);
+
+            var accountId = explorer.manager.active().filesystem().id
+              , accountKey = explorer.manager.active().filesystem().key;
+            var requestCountSuccess = 0
+              , requestCountError = 0;
+
+            var selectionComplete = function(success) {
+              if (success) {
+                requestCountSuccess++;
+              }
+              else {
+                requestCountError++;
+                logger.warn('Error with ajax requests for selection');
+              }
+
+              // All requests are done
+              // TODO handle case if requestCountError != 0
+              if (requestCountSuccess + requestCountError == selections.length) {
+                explorer.view_model.postMessage('success', selections);
+                explorer.view_model.files.table.finderSelect('unHighlightAll');
+                explorer.view_model.loading(false);
+              }
+            };
+
+            // Add the link at the last possible moment for error/async handling
+            var createLink = function(selection_index) {
+              var request = $.ajax({
+                url: config.base_url + '/v0/accounts/' + accountId + '/links/',
+                type: 'POST',
+                headers: {
+                  Authorization: 'AccountKey ' + accountKey
+                },
+                data: {
+                  // TODO: add other parameters
+                  file_id: selections[selection_index].id,
+                  direct: config.direct_link
+                }
+              }).done(function(data) {
+                selections[selection_index]['link'] = data['url'];
+                selectionComplete(true);
+              }).fail(function(xhr, status, err) {
+                logger.warn('Error creating link: ', status, err, xhr);
+                selectionComplete(false);
+              });
+            };
+
+            if (config.copy_to_upload_location) {
+              // Move to upload location.
+              for (var i=0; i<selections.length; i++) {
+                (function(i) {
+                  $.ajax({
+                    url: (config.base_url + '/v0/accounts/' + accountId + '/files/' +
+                          selections[i].id + '/copy/?link=' + config.link),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: { Authorization: 'AccountKey ' + accountKey },
+                    data: JSON.stringify({ account: 'upload_location' }),
+                  }).done(function(data) {
+                    selections[i] = data;
+                    selectionComplete(true);
+                  }).fail(function() {
+                    selectionComplete(false);
+                  });
+                })(i);
+              }
+            }
+            else if (config.link) {
+              for (var i=0; i < selections.length; i++) {
+                createLink(i);
+              }
+            } else {
+              explorer.view_model.postMessage('success', selections);
+              explorer.view_model.files.table.finderSelect('unHighlightAll');
+              explorer.view_model.loading(false);
+            }
+            // assuming 'folders' or 'all' is part of what can be selected
+          } else if (config.types.indexOf('all') != -1 || config.types.indexOf('folders') != -1) {
+            // if no files are selected, return folder currently in
+            // TODO: for now don't allow root folders for all sources later check
+            // the can_upload_files attribute
+            if (current.can_upload_files) {
+              logger.debug('Folder selected! ', current);
+              var clone = {};
+              for (var attr in current) {
+                if (current.hasOwnProperty(attr) && attr != 'parent_obs') {
+                  clone[attr] = current[attr];
+                }
+              }
+              explorer.view_model.postMessage('success', [clone]);
+              explorer.view_model.files.table.finderSelect('unHighlightAll');
+              explorer.view_model.loading(false);
+            } else {
+              explorer.view_model.error('This folder cannot be selected. Please choose again.');
+              explorer.view_model.loading(false);
+            }
+          } else {
+            explorer.view_model.error('No files selected. Please select a file.');
+            explorer.view_model.loading(false);
+          }
+        },
+
+        // Quit the file explorer.
+        cancel: function() {
+          logger.debug('Quitting!');
+          self.view_model.error('');
+          // postMessage to indicate failure.
+          explorer.view_model.postMessage('cancel');
+          if (explorer.view_model.files.table) {
+            explorer.view_model.files.table.finderSelect('unHighlightAll');
+          }
+        },
+
+        postMessage: function(action, data) {
+          var post_data = {
+            exp_id: explorer.exp_id,
+            type: 'explorer',
+            action: action,
+          };
+
+          if (data !== undefined) {
+            if (action === 'success') {
+
+              // Add in Account Key on success for files.
+              if (config.account_key && config.user_data.trusted) {
+                var active_account = explorer.manager.active();
+                var account_id = active_account.filesystem().id;
+                if (active_account.filesystem &&
+                    explorer.view_model.current() === 'files') {
+                  for (var i = 0; i < data.length; i++) {
+                    if (account_id == data[i].account) {
+                      data[i]['account_key'] = {
+                        key: active_account.filesystem().key,
+                      }
+                    }
+                  }
+                }
+              }
+
+            }
+            post_data.data = data
+          }
+
+          window.parent.postMessage(JSON.stringify(post_data), config.origin);
+        },
+
+        sync: function(accounts, loadStorage) {
+          // if loadStorage, remove local accounts and load from storage
+          // if not loadStorage, store local accounts into storage
+
+          logger.debug('syncing...');
+
+          // remove all old accounts
+          if (loadStorage) {
+            explorer.manager.accounts.removeAll();
+          }
+
+          // add new accounts because data may have changed
+          require(['models/account'], function(Account) {
+            var i, local_data, active;
+            for (i = 0; i < accounts.length; i++) {
+              local_data = accounts[i];
+
+              var created = new Account(local_data, function(acc) {
+                if (acc.connected) {
+                  explorer.manager.accounts.push(acc);
+
+                  if (!active) {
+                    active = true;
+                    explorer.manager.active(explorer.manager.getByAccount(acc.account));
+                  }
+
+                  if (!loadStorage) {
+                    storage.storeAccounts(config.app_id, explorer.manager.accounts(),
+                        config.services);
+                  }
+                }
+
+                // if no valid accounts from local storage are loaded
+                if (explorer.manager.accounts().length == 0) {
+                  router.runRoute('get', '#/accounts');
+                } else {
+                  explorer.switchViewTo('files');
+                }
+              }, function(err, result) {
+                explorer.view_model.loading(false);
+
+                // if it errors on root folder metadata, we shouldn't add it
+                if (err && err.message === 'failed to retrieve root folder') {
+                  logger.warn('failed to load account from localStorage');
+                  explorer.manager.removeAccount(local_data.account);
+                  // store accounts
+                  storage.storeAccounts(config.app_id, explorer.manager.accounts(),
+                      config.services);
+                // else if it errors on folder contents, we should show an error
+                } else if (err) {
+                  logger.warn('failed to refresh filesystem', err);
+                  explorer.view_model.error('Error occurred. Please try again.');
+                } else {
+                  explorer.view_model.error('');
+                }
+
+                // need to make sure on files view since we're loading asynchronously
+                // from local storage
+                if (first_account && explorer.view_model.current() == 'files') {
+                  router.runRoute('get', '#/files');
+                  first_account = false;
+                }
+
+                // need to make sure on accounts view since... ^^^
+                if (explorer.manager.accounts().length == 0) {
+                  router.runRoute('get', '#/accounts');
+                }
+              });
+            }
+          });
+        },
+
+        // Request states.
+        error: ko.observable(''),
+        loading: ko.observable(true),
+
+        // Accounts view model.
+        accounts: {
+          // List of all account objects.
+          all: self.manager.accounts,
+          // Current active service
+          active: ko.computed(function() {
+            var self = this();
+            return self.service;
+          }, self.manager.active),
+          logo_url: ko.computed(function() {
+            return config.user_data.logo_url;
+          }),
+          // Current active service name
+          name: ko.computed(function() {
+            var self = this();
+            return self.account_name;
+          }, self.manager.active),
+          // return friendly names by service
+          friendly_name: function(service_name) {
+            for (var i = 0; i < services.length; i++) {
+              var s = services[i];
+              if (s['id'] == service_name) {
+                return s['name'];
+              }
+            }
+          },
+          // Returns hash mapping a string service name to an array of account objects.
+          by_service: ko.computed(function() {
+            var accounts = this() // gimmick to register observer with KO
+              , output = {};
+
+            for (var i = 0; i < accounts.length; i++) {
+              if (!(accounts[i].service in output)) {
+                output[accounts[i].service] = [];
+              }
+              output[accounts[i].service].push(accounts[i]);
+            }
+
+            return output;
+          }, self.manager.accounts),
+          // Connect new account.
+          connect: function(service) {
+            // if clicking on computer, switch to computer view
+            if (service == 'computer') {
+              router.setLocation('#/computer');
+              return;
+            }
+
+            logger.debug('Account connection invoked for service: ' + service + '.');
+
+            explorer.manager.addAccount(service, {
+              on_account_ready: function(account) {
+                logger.debug('Redirecting to files view? ', first_account);
+
+                // Don't allow duplicate accounts
+                for (var i = 0; i < explorer.manager.accounts().length; i++) {
+                  var acc = explorer.manager.accounts()[i];
+                  if (acc.account == account.account) {
+                    return;
+                  }
+                }
+
+                explorer.manager.accounts.push(account);
+
+                if (Object.keys(ko.toJS(explorer.manager.active)).length === 0) {
+                  explorer.manager.active(explorer.manager.getByAccount(account.account));
+                }
+
+                // post message for account
+                explorer.view_model.postMessage('addAccount', {
+                  id: account.account,
+                  name: account.account_name,
+                  service: account.service
+                });
+
+                if (first_account) {
+                  explorer.view_model.loading(true);
+                  router.runRoute('get', '#/files');
+                }
+              },
+              on_fs_ready: function(err, result) {
+                if (err && error_message) {
+                  explorer.view_model.error(error_message)
+                } else if (err) {
+                  explorer.view_model.error(err.message);
+                } else {
+                  explorer.view_model.error('');
+                }
+
+                if (first_account) {
+                  explorer.view_model.loading(false);
+                  first_account = false;
+                }
+
+                // store accounts
+                storage.storeAccounts(config.app_id, explorer.manager.accounts(),
+                    config.services);
+              }
+            });
+          },
+          computer: function() {
+            return config.computer;
+          }
+        },
+
+        // Files view model.
+        files: {
+          // Compute breadcrumbs.
+          breadcrumbs: ko.computed(function() {
+            var self = this(); // gimmick to register observer with KO
+
+            if (Object.keys(self).length === 0) { // check to make sure an active account is set
+              return null;
+            }
+            return self.filesystem().path();
+          }, self.manager.active),
+          // Return active service
+          service: ko.computed(function() {
+            var self = this();
+            return self.service;
+          }, self.manager.active),
+          service_friendly: ko.computed(function() {
+            var self = this();
+            var name = self.service;
+            for (var i = 0; i < services.length; i++) {
+              var s = services[i];
+              if (s['id'] == name) {
+                return s['name'];
+              }
+            }
+          }, self.manager.active),
+          // Compute current working directory.
+          cwd: ko.computed(function() {
+            var self = this();
+
+            if (Object.keys(self).length === 0) {
+              return null;
+            }
+            logger.debug('Recomputing cwd...');
+            return self.filesystem().cwd();
+          }, self.manager.active),
+          // Relative navigation.
+          navigate: function(file) {
+            logger.debug('Navigating to file: ', file);
+
+            var target = file
+              , parent = self.manager.active().filesystem().PARENT_FLAG;
+            if (typeof file == 'string' && file == parent) {
+              target = parent;
+            }
+            self.view_model.loading(true);
+            self.manager.active().filesystem().navigate(target, function(err, result) {
+              logger.debug('Navigation result: ', err, result);
+              self.view_model.loading(false);
+              if (err && error_message) {
+                return self.view_model.error(error_message)
+              } else if (err) {
+                return self.view_model.error(err.message);
+              }
+              self.view_model.error('');
+            });
+          },
+          // Breadcrumb navigation.
+          up: function(count) {
+            logger.debug('Going up ' + count + ' directories.');
+
+            self.view_model.loading(true);
+            self.manager.active().filesystem().up(count, function(err, result) {
+              self.view_model.loading(false);
+              if (err && error_message) {
+                return self.view_model.error(error_message)
+              } else if (err) {
+                return self.view_model.error(err.message);
+              }
+              self.view_model.error('');
+            });
+          },
+          mkdir: function() {
+            self.view_model.loading(true);
+            var name = $('.new-folder-name').val();
+            logger.debug('New folder name', name);
+            self.manager.active().filesystem().mkdir(name, function(err, result) {
+              // update first entry
+              if (err && error_message) {
+                self.view_model.error(error_message)
+              } else if (err) {
+                self.view_model.error(err.message);
+              } else {
+                self.view_model.error('');
+                var dir = self.manager.active().filesystem().updatedir(result);
+                if (dir) {
+                  self.view_model.files.navigate(dir);
+                }
+              }
+              self.view_model.loading(false)
+            });
+          },
+          newdir: function() {
+            if (self.manager.active().filesystem().current().can_create_folders) {
+              self.manager.active().filesystem().newdir()
+            } else {
+              self.view_model.error('Sorry! Folders cannot be created in this directory');
+            }
+          },
+          rmdir: function() {
+            self.manager.active().filesystem().rmdir()
+          },
+          refresh: function() {
+            logger.debug('Refreshing current directory');
+            self.view_model.loading(true);
+            self.manager.active().filesystem().refresh(true, function(err, result) {
+              self.view_model.loading(false);
+              if (err && error_message) {
+                return self.view_model.error(error_message)
+              } else if (err) {
+                return self.view_model.error(err.message)
+              }
+              self.view_model.error('')
+            });
+          },
+          allow_newdir: config.create_folder,
+
+          // Placeholder for finderSelect'd jQuery object.
+          table: null,
+        },
+
+        // Computer view model.
+        computer: {
+
+        },
+
+        // List of supported services. Used to render things on the accounts page.
+        services: services
+      };
+
+      ko.applyBindings(this.view_model);
+    };
+
+    // Switch views between 'accounts', 'files', and 'computer'.
+    FileExplorer.prototype.switchViewTo = function(to) {
+      var explorer = this;
+      explorer.view_model.current(to);
+
+      // Initialise jQuery dropdown plugin.
+      if (to == 'files' || to == 'computer') {
+        // TODO: maybe remove later
+        $('.dropdown-menu li a').off('click');
+        $('.dropdown-menu li a').on('click', function(e) {
+          $('.accountsbutton').dropdown('hide');
+          // $('.accountsbutton').click();
+        });
+        $('.accountsbutton').dropdown('attach', ['#account-dropdown']);
+
+        // Since we're not using foundation, add click handler to 'x'
+        $('.close').off('click');
+        $('.close').on('click', function(e) {
+          // clear the error
+          explorer.view_model.error('');
+          e.preventDefault();
+          e.stopPropagation();
+        });
+      }
+
+      // Initialise infinite scroll
+      if (to == 'files') {
+        $(".filesinner table").off("scrollstop");
+        $(".filesinner table").on("scrollstop", function(e) {
+          var headerHeight = $('.filesinner table thead tr:first').height();
+          var scrolled = $('.filesinner table').scrollTop();
+          var tableHeight = $('.filesinner table').outerHeight();
+          var contentHeight = $('.filesinner table tbody').outerHeight() + headerHeight;
+
+          // load more
+          if ((scrolled + tableHeight) >= contentHeight) {
+            logger.debug('Infinite Scroll... load more...');
+            explorer.view_model.loading(true);
+            explorer.manager.active().filesystem().getPage(function() {
+              // TODO: extra handling?!
+              explorer.view_model.loading(false);
+            });
+          }
+        });
+      }
+
+      if (to == 'computer') {
+        $(function() {
+          var selections = [];
+          var filtered_types = [];
+          // if not default 'all' or 'files', add the mimetypes
+          if ((config.types.indexOf('all') == -1 && config.types.indexOf('files') == -1) ||
+              (config.types.length != 1)) {
+            filtered_types.push({
+              title: "Uploadable files",
+              extensions: config.types.join(",")
+            });
+          }
+
+          $("#uploader").plupload({
+              // Required
+              url: config.base_url + '/drop/' + config.app_id,
+              // browse_button: "uploader",
+
+              // Filters
+              filters : (function() {
+                var filters = {
+                  max_file_size: '5000mb',
+                  prevent_duplicates: false, // unique_names instead.
+                  mime_types: filtered_types
+                };
+
+                // Don't set to 0, because it forces 0 files to be selected.
+                // Happens even though the default is supposed to be 0.
+                if (!config.multiselect)
+                  filters['max_file_count'] = 1;
+
+                return filters;
+              })(),
+
+              // Multipart / Chunking
+              multipart: false,
+              chunk_size: config.chunk_size,
+              max_retries: 2,
+
+              // Parallelize
+              max_upload_slots: 6,
+
+              // Misc
+              runtimes : 'html5,flash,silverlight',
+
+              // Rename files by clicking on their titles
+              rename: true,
+
+              // Unique file names
+              // This is set to false because we use the file ID
+              // to identify the file instead.
+              unique_names: false,
+
+              // Sort files
+              sortable: true,
+
+              // Enable ability to drag'n'drop files onto the widget (currently only HTML5 supports that)
+              dragdrop: true,
+
+              browse_button: 'custom-add',
+
+              container: 'custom-add-container',
+
+              // Views to activate
+              views: {
+                list: true,
+                thumbs: false, // Hide thumbs
+                active: 'list', // 'thumbs' is another possible view.
+              },
+
+              // Flash settings
+              flash_swf_url : '//static-cdn.kloudless.com/p/platform/explorer/Moxie.cdn.swf',
+
+              // Silverlight settings
+              silverlight_xap_url : '//static-cdn.kloudless.com/p/platform/explorer/Moxie.cdn.xap',
+
+              init: {
+                PostInit: function() {
+                  // enable the browse button
+                  $('#uploader_browse').removeAttr('disabled');
+                  var uploader = this;
+                  // Add pause/resume upload handler
+                  $('#upload-button').click(function() {
+                    if ($(this).text() == 'Upload') {
+                      $(this).text('Pause');
+                      uploader.start();
+                      explorer.view_model.loading(true);
+                    } else if ($(this).text() == 'Pause') {
+                      $(this).text('Resume');
+                      uploader.stop();
+                      explorer.view_model.loading(false);
+                    } else if ($(this).text() == 'Resume') {
+                      $(this).text('Pause');
+                      uploader.start();
+                      explorer.view_model.loading(true);
+                    }
+                  });
+                  // Add abort upload handler
+                  $('#cancel-button').click(function() {
+                    var msg = ('Are you sure you want to cancel? You have an' +
+                      ' upload in progress.');
+                    if (uploader.total.queued > 0) {
+                      uploader.stop();
+                      if (confirm(msg)) {
+                        $('#upload-button').text('Upload');
+
+                        var file_ids_to_abort = uploader.files.filter(function(f) {
+                            return $.inArray(f.status, [plupload.QUEUED, plupload.UPLOADING]) > -1;
+                        }).map(function(f) { return f.id; });
+
+                        uploader.splice();
+                        explorer.view_model.cancel();
+
+                        // Abort asynchronously.
+                        window.setTimeout(function() {
+                            $.each(file_ids_to_abort, function(index, id) {
+                               $.ajax({
+                                   url: config.base_url + '/drop/' + config.app_id +
+                                       '?file_id=' + id,
+                                   type: 'DELETE',
+                               });
+                            });
+                        }, 0);
+
+                      } else {
+                        uploader.start();
+                      }
+                    } else {
+                      explorer.view_model.cancel();
+                    }
+                  });
+                },
+                BeforeUpload: function(up, file) {
+                  up.settings.multipart_params = up.settings.multipart_params || {};
+                  up.settings.multipart_params['file_id'] = file.id;
+                  if (config.link) up.settings.multipart_params['link'] = true;
+
+                  up.settings.headers = up.settings.headers || {};
+                  // Not using up.id because it changes with every plUpload().
+                  up.settings.headers["X-Explorer-Id"] = explorer.id
+                },
+                FileUploaded: function(up, file, info) {
+                  if (info.status == 200 || info.status == 201) {
+                    var responseData = JSON.parse(info.response);
+                    if (Object.keys(responseData).length > 5) {
+                      selections.push(responseData);
+                    }
+                  }
+                },
+                Error: function(up, args) {
+                  // file extension error
+                  if (args.code == plupload.FILE_EXTENSION_ERROR) {
+                    var filter_msg = 'Please upload files of the following types: ';
+                    filter_msg += config.types.join(", ") + '.';
+                    explorer.view_model.error(filter_msg);
+                  }
+                  else if (args.code == plupload.HTTP_ERROR) {
+                    logger.error("Error uploading file '" + args.file.name + "': " +
+                                 args.message);
+                    up.removeFile(args.file);
+                    up.stop();
+                    up.start();
+                  }
+                },
+                UploadComplete: function(files) {
+                  $('#upload-button').text('Upload');
+                  explorer.view_model.postMessage('success', selections);
+                  explorer.view_model.loading(false);
+                  selections = [];
+                  this.splice();
+                }
+              }
+          });
+        });
+      }
+    };
+
+    ko.bindingHandlers.finderSelect = {
+      init: function(element, valueAccessor) {
+        var selector = $(element).finderSelect({
+          children: 'tr[data-type="file"]',
+          enableClickDrag: config.multiselect,
+          enableShiftClick: config.multiselect,
+          enableCtrlClick: config.multiselect,
+          enableSelectAll: config.multiselect,
+        });
+        var files = ko.unwrap(valueAccessor());
+        files.table = selector;
+      },
+      update: function(element) {
+        $(element).finderSelect('update');
+      }
+    };
+
+    // Explorer initialisation.
+    var explorer = new FileExplorer();
+    // TODO: we can display err.message if the new error handling is deployed
+    // for now use default error message
+    var error_message = "Error! Please try again or contact support@kloudless.com";
+
+    // Router.
+    var first_account = true;
+    var router = sammy(function() {
+      var self = this;
+
+      // Default to the accounts page if no accounts in local storage
+      // storage.removeAllAccounts(config.app_id);
+      var accounts = storage.loadAccounts(config.app_id, config.services);
+      logger.debug(accounts);
+
+      if (accounts.length == 0) {
+        this.get('#/', function(ctx) {
+          router.runRoute('get', '#/accounts');
+        });
+      } else {
+        // Load from local storage or configuration
+        this.get('#/', function(ctx) {
+          explorer.view_model.sync(accounts, true);
+        });
+      }
+
+      // Switch to the accounts page.
+      this.get('#/accounts', function() {
+        logger.debug('Accounts page requested.');
+        explorer.switchViewTo('accounts');
+      });
+
+      // Reconnect an erroneously disconnected account.
+      // WARNING: THIS HAS NOT YET BEEN IMPLEMENTED.
+      this.get('#/account/reconnect/:id', function() {
+        logger.debug('Account reconnection invoked for id: ' + this.params.id + '.');
+      });
+      // Disconnect an account.
+      this.get('#/account/disconnect/:id', function() {
+        logger.debug('Account disconnection invoked for id: ' + this.params.id + '.');
+
+        // Find account
+        var accounts = explorer.manager.accounts();
+        var account_data = {};
+        for (var i = 0; i < accounts.length; i++) {
+          if (accounts[i].account == this.params.id) {
+            account_data = accounts[i];
+            break;
+          }
+        }
+        if (Object.keys(account_data).length == 0) {
+          logger.warn('Account failed to remove');
+          alert('Error occurred. Please try again!');
+          return;
+        }
+        var request = $.ajax({
+          url: config.base_url + '/v0/accounts/' + account_data.account,
+          type: 'DELETE',
+          headers: {
+            Authorization: 'AccountKey ' + account_data.account_key
+          }
+        }).done(function(data) {
+          explorer.manager.removeAccount(account_data.account);
+          // post message for account
+          explorer.view_model.postMessage('deleteAccount', account_data.account);
+          // store accounts
+          storage.storeAccounts(config.app_id, explorer.manager.accounts(),
+              config.services);
+        }).fail(function(xhr, status, err) {
+          logger.warn('Account failed to remove');
+          alert('Error occurred. Please try again!');
+        }).always(function() {
+          request = null;
+        });
+      });
+
+      // Switch to the files page.
+      this.get('#/files', function() {
+        logger.debug('File view requested.');
+        explorer.switchViewTo('files');
+      });
+      // Switch to the files view of a particular account.
+      // TODO: test.
+      this.get('#/files/:account', function() {
+        logger.debug('Switching to files of account: ' + this.params.account + '.');
+        explorer.switchViewTo('files');
+        explorer.manager.active(explorer.manager.getByAccount(this.params.account));
+      });
+      // Switch to the computer view
+      this.get('#/computer', function() {
+        logger.debug('Switching to computer view');
+        explorer.switchViewTo('computer');
+      });
+    });
+
+    // Expose hooks for debugging.
+    if (config.debug) {
+      window.explorer = explorer;
+      window.ko = ko;
+    }
+
+    // Initialise to '#/' route.
+    window.addEventListener('message', function(message) {
+      logger.debug('Explorer hears message: ', message);
+      if (message.origin !== config.origin) {
+        return;
+      }
+
+      var contents = JSON.parse(message.data);
+      if (contents.action == 'INIT') {
+        // Call sync if frame has already been initialized and there are differences
+        // between storage and current accounts
+        if (explorer.manager.accounts().length !== 0) {
+          var accounts = storage.loadAccounts(config.app_id, config.services);
+          var account_ids = {};
+          var local_accounts = explorer.manager.accounts();
+          var i, different = false;
+          for (i = 0; i < accounts.length; i++) {
+            var account = accounts[i];
+            account_ids[account.account] = true;
+          }
+          for (i = 0; i < local_accounts.length; i++) {
+            var local_account = local_accounts[i];
+            if (! local_account.account in account_ids) {
+              different = true;
+              break;
+            }
+          }
+          logger.debug(different || accounts.length != local_accounts.length);
+          if (different || accounts.length != local_accounts.length) {
+            explorer.view_model.sync(accounts, true);
+          }
+        }
+
+        router.run('#/');
+      } else if (contents.action == 'DATA') {
+        // Similar to an INIT call, but this time, the explorer has some data
+        // to initialize the explorer
+        var data = contents.data;
+
+        // account key data
+        if (data.keys) {
+          explorer.view_model.sync(data.keys, false);
+        }
+      }
+    });
+
+    // Looking up chunk size. Since the drop location doesn't really
+    // change we look it up based on that. The /drop end point for the
+    // API returns the chunk size for that drop location.
+    $.get(config.base_url + '/drop/' + config.app_id, {},
+      function(drop_information) {
+        config.chunk_size = drop_information.chunk_size;
+      });
+
+    // This signal is placed last and indicates all the JS has loaded
+    // and events can be received.
+    explorer.view_model.postMessage('load');
+  });
+})();
