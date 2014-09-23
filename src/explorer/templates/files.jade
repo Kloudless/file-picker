@@ -1,0 +1,143 @@
+.files
+  .filesinner
+    header
+      //- Select account
+      .accountselect(data-bind='with: accounts')
+        button.button.accountsbutton(href="#")
+          img.accounticon(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/" + active() + ".png"}')
+          div.name(data-bind='text: name')
+          div.arrow
+        div#account-dropdown.dropdown.dropdown-tip
+          ul.dropdown-menu
+            // ko foreach: all
+            li
+              a(data-bind='attr: {href: "#/files/" + account}')
+                img.accounticon(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/" + service + ".png"}')
+                div.accountname(data-bind='text: account_name')
+            // /ko
+            // ko if: computer()
+            li
+              a(href='#/computer')
+                div.computericon
+                span My Computer
+            // /ko
+            li
+              a(href='#/accounts')
+                div.accountsicon
+                span Accounts
+      //- Actions
+      .actions(data-bind='with: files')
+        // ko if: allow_newdir
+        a(data-bind='click: newdir, attr: {href: "#"}').new-folder-button
+        // /ko
+        a(data-bind='click: refresh, attr: {href: "#"}').refresh-button
+
+      //- Breadcrumbs
+      .breadcrumbcontainer(data-bind='with: files')
+        //- Default service breadcrumb
+        // ko if: breadcrumbs().length == 0
+        div.breadcrumbs
+          span.crumb(data-bind='css: {current: parseInt("" + (breadcrumbs().length), 10) == 0}')
+            a(data-bind='click: up.bind(null, breadcrumbs().length)')
+              div.foldericon
+              div.foldertext(data-bind='text: service_friendly')
+        // /ko
+        //- Un-collapsed breadcrumb
+        // ko if: breadcrumbs().length > 0 && breadcrumbs().length < 2
+        div.breadcrumbs
+          span.crumb(data-bind='css: {current: parseInt("" + (breadcrumbs().length), 10) == 0}')
+            a(data-bind='click: up.bind(null, breadcrumbs().length)')
+              div.foldericon
+              div.foldertext(data-bind='text: service_friendly')
+          // ko foreach: breadcrumbs
+          span.crumb(data-bind='css: {current: parseInt("" + ($parent.breadcrumbs().length - 1), 10) == parseInt("" + $index(), 10)}')
+            a(data-bind='click: $parent.up.bind(null, $parent.breadcrumbs().length - parseInt("" + ($index() + 1), 10))')
+              div.foldertext(data-bind='html: $data')
+          // /ko
+        // /ko
+        //- Collapsed breadcrumb
+        // ko if: breadcrumbs().length >= 2
+        div.breadcrumbs
+          div.crumbutton
+            div.crumbmenuwrap
+              ul.crumbmenu
+                // ko foreach: breadcrumbs().slice(0, breadcrumbs().length - 1).reverse()
+                li.crumb
+                  a(data-bind='click: $parent.up.bind(null, parseInt("" + ($index() + 1), 10))')
+                    div.foldericon
+                    div.foldertext(data-bind='html: $data')
+                // /ko
+                li.crumb(data-bind='css: {current: parseInt("" + (breadcrumbs().length), 10) == 0}')
+                  a(data-bind='click: up.bind(null, breadcrumbs().length)')
+                    div.foldericon
+                    div.foldertext(data-bind='text: service_friendly')
+          span.crumb.fullwide(class='current')
+            a(data-bind='click: up.bind(null, 0)')
+              div.foldertext(data-bind='html: breadcrumbs()[(breadcrumbs().length - 1)]')
+        // /ko
+
+    //- Current directory view
+    table(data-bind='with: files').clickable
+      thead
+        tr
+          th Name
+          th Updated
+    div.iewrapper
+      table(data-bind='with: files').clickable
+        // ko if: cwd().length > 0 && cwd()[0].type == "newfolder"
+        tbody
+          tr.newfolder()
+            td.newfolder()
+              span()
+                div.foldericon()
+              span()
+                input.new-folder-name(data-bind='attr: {value: "Untitled Folder"}')
+              span(data-bind='click: mkdir')
+                span.save-button.inline-button Save
+              span(data-bind='click: rmdir')
+                span.cancel-button.inline-button
+                  div.closeicon()
+            td.updated()
+        // /ko
+        tbody(data-bind='finderSelect: $data')
+          // ko foreach: cwd
+          // ko ifnot: type == "disabled" || type == "newfolder"
+          tr(data-bind="click: $parent.navigate, attr: {'data-type': type}")
+            td
+              span(data-bind='if: type == "folder"')
+                div.foldericon()
+              span(data-bind='if: type == "file"')
+                div.fileicon()
+              span(data-bind='text: name')
+            // ko if: modified == null || modified == ""
+            td.updated(data-bind='text: moment(new Date(created)).format("MMM DD   h:mm a")')
+            // /ko
+            // ko ifnot: modified == null || modified == ""
+            td.updated(data-bind='text: moment(new Date(modified)).format("MMM DD   h:mm a")')
+            // /ko
+          // /ko
+          // ko if: type == "disabled"
+          tr.disabled(data-bind='if: type == "disabled"')
+            td
+              span
+                div.fileicon()
+              span(data-bind='text: name')
+            td.updated(data-bind='text: moment(new Date(modified)).format("MMM DD   h:mm a")')
+          // /ko
+          // /ko
+
+    //- Footer buttons
+    footer
+      .row
+        div.kloading(data-bind='visible: loading')
+        div.error(data-alert, data-bind='visible: error().length > 0')
+          div.error-text(data-bind='text: error, attr: {title: error}')
+          a.close(href='#')
+        .buttonscontainer
+          a(data-bind='click: cancel').button.reg Cancel
+          a(data-bind='click: confirm').button.blue Select
+        .textcontainer
+          span powered by
+          img(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/settings_popup_logo.png"}')
+
+    //- Debug info, since we don't have proper UI elements

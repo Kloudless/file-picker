@@ -1,0 +1,67 @@
+.accounts
+  header
+    //- Back button
+    .back(data-bind='with: accounts')
+      .backcontain(data-bind='if: all().length > 0')
+        a.backbtn(href='#/files')
+          div.arrow
+        // ko if: logo_url
+        img.klogo(data-bind='attr: {src: logo_url}')
+        // /ko
+        // ko ifnot: logo_url
+        img.klogo(src='https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/kloudless32x33.png')
+        // /ko
+        span Manage your cloud storage accounts here.
+      .nobackcontain(data-bind='if: all().length < 1')
+        div.nobackbtn
+        img.klogo(src='https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/kloudless32x33.png')
+        span Welcome! Please choose a service to connect.
+    a.closeexplorer(data-bind='click: cancel')
+
+  .containall
+    .connectedaccounts(data-bind='with: accounts')
+      div(data-bind='if: all().length > 0')
+        .intro-message Connected accounts
+        //- Linked accounts
+        //- Each service group
+        ul.linked-services
+          div.service-group(data-bind='foreach: {data: Object.keys(ko.toJS(by_service)), as: "service"}')
+            li.linked-service
+              div.servicename
+                img.servicelogo(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/" + service + ".png"}')
+                span(data-bind='text: $parent.friendly_name(service)')
+              div.accounts(data-bind='foreach: ko.toJS($parent.by_service)[service]')
+                ul.accountnames
+                  li.account
+                    div
+                      a(data-bind='attr: {href: "#/files/" + account}, text: account_name')
+                    //-.unlink
+                    a.alert(data-bind='attr: {href: "#/account/disconnect/" + account}', onClick='return confirm("If you remove this account, you will no longer be able to explore. Are you sure?")')
+                //-.refresh(data-bind='if: !connected')
+                //-  a.button(data-bind='attr: {href: "#/account/reconnect/" + account}') Refresh
+            // ko if: ($index() == (Object.keys($parent.by_service()).length - 1))
+            li.linked-service
+              div.servicename
+                img.servicelogo(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png"}')
+                span(data-bind='text: "Upload"')
+              div.accounts
+                ul.accountnames
+                  li.account
+                    div
+                      a(data-bind='attr: {href: "#/computer"}, text: "Upload from your computer"')
+            // /ko
+
+      .row(data-bind='if: all().length > 0')
+        div.intro-message.more Connect more!
+
+    //- Add a new account.
+    .connectmore
+      ul.small-block-grid-2.medium-block-grid-4.large-block-grid-6.add-account(data-bind='foreach: {data: services, as: "service"}')
+        // ko ifnot: $parent.accounts.all().length > 0 && service.id == 'computer'
+        li
+          a(data-bind='click: $parent.accounts.connect.bind(null, id)')
+            div.service
+              img.servicelogo(data-bind='attr: {src: logo}')
+              span.servicename-container
+                span.servicename(data-bind='text: name')
+        // /ko
