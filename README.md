@@ -361,13 +361,13 @@ Then navigate to `localhost:3000` and click the buttons to test.
 
 ## Self-hosting
 
-* Modify the JS and CSS links at `example/index.html` to point to where you will
+* Modify the JS and CSS links at `example/explorer.html` to point to where you will
   be hosting the compiled JS and CSS files for the explorer.
 * See notes on how to build the File Explorer for deployment purposes with the
   `--url` option. Perform the `grunt deploy --url=$URL` build, where $URL is
   the URL that will serve the File Explorer.
 * Place `dist/explorer/js/explorer.js` and `dist/explorer/css/explorer.css`
-  at the locations you specified in `example/index.html`.
+  at the locations you specified in `example/explorer.html`.
 * Make `dist/explorer/explorer.html` available at $URL.
   Feel free to customize the way assets are loaded/delivered.
   The important part is that the JS, HTML and CSS must all be included on that

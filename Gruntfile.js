@@ -29,7 +29,7 @@ module.exports = function(grunt) {
     },
     includes: {
       files: {
-        src: path.join(DIR, 'example', 'index.html'),
+        src: path.join(DIR, 'example', 'explorer.html'),
         dest: path.join(EXPLORER_DEST, 'explorer.html')
       }
     },
