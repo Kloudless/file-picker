@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<!--
+    This file should be rendered at the URL loaded by the loader.js
+    to display the File Explorer.
+
+    When executing `grunt` this file will be compiled to
+    dist/explorer/explorer.html, with the _explorer.html file included.
+    Therefore, all that is required is for the CSS/JS links below to
+    point to the right location, and this HTML file can be used to render
+    the File Explorer.
+-->
+
+<html>
+  <head>
+    <title>Kloudless File Explorer</title>
+    <!-- CHANGEME: Point this link to the URL the stylesheet is available at. -->
+    <link rel="stylesheet" href="/dist/explorer/css/explorer.css">
+  </head>
+  <body>
+
+    <!--
+        CHANGEME (Optional):
+        Include /dist/explorer/_explorer.html here, either with a template tag,
+        or compiling in the contents.
+    -->
+    include "../dist/explorer/_explorer.html"
+
+    <!-- CHANGEME: Point this link to the URL the JavaScript file is available at. -->
+    <script type="text/javascript" src="/dist/explorer/js/explorer.js"></script>
+  </body>
+</html>
+
+<!--
+    For an example implementation of this template, check out the one used
+    by the test server at test/views/file-explorer.jade.
+-->
