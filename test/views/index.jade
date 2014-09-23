@@ -1,0 +1,12 @@
+extends layout
+
+block scripts
+  script(type='text/javascript').
+    window.app_id = "#{app_id}";
+  script(src='/dist/loader/js/loader.js')
+  script(src='/javascripts/file-explorer-test.js')
+
+block content
+  p Click below to test the explorer/saver.
+  button#file-test Test explorer!
+  button#folder-test Second explorer!

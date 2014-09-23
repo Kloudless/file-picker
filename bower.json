@@ -1,0 +1,20 @@
+{
+  "name": "kloudless-file-picker-iframe",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "foundation": "5.2.3",
+    "jquery-ui": "1.10.4",
+    "knockout": "3.1.0",
+    "sammy": "0.7.5",
+    "requirejs": "2.1.14",
+    "loglevel": "0.6.0",
+    "momentjs": "2.7.0",
+    "almond": "0.2.9",
+    "jquery-dropdown": "1.0.5",
+    "jquery-scrollstop": "1.1.0"
+  },
+  "resolutions": {
+    "jquery": "2.1.1"
+  }
+}
