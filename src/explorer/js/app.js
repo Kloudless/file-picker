@@ -52,6 +52,9 @@
     // Initialise and configure.
     logger.setLevel(config.logLevel);
 
+    // Enable cors
+    $.support.cors = true;
+
     var service_names = {
         'dropbox' : 'Dropbox',
         'gdrive' : 'Google Drive',
