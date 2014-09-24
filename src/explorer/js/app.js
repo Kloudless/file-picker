@@ -29,6 +29,9 @@
       'vendor/jquery-scrollstop': {
         deps: ['jquery']
       },
+      'vendor/jquery.xdomainrequest': {
+        deps: ['jquery']
+      },
       'plupload': {
         deps: ['jquery'],
         exports: 'plupload'
@@ -46,7 +49,8 @@
            'config', 'storage', 'accounts',
            // Imports below don't need to be assigned to variables.
            'jqueryui', 'vendor/jquery-dropdown', 'vendor/jquery-scrollstop',
-           'moxie', 'plupload', 'pluploadui', 'vendor/jquery.finderSelect'],
+           'moxie', 'plupload', 'pluploadui', 'vendor/jquery.finderSelect',
+           'vendor/jquery.xdomainrequest'],
   function($, ko, sammy, logger, moment, config, storage, AccountManager) {
 
     // Initialise and configure.
