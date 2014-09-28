@@ -695,7 +695,7 @@
               max_upload_slots: 6,
 
               // Misc
-              runtimes : 'html5,flash,silverlight',
+              runtimes : 'html5,flash',
 
               // Rename files by clicking on their titles
               rename: true,
