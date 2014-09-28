@@ -6,6 +6,8 @@ storage services. It comes in two modes: a chooser and a saver.
 
 [Visit our JSFiddle example of the File Explorer!](http://jsfiddle.net/pseudonumos/PB565/embedded/)
 
+![fe.gif](http://i.imgur.com/xO2QcyD.gif)
+
 ## Usage
 
 Embedding the Kloudless javascript library will expose a global
