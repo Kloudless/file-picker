@@ -359,6 +359,11 @@ where 'app_id' above is a Kloudless App ID specifying which app to connect the
 accounts to. You can create an application in the Developer Portal for testing
 purposes.
 
+Since the webserver is running at `localhost:3000`, add `localhost:3000` to your
+App's list of Trusted Domains to allow it to receive Account Keys to make API
+requests with. Be careful to only do this with an app you are using for
+development purposes so that there is no security risk.
+
 Then navigate to `localhost:3000` and click the buttons to test.
 
 ## Self-hosting
