@@ -110,7 +110,7 @@
   document.getElementsByTagName('head')[0].appendChild(style);
 
   // Initialise an iframe.
-  var initialise_frame = function(key, options) {
+  var initialise_frame = function(options) {
     var exp_id = Math.floor(Math.random() * Math.pow(10, 12));
     var frame = document.createElement('iframe');
 
@@ -119,7 +119,7 @@
     frame.setAttribute('src', window.Kloudless.explorerUrl + '?' +
       'app_id=' + options.app_id +
       '&exp_id=' + exp_id +
-      '&flavor=' + key +
+      '&flavor=' + options.flavor +
       '&origin=' + encodeURIComponent(window.location.protocol + '//' + window.location.host) +
       '&multiselect=' + options.multiselect +
       '&link=' + options.link +
@@ -127,6 +127,7 @@
       '&computer=' + options.computer +
       '&copy_to_upload_location=' + options.copy_to_upload_location +
       '&services=' + JSON.stringify(options.services) +
+      '&persist=' + JSON.stringify(options.persist) +
       '&account_key=' + options.account_key +
       '&create_folder=' + options.create_folder +
       '&types=' + JSON.stringify(options.types));
@@ -153,6 +154,9 @@
 
     this.app_id = options.app_id;
     this.exp_id = options.exp_id;
+
+    // These don't need to be passed for query variables
+    this.flavor = (options.flavor === undefined) ? 'chooser' : options.flavor;
     this.multiselect = (options.multiselect === undefined) ? false : options.multiselect;
     this.link = (options.link === undefined) ? true : options.link;
     this.direct_link = (options.direct_link === undefined) ? false : options.direct_link;
@@ -161,7 +165,9 @@
                                     false : options.copy_to_upload_location);
     this.create_folder = (options.create_folder === undefined) ? true : options.create_folder;
     this.account_key = (options.account_key === undefined) ? false : options.account_key;
+    this.persist = (options.persist === undefined) ? "local" : options.persist;
     this.services = options.services || null;
+    this.files = options.files || [];
     this.types = options.types || [];
     if (!(this.types instanceof Array)) {
       this.types = [this.types];
@@ -226,9 +232,10 @@
       }
     });
 
-    var id = initialise_frame('chooser', {
+    var id = initialise_frame({
       app_id: exp.app_id,
       exp_id: exp.exp_id,
+      flavor: exp.flavor,
       multiselect: exp.multiselect,
       link: exp.link,
       direct_link: exp.direct_link,
@@ -236,6 +243,7 @@
       copy_to_upload_location: exp.copy_to_upload_location,
       account_key: exp.account_key,
       services: exp.services,
+      persist: exp.persist,
       types: exp.types,
       create_folder: exp.create_folder,
     });
@@ -246,6 +254,11 @@
     }
 
     explorers[exp.exp_id] = exp;
+
+    // TODO: INIT post message with all the config variables that contain
+    // unicode
+    exp.message('INIT', null);
+    // console.log('Explorer initialisation signal sent.');
 
     return exp;
   };
@@ -271,7 +284,10 @@
       return;
     }
 
-    self.message('INIT', null);
+    self.message('DATA', {
+      flavor: 'chooser',
+    });
+
     if (self.keys) {
       self.message('DATA', {
         keys: self.keys
@@ -294,7 +310,52 @@
       duration: 200
     });
 
-    // console.log('Explorer initialisation signal sent.');
+    return this;
+  };
+
+  // Open a file saving dialogue.
+  window.Kloudless._explorer.prototype.save = function(files) {
+    var self = this;
+    var body = document.getElementsByTagName("body")[0];
+
+    if (!self.loaded) {
+      queuedAction[self.exp_id] = self.save;
+      return;
+    }
+
+    // Need to have at least 1 file to save
+    if (files.length < 1 && this.files.length < 1) {
+      console.log('No files to save');
+      return;
+    }
+
+    // Send over files inside the options or those sent with save()
+    self.message('DATA', {
+      flavor: 'saver',
+      files: this.files.concat(files)
+    });
+
+    if (self.keys) {
+      self.message('DATA', {
+        keys: self.keys,
+      });
+    }
+
+    // Store the last scrollTop value so we can reset it when the explorer closes
+    window.Kloudless._fileWidget['lastScrollTop'] = body.scrollTop;
+    // Then scroll to the top of the file explorer after it's set
+    // if the user is mobile
+    if (isMobile()) {
+      body.scrollTop = 0;
+    }
+
+    frames[self.exp_id].style.display = 'block';
+    frames[self.exp_id].style.opacity = 0;
+    addClass(body, "kfe-active");
+
+    FX.fadeIn(frames[self.exp_id],{
+      duration: 200
+    });
 
     return this;
   };
@@ -313,9 +374,39 @@
   // Bind the file exploring dialogue to an element.
   window.Kloudless._explorer.prototype.choosify = function(element) {
     var self = this;
-    element.addEventListener('click', function() {
-      self.choose();
-    });
+    if (element instanceof Array) {
+      for (var i = 0; i < element.length; i++) {
+        var el = element[i];
+        el.addEventListener('click', function() {
+          self.choose();
+        });
+      }
+    } else {
+      element.addEventListener('click', function() {
+        self.choose();
+      });
+    }
     return this;
   };
+
+  // Bind the file exploring dialogue to an element.
+  window.Kloudless._explorer.prototype.savify = function(element, files) {
+    var self = this;
+    if (!files) {
+      files = [];
+    }
+
+    if (element instanceof Array) {
+      for (var i = 0; i < element.length; i++) {
+        el.addEventListener('click', function() {
+          self.save(files);
+        });
+      }
+    } else {
+      element.addEventListener('click', function() {
+        self.save(files);
+      });
+    }
+    return this;
+  }
 })();

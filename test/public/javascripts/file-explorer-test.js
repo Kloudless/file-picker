@@ -72,8 +72,6 @@
     types: ['folder']
   });
 
-  console.log(second);
-
   second.on('success', function(files) {
     console.log('Successfully chose folder: ', files);
 
@@ -97,4 +95,44 @@
   });
 
   second.choosify(document.getElementById('folder-test'));
+
+
+  // Test saver.
+  var saver = window.Kloudless.explorer({
+    app_id: window.app_id,
+    flavor: 'saver',
+    files: [{
+      'url': 'https://dt8kf6553cww8.cloudfront.net/static/images/icons/blue_dropbox_glyph-vflJ8-C5d.png',
+      'name': 'dropboxlogo.png'
+    },{
+      'url': 'http://upload.wikimedia.org/wikipedia/commons/7/75/Google_Drive_Logo.svg',
+      'name': 'drivelogo.svg'
+    }]
+  });
+
+  saver.on('success', function(files) {
+    console.log('Successfully saved file: ', files);
+
+    var result = document.createElement('p');
+    result.appendChild(document.createTextNode('Saved files: ' + JSON.stringify(files)));
+    document.body.appendChild(result);
+  });
+  saver.on('cancel', function() {
+    console.log('Save cancelled.');
+
+    var result = document.createElement('p');
+    result.appendChild(document.createTextNode('Save cancelled!'));
+    document.body.appendChild(result);
+  });
+  saver.on('error', function(error) {
+    console.log('An error occurred: ', error);
+
+    var result = document.createElement('p');
+    result.appendChild(document.createTextNode('An error occurred in saving!'));
+    document.body.appendChild(result);
+  });
+
+  saver.savify(document.getElementById('saver-test'));
+
+
 })();

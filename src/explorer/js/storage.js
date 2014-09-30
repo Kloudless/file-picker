@@ -1,14 +1,28 @@
 (function () {
     'use strict';
 
-    define(function () {
+    define(['config'], function(config) {
 
         var storage = {
+            container: null
         };
+
+        // set the storage container
+        if (config.persist == "local") {
+            storage.container = localStorage;
+        } else if (config.persist == "session") {
+            storage.container = sessionStorage;
+        } else {
+            storage.container = null;
+        }
+
+        console.log(storage.container);
 
         // Pass in accounts from an account manager
         storage.storeAccounts = function (appId, accounts, services) {
-            var key = 'k-' + appId, appData = localStorage[key];
+            if (!storage.container) return;
+
+            var key = 'k-' + appId, appData = storage.container[key];
             if (!appData || appData.length == 0) {
                 appData = {}
             } else {
@@ -30,17 +44,19 @@
             }
             // store the final array
             appData.accounts = array;
-            localStorage[key] = JSON.stringify(appData);
+            storage.container[key] = JSON.stringify(appData);
         };
 
         // Return an array of accounts, initialize if necessary
         // the appData is stringified
         storage.loadAccounts = function (appId, services) {
-            var key = 'k-' + appId, appData = localStorage[key];
+            if (!storage.container) return;
+
+            var key = 'k-' + appId, appData = storage.container[key];
             if (!appData || appData.length === 0) {
                 appData = {};
                 appData.accounts = [];
-                localStorage[key] = JSON.stringify(appData);
+                storage.container[key] = JSON.stringify(appData);
                 return appData.accounts;
             }
 
@@ -57,26 +73,30 @@
         };
 
         storage.removeAllAccounts = function (appId) {
-            var key = 'k-' + appId, appData = localStorage[key];
+            if (!storage.container) return;
+
+            var key = 'k-' + appId, appData = storage.container[key];
             if (!appData || appData.length == 0) {
                 appData = {};
                 appData.accounts = [];
-                localStorage[key] = JSON.stringify(appData);
+                storage.container[key] = JSON.stringify(appData);
             } else {
                 appData = JSON.parse(appData);
                 appData.accounts = [];
-                localStorage[key] = JSON.stringify(appData);
+                storage.container[key] = JSON.stringify(appData);
             }
         };
 
         storage.storeId = function(explorerId) {
-          var key = 'k-explorerId';
-          localStorage[key] = explorerId;
+            if (!storage.container) return;
+            var key = 'k-explorerId';
+            storage.container[key] = explorerId;
         }
 
         storage.loadId = function() {
-          var key = 'k-explorerId';
-          return localStorage[key];
+            if (!storage.container) return;
+            var key = 'k-explorerId';
+            return storage.container[key];
         }
 
         return storage;

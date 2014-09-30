@@ -20,8 +20,9 @@
 
   .containall
     .connectedaccounts(data-bind='with: accounts')
-      div(data-bind='if: all().length > 0')
+      div.header(data-bind='if: all().length > 0')
         .intro-message Connected accounts
+        .logout-message(data-bind='click: logout') logout
         //- Linked accounts
         //- Each service group
         ul.linked-services
@@ -39,7 +40,7 @@
                     a.alert(data-bind='attr: {href: "#/account/disconnect/" + account}', onClick='return confirm("If you remove this account, you will no longer be able to explore. Are you sure?")')
                 //-.refresh(data-bind='if: !connected')
                 //-  a.button(data-bind='attr: {href: "#/account/reconnect/" + account}') Refresh
-            // ko if: ($index() == (Object.keys($parent.by_service()).length - 1))
+            // ko if: ($index() == (Object.keys($parent.by_service()).length - 1)) && $parent.flavor == 'chooser'
             li.linked-service
               div.servicename
                 img.servicelogo(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png"}')

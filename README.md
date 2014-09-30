@@ -43,16 +43,19 @@ The Chooser allows your application to prompt a user to select files or a folder
 and retrieves metadata about the files or folder selected.
 It supports choosing files from the local machine as well as cloud storage.
 
-### Saver (Coming soon!)
+### Saver
 
 The Saver allows your application to prompt a user to select a folder to save
-files to.
+files to and file metadata will be returned to the developer.  It supports single
+and multiple files.
 
 ### Configuration
 
 The File Explorer has the following configuration options:
 
-* `app_id` : string.
+#### Chooser and Saver
+
+* `app_id` : string
 
   Chooser: _Required_
 
@@ -60,6 +63,45 @@ The File Explorer has the following configuration options:
 
   The application ID is specific to the developer's application and is located
   in the developer portal on the App Details page.
+
+* `computer` : boolean
+
+  Chooser: _Optional (default: false)_
+
+  Saver: _Optional (default: false)_
+
+  This option allows users to upload/download files directly from/to their computer.
+  Saving to the computer is currently unavailable and will be coming soon.
+
+  __Configuring the Chooser's Upload Location__
+
+  The Chooser will upload files to the developer's Upload Location.
+  The Upload Location can be set in the [developer portal](https://developers.kloudless.com)
+  under 'App Details', by selecting a folder in a storage service such as Amazon S3.
+  All local files from a user will be uploaded there.
+
+* `persist` : string
+
+  Chooser: "none", "local", "session" (default: "local")
+
+  Saver: "none", "local", "session" (default: "local")
+
+  This option specifies account persistence for the explorer in either localStorage,
+  sessionStorage, or no storage. The explorer will always fall back to localStorage
+  if an invalid option is given.
+
+* `services` : array
+
+  Chooser: _Optional (default: ['file_store'])_
+
+  Saver: _Optional (default: ['file_store'])_
+
+  This option specifies which services to allow a user to explore. You can enumerate
+  the specific [services](#accounts) or [service groups](#accounts).
+  The default is the file store service group.  If you specify an empty array,
+  no services will show up.
+
+#### Chooser options
 
 * `multiselect` : boolean
 
@@ -93,21 +135,6 @@ The File Explorer has the following configuration options:
   `true`, the link will download the file instead. See the `direct`
   [attribute](#links) for more details.
 
-* `computer` : boolean
-
-  Chooser: _Optional (default: false)_
-
-  Saver: _Optional (default: false)_
-
-  This option allows users to upload/download files directly from/to their computer.
-
-  __Configuring the Chooser's Upload Location__
-
-  The Chooser will upload files to the developer's Upload Location.
-  The Upload Location can be set in the [developer portal](https://developers.kloudless.com)
-  under 'App Details', by selecting a folder in a storage service such as Amazon S3.
-  All local files from a user will be uploaded there.
-
 * `copy_to_upload_location` : boolean
 
   Chooser: _Optional (default: false)_
@@ -129,17 +156,6 @@ The File Explorer has the following configuration options:
 
   If `true`, the user will be able to create folders in their cloud storage
   accounts.
-
-* `services` : array
-
-  Chooser: _Optional (default: ['file_store'])_
-
-  Saver: _Optional (default: ['file_store'])_
-
-  This option specifies which services to allow a user to explore. You can enumerate
-  the specific [services](#accounts) or [service groups](#accounts).
-  The default is the file store service group.  If you specify an empty array,
-  no services will show up.
 
 * `types` : array
 
@@ -166,7 +182,6 @@ The File Explorer has the following configuration options:
   * `videos`
 
   * `audio`
-
 
 * `account_key` : boolean
 
@@ -210,6 +225,31 @@ The File Explorer has the following configuration options:
     explorer({
       ...
       keys: ["abcdefghijklmn", "opqrstuvwxyz"]
+      ...
+    });
+  ```
+
+#### Saver options
+
+* `files` : array
+
+  Saver: _Optional (default: [])_
+
+  This option should list files for the File Explorer to save. The format
+  should be an array of Javascript Objects containing a file url and name.
+  You can specify up to 100 files.
+
+  ```javascript
+    // Example initialization with files to save.
+    explorer({
+      ...
+      files: [{
+        "url": "http://<your image url>",
+        "name": "filename.extension"
+      }, {
+        "url": "http://<your image url>",
+        "name": "filename.extension"
+      }]
       ...
     });
   ```
@@ -287,7 +327,7 @@ The final step is to launch the explorer and handle the events returned from the
 explorer based on a user's actions.
 
 ```javascript
-// When a user successfully selects a file
+// When a user successfully selects or saves a file
 explorer.on('success', function(files) {
   // files is an array of JS objects that contain file metadata.
   console.log('Successfully selected files: ', files);
@@ -298,11 +338,34 @@ explorer.on('cancel', function() {
   console.log('File selection cancelled.');
 });
 
-// Launching the explorer when a user clicks the Explore! button
-explorer.choosify(document.getElementById('file-explorer'));
+// Launching the explorer to choose when a user clicks the Explore! button
+explorer.choosify(document.getElementById('file-explorer-chooser'));
 
 // In addition, you can launch the explorer programmatically with choose()
 explorer.choose();
+
+// Launching the explorer to save when a user clicks the Explore! button
+// Note: you can pass in an array of files instead of using the configuration option
+var files = [{
+  "url": "http://<your image url>",
+  "name": "filename.extension"
+}, {
+  "url": "http://<your image url>",
+  "name": "filename.extension"
+}];
+
+explorer.savify(document.getElementById('file-explorer-saver'), files);
+
+// In addition, you can launch the explorer programmatically with save()
+var files = [{
+  "url": "http://<your image url>",
+  "name": "filename.extension"
+}, {
+  "url": "http://<your image url>",
+  "name": "filename.extension"
+}];
+
+explorer.save(files);
 ```
 
 [Visit our JS Fiddle example of the File Explorer!](http://jsfiddle.net/pseudonumos/PB565/embedded/)

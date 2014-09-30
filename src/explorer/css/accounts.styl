@@ -4,6 +4,9 @@ div.accounts
     .containall
         padding:35px
         padding-top:113px
+        .connectedaccounts
+            .header
+                clear: both
     .back
         padding: 20px 16px
         width:100%
@@ -71,9 +74,17 @@ div.accounts
         background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px -146px no-repeat
 
     .intro-message
+        float: left;
         margin-bottom:15px
         &.more
             margin-top:40px
+    .logout-message
+        float: right
+        margin-bottom:15px
+        color: #2a8eff;
+        font-size: 12px;
+        &:hover
+            cursor: pointer
 
     ul.linked-services
         list-style:none

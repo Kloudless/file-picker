@@ -133,9 +133,17 @@
         div.error(data-alert, data-bind='visible: error().length > 0')
           div.error-text(data-bind='text: error, attr: {title: error}')
           a.close(href='#')
+        // ko if: files.all().length == 1 && flavor() == 'saver'
+        input.kloudless-saver-name(data-bind='value: files.all()[0].name')
+        // /ko
         .buttonscontainer
           a(data-bind='click: cancel').button.reg Cancel
+          // ko if: flavor() == 'chooser'
           a(data-bind='click: confirm').button.blue Select
+          // /ko
+          // ko if: flavor() == 'saver'
+          a(data-bind='click: save').button.blue Save
+          // /ko
         .textcontainer
           span powered by
           img(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/settings_popup_logo.png"}')

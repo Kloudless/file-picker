@@ -19,12 +19,15 @@
       exp_id: get_query_variable('exp_id'),
       app_id: get_query_variable('app_id'),
       origin: get_query_variable('origin'),
+      // data options move to post messaging
+      flavor: get_query_variable('flavor'),
       multiselect: JSON.parse(get_query_variable('multiselect')),
       link: JSON.parse(get_query_variable('link')),
       direct_link: JSON.parse(get_query_variable('direct_link')),
       computer: JSON.parse(get_query_variable('computer')),
       account_key: JSON.parse(get_query_variable('account_key')),
       services: JSON.parse(get_query_variable('services')),
+      persist: JSON.parse(get_query_variable('persist')),
       types: JSON.parse(get_query_variable('types')),
       user_data: {}, // Get asynchronously.
       copy_to_upload_location: JSON.parse(get_query_variable('copy_to_upload_location')),

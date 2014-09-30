@@ -46,12 +46,12 @@
   // Load dependencies.
   require(['jquery', 'vendor/knockout', 'vendor/sammy',
            'vendor/loglevel', 'vendor/moment',
-           'config', 'storage', 'accounts',
+           'config', 'storage', 'accounts', 'files',
            // Imports below don't need to be assigned to variables.
            'jqueryui', 'vendor/jquery-dropdown', 'vendor/jquery-scrollstop',
            'moxie', 'plupload', 'pluploadui', 'vendor/jquery.finderSelect',
            'vendor/jquery.xdomainrequest'],
-  function($, ko, sammy, logger, moment, config, storage, AccountManager) {
+  function($, ko, sammy, logger, moment, config, storage, AccountManager, FileManager) {
 
     // Initialise and configure.
     logger.setLevel(config.logLevel);
@@ -74,7 +74,7 @@
         'onedrivebiz': 'OneDrive for Business',
         'azure': 'Azure Storage',
       },
-      services = [];
+      services = ko.observableArray();
 
     for (var i = 0; i < config.services.length; i++) {
       var service = config.services[i];
@@ -96,6 +96,7 @@
     // Explorer declaration.
     var FileExplorer = function() {
       this.manager = new AccountManager();
+      this.fileManager = new FileManager();
 
       this.id = (function() {
         var _id = storage.loadId();
@@ -111,8 +112,73 @@
       // View model setup.
       var self = this;
       this.view_model = {
+        flavor: ko.observable(config.flavor),
+
         // The current view: alternates between 'files' and 'accounts'
         current: ko.observable('accounts'),
+
+        // Save all files in FileManager to the selected directory
+        save: function() {
+          // Set loading to true
+          explorer.view_model.loading(true);
+
+          // Grab the current location
+          var current = explorer.manager.active().filesystem().current()
+            , saves = [];
+
+          // If you can save here
+          if (current.can_upload_files) {
+            var accountId = explorer.manager.active().filesystem().id
+              , accountKey = explorer.manager.active().filesystem().key;
+            var requestCountSuccess = 0
+              , requestCountError = 0;
+
+            // Save Complete Callback
+            var saveComplete = function(success) {
+              if (success) {
+                requestCountSuccess++;
+              }
+              else {
+                requestCountError++;
+                logger.warn('Error with ajax requests for save');
+              }
+
+              // All requests are done
+              if (requestCountSuccess + requestCountError == explorer.fileManager.files().length) {
+                explorer.view_model.postMessage('success', saves);
+                explorer.view_model.loading(false);
+                logger.debug('Successfully uploaded files: ', saves);
+                explorer.fileManager.files.removeAll();
+              }
+            };
+
+            for (var i = 0; i < explorer.fileManager.files().length; i++) {
+              var f = explorer.fileManager.files()[i];
+              var file_data = {
+                url: f.url,
+                parent_id: current.id,
+                name: $('.kloudless-saver-name').val() || f.name
+              };
+              logger.debug('file_data.name: ', file_data.name);
+              var request = $.ajax({
+                url: config.base_url + '/v0/accounts/' + accountId + '/files/',
+                type: 'POST',
+                contentType: 'application/json',
+                headers: { Authorization: 'AccountKey ' + accountKey },
+                data: JSON.stringify(file_data)
+              }).done(function(data) {
+                saves.push(data);
+                saveComplete(true);
+              }).fail(function(xhr, status, err) {
+                logger.warn('Error uploading file: ', status, err, xhr);
+                saveComplete(false);
+              });
+            }
+          } else {
+            explorer.view_model.error('Files cannot be saved to this folder. Please choose again.');
+            explorer.view_model.loading(false);
+          }
+        },
 
         // Select a file.
         confirm: function() {
@@ -153,6 +219,7 @@
             var requestCountSuccess = 0
               , requestCountError = 0;
 
+            // Selection Complete Callback
             var selectionComplete = function(success) {
               if (success) {
                 requestCountSuccess++;
@@ -212,8 +279,7 @@
                   });
                 })(i);
               }
-            }
-            else if (config.link) {
+            } else if (config.link) {
               for (var i=0; i < selections.length; i++) {
                 createLink(i);
               }
@@ -380,6 +446,11 @@
           logo_url: ko.computed(function() {
             return config.user_data.logo_url;
           }),
+          logout: function() {
+            explorer.manager.accounts.removeAll();
+            storage.removeAllAccounts(config.app_id);
+            router.runRoute('get', '#/accounts');
+          },
           // Current active service name
           name: ko.computed(function() {
             var self = this();
@@ -387,8 +458,8 @@
           }, self.manager.active),
           // return friendly names by service
           friendly_name: function(service_name) {
-            for (var i = 0; i < services.length; i++) {
-              var s = services[i];
+            for (var i = 0; i < services().length; i++) {
+              var s = services()[i];
               if (s['id'] == service_name) {
                 return s['name'];
               }
@@ -469,12 +540,14 @@
             });
           },
           computer: function() {
-            return config.computer;
+            return config.computer && explorer.view_model.flavor() == 'chooser';
           }
         },
 
         // Files view model.
         files: {
+          all: self.fileManager.files,
+
           // Compute breadcrumbs.
           breadcrumbs: ko.computed(function() {
             var self = this(); // gimmick to register observer with KO
@@ -492,8 +565,8 @@
           service_friendly: ko.computed(function() {
             var self = this();
             var name = self.service;
-            for (var i = 0; i < services.length; i++) {
-              var s = services[i];
+            for (var i = 0; i < services().length; i++) {
+              var s = services()[i];
               if (s['id'] == name) {
                 return s['name'];
               }
@@ -956,7 +1029,57 @@
       }
 
       var contents = JSON.parse(message.data);
+      // TODO: future config options
       if (contents.action == 'INIT') {
+        router.run('#/');
+      } else if (contents.action == 'DATA') {
+
+        // Similar to an INIT call, but this time, the explorer has some data
+        // to initialize the explorer
+        var data = contents.data;
+
+        // Differentiate between saver and chooser
+        // Check the flavor on init call
+        if (data.flavor) {
+          // refresh and go back to accounts if going from saver to chooser
+          // or vice versa
+          if (config.flavor !== data.flavor) {
+            logger.debug('SWITCHING FLAVORS');
+            router.setLocation('#/accounts');
+            router.runRoute('get', '#/accounts');
+          }
+
+          config.flavor = data.flavor;
+          explorer.view_model.flavor(config.flavor);
+        }
+
+        if (data.flavor == 'saver') {
+
+          // Add files to fileManager
+          if (data.files && data.files.length > 0) {
+            // first clear all files.
+            explorer.fileManager.files.removeAll();
+            for (var i = 0; i < data.files.length; i++) {
+              var file = data.files[i];
+              explorer.fileManager.add(file.url, file.name);
+            }
+          }
+
+          // Remove computer
+          if (config.computer && services()[0].id == 'computer') {
+            services.shift();
+          }
+        } else if (data.flavor == 'chooser') {
+          // Add computer
+          if (config.computer && services()[0].id != 'computer') {
+            services.unshift({
+              id: 'computer',
+              name: 'My Computer',
+              logo: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png'
+            });
+          }
+        }
+
         // Call sync if frame has already been initialized and there are differences
         // between storage and current accounts
         if (explorer.manager.accounts().length !== 0) {
@@ -975,22 +1098,18 @@
               break;
             }
           }
-          logger.debug(different || accounts.length != local_accounts.length);
+          // logger.debug(different || accounts.length != local_accounts.length);
           if (different || accounts.length != local_accounts.length) {
             explorer.view_model.sync(accounts, true);
           }
         }
 
-        router.run('#/');
-      } else if (contents.action == 'DATA') {
-        // Similar to an INIT call, but this time, the explorer has some data
-        // to initialize the explorer
-        var data = contents.data;
-
         // account key data
         if (data.keys) {
           explorer.view_model.sync(data.keys, false);
         }
+
+        router.run('#/');
       }
     });
 
