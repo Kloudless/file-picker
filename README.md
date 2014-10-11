@@ -30,6 +30,10 @@ You can then create an element on the page to launch the explorer.
 </script>
 ```
 
+Be sure to serve the page via a web server, as pages opened via the
+file URI scheme (`file://`) cannot receive messages sent via postMessage
+due to security concerns.
+
 The File Explorer can be configured to be either a chooser or a saver.
 An `iframe` will be created by the JS library to view the explorer.
 
