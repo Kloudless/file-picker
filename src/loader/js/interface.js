@@ -224,6 +224,9 @@
     var exp = new window.Kloudless._explorer(options);
 
     exp.on('load', function() {
+      // TODO: INIT post message with all config variables
+      exp.message('INIT', null);
+
       exp.loaded = true;
       if (queuedAction[exp.exp_id]) {
         var method = queuedAction[exp.exp_id];
@@ -254,11 +257,6 @@
     }
 
     explorers[exp.exp_id] = exp;
-
-    // TODO: INIT post message with all the config variables that contain
-    // unicode
-    exp.message('INIT', null);
-    // console.log('Explorer initialisation signal sent.');
 
     return exp;
   };
