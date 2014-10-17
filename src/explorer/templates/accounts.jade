@@ -52,8 +52,10 @@
                       a(data-bind='attr: {href: "#/computer"}, text: "Upload from your computer"')
             // /ko
 
+      // ko if: $parent.services.length > 0
       .row(data-bind='if: all().length > 0')
         div.intro-message.more Connect more!
+      // /ko
 
     //- Add a new account.
     .connectmore

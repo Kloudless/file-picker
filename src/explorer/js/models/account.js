@@ -1,8 +1,8 @@
 (function() {
   'use strict';
 
-  define(['vendor/knockout', 'vendor/loglevel', 'models/filesystem'],
-      function(ko, logger, Filesystem) {
+  define(['vendor/knockout', 'vendor/loglevel', 'models/filesystem', 'config'],
+      function(ko, logger, Filesystem, config) {
     // Construct an Account, which keeps track of account metadata, and fire a callback on init.
     var Account = function(data, account_callback, filesystem_callback) {
       /*

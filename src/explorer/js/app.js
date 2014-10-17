@@ -458,12 +458,7 @@
           }, self.manager.active),
           // return friendly names by service
           friendly_name: function(service_name) {
-            for (var i = 0; i < services().length; i++) {
-              var s = services()[i];
-              if (s['id'] == service_name) {
-                return s['name'];
-              }
-            }
+            return service_names[service_name];
           },
           // Returns hash mapping a string service name to an array of account objects.
           by_service: ko.computed(function() {
@@ -565,12 +560,7 @@
           service_friendly: ko.computed(function() {
             var self = this();
             var name = self.service;
-            for (var i = 0; i < services().length; i++) {
-              var s = services()[i];
-              if (s['id'] == name) {
-                return s['name'];
-              }
-            }
+            return service_names[name];
           }, self.manager.active),
           // Compute current working directory.
           cwd: ko.computed(function() {
@@ -673,7 +663,10 @@
         },
 
         // List of supported services. Used to render things on the accounts page.
-        services: services
+        services: services,
+        // List of friendly names
+        service_names: service_names
+
       };
 
       ko.applyBindings(this.view_model);
@@ -1106,7 +1099,7 @@
 
         // account key data
         if (data.keys) {
-          explorer.view_model.sync(data.keys, false);
+          explorer.view_model.sync(data.keys, true);
         }
 
         router.run('#/');
