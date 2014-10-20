@@ -1,7 +1,7 @@
 {
-  "name": "kloudless-file-picker-iframe",
+  "name": "kloudless-file-explorer",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "foundation": "5.2.3",
     "jquery-ui": "1.10.4",
