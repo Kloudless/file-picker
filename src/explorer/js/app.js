@@ -63,7 +63,7 @@
         'dropbox' : 'Dropbox',
         'gdrive' : 'Google Drive',
         'box' : 'Box',
-        'bitcasa' : 'Bitcasa',
+        'evernote' : 'Evernote',
         'skydrive' : 'OneDrive',
         'sugarsync' : 'SugarSync',
         'sharefile' : 'Citrix ShareFile',
@@ -1112,6 +1112,12 @@
     $.get(config.base_url + '/drop/' + config.app_id, {},
       function(drop_information) {
         config.chunk_size = drop_information.chunk_size;
+      }).fail(function() {
+        // Disable computer if no drop location is set.
+          if (config.computer && services()[0].id == 'computer') {
+            services.shift();
+          }
+          config.computer = false;
       });
 
     // This signal is placed last and indicates all the JS has loaded

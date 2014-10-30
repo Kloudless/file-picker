@@ -358,6 +358,32 @@
     return this;
   };
 
+  // Close the explorer
+  window.Kloudless._explorer.prototype.close = function() {
+    var self = this;
+    var body = document.getElementsByTagName("body")[0];
+
+    if (!self.loaded) {
+      queuedAction[self.exp_id] = self.close;
+      return;
+    }
+
+    removeClass(body, "kfe-active");
+
+    if(typeof(window.Kloudless._fileWidget['lastScrollTop']) != "undefined") {
+      if(isMobile) {
+        body.scrollTop = window.Kloudless._fileWidget['lastScrollTop'];
+      }
+
+      FX.fadeOut(frames[self.exp_id],{
+        duration: 200,
+        complete: function() {
+          frames[self.exp_id].style.display = 'none';
+        }
+      });
+    }
+  }
+
   // Send a message to the explorer frame
   window.Kloudless._explorer.prototype.message = function(action, data) {
     var self = this;
@@ -379,6 +405,13 @@
           self.choose();
         });
       }
+    } else if (window.jQuery !== undefined && element instanceof window.jQuery) {
+      for (var i = 0; i < element.length; i++) {
+        var el = element.get(i);
+        el.addEventListener('click', function() {
+          self.choose();
+        });
+      }
     } else {
       element.addEventListener('click', function() {
         self.choose();
@@ -396,6 +429,13 @@
 
     if (element instanceof Array) {
       for (var i = 0; i < element.length; i++) {
+        el.addEventListener('click', function() {
+          self.save(files);
+        });
+      }
+    } else if (window.jQuery !== undefined && element instanceof window.jQuery) {
+      for (var i = 0; i < element.length; i++) {
+        var el = element.get(i);
         el.addEventListener('click', function() {
           self.save(files);
         });

@@ -62,6 +62,11 @@
 
   explorer.choosify(document.getElementById('file-test'));
 
+  var cl = document.getElementById('close-test');
+  cl.addEventListener('click', function() {
+    explorer.close();
+  });
+
   // Test second file explorer.
   var second = window.Kloudless.explorer({
     app_id: window.app_id,

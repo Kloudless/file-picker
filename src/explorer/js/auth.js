@@ -18,10 +18,11 @@
      * This is because IE 9 only accepts postMessages between frames if
      * the domains are not the same.
      */
-    var iframe = (function(){ 
+    var iframe = (function() {
       var i = document.createElement('iframe');
       i.setAttribute('id', 'kloudless_iexd-' + randomID());
-      i.setAttribute('src', config.base_url + '/static/iexd.html');
+      i.setAttribute('src', config.base_url + '/static/iexd.html?cache=' + Math.floor(
+        Math.random()*10000 + 1));
       i.style.display = 'none';
       document.getElementsByTagName('body')[0].appendChild(i);
       return i;
@@ -40,6 +41,13 @@
       }
 
       var contents = JSON.parse(message.data.substring(ns.length));
+
+      // Enable popups
+      if (contents.type == 'error') {
+        alert('Please enable popups on your in Browser Settings > Advanced > Disable/Block Pop-ups');
+        return;
+      }
+
       if (requests[contents.id] !== undefined) {
         (function(callback) {
           window.setTimeout(function() {
@@ -104,14 +112,14 @@
         'left=' + options.left,
         'top=' + options.top,
       ];
-        
+
       var data = {
         type: 'open',
         url: url + "?" + $.param(query_params),
         params: params.join(',')
       };
 
-      postMessage(data, query_params.request_id, function(response_contents){
+      postMessage(data, query_params.request_id, function(response_contents) {
         postMessage({type: 'close'});
         callback(response_contents.data);
       });

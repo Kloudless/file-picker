@@ -295,6 +295,10 @@ The File Explorer has the following configuration options:
 
   This method binds the explorer to an HTML element to launch the explorer.
 
+* `explorer.close()`
+
+  This method closes the explorer window.
+
 ### Example
 
 To start using the File Explorer, simply include the JavaScript file in your
