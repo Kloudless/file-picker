@@ -73,6 +73,8 @@
         'sharepoint': 'SharePoint',
         'onedrivebiz': 'OneDrive for Business',
         'azure': 'Azure Storage',
+        'cmis' : 'CMIS',
+        'alfresco' : 'Alfresco',
       },
       services = ko.observableArray();
 

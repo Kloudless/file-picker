@@ -66,6 +66,8 @@
             'sharepoint',
             'onedrivebiz',
             'azure',
+            'cmis',
+            'alfresco'
         ],
         file_store: [
             'dropbox',
@@ -79,6 +81,8 @@
             'egnyte',
             'sharepoint',
             'onedrivebiz',
+            'cmis',
+            'alfresco'
         ],
         object_store: [
             'azure',
