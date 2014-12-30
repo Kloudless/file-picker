@@ -186,8 +186,7 @@
   };
 
   // Fire an event handler. Called by the message listeners.
-  // Takes a variable number of arguments, and passes them to the handler.
-  window.Kloudless._fileWidget.prototype._fire = function(event) {
+  window.Kloudless._fileWidget.prototype._fire = function(event, data) {
 
     var body = document.getElementsByTagName("body")[0];
 
@@ -211,9 +210,8 @@
       }
     }
 
-    var args = Array.prototype.slice.call(arguments, 1);
     if (this.handlers[event]) {
-      this.handlers[event].call(this, args);
+      this.handlers[event].call(this, data);
     }
 
     return this;

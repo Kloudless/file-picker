@@ -21,7 +21,7 @@
     // Listen for file explorer events.
     // postMessage based on explorer id
     explorer = window.Kloudless._explorers[exp_id];
-    explorer._fire.apply(explorer, [contents.action].concat(contents.data));
+    explorer._fire.apply(explorer, [contents.action, contents.data]);
   });
 
 })();

@@ -269,16 +269,15 @@ The File Explorer has the following configuration options:
 
   Fired if the user decides to cancel an operation.
 
-* `addAccount(data)`
+* `addAccount(account)`
 
   Fired when a user successfully adds an account.
-  `data` is an array containing the account id, name, and service.
+  `account` is an object containing the account id, name, and service.
 
-* `deleteAccount(data)`
+* `deleteAccount(account)`
 
   Fired when a user successfully removes an account.
-  `data` is an array containing the account id of the deleted
-  account.
+  `account` is an object containing the account id of the deleted account.
 
 ### Methods
 
