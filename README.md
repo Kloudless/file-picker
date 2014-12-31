@@ -269,6 +269,21 @@ The File Explorer has the following configuration options:
 
   Fired if the user decides to cancel an operation.
 
+* `selected(files)`
+
+  The selected event handler is fired when the user selects files from the
+  explorer, but before sending the list to the Kloudless API for additional
+  processing. It fires before the `success` handler, and can allow you to
+  perform an action while waiting to get the final list.
+
+  If `copy_to_upload_location` and `link` are both false, then this event is
+  equivalent to the `success` event (since nothing needs to happen on the
+  server after the selections are made), so this event probably isn't useful
+  for you.
+
+  `files` is an array of files, formatted the same way as the array passed to
+  `success`.
+
 * `addAccount(account)`
 
   Fired when a user successfully adds an account.
@@ -278,6 +293,17 @@ The File Explorer has the following configuration options:
 
   Fired when a user successfully removes an account.
   `account` is an object containing the account id of the deleted account.
+
+* `startFileUpload(file)`
+
+  Fired when a file upload starts (once per file being uploaded). `file` is an
+  object containing keys `id`, `name`, `size`, and `mime_type`.
+
+* `finishFileUpload(file)`
+
+  Fired when a file upload completes successfully (once per file being
+  uploaded). `file` contains the same information as in `startFileUpload`
+  above.
 
 ### Methods
 

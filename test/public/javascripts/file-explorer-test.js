@@ -20,11 +20,36 @@
     console.log('Successfully chose files: ', files);
 
     var result = document.createElement('p');
+    result.appendChild(document.createTextNode('Files chosen:'));
+    var data = document.createElement('pre');
+    data.appendChild(document.createTextNode(
+        JSON.stringify(files, null, 2)));
+    result.appendChild(data);
+    document.body.appendChild(result);
+  });
+  explorer.on('selected', function(files) {
+    console.log('Selected files: ', files);
+
+    var result = document.createElement('p');
     result.appendChild(document.createTextNode('Files selected:'));
     var data = document.createElement('pre');
     data.appendChild(document.createTextNode(
         JSON.stringify(files, null, 2)));
     result.appendChild(data);
+    document.body.appendChild(result);
+  });
+  explorer.on('startFileUpload', function(file) {
+    console.log('File upload started:', file);
+
+    var result = document.createElement('p');
+    result.appendChild(document.createTextNode('File upload started: ' + file.name));
+    document.body.appendChild(result);
+  });
+  explorer.on('finishFileUpload', function(file) {
+    console.log('File upload finished:', file);
+
+    var result = document.createElement('p');
+    result.appendChild(document.createTextNode('File upload finished: ' + file.name));
     document.body.appendChild(result);
   });
   explorer.on('cancel', function() {

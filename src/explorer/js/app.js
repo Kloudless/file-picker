@@ -215,6 +215,7 @@
           // postMessage to indicate success.
           if (selections.length > 0) {
             logger.debug('Files selected! ', selections);
+            explorer.view_model.postMessage('selected', selections);
 
             var accountId = explorer.manager.active().filesystem().id
               , accountKey = explorer.manager.active().filesystem().key;
@@ -354,7 +355,7 @@
               }
 
             }
-            post_data.data = data
+            post_data.data = data;
           }
 
           window.parent.postMessage(JSON.stringify(post_data), config.origin);
@@ -733,6 +734,22 @@
             });
           }
 
+          function formatFileObject(file) {
+            /**
+             * Format a file info dict to be emitted to the API.
+             *
+             * Returns a subset of the info (rather than returning a
+             * Pluploadfile object) to avoid exposing internals that may
+             * change.
+             */
+            return {
+              id: file.id,
+              name: file.name,
+              size: file.size,
+              mime_type: file.type
+            };
+          }
+
           $("#uploader").plupload({
               // Required
               url: config.base_url + '/drop/' + config.app_id,
@@ -853,6 +870,10 @@
                   });
                 },
                 BeforeUpload: function(up, file) {
+                  /**
+                   * Called just before a file begins to upload. Called once
+                   * per file being uploaded.
+                   */
                   up.settings.multipart_params = up.settings.multipart_params || {};
                   up.settings.multipart_params['file_id'] = file.id;
                   if (config.link) up.settings.multipart_params['link'] = true;
@@ -860,13 +881,23 @@
                   up.settings.headers = up.settings.headers || {};
                   // Not using up.id because it changes with every plUpload().
                   up.settings.headers["X-Explorer-Id"] = explorer.id
+
+                  explorer.view_model.postMessage('startFileUpload',
+                    formatFileObject(file));
                 },
                 FileUploaded: function(up, file, info) {
+                  /**
+                   * Called just after a file has been successfully uploaded to
+                   * Kloudless. Called once per file being uploaded.
+                   */
                   if (info.status == 200 || info.status == 201) {
                     var responseData = JSON.parse(info.response);
                     if (Object.keys(responseData).length > 5) {
                       selections.push(responseData);
                     }
+
+                    explorer.view_model.postMessage('finishFileUpload',
+                      formatFileObject(file));
                   }
                 },
                 Error: function(up, args) {
