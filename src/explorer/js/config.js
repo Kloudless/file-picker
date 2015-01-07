@@ -28,7 +28,13 @@
       account_key: JSON.parse(get_query_variable('account_key')),
       services: JSON.parse(get_query_variable('services')),
       persist: JSON.parse(get_query_variable('persist')),
-      types: JSON.parse(get_query_variable('types')),
+      types: JSON.parse(get_query_variable('types')).map(function(str) {
+        /**
+         * Make sure all types are lowercase since we do a case-insensitive
+         * search by lowercasing the search key and using types#indexOf.
+         */
+        return str.toLowerCase();
+      }),
       user_data: {}, // Get asynchronously.
       copy_to_upload_location: JSON.parse(get_query_variable('copy_to_upload_location')),
       create_folder: JSON.parse(get_query_variable('create_folder')),

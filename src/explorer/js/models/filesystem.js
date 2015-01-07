@@ -146,7 +146,7 @@
           if (child.type == 'folder' ||
               (((config.types.length === 1 && config.types.indexOf('files') != -1) ||
                 (config.types.length === 1 && config.types.indexOf('all') != -1) ||
-                (config.types.indexOf(extension) != -1) ||
+                (config.types.indexOf(extension.toLowerCase()) != -1) ||
                 (config.types.indexOf('') != -1 && child.name.indexOf('.') == -1))
                   && config.flavor == 'chooser')) {
             logger.debug('Child passed type test.');
