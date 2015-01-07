@@ -54,4 +54,7 @@
       window.Window.prototype.removeEventListener = removeEventListener;
     }
   }
+
+  // simple console.log polyfill
+  window.console = window.console || {log: function() {}};
 })();
