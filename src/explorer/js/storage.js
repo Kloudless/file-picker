@@ -16,8 +16,6 @@
             storage.container = null;
         }
 
-        console.log(storage.container);
-
         // Pass in accounts from an account manager
         storage.storeAccounts = function (appId, accounts, services) {
             if (!storage.container) return;
