@@ -14,6 +14,9 @@
       'vendor/jquery-cookie': {
         deps: ['jquery']
       },
+      'vendor/jquery.finderSelect': {
+        deps: ['jquery']
+      },
       'vendor/jquery-placeholder': {
         deps: ['jquery']
       },
@@ -33,7 +36,7 @@
         deps: ['jquery']
       },
       'plupload': {
-        deps: ['jquery'],
+        deps: ['jquery', 'moxie'],
         exports: 'plupload'
       },
       'pluploadui': {
