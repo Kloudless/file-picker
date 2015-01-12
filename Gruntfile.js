@@ -115,9 +115,6 @@ module.exports = function(grunt) {
           src: path.join(DIR, 'bower_components', 'jquery-scrollstop', 'jquery.scrollstop.js'),
           dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-scrollstop.js')
         }, {
-          src: path.join(DIR, 'bower_components', 'jquery.xdomainrequest', 'jQuery.XDomainRequest.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery.xdomainrequest.js')
-        }, {
           src: path.join(DIR, 'bower_components', 'modernizr', 'modernizr.js'),
           dest: path.join(TMP_PATH, 'js', 'vendor', 'modernizr.js')
         }, {
@@ -174,9 +171,6 @@ module.exports = function(grunt) {
         }, {
           src: path.join(DIR, 'bower_components', 'jquery-scrollstop', 'jquery.scrollstop.js'),
           dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-scrollstop.js')
-        }, {
-          src: path.join(DIR, 'bower_components', 'jquery.xdomainrequest', 'jquery.xdomainrequest.min.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery.xdomainrequest.js')
         }, {
           src: path.join(DIR, 'bower_components', 'modernizr', 'modernizr.js'),
           dest: path.join(TMP_PATH, 'js', 'vendor', 'modernizr.js')

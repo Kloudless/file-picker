@@ -12,8 +12,7 @@
     "momentjs": "2.7.0",
     "almond": "0.2.9",
     "jquery-dropdown": "1.0.5",
-    "jquery-scrollstop": "1.1.0",
-    "jquery.xdomainrequest": "1.0.2"
+    "jquery-scrollstop": "1.1.0"
   },
   "resolutions": {
     "jquery": "2.1.1"
