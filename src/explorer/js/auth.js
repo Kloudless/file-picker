@@ -1,17 +1,10 @@
 (function() {
   'use strict';
 
-  define(['jquery', 'config', 'vendor/loglevel'],
-         function($, config, logger) {
+  define(['jquery', 'config', 'vendor/loglevel', 'util'],
+         function($, config, logger, util) {
 
     var requests = {};
-
-    /*
-     * Perhaps move to util module?
-     */
-    var randomID = function() {
-      return parseInt(Math.random() * 10e10).toString();
-    };
 
     /*
      * Find or create the iframe messages are posted to and received via.
@@ -20,9 +13,8 @@
      */
     var iframe = (function() {
       var i = document.createElement('iframe');
-      i.setAttribute('id', 'kloudless_iexd-' + randomID());
-      i.setAttribute('src', config.base_url + '/static/iexd.html?cache=' + Math.floor(
-        Math.random()*10000 + 1));
+      i.setAttribute('id', 'kloudless_iexd-' + util.randomID());
+      i.setAttribute('src', config.base_url + '/static/iexd.html?cache=' + util.randomID());
       i.style.display = 'none';
       document.getElementsByTagName('body')[0].appendChild(i);
       return i;
@@ -68,7 +60,7 @@
             app_id: config.app_id,
             referrer: 'explorer',
             retrieve_account_key: 'true',
-            request_id: randomID(),
+            request_id: util.randomID(),
             origin: window.location.protocol + '//' + window.location.host,
         };
 
