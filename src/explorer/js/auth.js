@@ -4,7 +4,9 @@
   define(['jquery', 'config', 'vendor/loglevel', 'util'],
          function($, config, logger, util) {
 
-    var requests = {};
+    var requests = {},
+      iframeLoaded = false,
+      queuedRequests = [];
 
     /*
      * Find or create the iframe messages are posted to and received via.
@@ -118,17 +120,32 @@
     };
 
     var postMessage = function(data, identifier, callback) {
+      if (!iframeLoaded) {
+        queuedRequests.push(arguments);
+        return;
+      }
+
       if (identifier && callback) {
         requests[identifier] = {
           callback: callback
         };
       }
+
       iframe.contentWindow.postMessage('kloudless:' + JSON.stringify(data),
                                        iframe.src);
     };
 
+    iframe.onload = function() {
+      // when the iframe loads, post any pending messages.
+      iframeLoaded = true;
+      while (queuedRequests.length) {
+        postMessage.apply(this, queuedRequests.pop());
+      }
+    };
+
     return {
-      authenticate: authenticate
+      authenticate: authenticate,
+      postMessage: postMessage
     };
   });
 })();
