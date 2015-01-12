@@ -446,6 +446,7 @@
             var self = this();
             return self.service;
           }, self.manager.active),
+          flavor: ko.observable(config.flavor),
           logo_url: ko.computed(function() {
             return config.user_data.logo_url;
           }),
