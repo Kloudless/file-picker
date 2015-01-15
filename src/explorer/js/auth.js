@@ -6,21 +6,44 @@
 
     var requests = {},
       iframeLoaded = false,
-      queuedRequests = [];
+      queuedRequests = [],
+      popup, iframe;
 
     /*
      * Find or create the iframe messages are posted to and received via.
-     * This is because IE 9 only accepts postMessages between frames if
-     * the domains are not the same.
+     *
+     * Instead of directly opening a popup window and postMessage-ing to it, we
+     * first load an iframe (iexd.html) from the api.kloudless.com server. The
+     * iframe is responsible for opening the popup; when we want one opened, we
+     * send a message to the iframe, which then acts as a proxy between us and
+     * the OAuth popup.
+     *
+     * This is necessary because IE 9 and 10 only accept postMessages between
+     * iframes (and not popup windows) if the domains are not the same. Other
+     * browsers correctly implement postMessage and don't have this arbitrary
+     * limitation.
+     *
+     * Without this hack, we wouldn't be able to post messages to the OAuth
+     * popup on IE < 11.
      */
-    var iframe = (function() {
-      var i = document.createElement('iframe');
-      i.setAttribute('id', 'kloudless_iexd-' + util.randomID());
-      i.setAttribute('src', config.base_url + '/static/iexd.html?cache=' + util.randomID());
-      i.style.display = 'none';
-      document.getElementsByTagName('body')[0].appendChild(i);
-      return i;
-    })();
+    if (!util.supportsCORS() || !util.supportsPopupPostMessage()) {
+      iframe = (function() {
+        var i = document.createElement('iframe');
+        i.setAttribute('id', 'kloudless_iexd-' + util.randomID());
+        i.setAttribute('src', config.base_url + '/static/iexd.html?cache=' + util.randomID());
+        i.style.display = 'none';
+        document.getElementsByTagName('body')[0].appendChild(i);
+        return i;
+      })();
+
+      iframe.onload = function() {
+        // when the iframe loads, post any pending messages.
+        iframeLoaded = true;
+        while (queuedRequests.length) {
+          postMessage.apply(this, queuedRequests.pop());
+        }
+      };
+    }
 
     /*
      * Listen for events that are responses to requests we made.
@@ -106,17 +129,49 @@
         'left=' + options.left,
         'top=' + options.top,
       ];
+      url += "?" + $.param(query_params)
 
-      var data = {
-        type: 'open',
-        url: url + "?" + $.param(query_params),
-        params: params.join(',')
-      };
+      /**
+       * On reasonable browsers, we can open the OAuth popup here, and it will
+       * be able to postMessage back to us.
+       *
+       * On unreasonable browsers (like IE < 11), cross-origin postMessage only
+       * works between iframes and not between popups. So we need to use the
+       * 'iexd' iframe, hosted on the API server, to open the OAuth popup.
+       * It basically proxies data back-and-forth between us and the OAuth
+       * popup.
+       */
+      var close,
+        popupCallback = function(response) {
+          close();
+          callback(response.data);
+        };
 
-      postMessage(data, query_params.request_id, function(response_contents) {
-        postMessage({type: 'close'});
-        callback(response_contents.data);
-      });
+      if (util.supportsPopupPostMessage()) { // open popup directly
+        close = function() {
+          if (popup) {
+            popup.close();
+            popup = null;
+          }
+        };
+
+        popup = window.open(url, 'kloudlessIEXD', params);
+        popup.focus();
+
+        requests[query_params.request_id] = {
+          callback: popupCallback
+        };
+      } else { // use iexd iframe
+        close = function() {
+          postMessage({type: 'close'});
+        };
+
+        postMessage({
+          type: 'open',
+          url: url,
+          params: params.join(',')
+        }, query_params.request_id, popupCallback);
+      }
     };
 
     var postMessage = function(data, identifier, callback) {
@@ -133,14 +188,6 @@
 
       iframe.contentWindow.postMessage('kloudless:' + JSON.stringify(data),
                                        iframe.src);
-    };
-
-    iframe.onload = function() {
-      // when the iframe loads, post any pending messages.
-      iframeLoaded = true;
-      while (queuedRequests.length) {
-        postMessage.apply(this, queuedRequests.pop());
-      }
     };
 
     return {
