@@ -16,10 +16,8 @@
   'use strict';
 
   define(['jquery', 'config', 'auth', 'util'], function($, config, auth, util) {
-    // do nothing if cross-domain requests are supported
-    // (basically anything besides IE < 10)
-    var nav = navigator.userAgent.toLowerCase();
-    if (nav.indexOf('msie') === -1 || !(parseInt(nav.split('msie')[1]) < 10)) {
+    // do nothing if proper cross-domain requests are supported
+    if (util.supportsCORS()) {
       return;
     }
 
