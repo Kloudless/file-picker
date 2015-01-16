@@ -110,10 +110,10 @@
                 div.fileicon()
               span(data-bind='text: name')
             // ko if: modified == null || modified == ""
-            td.updated(data-bind='text: moment(new Date(created)).format("MMM DD   h:mm a")')
+            td.updated(data-bind='text: moment(new Date(created.substring(0,19))).format("MMM DD   h:mm a")')
             // /ko
             // ko ifnot: modified == null || modified == ""
-            td.updated(data-bind='text: moment(new Date(modified)).format("MMM DD   h:mm a")')
+            td.updated(data-bind='text: moment(new Date(modified.substring(0,19))).format("MMM DD   h:mm a")')
             // /ko
           // /ko
           // ko if: type == "disabled"
