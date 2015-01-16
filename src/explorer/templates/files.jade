@@ -109,8 +109,11 @@
               span(data-bind='if: type == "file"')
                 div.fileicon()
               span(data-bind='text: name')
-            // ko if: modified == null || modified == ""
+            // ko if: (modified == null || modified == "") && created
             td.updated(data-bind='text: moment(new Date(created.substring(0,19))).format("MMM DD   h:mm a")')
+            // /ko
+            // ko if: (modified == null || modified == "") && (created == null || created == "")
+            td.updated
             // /ko
             // ko ifnot: modified == null || modified == ""
             td.updated(data-bind='text: moment(new Date(modified.substring(0,19))).format("MMM DD   h:mm a")')
