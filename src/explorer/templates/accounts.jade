@@ -40,7 +40,7 @@
                     a.alert(data-bind='attr: {href: "#/account/disconnect/" + account}', onClick='return confirm("If you remove this account, you will no longer be able to explore. Are you sure?")')
                 //-.refresh(data-bind='if: !connected')
                 //-  a.button(data-bind='attr: {href: "#/account/reconnect/" + account}') Refresh
-            // ko if: $index() === ($parent.all().length - 1) && $parent.flavor() == 'chooser'
+            // ko if: $index() === ($parent.all().length - 1) && $parent.computer()
             li.linked-service
               div.servicename
                 img.servicelogo(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png"}')
