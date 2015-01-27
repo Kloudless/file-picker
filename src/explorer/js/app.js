@@ -759,7 +759,7 @@
               // Filters
               filters : (function() {
                 var filters = {
-                  max_file_size: '5000mb',
+                  max_file_size: '50000mb',
                   prevent_duplicates: false, // unique_names instead.
                   mime_types: filtered_types
                 };
