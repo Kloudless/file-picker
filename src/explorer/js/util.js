@@ -2,8 +2,23 @@
   'use strict';
 
   var nav = navigator.userAgent.toLowerCase(),
-    isIE = nav.indexOf('msie') !== -1,
-    ieVersion = isIE ? parseInt(nav.split('msie')[1]) : -1;
+    isIE = false,
+    ieVersion = -1;
+
+  /*
+   * IE 11 removes 'msie' from the UA string so that apps which sniff it to
+   * determine capabilities won't serve it crippled code.
+   *
+   * This might have been a good idea if we didn't still need to workaround its
+   * annoying bugs. But we do.
+   */
+  if (nav.indexOf('msie') !== -1) { // IE < 11
+    isIE = true;
+    ieVersion = parseInt(nav.split('msie')[1]);
+  } else if (nav.indexOf('trident/') !== -1) { // IE 11+
+    isIE = true;
+    ieVersion = parseInt(nav.split('rv:')[1]);
+  }
 
   define({
     /**
@@ -28,10 +43,12 @@
      * Determines if the browser supports postMessage to popups with a
      * different origin.
      *
-     * Supported by most non-IE and IE >= 11
+     * Supported by most non-IE; not supported IE <= 11. Seems to be supported
+     * on (currently unreleased version of) IE 12, but needs testing after
+     * release.
      */
     supportsPopupPostMessage: function() {
-      return !isIE || !(ieVersion < 11);
+      return !isIE;
     },
   });
 })();
