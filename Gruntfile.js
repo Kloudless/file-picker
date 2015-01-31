@@ -296,7 +296,7 @@ module.exports = function(grunt) {
     // Watch source files for changes.
     watch: {
       scripts: {
-        files: ['src/**/*.js', 'src/**/*.jade'],
+        files: ['src/**/*.js', 'src/**/*.jade', 'src/**/*.json'],
         tasks: ['default', 'watch'],
         options: {
           spawn: false,
