@@ -399,6 +399,14 @@ explorer.save(files);
 
 [Visit our JS Fiddle example of the File Explorer!](http://jsfiddle.net/pseudonumos/PB565/embedded/)
 
+## Browser Support
+
+* Chrome 17+
+* Firefox 21+
+* IE 9+
+* Safari 6+
+* Opera 15+
+
 ## Contributing
 
 Contributions are welcome and appreciated. We'd love to discuss any ideas you
