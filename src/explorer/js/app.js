@@ -46,12 +46,12 @@
   // Load dependencies.
   require(['jquery', 'vendor/knockout', 'vendor/sammy',
            'vendor/loglevel', 'vendor/moment',
-           'config', 'storage', 'accounts', 'files',
+           'config', 'storage', 'accounts', 'files', 'auth',
            // Imports below don't need to be assigned to variables.
            'jqueryui', 'vendor/jquery-dropdown', 'vendor/jquery-scrollstop',
            'moxie', 'plupload', 'pluploadui', 'vendor/jquery.finderSelect',
            'iexd-transport'],
-  function($, ko, sammy, logger, moment, config, storage, AccountManager, FileManager) {
+  function($, ko, sammy, logger, moment, config, storage, AccountManager, FileManager, auth) {
 
     // Initialise and configure.
     logger.setLevel(config.logLevel);
@@ -489,6 +489,37 @@
             logger.debug('Account connection invoked for service: ' + service + '.');
 
             explorer.manager.addAccount(service, {
+              on_confirm_with_iexd: function() {
+                explorer.view_model.addconfirm.serviceName = service_names[service];
+                explorer.view_model.addconfirm.serviceLogo =
+                  services().filter(function(s) {
+                    return s.id === service;
+                  })[0].logo;
+
+                router.setLocation('#/addconfirm');
+
+                // position the iframe on the modal;
+                //
+                // note that we can't move the iframe in the DOM (e.g. to be a
+                // child of some element in our template) because that will
+                // force a reload, and we'll lose all existing state
+                // --> http://stackoverflow.com/q/7434230/612279
+
+                setTimeout(function() {
+                  var button = $('#confirm-add-button');
+                  var pos = button.offset();
+
+                  console.log(button);
+                  console.log(pos);
+
+                  $(auth.iframe).css({
+                    top: pos.top + 'px',
+                    left: pos.left + 'px',
+                    width: button.outerWidth(),
+                    height: button.outerHeight()
+                  }).show();
+                }, 0);
+              },
               on_account_ready: function(account) {
                 logger.debug('Redirecting to files view? ', first_account);
 
@@ -541,6 +572,13 @@
           computer: function() {
             return config.computer && explorer.view_model.flavor() == 'chooser';
           }
+        },
+
+        // addconfirm view model
+        addconfirm: {
+          logo_url: ko.computed(function() {
+            return config.user_data.logo_url;
+          })
         },
 
         // Files view model.
@@ -680,6 +718,10 @@
     FileExplorer.prototype.switchViewTo = function(to) {
       var explorer = this;
       explorer.view_model.current(to);
+
+      if (to !== 'addconfirm') {
+        $(auth.iframe).hide();
+      }
 
       // Initialise jQuery dropdown plugin.
       if (to == 'files' || to == 'computer') {
@@ -1039,6 +1081,10 @@
       this.get('#/computer', function() {
         logger.debug('Switching to computer view');
         explorer.switchViewTo('computer');
+      });
+      // Confirm add account button
+      this.get('#/addconfirm', function() {
+        explorer.switchViewTo('addconfirm');
       });
     });
 

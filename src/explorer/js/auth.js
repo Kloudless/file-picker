@@ -28,12 +28,25 @@
      */
     if (!util.supportsCORS() || !util.supportsPopupPostMessage()) {
       iframe = (function() {
-        var i = document.createElement('iframe');
-        i.setAttribute('id', 'kloudless_iexd-' + util.randomID());
-        i.setAttribute('src', config.base_url + '/static/iexd.html?cache=' + util.randomID());
-        i.style.display = 'none';
-        document.getElementsByTagName('body')[0].appendChild(i);
-        return i;
+        var el = $('<iframe />');
+        el.attr({
+            seamless: 'seamless',
+            src: config.base_url + '/static/iexd.html?cache=' + util.randomID(),
+
+            // not technically HTML5, but needed for old IE
+            frameBorder: 0,
+            scrolling: 'no',
+          })
+          .addClass('iexd')
+          .appendTo('body')
+
+          // simulate hovering over the button the frame covers
+          .hover(function() {
+            $('#confirm-add-button').addClass('hover');
+          }, function() {
+            $('#confirm-add-button').removeClass('hover');
+          });
+        return el[0];
       })();
 
       iframe.onload = function() {
@@ -161,6 +174,8 @@
         requests[query_params.request_id] = {
           callback: popupCallback
         };
+
+        return {authUsingIEXDFrame: false};
       } else { // use iexd iframe
         close = function() {
           postMessage({type: 'close'});
@@ -171,6 +186,8 @@
           url: url,
           params: params.join(',')
         }, query_params.request_id, popupCallback);
+
+        return {authUsingIEXDFrame: true};
       }
     };
 
@@ -192,7 +209,8 @@
 
     return {
       authenticate: authenticate,
-      postMessage: postMessage
+      postMessage: postMessage,
+      iframe: iframe
     };
   });
 })();

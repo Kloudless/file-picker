@@ -25,7 +25,7 @@ body
         border: 1px solid #ccc
         box-shadow:none
         text-shadow:none
-        &:hover
+        &:hover, &.hover
             color:#aaa
             background: #f2f2f2
             border: 1px solid #ccc
@@ -41,7 +41,7 @@ body
             background: #3b97ff
             border: 1px solid #3b97ff
             box-shadow: inset 0 1px 0 0 #53c1ff, 0 0 1px rgba(0, 0, 0, .2)
-            &:hover, &:focus
+            &:hover, &:focus, &.hover
                 border:1px solid #398ae5
                 background-image:-webkit-linear-gradient(top, #3b97ff, #368aeb)
                 background-image:-moz-linear-gradient(top, #3b97ff, #368aeb)
@@ -52,14 +52,19 @@ body
             color: #fff !important
             border: 1px solid #3fd183
             box-shadow: rgba(255, 255, 255, 0.4) 0 1px 0 inset, 0 0 1px rgba(0, 0, 0, .2)
-            &:hover, &:focus
+            &:hover, &:focus, &.hover
                 background-color: #40d686
                 border: 1px solid #40d686
                 color: #fff
             &:active
                 background: #3fd183
                 border: 1px solid #3fd183
+    .iexd
+        position: absolute
+        display: none
+        overflow: hidden
 
 @import 'accounts'
 @import 'files'
 @import 'computer'
+@import 'addconfirm'

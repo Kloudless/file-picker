@@ -1,0 +1,27 @@
+.addconfirm
+  header
+    //- Back button
+    .back
+      .backcontain
+        a.backbtn(href='#/')
+          div.arrow
+        // ko if: addconfirm.logo_url
+        img.klogo(data-bind='attr: {src: addconfirm.logo_url}')
+        // /ko
+        // ko ifnot: addconfirm.logo_url
+        img.klogo(src='https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/kloudless32x33.png')
+        // /ko
+        span Confirm connect account.
+
+  .addconfirminner
+    p.confirm Are you sure you want to add the #[span(data-bind="text: addconfirm.serviceName")] account?
+    p.imageholder
+      img(data-bind='attr: {src: addconfirm.serviceLogo}')
+    .buttonscontainer
+      a.button.reg(data-bind='attr: {href: "#/"}') Cancel
+      a.button.blue#confirm-add-button Connect with #[span(data-bind="text: addconfirm.serviceName")]
+
+  //- "Powered by Kloudless" footer
+  footer
+    .row
+      div(data-bind='template: {name: "powered-by-kl-footer"}')
