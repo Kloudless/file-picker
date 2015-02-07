@@ -38,8 +38,6 @@
         .buttonscontainer.right
           a#cancel-button(href='javascript:void(0)').button.reg Cancel
           a#upload-button.button.blue(href='javascript:void(0)') Upload
-        .textcontainer
-          span powered by
-          img(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/settings_popup_logo.png"}')
+        div(data-bind='template: {name: "powered-by-kl-footer"}')
 
     //- Debug info, since we don't have proper UI elements
