@@ -1,8 +1,8 @@
 .accounts
   header
     //- Back button
-    .back(data-bind='with: accounts')
-      .backcontain(data-bind='if: all().length > 0')
+    .back
+      .backcontain(data-bind='if: accounts.all().length > 0')
         a.backbtn(href='#/files')
           div.arrow
         // ko if: logo_url
@@ -12,11 +12,17 @@
         img.klogo(src='https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/kloudless32x33.png')
         // /ko
         span Manage your cloud storage accounts here.
-      .nobackcontain(data-bind='if: all().length < 1')
+      .nobackcontain(data-bind='if: accounts.all().length < 1')
         div.nobackbtn
+        // ko if: logo_url
+        img.klogo(data-bind='attr: {src: logo_url}')
+        // /ko
+        // ko ifnot: logo_url
         img.klogo(src='https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/kloudless32x33.png')
+        // /ko
         span Welcome! Please choose a service to connect.
-    a.closeexplorer(data-bind='click: cancel')
+    a.closeexplorer(data-bind='click: accounts.cancel')
+
 
   .containall
     .connectedaccounts(data-bind='with: accounts')

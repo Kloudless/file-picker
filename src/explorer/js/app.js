@@ -437,6 +437,8 @@
         error: ko.observable(''),
         loading: ko.observable(true),
 
+        logo_url: ko.observable(),
+
         // Accounts view model.
         accounts: {
           // List of all account objects.
@@ -447,9 +449,6 @@
             return self.service;
           }, self.manager.active),
           flavor: ko.observable(config.flavor),
-          logo_url: ko.computed(function() {
-            return config.user_data.logo_url;
-          }),
           logout: function() {
             explorer.manager.accounts.removeAll();
             storage.removeAllAccounts(config.app_id);
@@ -508,9 +507,6 @@
                 setTimeout(function() {
                   var button = $('#confirm-add-button');
                   var pos = button.offset();
-
-                  console.log(button);
-                  console.log(pos);
 
                   $(auth.iframe).css({
                     top: pos.top + 'px',
@@ -575,11 +571,7 @@
         },
 
         // addconfirm view model
-        addconfirm: {
-          logo_url: ko.computed(function() {
-            return config.user_data.logo_url;
-          })
-        },
+        addconfirm: {},
 
         // Files view model.
         files: {
@@ -710,6 +702,10 @@
         service_names: service_names
 
       };
+
+      config.onReceiveUserData = function(userData) {
+        this.view_model.logo_url(userData.logo_url);
+      }.bind(this);
 
       ko.applyBindings(this.view_model);
     };

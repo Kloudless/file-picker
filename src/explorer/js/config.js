@@ -50,6 +50,10 @@
     $.get(config.base_url + "/file-explorer/config/", query_params,
           function(config_data) {
             config.user_data = (config_data && config_data.user_data) || {};
+
+            if (config.onReceiveUserData) {
+              config.onReceiveUserData(config.user_data);
+            }
           });
 
     if (config.types.indexOf('folders') != -1 && config.types.length === 1) {
