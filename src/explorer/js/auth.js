@@ -181,8 +181,10 @@
           postMessage({type: 'close'});
         };
 
+        // we ask the iexd to show a "Confirm" button, which we then overlay
+        // and make the user click (as a work-around for popup blockers)
         postMessage({
-          type: 'open',
+          type: 'prepareToOpen',
           url: url,
           params: params.join(',')
         }, query_params.request_id, popupCallback);
