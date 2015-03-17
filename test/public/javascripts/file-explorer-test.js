@@ -107,7 +107,7 @@
     link: false,
     computer: true,
     services: ['file_store'],
-    types: ['folder']
+    types: ['folders']
   });
 
   second.on('success', function(files) {
