@@ -181,40 +181,30 @@
 
   // Define handlers. New handlers will override pre-existing ones.
   window.Kloudless._fileWidget.prototype.on = function(event, handler) {
-    this.handlers[event] = handler;
+    if (this.handlers[event] === undefined)
+      this.handlers[event] = [];
+    this.handlers[event].push(handler);
     return this;
   };
 
   // Fire an event handler. Called by the message listeners.
   window.Kloudless._fileWidget.prototype._fire = function(event, data) {
-
-    var body = document.getElementsByTagName("body")[0];
-
+    var self = this;
     if(["success", "cancel"].indexOf(event) != -1) {
+      self.close();
+    }
 
-      var self = this;
-      removeClass(body, "kfe-active");
-
-      if(typeof(window.Kloudless._fileWidget['lastScrollTop']) != "undefined") {
-        if(isMobile) {
-          body.scrollTop = window.Kloudless._fileWidget['lastScrollTop'];
-        }
-
-        FX.fadeOut(frames[self.exp_id],{
-          duration: 200,
-          complete: function() {
-            frames[self.exp_id].style.display = 'none';
-          }
-        });
-
+    if (self.handlers[event] !== undefined) {
+      for (var i=0; i < self.handlers[event].length; i++) {
+        (function(handler) {
+          window.setTimeout(function(){
+            handler.call(self, data);
+          }, 0);
+        })(self.handlers[event][i])
       }
     }
 
-    if (this.handlers[event]) {
-      this.handlers[event].call(this, data);
-    }
-
-    return this;
+    return self;
   };
 
   window.Kloudless.explorer = function(options) {
@@ -270,49 +260,25 @@
     value: window.Kloudless._explorer
   });
 
-  // Open a file exploring dialogue.
+  // Open the chooser
   window.Kloudless._explorer.prototype.choose = function() {
     var self = this;
-    var body = document.getElementsByTagName("body")[0];
 
     if (!self.loaded) {
       queuedAction[self.exp_id] = self.choose;
       return;
     }
 
-    self.message('DATA', {
+    self._open({
       flavor: 'chooser',
     });
 
-    if (self.keys) {
-      self.message('DATA', {
-        keys: self.keys
-      });
-    }
-
-    // Store the last scrollTop value so we can reset it when the explorer closes
-    window.Kloudless._fileWidget['lastScrollTop'] = body.scrollTop;
-    // Then scroll to the top of the file explorer after it's set
-    // if the user is mobile
-    if (isMobile()) {
-      body.scrollTop = 0;
-    }
-
-    frames[self.exp_id].style.display = 'block';
-    frames[self.exp_id].style.opacity = 0;
-    addClass(body, "kfe-active");
-
-    FX.fadeIn(frames[self.exp_id],{
-      duration: 200
-    });
-
-    return this;
+    return self;
   };
 
-  // Open a file saving dialogue.
+  // Open the saver
   window.Kloudless._explorer.prototype.save = function(files) {
     var self = this;
-    var body = document.getElementsByTagName("body")[0];
 
     if (!self.loaded) {
       queuedAction[self.exp_id] = self.save;
@@ -320,16 +286,25 @@
     }
 
     // Need to have at least 1 file to save
-    if (files.length < 1 && this.files.length < 1) {
+    if (files.length < 1 && self.files.length < 1) {
       console.log('No files to save');
       return;
     }
 
     // Send over files inside the options or those sent with save()
-    self.message('DATA', {
+    self._open({
       flavor: 'saver',
-      files: this.files.concat(files)
+      files: self.files.concat(files)
     });
+
+    return self;
+  };
+
+  window.Kloudless._explorer.prototype._open = function(data) {
+    var self = this;
+    var body = document.getElementsByTagName("body")[0];
+
+    self.message('DATA', data);
 
     if (self.keys) {
       self.message('DATA', {
@@ -349,11 +324,13 @@
     frames[self.exp_id].style.opacity = 0;
     addClass(body, "kfe-active");
 
-    FX.fadeIn(frames[self.exp_id],{
+    FX.fadeIn(frames[self.exp_id], {
       duration: 200
     });
 
-    return this;
+    self._fire('open');
+
+    return self;
   };
 
   // Close the explorer
@@ -380,6 +357,8 @@
         }
       });
     }
+
+    self._fire('close');
   }
 
   // Send a message to the explorer frame

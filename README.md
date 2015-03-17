@@ -259,15 +259,30 @@ The File Explorer has the following configuration options:
 * `success(files)`
 
   The success event handler will fire when the user's operation succeeds.
-  `files` is an array of file/folder metadata.
+  `files` is an array of file/folder metadata. The File Explorer will be
+  closed on success.
+
+* `cancel()`
+
+  Fired if the user decides to cancel an operation. The File Explorer will
+  be closed on cancellation.
 
 * `error(error)`
 
   Fired in the event of an unrecoverable error.
 
-* `cancel()`
+* `open()`
 
-  Fired if the user decides to cancel an operation.
+  Fired when the File Explorer is displayed to the user. This occurs when
+  the Chooser or Saver are opened.
+
+* `close()`
+
+  Fired when the File Explorer is hidden from the user. This occurs when
+  the File Explorer is closed. This could be due to either a user action,
+  such as choosing files or cancelling, or due to the `close()` method
+  being called (not to be confused with this `close` event handler).
+  The `success()` or `cancel()` events will also trigger if appropriate.
 
 * `selected(files)`
 

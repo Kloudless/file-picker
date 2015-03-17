@@ -87,6 +87,14 @@
 
   explorer.choosify(document.getElementById('file-test'));
 
+  explorer.on('open', function() {
+    console.log("File Explorer opened.");
+  });
+
+  explorer.on('close', function() {
+    console.log("File Explorer closed.");
+  });
+
   var cl = document.getElementById('close-test');
   cl.addEventListener('click', function() {
     explorer.close();
