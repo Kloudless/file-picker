@@ -318,7 +318,16 @@ The File Explorer has the following configuration options:
 
 * `explorer.choosify(element)`
 
-  This method binds the explorer to an HTML element to launch the explorer.
+  This method binds a click handler that launches the Chooser to the DOM element.
+  
+* `explorer.save(options)`
+
+  This method allows you to launch a saver dynamically with the specified
+  options.
+
+* `explorer.savify(element)`
+
+  This method binds a click handler that launches the Saver to the DOM element.
 
 * `explorer.close()`
 
