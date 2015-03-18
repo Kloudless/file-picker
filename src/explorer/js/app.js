@@ -162,19 +162,25 @@
                 name: $('.kloudless-saver-name').val() || f.name
               };
               logger.debug('file_data.name: ', file_data.name);
-              var request = $.ajax({
-                url: config.base_url + '/v0/accounts/' + accountId + '/files/',
-                type: 'POST',
-                contentType: 'application/json',
-                headers: { Authorization: 'AccountKey ' + accountKey },
-                data: JSON.stringify(file_data)
-              }).done(function(data) {
-                saves.push(data);
-                saveComplete(true);
-              }).fail(function(xhr, status, err) {
-                logger.warn('Error uploading file: ', status, err, xhr);
-                saveComplete(false);
-              });
+
+              (function(event_data) {
+                explorer.view_model.postMessage('startFileUpload', event_data);
+
+                var request = $.ajax({
+                  url: config.base_url + '/v0/accounts/' + accountId + '/files/',
+                  type: 'POST',
+                  contentType: 'application/json',
+                  headers: { Authorization: 'AccountKey ' + accountKey },
+                  data: JSON.stringify(file_data)
+                }).done(function(data) {
+                  saves.push(data);
+                  explorer.view_model.postMessage('finishFileUpload', event_data);
+                  saveComplete(true);
+                }).fail(function(xhr, status, err) {
+                  logger.warn('Error uploading file: ', status, err, xhr);
+                  saveComplete(false);
+                });
+              })({name: file_data.name, url: file_data.url})
             }
           } else {
             explorer.view_model.error('Files cannot be saved to this folder. Please choose again.');

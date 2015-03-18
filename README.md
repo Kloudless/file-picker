@@ -299,6 +299,9 @@ The File Explorer has the following configuration options:
   `files` is an array of files, formatted the same way as the array passed to
   `success`.
 
+  This event is not fired when the user uses the Chooser's Computer option or
+  the Saver. See `startFileUpload` and `finishFileUpload` for those.
+
 * `addAccount(account)`
 
   Fired when a user successfully adds an account.
@@ -311,14 +314,18 @@ The File Explorer has the following configuration options:
 
 * `startFileUpload(file)`
 
-  Fired when a file upload starts (once per file being uploaded). `file` is an
-  object containing keys `id`, `name`, `size`, and `mime_type`.
+  Fired when a file upload starts (once per file being uploaded). This event is
+  only fired when the user uploads a file via the Chooser's Computer option
+  or the Saver. For the Chooser, `file` is an object containing keys
+  `id`, `name`, `size` and `mime_type`. For the Saver, it contains `url` and
+  `name`.
 
 * `finishFileUpload(file)`
 
   Fired when a file upload completes successfully (once per file being
   uploaded). `file` contains the same information as in `startFileUpload`
-  above.
+  above. This event is only fired when the user uploads a file via the
+  Chooser's Computer option or the Saver.
 
 ### Methods
 

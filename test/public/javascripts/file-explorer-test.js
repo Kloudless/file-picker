@@ -11,78 +11,68 @@
     types: ['all'],
   });
 
+  /*
+   * Helper methods
+   */
+
+  function addResult(resultText) {
+    console.log(resultText)
+    var result = document.createElement('p');
+    result.appendChild(document.createTextNode(resultText));
+    document.body.appendChild(result);
+  }
+
+  function addResultWithData(resultText, dataObject) {
+    console.log(resultText, ' ', dataObject)
+    var result = document.createElement('p');
+    result.appendChild(document.createTextNode(resultText));
+    var data = document.createElement('pre');
+    data.appendChild(document.createTextNode(
+        JSON.stringify(dataObject, null, 2)));
+    result.appendChild(data);
+    document.body.appendChild(result);
+  }
+
+  function startFileUpload(file) {
+    addResult('File upload started: ' + file.name)
+  }
+
+  function finishFileUpload(file) {
+    addResult('File upload finished: ' + file.name);
+  }
+
+  /*
+   * Event Handlers
+   */
+
   /* Uncomment the line below to test out event queueing
    * till the File Explorer is ready.
    */
   // explorer.choose();
 
   explorer.on('success', function(files) {
-    console.log('Successfully chose files: ', files);
-
-    var result = document.createElement('p');
-    result.appendChild(document.createTextNode('Files chosen:'));
-    var data = document.createElement('pre');
-    data.appendChild(document.createTextNode(
-        JSON.stringify(files, null, 2)));
-    result.appendChild(data);
-    document.body.appendChild(result);
+    addResultWithData('Files chosen:', files);
   });
   explorer.on('selected', function(files) {
-    console.log('Selected files: ', files);
-
-    var result = document.createElement('p');
-    result.appendChild(document.createTextNode('Files selected:'));
-    var data = document.createElement('pre');
-    data.appendChild(document.createTextNode(
-        JSON.stringify(files, null, 2)));
-    result.appendChild(data);
-    document.body.appendChild(result);
+    addResultWithData('Files selected:', files);
   });
-  explorer.on('startFileUpload', function(file) {
-    console.log('File upload started:', file);
 
-    var result = document.createElement('p');
-    result.appendChild(document.createTextNode('File upload started: ' + file.name));
-    document.body.appendChild(result);
-  });
-  explorer.on('finishFileUpload', function(file) {
-    console.log('File upload finished:', file);
+  explorer.on('startFileUpload', startFileUpload);
+  explorer.on('finishFileUpload', finishFileUpload);
 
-    var result = document.createElement('p');
-    result.appendChild(document.createTextNode('File upload finished: ' + file.name));
-    document.body.appendChild(result);
-  });
   explorer.on('cancel', function() {
-    console.log('File selection cancelled.');
-
-    var result = document.createElement('p');
-    result.appendChild(document.createTextNode('File selection cancelled!'));
-    document.body.appendChild(result);
+    addResult('File selection cancelled.');
   });
   explorer.on('error', function(error) {
-    console.log('An error occurred: ', error);
-
-    var result = document.createElement('p');
-    result.appendChild(document.createTextNode('An error occurred in file selection!'));
-    document.body.appendChild(result);
+    addResultWithData('An error occurred in file selection:', error);
   });
 
   explorer.on('addAccount', function(account) {
-    console.log('Succesfully added account: ', account);
-
-    var result = document.createElement('p');
-    result.appendChild(document.createTextNode('Account added: ' +
-        JSON.stringify(account)));
-    document.body.appendChild(result);
+    addResultWithData('Account added:', account);
   });
 
   explorer.on('deleteAccount', function(account) {
-    console.log('Succesfully deleted account: ', account);
-
-    var result = document.createElement('p');
-    result.appendChild(document.createTextNode('Deleted account: ' +
-        JSON.stringify(account)));
-    document.body.appendChild(result);
+    addResultWithData('Deleted account:', account);
   });
 
   explorer.choosify(document.getElementById('file-test'));
@@ -111,25 +101,13 @@
   });
 
   second.on('success', function(files) {
-    console.log('Successfully chose folder: ', files);
-
-    var result = document.createElement('p');
-    result.appendChild(document.createTextNode('Folder selected: ' + JSON.stringify(files)));
-    document.body.appendChild(result);
+    addResultWithData('Folder selected:', files);
   });
   second.on('cancel', function() {
-    console.log('Folder selection cancelled.');
-
-    var result = document.createElement('p');
-    result.appendChild(document.createTextNode('Folder selection cancelled!'));
-    document.body.appendChild(result);
+    addResult('Folder selection cancelled!');
   });
   second.on('error', function(error) {
-    console.log('An error occurred: ', error);
-
-    var result = document.createElement('p');
-    result.appendChild(document.createTextNode('An error occurred in file selection!'));
-    document.body.appendChild(result);
+    addResult('An error occurred in file selection!');
   });
 
   second.choosify(document.getElementById('folder-test'));
@@ -139,38 +117,28 @@
   var saver = window.Kloudless.explorer({
     app_id: window.app_id,
     flavor: 'saver',
-    files: [{
-      'url': 'https://dt8kf6553cww8.cloudfront.net/static/images/icons/blue_dropbox_glyph-vflJ8-C5d.png',
-      'name': 'dropboxlogo.png'
-    },{
-      'url': 'http://upload.wikimedia.org/wikipedia/commons/7/75/Google_Drive_Logo.svg',
-      'name': 'drivelogo.svg'
-    }]
+
+   files: [{
+      'url': 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/dropbox.png',
+      'name': 'dropbox-logo.png'
+    }/*,{
+      'url': 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/gdrive.png',
+      'name': 'drive-logo.png'
+    }*/]
   });
 
   saver.on('success', function(files) {
-    console.log('Successfully saved file: ', files);
-
-    var result = document.createElement('p');
-    result.appendChild(document.createTextNode('Saved files: ' + JSON.stringify(files)));
-    document.body.appendChild(result);
+    addResultWithData('Saved files:', files);
   });
   saver.on('cancel', function() {
-    console.log('Save cancelled.');
-
-    var result = document.createElement('p');
-    result.appendChild(document.createTextNode('Save cancelled!'));
-    document.body.appendChild(result);
+    addResult('Save cancelled.');
   });
   saver.on('error', function(error) {
-    console.log('An error occurred: ', error);
-
-    var result = document.createElement('p');
-    result.appendChild(document.createTextNode('An error occurred in saving!'));
-    document.body.appendChild(result);
+    addResultWithData('An error occurred in saving:', error);
   });
+  saver.on('startFileUpload', startFileUpload);
+  saver.on('finishFileUpload', finishFileUpload);
 
   saver.savify(document.getElementById('saver-test'));
-
 
 })();
