@@ -333,23 +333,23 @@ The File Explorer has the following configuration options:
 
   You can initialize a Kloudless Explorer using the options mentioned above.
 
-* `explorer.choose(options)`
+* `explorer.choose()`
 
-  This method allows you to launch a chooser dynamically with the specified
-  options.
+  This method allows you to launch a Chooser.
 
 * `explorer.choosify(element)`
 
   This method binds a click handler that launches the Chooser to the DOM element.
   
-* `explorer.save(options)`
+* `explorer.save(files)`
 
-  This method allows you to launch a saver dynamically with the specified
-  options.
+  This method allows you to launch a Saver. See *Saver Options* for more information
+  on the format for `files`.
 
-* `explorer.savify(element)`
+* `explorer.savify(element, files)`
 
-  This method binds a click handler that launches the Saver to the DOM element.
+  This method binds a click handler that launches the Saver for `files` to the
+  DOM element.
 
 * `explorer.close()`
 
