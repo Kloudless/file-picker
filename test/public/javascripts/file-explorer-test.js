@@ -117,14 +117,6 @@
   var saver = window.Kloudless.explorer({
     app_id: window.app_id,
     flavor: 'saver',
-
-   files: [{
-      'url': 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/dropbox.png',
-      'name': 'dropbox-logo.png'
-    }/*,{
-      'url': 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/gdrive.png',
-      'name': 'drive-logo.png'
-    }*/]
   });
 
   saver.on('success', function(files) {
@@ -139,6 +131,11 @@
   saver.on('startFileUpload', startFileUpload);
   saver.on('finishFileUpload', finishFileUpload);
 
-  saver.savify(document.getElementById('saver-test'));
+  saver.savify(document.getElementById('saver-test'), [
+    {'url': 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/dropbox.png',
+     'name': 'dropbox-logo.png'},
+    /*{'url': 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/gdrive.png',
+     'name': 'drive-logo.png'}*/
+  ]);
 
 })();

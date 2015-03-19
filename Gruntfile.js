@@ -270,7 +270,18 @@ module.exports = function(grunt) {
       dev: {
         options: {
           mangle: false,
-          beautify: true
+          beautify: true,
+          compress: {
+            sequences    : false,
+            conditionals : false,
+            comparisons  : false,
+            booleans     : false,
+            loops        : false,
+            if_return    : false,
+            join_vars    : false,
+            cascade      : false,
+            global_defs  : inlines
+          }
         },
         files: [{
           src: path.join(LOADER_SRC, 'js/*.js'),

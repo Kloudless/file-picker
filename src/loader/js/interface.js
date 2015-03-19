@@ -169,6 +169,9 @@
     this.services = options.services || null;
     this.files = options.files || [];
     this.types = options.types || [];
+    if (!(this.files instanceof Array)) {
+      this.files = [];
+    }
     if (!(this.types instanceof Array)) {
       this.types = [this.types];
     }
@@ -217,9 +220,10 @@
 
       exp.loaded = true;
       if (queuedAction[exp.exp_id]) {
-        var method = queuedAction[exp.exp_id];
-        queuedAction[exp.exp_id] = null;
-        method.apply(exp);
+        var method = queuedAction[exp.exp_id]['method'];
+        var args = queuedAction[exp.exp_id]['args'];
+        delete queuedAction[exp.exp_id];
+        method.apply(exp, args);
       }
     });
 
@@ -265,7 +269,7 @@
     var self = this;
 
     if (!self.loaded) {
-      queuedAction[self.exp_id] = self.choose;
+      queuedAction[self.exp_id] = {method: self.choose};
       return;
     }
 
@@ -281,20 +285,25 @@
     var self = this;
 
     if (!self.loaded) {
-      queuedAction[self.exp_id] = self.save;
+      queuedAction[self.exp_id] = {method: self.save, args: [files]};
       return;
     }
 
+    if (!(files instanceof Array)) {
+      files = [];
+    }
+    files = self.files.concat(files);
+
     // Need to have at least 1 file to save
-    if (files.length < 1 && self.files.length < 1) {
-      console.log('No files to save');
+    if (files.length < 1) {
+      console.log('ERROR: No files to save');
       return;
     }
 
     // Send over files inside the options or those sent with save()
     self._open({
       flavor: 'saver',
-      files: self.files.concat(files)
+      files: files,
     });
 
     return self;
@@ -339,7 +348,7 @@
     var body = document.getElementsByTagName("body")[0];
 
     if (!self.loaded) {
-      queuedAction[self.exp_id] = self.close;
+      queuedAction[self.exp_id] = {method: self.close};
       return;
     }
 
@@ -400,9 +409,6 @@
   // Bind the file exploring dialogue to an element.
   window.Kloudless._explorer.prototype.savify = function(element, files) {
     var self = this;
-    if (!files) {
-      files = [];
-    }
 
     if (element instanceof Array) {
       for (var i = 0; i < element.length; i++) {
