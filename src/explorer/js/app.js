@@ -377,6 +377,7 @@
             var i, local_data, active;
             for (i = 0; i < accounts.length; i++) {
               local_data = accounts[i];
+              //scope local_data correctly
               (function(local_data){
                 var created = new Account(local_data, function(acc) {
                   if (acc.connected) {
