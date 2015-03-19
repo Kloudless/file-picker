@@ -525,6 +525,7 @@
                 for (var i = 0; i < explorer.manager.accounts().length; i++) {
                   var acc = explorer.manager.accounts()[i];
                   if (acc.account == account.account) {
+                    //Remove account to be overriden by new account
                     explorer.manager.removeAccount(acc.account);
                   }
                 }
