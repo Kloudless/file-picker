@@ -376,8 +376,6 @@
           require(['models/account'], function(Account) {
             var i, local_data, active;
             for (i = 0; i < accounts.length; i++) {
-              local_data = accounts[i];
-              //scope local_data correctly
               (function(local_data){
                 var created = new Account(local_data, function(acc) {
                   if (acc.connected) {
@@ -430,7 +428,7 @@
                     router.runRoute('get', '#/accounts');
                   }
                 });
-              };)(accounts[i]);
+              })(accounts[i]);
               
             }
           });
@@ -526,7 +524,7 @@
                 for (var i = 0; i < explorer.manager.accounts().length; i++) {
                   var acc = explorer.manager.accounts()[i];
                   if (acc.account == account.account) {
-                    //Remove account to be overriden by new account
+                    //Delete existing account to be overridden by new account
                     explorer.manager.removeAccount(acc.account);
                   }
                 }
