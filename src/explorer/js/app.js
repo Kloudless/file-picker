@@ -382,59 +382,60 @@
           require(['models/account'], function(Account) {
             var i, local_data, active;
             for (i = 0; i < accounts.length; i++) {
-              local_data = accounts[i];
+              (function(local_data){
+                var created = new Account(local_data, function(acc) {
+                  if (acc.connected) {
+                    explorer.manager.accounts.push(acc);
 
-              var created = new Account(local_data, function(acc) {
-                if (acc.connected) {
-                  explorer.manager.accounts.push(acc);
+                    if (!active) {
+                      active = true;
+                      explorer.manager.active(explorer.manager.getByAccount(acc.account));
+                    }
 
-                  if (!active) {
-                    active = true;
-                    explorer.manager.active(explorer.manager.getByAccount(acc.account));
+                    if (!loadStorage) {
+                      storage.storeAccounts(config.app_id, explorer.manager.accounts(),
+                          config.services);
+                    }
                   }
 
-                  if (!loadStorage) {
+                  // if no valid accounts from local storage are loaded
+                  if (explorer.manager.accounts().length == 0) {
+                    router.runRoute('get', '#/accounts');
+                  } else {
+                    explorer.switchViewTo('files');
+                  }
+                }, function(err, result) {
+                  explorer.view_model.loading(false);
+
+                  // if it errors on root folder metadata, we shouldn't add it
+                  if (err && err.message === 'failed to retrieve root folder') {
+                    logger.warn('failed to load account from localStorage');
+                    explorer.manager.removeAccount(local_data.account);
+                    // store accounts
                     storage.storeAccounts(config.app_id, explorer.manager.accounts(),
                         config.services);
+                  // else if it errors on folder contents, we should show an error
+                  } else if (err) {
+                    logger.warn('failed to refresh filesystem', err);
+                    explorer.view_model.error('Error occurred. Please try again.');
+                  } else {
+                    explorer.view_model.error('');
                   }
-                }
 
-                // if no valid accounts from local storage are loaded
-                if (explorer.manager.accounts().length == 0) {
-                  router.runRoute('get', '#/accounts');
-                } else {
-                  explorer.switchViewTo('files');
-                }
-              }, function(err, result) {
-                explorer.view_model.loading(false);
+                  // need to make sure on files view since we're loading asynchronously
+                  // from local storage
+                  if (first_account && explorer.view_model.current() == 'files') {
+                    router.runRoute('get', '#/files');
+                    first_account = false;
+                  }
 
-                // if it errors on root folder metadata, we shouldn't add it
-                if (err && err.message === 'failed to retrieve root folder') {
-                  logger.warn('failed to load account from localStorage');
-                  explorer.manager.removeAccount(local_data.account);
-                  // store accounts
-                  storage.storeAccounts(config.app_id, explorer.manager.accounts(),
-                      config.services);
-                // else if it errors on folder contents, we should show an error
-                } else if (err) {
-                  logger.warn('failed to refresh filesystem', err);
-                  explorer.view_model.error('Error occurred. Please try again.');
-                } else {
-                  explorer.view_model.error('');
-                }
-
-                // need to make sure on files view since we're loading asynchronously
-                // from local storage
-                if (first_account && explorer.view_model.current() == 'files') {
-                  router.runRoute('get', '#/files');
-                  first_account = false;
-                }
-
-                // need to make sure on accounts view since... ^^^
-                if (explorer.manager.accounts().length == 0) {
-                  router.runRoute('get', '#/accounts');
-                }
-              });
+                  // need to make sure on accounts view since... ^^^
+                  if (explorer.manager.accounts().length == 0) {
+                    router.runRoute('get', '#/accounts');
+                  }
+                });
+              })(accounts[i]);
+              
             }
           });
         },
@@ -529,7 +530,8 @@
                 for (var i = 0; i < explorer.manager.accounts().length; i++) {
                   var acc = explorer.manager.accounts()[i];
                   if (acc.account == account.account) {
-                    return;
+                    //Delete existing account to be overridden by new account
+                    explorer.manager.removeAccount(acc.account);
                   }
                 }
 
