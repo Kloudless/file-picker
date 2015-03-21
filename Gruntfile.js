@@ -73,10 +73,6 @@ module.exports = function(grunt) {
       load: {
         command: 'bower --config.analytics=false install || echo'
       },
-      build: {
-        command: 'npm install || echo; grunt build || echo',
-        cwd: path.join(DIR, 'bower_components', 'knockout')
-      }
     },
     // Copy files.
     copy: {
@@ -118,7 +114,7 @@ module.exports = function(grunt) {
           src: path.join(DIR, 'bower_components', 'modernizr', 'modernizr.js'),
           dest: path.join(TMP_PATH, 'js', 'vendor', 'modernizr.js')
         }, {
-          src: path.join(DIR, 'bower_components', 'knockout', 'build', 'output', 'knockout-latest.debug.js'),
+          src: path.join(DIR, 'bower_components', 'knockout', 'dist', 'knockout.debug.js'),
           dest: path.join(TMP_PATH, 'js', 'vendor', 'knockout.js')
         }, {
           src: path.join(DIR, 'bower_components', 'requirejs', 'require.js'),
@@ -175,7 +171,7 @@ module.exports = function(grunt) {
           src: path.join(DIR, 'bower_components', 'modernizr', 'modernizr.js'),
           dest: path.join(TMP_PATH, 'js', 'vendor', 'modernizr.js')
         }, {
-          src: path.join(DIR, 'bower_components', 'knockout', 'build', 'output', 'knockout-latest.debug.js'),
+          src: path.join(DIR, 'bower_components', 'knockout', 'dist', 'knockout.js'),
           dest: path.join(TMP_PATH, 'js', 'vendor', 'knockout.js')
         }, {
           src: path.join(DIR, 'bower_components', 'requirejs', 'require.js'),
@@ -341,7 +337,6 @@ module.exports = function(grunt) {
   // Build all dependencies.
   grunt.registerTask('build', [
     'exec:load',
-    'exec:build',
   ]);
 
   // Refresh stuff you've been developing.
