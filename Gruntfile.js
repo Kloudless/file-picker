@@ -71,7 +71,7 @@ module.exports = function(grunt) {
     // Install dependencies.
     exec: {
       load: {
-        command: 'bower install || echo'
+        command: 'bower --config.analytics=false install || echo'
       },
       build: {
         command: 'npm install || echo; grunt build || echo',
