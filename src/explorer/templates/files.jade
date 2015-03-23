@@ -80,9 +80,9 @@
     table(data-bind='with: files').clickable
       thead
         tr
-          th Name
-          th Size
-          th Updated
+          th(data-bind='click: sort_pref("type")')  Name
+          th(data-bind='click: sort_pref("largest")') Size
+          th(data-bind='click: sort_pref("recent")') Updated
     div.iewrapper
       table(data-bind='with: files').clickable
         // ko if: cwd().length > 0 && cwd()[0].type == "newfolder"

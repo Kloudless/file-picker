@@ -694,6 +694,11 @@
               self.view_model.error('')
             });
           },
+
+          sortPref: function(option) {
+            self.manager.active().filesystem().sortPref(option)
+          },
+
           allow_newdir: config.create_folder,
 
           // Placeholder for finderSelect'd jQuery object.
