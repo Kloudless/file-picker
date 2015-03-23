@@ -80,9 +80,15 @@
     table(data-bind='with: files').clickable
       thead
         tr
-          th Name
-          th Size
-          th Updated
+          th(data-bind='click: sort("name")') Name
+            .arrow-up#sort-name-up
+            .arrow-down#sort-name-down
+          th(data-bind='click: sort("largest")') Size
+            .arrow-up#sort-largest-up
+            .arrow-down#sort-largest-down
+          th(data-bind='click: sort("recent")') Updated
+            .arrow-up#sort-recent-up
+            .arrow-down#sort-recent-down
     div.iewrapper
       table(data-bind='with: files').clickable
         // ko if: cwd().length > 0 && cwd()[0].type == "newfolder"
