@@ -46,12 +46,13 @@
   // Load dependencies.
   require(['jquery', 'vendor/knockout', 'vendor/sammy',
            'vendor/loglevel', 'vendor/moment',
-           'config', 'storage', 'accounts', 'files', 'auth',
+           'config', 'storage', 'accounts', 'files', 'auth', 'util',
            // Imports below don't need to be assigned to variables.
            'jqueryui', 'vendor/jquery-dropdown', 'vendor/jquery-scrollstop',
            'moxie', 'plupload', 'pluploadui', 'vendor/jquery.finderSelect',
            'iexd-transport'],
-  function($, ko, sammy, logger, moment, config, storage, AccountManager, FileManager, auth) {
+  function($, ko, sammy, logger, moment, config, storage, AccountManager, 
+    FileManager, auth, util) {
 
     // Initialise and configure.
     logger.setLevel(config.logLevel);
