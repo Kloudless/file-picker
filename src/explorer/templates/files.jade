@@ -81,6 +81,7 @@
       thead
         tr
           th Name
+          th Size
           th Updated
     div.iewrapper
       table(data-bind='with: files').clickable
@@ -97,6 +98,7 @@
               span(data-bind='click: rmdir')
                 span.cancel-button.inline-button
                   div.closeicon()
+            td.size
             td.updated()
         // /ko
         tbody(data-bind='finderSelect: $data')
@@ -109,6 +111,9 @@
               span(data-bind='if: type == "file"')
                 div.fileicon()
               span(data-bind='text: name')
+
+            td.size(data-bind='text: friendlySize')
+
             // ko if: (modified == null || modified == "") && created
             td.updated(data-bind='text: moment(new Date(created.substring(0,19))).format("MMM DD   h:mm a")')
             // /ko

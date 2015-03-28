@@ -29,6 +29,21 @@
     },
 
     /**
+      *Formats the sizes for files in the FileSystem
+      */
+
+    formatSize: function(size){
+        if (size < Math.pow(2,10)) {
+          size = size + " B";
+        } else if (size < Math.pow(2,20)) {
+          size = Math.floor(size / Math.pow(2,10)) + " KB";
+        } else {
+          size = Math.floor(size / Math.pow(2,20)) + " MB";
+        }
+        return size;
+      },
+  
+    /**
      * Determines if the browser supports cross-domain requests via the normal
      * XMLHttpRequest object, or if we need to use the special IE-only
      * XDomainRequest object (proxied through the iexd iframe).
