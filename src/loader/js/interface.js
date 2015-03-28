@@ -97,7 +97,7 @@
   var frames = window.Kloudless._frames;
   var explorers = window.Kloudless._explorers;
   var queuedAction = window.Kloudless._queuedAction;
-
+  var shadowDiv = null;
   // Add iframe styling.
   var style = document.createElement('style');
   var loaderCSS = LOADER_CSS;
@@ -135,7 +135,11 @@
     frames[exp_id] = frame;
 
     document.getElementsByTagName('body')[0].appendChild(frame);
-
+    if (!shadowDiv){
+      var div = document.createElement('div');
+      shadowDiv = document.getElementsByTagName('body')[0].appendChild(div);
+      addClass(shadowDiv, "shadowDiv");
+    }
     return exp_id;
   };
 
@@ -322,13 +326,18 @@
 
     frames[self.exp_id].style.display = 'block';
     frames[self.exp_id].style.opacity = 0;
+
+
     addClass(body, "kfe-active");
 
     FX.fadeIn(frames[self.exp_id], {
       duration: 200
     });
 
+    shadowDiv.style.display = 'block';
+
     self._fire('open');
+
 
     return self;
   };
@@ -349,6 +358,8 @@
       if(isMobile) {
         body.scrollTop = window.Kloudless._fileWidget['lastScrollTop'];
       }
+
+    shadowDiv.style.display = 'none';
 
       FX.fadeOut(frames[self.exp_id],{
         duration: 200,
