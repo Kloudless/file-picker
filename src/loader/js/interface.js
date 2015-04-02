@@ -334,6 +334,10 @@
       duration: 200
     });
 
+    body.style.overflow = 'hidden'; 
+  
+
+    // Enable the modal backdrop
     shadowDiv.style.display = 'block';
 
     self._fire('open');
@@ -359,6 +363,9 @@
         body.scrollTop = window.Kloudless._fileWidget['lastScrollTop'];
       }
 
+    body.style.overflow = 'scroll'; 
+
+    //Undo the modal backdrop
     shadowDiv.style.display = 'none';
 
       FX.fadeOut(frames[self.exp_id],{
