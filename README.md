@@ -455,6 +455,10 @@ Run the following commands:
     bower install
     grunt dev
 
+If you don't have `bower` or `grunt` installed, run:
+
+    sudo npm install -g bower grunt-cli
+
 Here are a few of the more useful [Grunt](http://gruntjs.com/) tasks available:
 
 * `grunt`
