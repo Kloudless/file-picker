@@ -402,7 +402,7 @@
                   if (explorer.manager.accounts().length == 0) {
                     router.runRoute('get', '#/accounts');
                   } else {
-                    explorer.switchViewTo('files');
+                    router.runRoute('get', '#/files');
                   }
                 }, function(err, result) {
                   explorer.view_model.loading(false);
