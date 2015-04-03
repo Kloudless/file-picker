@@ -349,10 +349,6 @@
       });
     };
 
-    Filesystem.prototype.friendlySize = function() {
-      return util.formatSize(this.size);
-    };
-
     return Filesystem;
   });
 })();
