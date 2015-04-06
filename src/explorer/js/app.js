@@ -400,9 +400,9 @@
 
                   // if no valid accounts from local storage are loaded
                   if (explorer.manager.accounts().length == 0) {
-                    router.runRoute('get', '#/accounts');
+                    router.setLocation('#/accounts');
                   } else {
-                    router.runRoute('get', '#/files');
+                    router.setLocation('#/files');
                   }
                 }, function(err, result) {
                   explorer.view_model.loading(false);
@@ -425,13 +425,13 @@
                   // need to make sure on files view since we're loading asynchronously
                   // from local storage
                   if (first_account && explorer.view_model.current() == 'files') {
-                    router.runRoute('get', '#/files');
+                    router.setLocation('#/files');
                     first_account = false;
                   }
 
                   // need to make sure on accounts view since... ^^^
                   if (explorer.manager.accounts().length == 0) {
-                    router.runRoute('get', '#/accounts');
+                    router.setLocation('#/accounts');
                   }
                 });
               })(accounts[i]);
@@ -459,7 +459,7 @@
           logout: function() {
             explorer.manager.accounts.removeAll();
             storage.removeAllAccounts(config.app_id);
-            router.runRoute('get', '#/accounts');
+            router.setLocation('#/accounts');
           },
           // Current active service name
           name: ko.computed(function() {
@@ -550,7 +550,7 @@
 
                 if (first_account) {
                   explorer.view_model.loading(true);
-                  router.runRoute('get', '#/files');
+                  router.setLocation('#/files');
                 }
               },
               on_fs_ready: function(err, result) {
@@ -1003,21 +1003,9 @@
     var router = sammy(function() {
       var self = this;
 
-      // Default to the accounts page if no accounts in local storage
-      // storage.removeAllAccounts(config.app_id);
-      var accounts = storage.loadAccounts(config.app_id, config.services);
-      logger.debug(accounts);
-
-      if (accounts.length == 0) {
-        this.get('#/', function(ctx) {
-          router.runRoute('get', '#/accounts');
-        });
-      } else {
-        // Load from local storage or configuration
-        this.get('#/', function(ctx) {
-          explorer.view_model.sync(accounts, true);
-        });
-      }
+      /*
+       * Routes
+       */
 
       // Switch to the accounts page.
       this.get('#/accounts', function() {
@@ -1030,6 +1018,7 @@
       this.get('#/account/reconnect/:id', function() {
         logger.debug('Account reconnection invoked for id: ' + this.params.id + '.');
       });
+
       // Disconnect an account.
       this.get('#/account/disconnect/:id', function() {
         logger.debug('Account disconnection invoked for id: ' + this.params.id + '.');
@@ -1090,6 +1079,27 @@
       this.get('#/addconfirm', function() {
         explorer.switchViewTo('addconfirm');
       });
+
+      /*
+       * Additional initialization steps.
+       */
+
+      // Default to the accounts page if no accounts in local storage
+      // storage.removeAllAccounts(config.app_id);
+      var accounts = storage.loadAccounts(config.app_id, config.services);
+      logger.debug(accounts);
+
+      if (accounts.length == 0) {
+        this.get('#/', function(ctx) {
+          router.setLocation('#/accounts');
+        });
+      } else {
+        // Load from local storage or configuration
+        this.get('#/', function(ctx) {
+          explorer.view_model.sync(accounts, true);
+        });
+      }
+
     });
 
     // Expose hooks for debugging.
@@ -1123,7 +1133,6 @@
           if (config.flavor !== data.flavor) {
             logger.debug('SWITCHING FLAVORS');
             router.setLocation('#/accounts');
-            router.runRoute('get', '#/accounts');
           }
 
           config.flavor = data.flavor;
