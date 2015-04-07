@@ -132,8 +132,8 @@
   saver.on('finishFileUpload', finishFileUpload);
 
   saver.savify(document.getElementById('saver-test'), [
-    {'url': 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/dropbox.png',
-     'name': 'dropbox-logo.png'},
+    {'url': 'http://kloudl.es/l/VfGt5lyl7tSFCbt0jvxd/logo.png',
+     'name': 'kloudless logo.png'},
     /*{'url': 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/gdrive.png',
      'name': 'drive-logo.png'}*/
   ]);
