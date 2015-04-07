@@ -33,12 +33,16 @@
       */
 
     formatSize: function(size){
+        if (size === null || size === undefined || size === '')
+          return "";
         if (size < Math.pow(2,10)) {
           size = size + " B";
         } else if (size < Math.pow(2,20)) {
-          size = Math.floor(size / Math.pow(2,10)) + " KB";
+          size = +((size / Math.pow(2,10)).toFixed(2)) + " KB";
+        } else if (size < Math.pow(2,30)) {
+          size = +((size / Math.pow(2,20)).toFixed(2)) + " MB";
         } else {
-          size = Math.floor(size / Math.pow(2,20)) + " MB";
+          size = +((size / Math.pow(2,30)).toFixed(2)) + " GB";
         }
         return size;
       },
