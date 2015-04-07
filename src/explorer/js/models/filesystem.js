@@ -4,8 +4,8 @@
   // TODO: replace some methods by using knockouts utils library
   // http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
 
-  define(['vendor/knockout', 'vendor/loglevel', 'jquery', 'config'],
-      function(ko, logger, $, config) {
+  define(['vendor/knockout', 'vendor/loglevel', 'jquery', 'config', 'util'],
+      function(ko, logger, $, config, util) {
     // Construct a filesystem, which keeps track of file operations for an account and fire a callback on init.
     var Filesystem = function(id, key, callback) {
       this.id = id;
@@ -23,6 +23,7 @@
         type: 'root',
         modified: null,
         size: null,
+        friendlySize: null,
         parent_obs: null,
         children: ko.observableArray()
       });
@@ -161,6 +162,11 @@
         }).map(function(child) {
           // Set custom attributes.
           child.parent_obs = self.current();
+          if(child.size == null){
+            child.friendlySize = "";
+          } else {
+            child.friendlySize = util.formatSize(child.size);
+          }
           return child;
         });
 

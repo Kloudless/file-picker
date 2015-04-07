@@ -301,11 +301,13 @@
                         float:left
                         font-weight:bold
                         padding-left:25px
-                        min-width:425px
-                        max-width:425px
-                    &:not(:first-child)
-                        float:right
-                        width:180px
+                        width: 350px
+                    &:nth-child(2)
+                        padding-left:15px
+                        width: 100px
+                    &:nth-child(3)
+                        padding-left:25px
+                        width: 155px
         tbody
             position:relative
             margin-top:0px
@@ -334,13 +336,11 @@
                 height:37px
                 &:first-child
                     float:left
-                    min-width:425px
-                    max-width:425px
-                &:not(:first-child)
-                    float:right
-                    width:180px
+                    width: 350px
                 &:nth-child(2)
-                    display: block
+                    width: 100px
+                &:nth-child(3)
+                    width: 155px
         @media only screen and (max-width: 500px)
             left: 0
             right: 0

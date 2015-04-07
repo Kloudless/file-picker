@@ -51,7 +51,8 @@
            'jqueryui', 'vendor/jquery-dropdown', 'vendor/jquery-scrollstop',
            'moxie', 'plupload', 'pluploadui', 'vendor/jquery.finderSelect',
            'iexd-transport'],
-  function($, ko, sammy, logger, moment, config, storage, AccountManager, FileManager, auth) {
+  function($, ko, sammy, logger, moment, config, storage, AccountManager, 
+    FileManager, auth) {
 
     // Initialise and configure.
     logger.setLevel(config.logLevel);
