@@ -695,8 +695,8 @@
             });
           },
 
-          sortPref: function(option) {
-            self.manager.active().filesystem().sortPref(option)
+          sort: function(option) {
+            self.manager.active().filesystem().sort(option)
           },
 
           allow_newdir: config.create_folder,

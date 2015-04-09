@@ -96,6 +96,7 @@
 
     Filesystem.prototype.getPage = function(callback) {
       var self = this;
+      
       if (callback === undefined) {
         callback = function(){};
       }
@@ -334,27 +335,13 @@
       });
     };
 
-
-    Filesystem.prototype.sort = function() {
-      var self = this;
-      self.current().children.sort(function(left, right) {
-        if (left.type == 'folder' && right.type != 'folder') {
-          return -1;
-        } else if (left.type != 'folder' && right.type == 'folder') {
-          return 1;
-        } else {
-          var lname = left.name.toLowerCase();
-          var rname = right.name.toLowerCase();
-          return lname == rname ? 0 : (lname < rname ? -1 : 1);
-        }
-      });
-    };
-
     // Sort by preference
-
-    Filesystem.prototype.sortPref = function(option) {
+    Filesystem.prototype.sort= function(option) {
       var self = this;
-      if (option == "type" || option == null){
+      if (option == undefined) {
+        option = "name";
+      }
+      if (option == "name"){
         self.current().children.sort(function(left, right) {
           if (left.type == 'folder' && right.type != 'folder') {
             return -1;
@@ -401,7 +388,6 @@
       }
       self.sort_order++;
     };
-
 
     return Filesystem;
   });
