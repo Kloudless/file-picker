@@ -354,7 +354,7 @@
 
     Filesystem.prototype.sortPref = function(option) {
       var self = this;
-      if(option == "type" || option == null){
+      if (option == "type" || option == null){
         self.current().children.sort(function(left, right) {
           if (left.type == 'folder' && right.type != 'folder') {
             return -1;
@@ -366,11 +366,15 @@
             return lname == rname ? 0 : (lname < rname ? -1*Math.pow(-1,self.sort_order) : 1*Math.pow(-1,self.sort_order));
           }
         });  
-      } else if(option == "recent"){
+      } else if (option == "recent"){
         self.current().children.sort(function(left, right){
-          if(left.modified > right.modified){
+          if (left.type == 'folder' && right.type != 'folder') {
+            return -1;
+          } else if (left.type != 'folder' && right.type == 'folder') {
+            return 1;
+          } else if (left.modified > right.modified) {
             return -1*Math.pow(-1,self.sort_order);
-          } else if (left.modified < right.modified){
+          } else if (left.modified < right.modified) {
             return 1*Math.pow(-1,self.sort_order);
           } else{
             var lname = left.name.toLowerCase();
@@ -378,17 +382,17 @@
             return lname == rname ? 0 : (lname < rname ? -1: 1);
           }
         });
-      } else if(option == "largest"){
+      } else if (option == "largest"){
         self.current().children.sort(function(left,right){
-          if(left.size == null && right.size != null){
+          if (left.type == 'folder' && right.type != 'folder') {
             return -1;
-          } else if(left.size != null && right.size == null){
+          } else if (left.type != 'folder' && right.type == 'folder') {
             return 1;
-          } else if(left.size > right.size){
+          } else if (left.size > right.size) {
             return -1*Math.pow(-1,self.sort_order);
-          } else if(left.size < right.size){
+          } else if (left.size < right.size) {
             return 1*Math.pow(-1,self.sort_order);
-          } else{
+          } else {
             var lname = left.name.toLowerCase();
             var rname = right.name.toLowerCase();
             return lname == rname ? 0 : (lname < rname ? -1 : 1);
@@ -396,7 +400,6 @@
         });
       }
       self.sort_order++;
-      console.log("SORT BY: " + option);
     };
 
 
