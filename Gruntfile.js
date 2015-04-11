@@ -83,7 +83,6 @@ module.exports = function(grunt) {
             path.join(DIR, 'bower_components', 'foundation', 'css', 'foundation.css'),
             path.join(DIR, 'bower_components', 'foundation', 'css', 'normalize.css'),
             path.join(DIR, 'bower_components', 'jquery-dropdown', 'jquery.dropdown.css'),
-            path.join(DIR, 'lib', 'plupload', 'jquery.ui.plupload', 'css', 'jquery.ui.plupload.css')
           ],
           dest: path.join(TMP_PATH, 'css/'),
           flatten: true,
@@ -140,7 +139,6 @@ module.exports = function(grunt) {
             path.join(DIR, 'bower_components', 'foundation', 'css', 'foundation.css'),
             path.join(DIR, 'bower_components', 'foundation', 'css', 'normalize.css'),
             path.join(DIR, 'bower_components', 'jquery-dropdown', 'jquery.dropdown.css'),
-            path.join(DIR, 'lib', 'plupload', 'jquery.ui.plupload', 'css', 'jquery.ui.plupload.css')
           ],
           dest: path.join(TMP_PATH, 'css/'),
           flatten: true,
