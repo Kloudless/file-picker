@@ -694,6 +694,17 @@
               self.view_model.error('')
             });
           },
+          search: function() {
+            (function(query) {
+              require(['models/search'], function(Search) {
+                  var s = new Search(explorer.manager.accounts(), query);
+                  s.getSearch( function() {
+                    self.manager.active().filesystem().display(s.results);
+                  }); 
+              });
+            })($("#query").val());
+          },
+
           allow_newdir: config.create_folder,
 
           // Placeholder for finderSelect'd jQuery object.
@@ -766,6 +777,30 @@
               explorer.view_model.loading(false);
             });
           }
+        });
+
+        //Search jquery actions
+        $(".search-form").hide();
+        $(".search-button").off('click');
+        $(".search-button").on('click', function() {
+          if ($(".search-form").is(":visible")) {
+            $(".search-button").animate({
+              left: "+=360"
+            }, 250, function(){});
+            $(".search-button").animate({
+              left: "-=360"
+            }, 0, function(){});
+          } else{
+            $(".search-button").animate({
+              left: "+=360" 
+            }, 0, function(){});
+            $(".search-button").animate({
+              left: "-=360"
+            }, 300, function(){});
+          }
+          
+          $(".search-form").toggle('slide', {direction: "right"}, 250);
+          $(".breadcrumbs").toggle();
         });
       }
 

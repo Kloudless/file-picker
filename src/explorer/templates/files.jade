@@ -27,10 +27,13 @@
                 span Accounts
       //- Actions
       .actions(data-bind='with: files')
-        // ko if: allow_newdir
-        a(data-bind='click: newdir, attr: {href: "#"}').new-folder-button
-        // /ko
-        a(data-bind='click: refresh, attr: {href: "#"}').refresh-button
+        form(data-bind="submit: search")
+          // ko if: allow_newdir
+          a(data-bind='click: newdir, attr: {href: "#"}').new-folder-button
+          // /ko
+          a(data-bind='click: refresh, attr: {href: "#"}').refresh-button
+          input(id="query", type="text", placeholder="Search").search-form
+          a(type="submit").search-button          
 
       //- Breadcrumbs
       .breadcrumbcontainer(data-bind='with: files')

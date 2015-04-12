@@ -334,6 +334,12 @@
       });
     };
 
+    Filesystem.prototype.display = function(files) {
+      var self = this;
+      self.current().children(files.objects);
+      self.sort();
+    };
+
     Filesystem.prototype.sort = function() {
       var self = this;
       self.current().children.sort(function(left, right) {

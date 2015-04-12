@@ -5,13 +5,14 @@
 			function(ko, logger, $, config){
 		
 		//Create a search object
-		var Search = function(accounts, query, filesystem_callback){
+		var Search = function(accounts, query){
 			this.accounts = accounts;
 			this.q = query;
 			this.results = null;
+			this.request = null;;
 		};
 
-		Search.prototype.getSearch = function(){
+		Search.prototype.getSearch = function(callback){
 			var self = this;
 
 			var searchAccounts = "";
@@ -32,8 +33,9 @@
 					Authorization: 'AccountKey ' + accountKeys
 				},
 				success: function(data){
-					logger.debug('Search results:', data);
 					self.results = data;
+					logger.debug('Search results on', self.q, ':', self.results);
+					callback();
 				},
 				error: function(){
 					alert("Error in search request!");
@@ -46,12 +48,3 @@
 
 	})
 })();
-// Input this to create a search object and search a specific query
-// (function(query) {
-//   require(['models/search'], function(Search) {
-//     (function(accounts){
-//       var s = new Search(accounts, query, null);
-//       s.getSearch();
-//     })(explorer.manager.accounts());
-//   });
-// })("cpu");
