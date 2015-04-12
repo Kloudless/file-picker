@@ -31,6 +31,10 @@
         a(data-bind='click: newdir, attr: {href: "#"}').new-folder-button
         // /ko
         a(data-bind='click: refresh, attr: {href: "#"}').refresh-button
+        form.search-form(data-bind="submit: search")
+          a#search-back-button(data-bind='click: refresh').search-toggle-button
+          input#search-query(type="text", placeholder="Search", data-bind="textInput: searchQuery")
+          a.search-toggle-button
 
       //- Breadcrumbs
       .breadcrumbcontainer(data-bind='with: files')
@@ -91,6 +95,12 @@
             .arrow-down#sort-recent-down
     div.iewrapper
       table(data-bind='with: files').clickable
+        // ko if: cwd().length == 0 && !$root.loading()
+        tbody
+          tr.info-row(align="center")
+            td.info-cell
+              div No Files Found
+        // /ko
         // ko if: cwd().length > 0 && cwd()[0].type == "newfolder"
         tbody
           tr.newfolder()
@@ -106,8 +116,10 @@
                   div.closeicon()
             td.size
             td.updated()
+
         // /ko
         tbody(data-bind='finderSelect: $data')
+          //- tr(data-bind='text: "No Files Found"').no-files-found
           // ko foreach: cwd
           // ko ifnot: type == "disabled" || type == "newfolder"
           tr(data-bind="click: $parent.navigate, attr: {'data-type': type}")
@@ -139,6 +151,7 @@
             td.updated(data-bind='text: moment(new Date(modified)).format("MMM DD   h:mm a")')
           // /ko
           // /ko
+          //- tr.search-error No Files Found
 
     //- Footer buttons
     footer

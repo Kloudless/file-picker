@@ -694,9 +694,25 @@
               self.view_model.error('')
             });
           },
-
           sort: function(option) {
             self.manager.active().filesystem().sort(option)
+          },
+          searchQuery: ko.observable(""),
+          search: function() {
+            (function(query) {
+              if (query === "") {
+                self.view_model.files.refresh(); 
+                return;
+              }
+              self.view_model.loading(true);
+              require(['models/search'], function(Search) {
+                  var s = new Search(explorer.manager.accounts(), query);
+                  s.getSearch( function() {
+                    self.manager.active().filesystem().display(s.results.objects);
+                    self.view_model.loading(false);
+                  }); 
+              });
+            })(self.view_model.files.searchQuery());
           },
 
           allow_newdir: config.create_folder,
@@ -720,6 +736,16 @@
       config.onReceiveUserData = function(userData) {
         this.view_model.logo_url(userData.logo_url);
       }.bind(this);
+
+      this.view_model.files.searchQuery.extend({
+        rateLimit: {
+          timeout: 250,
+          method: "notifyWhenChangesStop"
+        }
+      });
+      this.view_model.files.searchQuery.subscribe(function(){
+        this.view_model.files.search();
+      }, this);
 
       ko.applyBindings(this.view_model);
     };
@@ -771,6 +797,41 @@
               explorer.view_model.loading(false);
             });
           }
+        });
+
+        //Search jquery actions
+        $(".search-toggle-button").off('click');
+        $(".search-toggle-button").on('click', function() {
+          $(".refresh-button").toggle();
+          $("#search-back-button").toggle();
+          $("#search-query").val("");
+          if ($("#search-query").is(":visible")) {
+            explorer.view_model.files.refresh();
+            //Slide along with search query
+            $(".search-toggle-button").animate({
+              left: "+=360"
+            }, 250);
+            $(".search-toggle-button").animate({
+              left: "-=360"
+            }, 0);
+            $("#search-query").toggle('slide', {
+              direction: "right"
+              }, 250, function() {
+                $(".breadcrumbs").toggle(); 
+                $(".new-folder-button").toggle();
+            });
+          } else{
+            $(".new-folder-button").toggle();
+            $(".breadcrumbs").toggle();
+            $(".search-toggle-button").animate({
+              left: "+=360" 
+            }, 0);
+            $(".search-toggle-button").animate({
+              left: "-=360"
+            }, 250);
+            $("#search-query").toggle('slide', {direction: "right"}, 250);
+          }
+          
         });
       }
 
