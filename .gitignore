@@ -27,3 +27,6 @@ bower_components
 
 .tmp
 dist
+
+# Mac
+.DS_Store
