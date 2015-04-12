@@ -704,6 +704,40 @@
               });
             })($("#query").val());
           },
+          back: function() {
+            logger.debug('Refreshing current directory');
+            self.view_model.loading(true);
+            self.manager.active().filesystem().refresh(true, function(err, result) {
+              self.view_model.loading(false);
+              if (err && error_message) {
+                return self.view_model.error(error_message)
+              } else if (err) {
+                return self.view_model.error(err.message)
+              }
+              self.view_model.error('')
+            });
+            $(".new-folder-button").toggle();
+            $(".refresh-button").toggle();
+            $(".back-button").toggle();
+            $(".perform-button").toggle();
+            if ($(".search-form").is(":visible")) {
+              $(".search-button").animate({
+                left: "+=360"
+              }, 250, function(){});
+              $(".search-button").animate({
+                left: "-=360"
+              }, 0, function(){});
+            } else{
+              $(".search-button").animate({
+                left: "+=360" 
+              }, 0, function(){});
+              $(".search-button").animate({
+                left: "-=360"
+              }, 300, function(){});
+            }
+            $(".search-form").toggle('slide', {direction: "right"}, 250);
+            $(".breadcrumbs").toggle();
+            },
 
           allow_newdir: config.create_folder,
 
@@ -780,9 +814,12 @@
         });
 
         //Search jquery actions
-        $(".search-form").hide();
         $(".search-button").off('click');
         $(".search-button").on('click', function() {
+          $(".new-folder-button").toggle();
+          $(".refresh-button").toggle();
+          $(".back-button").toggle();
+          $(".perform-button").toggle();
           if ($(".search-form").is(":visible")) {
             $(".search-button").animate({
               left: "+=360"
@@ -798,7 +835,6 @@
               left: "-=360"
             }, 300, function(){});
           }
-          
           $(".search-form").toggle('slide', {direction: "right"}, 250);
           $(".breadcrumbs").toggle();
         });
