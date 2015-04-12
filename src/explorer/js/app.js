@@ -695,11 +695,13 @@
             });
           },
           search: function() {
+            self.view_model.loading(true);
             (function(query) {
               require(['models/search'], function(Search) {
                   var s = new Search(explorer.manager.accounts(), query);
                   s.getSearch( function() {
                     self.manager.active().filesystem().display(s.results);
+                    self.view_model.loading(false);
                   }); 
               });
             })($("#query").val());
