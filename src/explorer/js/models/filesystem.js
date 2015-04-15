@@ -336,8 +336,12 @@
 
     Filesystem.prototype.display = function(files) {
       var self = this;
-      self.current().children(files.objects);
-      self.sort();
+      if (files.objects.length == 0){
+        alert("No results found!");
+      } else {
+        self.current().children(files.objects);   
+        self.sort();
+      }
     };
 
     Filesystem.prototype.sort = function() {
