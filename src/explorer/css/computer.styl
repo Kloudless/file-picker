@@ -122,6 +122,9 @@
                         td:nth-child(3)
                             width:200px
                             padding-left:45px
+                        td:nth-child(4)
+                            width: 5px
+                            padding: 0px
                 tbody
                     width: 100%
                     display: block
@@ -133,10 +136,23 @@
                         td
                             display:inline-block
                             width: 33%
+                            &:nth-child(3)
+                                width: 32%
+                            &:nth-child(4)
+                                cursor: pointer
+                                width: 1%
+                                padding: 0px
+                                padding-left: 5px
                             div div
                                 text-overflow: ellipsis
                                 white-space: nowrap
                                 overflow: hidden
+                            div .ui-icon-circle-minus
+                                background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") no-repeat -0px -146px
+                                width: 16px
+                                height: 16px
+                                margin-top: -5px
+
                 tfoot
                     position:absolute
                     bottom:0px
@@ -381,10 +397,11 @@ div#droptext_dropbox
     height: 100%
     z-index: 1
     transition: all 0
-    width:100%
+    width:95%
     div.relativer
         position: relative
         height: 225px
+
     span.thetext
         position: relative
         top: 33%
