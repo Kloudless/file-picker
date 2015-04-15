@@ -97,7 +97,8 @@ The File Explorer has the following configuration options:
   Saver: _Optional (default: ['file_store'])_
 
   This option specifies which services to allow a user to explore. You can enumerate
-  the specific [services](#accounts) or [service groups](#accounts).
+  the specific [services](https://developers.kloudless.com/docs#accounts) or
+  [service groups](https://developers.kloudless.com/docs#accounts).
   The default is the file store service group.  If you specify an empty array,
   no services will show up.
 
@@ -133,7 +134,7 @@ The File Explorer has the following configuration options:
   This option is specific to links generated through the file explorer. If
   `false`, the link redirects to the cloud storage service to view the file. If
   `true`, the link will download the file instead. See the `direct`
-  [attribute](#links) for more details.
+  [attribute](https://developers.kloudless.com/docs#links) for more details.
 
 * `copy_to_upload_location` : boolean
 
@@ -187,9 +188,9 @@ The File Explorer has the following configuration options:
 
   Chooser: _Optional (default: false)_
 
-  This option will include [Account Keys](#account-keys) in addition to the other
-  response data, to allow you to make further requests to the API or save the
-  Account Keys easily.
+  This option will include [Account Keys](https://developers.kloudless.com/docs#account-keys)
+  in addition to the other response data, to allow you to make further requests to the API
+  or save the Account Keys easily.
 
   ```javascript
     // Example response with an Account Key in the metadata.
@@ -215,8 +216,8 @@ The File Explorer has the following configuration options:
 
   Chooser: _Optional (default: [])_
 
-  This option should list [Account Keys](#account-keys) for accounts the File
-  Explorer should be initialized with. The File Explorer will make API
+  This option should list [Account Keys](https://developers.kloudless.com/docs#account-keys)
+  for accounts the File Explorer should be initialized with. The File Explorer will make API
   requests for additional information on the accounts and display them
   in the list of accounts the user has connected.
 
