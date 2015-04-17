@@ -9,7 +9,7 @@
 			this.accounts = accounts;
 			this.q = query;
 			this.results = null;
-			this.request = null;;
+			this.request = null;
 		};
 
 		Search.prototype.getSearch = function(callback){
@@ -38,6 +38,7 @@
 					callback();
 				},
 				error: function(){
+					//Show an error
 					alert("Error in search request!");
 				},
 				datatype: 'json'

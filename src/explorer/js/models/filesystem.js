@@ -96,6 +96,8 @@
     Filesystem.prototype.getPage = function(callback) {
       var self = this;
 
+      $(".no-files-found").hide();
+      
       if (callback === undefined) {
         callback = function(){};
       }
@@ -104,7 +106,6 @@
         callback(null, self.current().children);
         return;
       }
-
       var page_url = config.base_url + '/v0/accounts/' + self.id + '/folders/' + self.current().id + '/contents';
       page_url += '?page=' + self.page + '&page_size=' + self.page_size;
 
@@ -336,12 +337,10 @@
 
     Filesystem.prototype.display = function(files) {
       var self = this;
-      if (files.objects.length == 0){
-        alert("No results found!");
-      } else {
-        self.current().children(files.objects);   
-        self.sort();
-      }
+      $(".no-files-found").hide();
+      (files.length === 0) ? $(".no-files-found").show() : "";
+      self.current().children(files); 
+      self.sort();
     };
 
     Filesystem.prototype.sort = function() {
