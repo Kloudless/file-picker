@@ -356,14 +356,13 @@
         body.scrollTop = window.Kloudless._fileWidget['lastScrollTop'];
       }
 
-    backdropDiv.style.display = 'none';
-
       FX.fadeOut(frames[self.exp_id],{
         duration: 200,
         complete: function() {
           frames[self.exp_id].style.display = 'none';
         }
       });
+      backdropDiv.style.display = 'none';
     }
 
     self._fire('close');
