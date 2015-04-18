@@ -354,7 +354,6 @@
       return;
     }
 
-    body.style.overflow = 'scroll'; 
     removeClass(body, "kfe-active");
 
     if(typeof(window.Kloudless._fileWidget['lastScrollTop']) != "undefined") {
@@ -366,6 +365,7 @@
         duration: 200,
         complete: function() {
           frames[self.exp_id].style.display = 'none';
+          body.style.overflow = 'scroll'; 
         }
       });
     }
