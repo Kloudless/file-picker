@@ -337,6 +337,8 @@
       duration: 200
     });
 
+    body.style.overflow = 'hidden'; 
+
     self._fire('open');
 
     return self;
@@ -352,6 +354,7 @@
       return;
     }
 
+    body.style.overflow = 'scroll'; 
     removeClass(body, "kfe-active");
 
     if(typeof(window.Kloudless._fileWidget['lastScrollTop']) != "undefined") {
