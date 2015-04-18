@@ -97,7 +97,7 @@
   var frames = window.Kloudless._frames;
   var explorers = window.Kloudless._explorers;
   var queuedAction = window.Kloudless._queuedAction;
-  var shadowDiv = null;
+  var backdropDiv = null;
   // Add iframe styling.
   var style = document.createElement('style');
   var loaderCSS = LOADER_CSS;
@@ -135,10 +135,10 @@
     frames[exp_id] = frame;
 
     document.getElementsByTagName('body')[0].appendChild(frame);
-    if (!shadowDiv){
+    if (!backdropDiv){
       var div = document.createElement('div');
-      shadowDiv = document.getElementsByTagName('body')[0].appendChild(div);
-      addClass(shadowDiv, "shadowDiv");
+      backdropDiv = document.getElementsByTagName('body')[0].appendChild(div);
+      addClass(backdropDiv, "backdrop_div");
     }
     return exp_id;
   };
@@ -326,22 +326,15 @@
 
     frames[self.exp_id].style.display = 'block';
     frames[self.exp_id].style.opacity = 0;
-
-
     addClass(body, "kfe-active");
 
     FX.fadeIn(frames[self.exp_id], {
       duration: 200
     });
 
-    body.style.overflow = 'hidden'; 
-  
-
-    // Enable the modal backdrop
-    shadowDiv.style.display = 'block';
+    backdropDiv.style.display = 'block';
 
     self._fire('open');
-
 
     return self;
   };
@@ -363,10 +356,7 @@
         body.scrollTop = window.Kloudless._fileWidget['lastScrollTop'];
       }
 
-    body.style.overflow = 'scroll'; 
-
-    //Undo the modal backdrop
-    shadowDiv.style.display = 'none';
+    backdropDiv.style.display = 'none';
 
       FX.fadeOut(frames[self.exp_id],{
         duration: 200,
