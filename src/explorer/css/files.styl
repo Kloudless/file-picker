@@ -346,8 +346,6 @@
             margin-top:0px
             display:block
             padding:0 20px
-            .no-files-found
-                display:none;
         tbody tr
             display:block
             width:100%
@@ -369,7 +367,10 @@
                 white-space: nowrap
                 text-overflow: ellipsis
                 height:37px
-                &:first-child
+                &.info-cell
+                    display: block
+                    text-align: center
+                &:first-child:not(.info-cell)
                     float:left
                     width: 350px
                 &:nth-child(2)
@@ -405,7 +406,9 @@
         &.clickable
             tbody tr
                 cursor: pointer
-                &:hover
+                &.info-row
+                    cursor: auto
+                &:not(.info-row):hover
                     background-color: #fafcff
                     td
                         color:#222 !important

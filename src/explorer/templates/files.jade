@@ -89,9 +89,14 @@
           th Updated
     div.iewrapper
       table(data-bind='with: files').clickable
+        // ko if: cwd().length == 0 && !$root.loading()
+        tbody
+          tr.info-row(align="center")
+            td.info-cell
+              div No Files Found
+        // /ko
         // ko if: cwd().length > 0 && cwd()[0].type == "newfolder"
         tbody
-
           tr.newfolder()
             td.newfolder()
               span()
@@ -105,9 +110,10 @@
                   div.closeicon()
             td.size
             td.updated()
+
         // /ko
         tbody(data-bind='finderSelect: $data')
-          tr(data-bind='text: "No Files Found"').no-files-found
+          //- tr(data-bind='text: "No Files Found"').no-files-found
           // ko foreach: cwd
           // ko ifnot: type == "disabled" || type == "newfolder"
           tr(data-bind="click: $parent.navigate, attr: {'data-type': type}")

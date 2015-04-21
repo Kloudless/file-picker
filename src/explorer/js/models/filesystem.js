@@ -95,8 +95,6 @@
 
     Filesystem.prototype.getPage = function(callback) {
       var self = this;
-
-      $(".no-files-found").hide();
       
       if (callback === undefined) {
         callback = function(){};
@@ -337,8 +335,6 @@
 
     Filesystem.prototype.display = function(files) {
       var self = this;
-      $(".no-files-found").hide();
-      (files.length === 0) ? $(".no-files-found").show() : "";
       self.current().children(files); 
       self.sort();
     };
