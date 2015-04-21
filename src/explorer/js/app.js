@@ -703,11 +703,12 @@
               }
               self.view_model.loading(true);
               require(['models/search'], function(Search) {
-                  var s = new Search(explorer.manager.accounts(), query);
-                  s.getSearch( function() {
-                    self.manager.active().filesystem().display(s.results.objects);
-                    self.view_model.loading(false);
-                  }); 
+                var currentAcc = explorer.manager.active().filesystem();
+                var s = new Search(currentAcc.id, currentAcc.key, query);
+                s.getSearch( function() {
+                  self.manager.active().filesystem().display(s.results.objects);
+                  self.view_model.loading(false);
+                }); 
               });
             })(self.view_model.files.searchQuery());
           },
@@ -738,9 +739,7 @@
           method: "notifyWhenChangesStop"
         }
       });
-      this.view_model.files.searchQuery.subscribe(function(){
-        this.view_model.files.search();
-      }, this);
+      this.view_model.files.searchQuery.subscribe(this.view_model.files.search, this);
 
       ko.applyBindings(this.view_model);
     };
@@ -753,6 +752,8 @@
       if (to !== 'addconfirm') {
         $(auth.iframe).hide();
       }
+
+      ($("#search-query").is(":visible")) ? $("#search-back-button").trigger("click") : ""; 
 
       // Initialise jQuery dropdown plugin.
       if (to == 'files' || to == 'computer') {
@@ -797,9 +798,7 @@
         //Search jquery actions
         $(".search-toggle-button").off('click');
         $(".search-toggle-button").on('click', function() {
-          $(".refresh-button").toggle();
-          $("#search-back-button").toggle();
-          $("#search-query").val("");
+          $(".refresh-button, #search-back-button").toggle();
           if ($("#search-query").is(":visible")) {
             explorer.view_model.files.refresh();
             //Slide along with search query
@@ -812,19 +811,19 @@
             $("#search-query").toggle('slide', {
               direction: "right"
               }, 250, function() {
-                $(".breadcrumbs").toggle(); 
-                $(".new-folder-button").toggle();
+                $(".breadcrumbs, .new-folder-button").toggle(); 
             });
           } else{
-            $(".new-folder-button").toggle();
-            $(".breadcrumbs").toggle();
+            $(".new-folder-button, .breadcrumbs").toggle();
             $(".search-toggle-button").animate({
               left: "+=360" 
             }, 0);
             $(".search-toggle-button").animate({
               left: "-=360"
             }, 250);
-            $("#search-query").toggle('slide', {direction: "right"}, 250);
+            $("#search-query").toggle('slide', {
+              direction: "right"
+            }, 250);
           }
           
         });

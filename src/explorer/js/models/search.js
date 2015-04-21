@@ -5,8 +5,9 @@
 			function(ko, logger, $, config){
 		
 		//Create a search object
-		var Search = function(accounts, query){
-			this.accounts = accounts;
+		var Search = function(account, account_key, query){
+			this.account = account;
+			this.key = account_key
 			this.q = query;
 			this.results = null;
 			this.request = null;
@@ -15,22 +16,11 @@
 		Search.prototype.getSearch = function(callback){
 			var self = this;
 
-			var searchAccounts = "";
-			var accountKeys = "";
-			for(var i = 0; i < self.accounts.length; i++){
-				if(i>0){
-					searchAccounts+="%2C";
-					accountKeys+=",";
-				}
-				searchAccounts+=self.accounts[i].account;
-				accountKeys+=self.accounts[i].account_key;
-			}
-
 			self.request = $.ajax({
-				url: config.base_url + '/v0/accounts/' + searchAccounts + "/search/?q=" + self.q,
+				url: config.base_url + '/v0/accounts/' + self.account + "/search/?q=" + self.q,
 				type: 'GET',
 				headers: {
-					Authorization: 'AccountKey ' + accountKeys
+					Authorization: 'AccountKey ' + self.key
 				},
 				success: function(data){
 					self.results = data;
