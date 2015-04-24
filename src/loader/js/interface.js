@@ -97,7 +97,7 @@
   var frames = window.Kloudless._frames;
   var explorers = window.Kloudless._explorers;
   var queuedAction = window.Kloudless._queuedAction;
-
+  var backdropDiv = null;
   // Add iframe styling.
   var style = document.createElement('style');
   var loaderCSS = LOADER_CSS;
@@ -136,6 +136,11 @@
 
     document.getElementsByTagName('body')[0].appendChild(frame);
 
+    if (!backdropDiv){
+      var div = document.createElement('div');
+      backdropDiv = document.getElementsByTagName('body')[0].appendChild(div);
+      addClass(backdropDiv, "backdrop_div");
+    }
     return exp_id;
   };
 
@@ -337,6 +342,8 @@
       duration: 200
     });
 
+    backdropDiv.style.display = 'block';
+
     self._fire('open');
 
     return self;
@@ -365,6 +372,8 @@
           frames[self.exp_id].style.display = 'none';
         }
       });
+
+      backdropDiv.style.display = 'none';
     }
 
     self._fire('close');
