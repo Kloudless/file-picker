@@ -337,6 +337,8 @@
       duration: 200
     });
 
+    body.style.overflow = 'hidden'; 
+
     self._fire('open');
 
     return self;
@@ -363,6 +365,7 @@
         duration: 200,
         complete: function() {
           frames[self.exp_id].style.display = 'none';
+          body.style.overflow = 'scroll'; 
         }
       });
     }
