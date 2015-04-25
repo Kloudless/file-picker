@@ -98,6 +98,7 @@
   var explorers = window.Kloudless._explorers;
   var queuedAction = window.Kloudless._queuedAction;
   var backdropDiv = null;
+  var bodyOverflow = null;
   // Add iframe styling.
   var style = document.createElement('style');
   var loaderCSS = LOADER_CSS;
@@ -134,11 +135,12 @@
     frame.style.display = 'none';
     frames[exp_id] = frame;
 
-    document.getElementsByTagName('body')[0].appendChild(frame);
-
+    var body = document.getElementsByTagName("body")[0];
+    body.appendChild(frame);
+    bodyOverflow = body.style.overflow;
     if (!backdropDiv){
       var div = document.createElement('div');
-      backdropDiv = document.getElementsByTagName('body')[0].appendChild(div);
+      backdropDiv = body.appendChild(div);
       addClass(backdropDiv, "backdrop_div");
     }
     return exp_id;
@@ -375,7 +377,7 @@
       });
       
       backdropDiv.style.display = 'none';
-      body.style.overflow = 'scroll'; 
+      body.style.overflow = bodyOverflow; 
     }
 
     self._fire('close');
