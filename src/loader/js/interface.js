@@ -343,6 +343,7 @@
     });
 
     backdropDiv.style.display = 'block';
+    body.style.overflow = 'hidden'; 
 
     self._fire('open');
 
@@ -372,8 +373,9 @@
           frames[self.exp_id].style.display = 'none';
         }
       });
-
+      
       backdropDiv.style.display = 'none';
+      body.style.overflow = 'scroll'; 
     }
 
     self._fire('close');
