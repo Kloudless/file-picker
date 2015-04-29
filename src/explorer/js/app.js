@@ -753,7 +753,8 @@
         $(auth.iframe).hide();
       }
 
-      ($("#search-query").is(":visible")) ? $("#search-back-button").trigger("click") : ""; 
+      if ($("#search-query").is(":visible"))
+        $("#search-back-button").trigger("click"); 
 
       // Initialise jQuery dropdown plugin.
       if (to == 'files' || to == 'computer') {
@@ -796,16 +797,17 @@
         });
 
         //Search jquery actions
-        $(".search-toggle-button").off('click');
-        $(".search-toggle-button").on('click', function() {
+        $(".search").off('click');
+        $("#search-enable-button, #search-back-button").on('click', function() {
           $(".refresh-button, #search-back-button").toggle();
           if ($("#search-query").is(":visible")) {
+            $("#search-enable-button").removeClass('search-active');
             explorer.view_model.files.refresh();
             //Slide along with search query
-            $(".search-toggle-button").animate({
+            $("#search-enable-button").animate({
               left: "+=360"
             }, 250);
-            $(".search-toggle-button").animate({
+            $("#search-enable-button").animate({
               left: "-=360"
             }, 0);
             $("#search-query").toggle('slide', {
@@ -814,11 +816,12 @@
                 $(".breadcrumbs, .new-folder-button").toggle(); 
             });
           } else{
+            $("#search-enable-button").addClass('search-active');
             $(".new-folder-button, .breadcrumbs").toggle();
-            $(".search-toggle-button").animate({
+            $("#search-enable-button").animate({
               left: "+=360" 
             }, 0);
-            $(".search-toggle-button").animate({
+            $("#search-enable-button").animate({
               left: "-=360"
             }, 250);
             $("#search-query").toggle('slide', {

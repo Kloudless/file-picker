@@ -28,7 +28,6 @@
 					callback();
 				},
 				error: function(){
-					//Show an error
 					alert("Error in search request!");
 				},
 				datatype: 'json'
