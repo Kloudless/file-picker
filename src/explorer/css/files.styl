@@ -229,11 +229,11 @@
         .actions
             float: right;
             .refresh-button
-                background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px -196px no-repeat
+                background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px -193px no-repeat
                 width: 24px
                 height: 24px
                 margin-right: 7px
-                margin-left: 24px
+                margin-left: 9px
                 margin-top: 5px
                 display: inline-block;
                 float: right;
@@ -245,36 +245,34 @@
                 margin-top: 5px
                 display: inline-block;
                 float: right;
-            .search-toggle-button
-                background:unquote("url('http://redeals.in/stylistica-icons-set/png/24x24/search.png')") no-repeat
-                width: 24px
-                height: 24px
-                margin-right: -12px
-                margin-top: 8px
-                display: inline-block;
-                float: right;
-                z-index:1;
-                position:relative;
-            #search-query
-                background:0xFFFFFF
-                width: 390px
-                height: 24px
-                margin-right: -12px
-                margin-top: 8px
-                display: none;
-                float: right;
-                text-align:right;
             .search-form
-                float: right;
-            #search-back-button
-                background: url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png') 0px -146px no-repeat
-                width: 16px
-                height: 16px
-                margin-right: 7px
-                margin-left: 24px
-                margin-top: 9px
-                display: none;
-                float: right;
+                float:right;
+                .search
+                    float:right;
+                #search-enable-button
+                    background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") -1px -224px no-repeat
+                    width: 24px
+                    height: 24px
+                    margin-right: 3px
+                    margin-top: 9px
+                    position:relative;
+                    &.search-active
+                        background-position: -1px -249px
+                #search-query
+                    width: 380px
+                    height: 24px
+                    margin-right: -12px
+                    margin-top: 8px
+                    display: none;
+                    text-align:right;
+                #search-back-button
+                    background: url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png') 0px -146px no-repeat
+                    width: 16px
+                    height: 16px
+                    margin-right: 7px
+                    margin-left: 24px
+                    margin-top: 9px
+                    display: none;
     div.iewrapper
         height:300px
         width:650px
@@ -307,8 +305,6 @@
         bottom:0
         right:0
         overflow:auto
-        // div.search-error
-        //     display:none;
         thead
             position:relative
             display:block
