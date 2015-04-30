@@ -96,7 +96,7 @@
 
     Filesystem.prototype.getPage = function(callback) {
       var self = this;
-      
+
       if (callback === undefined) {
         callback = function(){};
       }
@@ -336,7 +336,7 @@
 
     Filesystem.prototype.display = function(files) {
       var self = this;
-      self.current().children(files); 
+      self.current().children(files);
       self.sort();
     };
 

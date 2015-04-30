@@ -3,7 +3,7 @@
 
 	define(['vendor/knockout', 'vendor/loglevel', 'jquery', 'config'],
 			function(ko, logger, $, config){
-		
+
 		//Create a search object
 		var Search = function(account, account_key, query){
 			this.account = account;

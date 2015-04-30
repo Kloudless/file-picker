@@ -51,7 +51,7 @@
            'jqueryui', 'vendor/jquery-dropdown', 'vendor/jquery-scrollstop',
            'moxie', 'plupload', 'pluploadui', 'vendor/jquery.finderSelect',
            'iexd-transport'],
-  function($, ko, sammy, logger, moment, config, storage, AccountManager, 
+  function($, ko, sammy, logger, moment, config, storage, AccountManager,
     FileManager, auth) {
 
     // Initialise and configure.
@@ -436,7 +436,7 @@
                   }
                 });
               })(accounts[i]);
-              
+
             }
           });
         },
@@ -701,7 +701,7 @@
           search: function() {
             (function(query) {
               if (query === "") {
-                self.view_model.files.refresh(); 
+                self.view_model.files.refresh();
                 return;
               }
               self.view_model.loading(true);
@@ -711,7 +711,7 @@
                 s.getSearch( function() {
                   self.manager.active().filesystem().display(s.results.objects);
                   self.view_model.loading(false);
-                }); 
+                });
               });
             })(self.view_model.files.searchQuery());
           },
@@ -759,7 +759,7 @@
       }
 
       if ($("#search-query").is(":visible"))
-        $("#search-back-button").trigger("click"); 
+        $("#search-back-button").trigger("click");
 
       // Initialise jQuery dropdown plugin.
       if (to == 'files' || to == 'computer') {
@@ -818,13 +818,13 @@
             $("#search-query").toggle('slide', {
               direction: "right"
               }, 250, function() {
-                $(".breadcrumbs, .new-folder-button").toggle(); 
+                $(".breadcrumbs, .new-folder-button").toggle();
             });
           } else{
             $("#search-enable-button").addClass('search-active');
             $(".new-folder-button, .breadcrumbs").toggle();
             $("#search-enable-button").animate({
-              left: "+=360" 
+              left: "+=360"
             }, 0);
             $("#search-enable-button").animate({
               left: "-=360"
@@ -833,7 +833,7 @@
               direction: "right"
             }, 250);
           }
-          
+
         });
       }
 
