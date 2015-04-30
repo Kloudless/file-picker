@@ -882,6 +882,16 @@
                       explorer.view_model.loading(true);
                     }
                   });
+
+                  // Add confirmation when closing tabs during uploading process
+                  $(window).bind('beforeunload', function(){
+                    if (uploader.total.queued > 0) {
+                      var msg = ('Are you sure you want to close this tab? You have an' +
+                        ' upload in progress.');
+                      return msg;
+                    }
+                  });
+
                   // Add abort upload handler
                   $('#cancel-button').click(function() {
                     var msg = ('Are you sure you want to cancel? You have an' +
