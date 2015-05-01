@@ -105,7 +105,6 @@
         callback(null, self.current().children);
         return;
       }
-
       var page_url = config.base_url + '/v0/accounts/' + self.id + '/folders/' + self.current().id + '/contents';
       page_url += '?page=' + self.page + '&page_size=' + self.page_size;
 
@@ -163,7 +162,7 @@
         }).map(function(child) {
           // Set custom attributes.
           child.parent_obs = self.current();
-          if(child.size == null){
+          if (child.size == null) {
             child.friendlySize = "";
           } else {
             child.friendlySize = util.formatSize(child.size);
@@ -333,6 +332,12 @@
 
         self.request = null;
       });
+    };
+
+    Filesystem.prototype.display = function(files) {
+      var self = this;
+      self.current().children(files);
+      self.sort();
     };
 
     // Sort by preference
