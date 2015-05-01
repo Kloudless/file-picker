@@ -95,7 +95,7 @@
 
     Filesystem.prototype.getPage = function(callback) {
       var self = this;
-
+      
       if (callback === undefined) {
         callback = function(){};
       }
@@ -104,7 +104,6 @@
         callback(null, self.current().children);
         return;
       }
-
       var page_url = config.base_url + '/v0/accounts/' + self.id + '/folders/' + self.current().id + '/contents';
       page_url += '?page=' + self.page + '&page_size=' + self.page_size;
 
@@ -332,6 +331,12 @@
 
         self.request = null;
       });
+    };
+
+    Filesystem.prototype.display = function(files) {
+      var self = this;
+      self.current().children(files); 
+      self.sort();
     };
 
     Filesystem.prototype.sort = function() {

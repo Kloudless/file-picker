@@ -31,6 +31,10 @@
         a(data-bind='click: newdir, attr: {href: "#"}').new-folder-button
         // /ko
         a(data-bind='click: refresh, attr: {href: "#"}').refresh-button
+        form.search-form(data-bind="submit: search")
+          a#search-back-button(data-bind='click: refresh').search
+          input#search-query(type="text", placeholder="Search", data-bind="textInput: searchQuery").search
+          a#search-enable-button.search
 
       //- Breadcrumbs
       .breadcrumbcontainer(data-bind='with: files')
@@ -85,6 +89,12 @@
           th Updated
     div.iewrapper
       table(data-bind='with: files').clickable
+        // ko if: cwd().length == 0 && !$root.loading()
+        tbody
+          tr.info-row(align="center")
+            td.info-cell
+              div No Files Found
+        // /ko
         // ko if: cwd().length > 0 && cwd()[0].type == "newfolder"
         tbody
           tr.newfolder()
@@ -100,6 +110,7 @@
                   div.closeicon()
             td.size
             td.updated()
+
         // /ko
         tbody(data-bind='finderSelect: $data')
           // ko foreach: cwd

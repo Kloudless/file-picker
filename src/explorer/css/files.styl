@@ -159,7 +159,7 @@
                 text-overflow: ellipsis
                 white-space: nowrap
                 height: 50px
-                width: 380px
+                width: 350px
                 display: inline-block
                 @media only screen and (max-width: 500px)
                     margin-top: 10px
@@ -229,12 +229,13 @@
         .actions
             float: right;
             .refresh-button
-                background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px -196px no-repeat
+                background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px -193px no-repeat
                 width: 24px
                 height: 24px
                 margin-right: 7px
+                margin-left: 9px
                 margin-top: 5px
-                display: block;
+                display: inline-block;
                 float: right;
             .new-folder-button
                 background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px -68px no-repeat
@@ -242,8 +243,36 @@
                 height: 24px
                 margin-right: 7px
                 margin-top: 5px
-                display: block;
+                display: inline-block;
                 float: right;
+            .search-form
+                float:right;
+                .search
+                    float:right;
+                #search-enable-button
+                    background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") -1px -224px no-repeat
+                    width: 24px
+                    height: 24px
+                    margin-right: 3px
+                    margin-top: 9px
+                    position:relative;
+                    &.search-active
+                        background-position: -1px -249px
+                #search-query
+                    width: 380px
+                    height: 24px
+                    margin-right: -12px
+                    margin-top: 8px
+                    display: none;
+                    text-align:right;
+                #search-back-button
+                    background: url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png') 0px -146px no-repeat
+                    width: 16px
+                    height: 16px
+                    margin-right: 7px
+                    margin-left: 24px
+                    margin-top: 9px
+                    display: none;
     div.iewrapper
         height:300px
         width:650px
@@ -334,7 +363,10 @@
                 white-space: nowrap
                 text-overflow: ellipsis
                 height:37px
-                &:first-child
+                &.info-cell
+                    display: block
+                    text-align: center
+                &:first-child:not(.info-cell)
                     float:left
                     width: 350px
                 &:nth-child(2)
@@ -370,7 +402,9 @@
         &.clickable
             tbody tr
                 cursor: pointer
-                &:hover
+                &.info-row
+                    cursor: auto
+                &:not(.info-row):hover
                     background-color: #fafcff
                     td
                         color:#222 !important
@@ -440,7 +474,6 @@
                 td
                     color:#777
                     opacity: 0.5
-
         tbody tr.selected
             background-color: #3b97ff
             td

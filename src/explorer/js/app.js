@@ -694,8 +694,25 @@
               self.view_model.error('')
             });
           },
+          searchQuery: ko.observable(""),
+          search: function() {
+            (function(query) {
+              if (query === "") {
+                self.view_model.files.refresh(); 
+                return;
+              }
+              self.view_model.loading(true);
+              require(['models/search'], function(Search) {
+                var currentAcc = explorer.manager.active().filesystem();
+                var s = new Search(currentAcc.id, currentAcc.key, query);
+                s.getSearch( function() {
+                  self.manager.active().filesystem().display(s.results.objects);
+                  self.view_model.loading(false);
+                }); 
+              });
+            })(self.view_model.files.searchQuery());
+          },
           allow_newdir: config.create_folder,
-
           // Placeholder for finderSelect'd jQuery object.
           table: null,
         },
@@ -716,6 +733,14 @@
         this.view_model.logo_url(userData.logo_url);
       }.bind(this);
 
+      this.view_model.files.searchQuery.extend({
+        rateLimit: {
+          timeout: 250,
+          method: "notifyWhenChangesStop"
+        }
+      });
+      this.view_model.files.searchQuery.subscribe(this.view_model.files.search, this);
+
       ko.applyBindings(this.view_model);
     };
 
@@ -727,6 +752,9 @@
       if (to !== 'addconfirm') {
         $(auth.iframe).hide();
       }
+
+      if ($("#search-query").is(":visible"))
+        $("#search-back-button").trigger("click"); 
 
       // Initialise jQuery dropdown plugin.
       if (to == 'files' || to == 'computer') {
@@ -766,6 +794,41 @@
               explorer.view_model.loading(false);
             });
           }
+        });
+
+        //Search jquery actions
+        $(".search").off('click');
+        $("#search-enable-button, #search-back-button").on('click', function() {
+          $(".refresh-button, #search-back-button").toggle();
+          if ($("#search-query").is(":visible")) {
+            $("#search-enable-button").removeClass('search-active');
+            explorer.view_model.files.refresh();
+            //Slide along with search query
+            $("#search-enable-button").animate({
+              left: "+=360"
+            }, 250);
+            $("#search-enable-button").animate({
+              left: "-=360"
+            }, 0);
+            $("#search-query").toggle('slide', {
+              direction: "right"
+              }, 250, function() {
+                $(".breadcrumbs, .new-folder-button").toggle(); 
+            });
+          } else{
+            $("#search-enable-button").addClass('search-active');
+            $(".new-folder-button, .breadcrumbs").toggle();
+            $("#search-enable-button").animate({
+              left: "+=360" 
+            }, 0);
+            $("#search-enable-button").animate({
+              left: "-=360"
+            }, 250);
+            $("#search-query").toggle('slide', {
+              direction: "right"
+            }, 250);
+          }
+          
         });
       }
 
