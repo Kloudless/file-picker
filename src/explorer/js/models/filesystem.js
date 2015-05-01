@@ -96,7 +96,7 @@
 
     Filesystem.prototype.getPage = function(callback) {
       var self = this;
-      
+
       if (callback === undefined) {
         callback = function(){};
       }
@@ -360,19 +360,19 @@
               return 1*reverse;
             } else if (left.modified < right.modified) {
               return -1*reverse;
-            } 
+            }
           } else if (option === "largest" && left.size != right.size) {
             if (left.size > right.size) {
               return 1*reverse;
             } else if (left.size < right.size) {
               return -1*reverse;
-            } 
+            }
           } else {
             return lname == rname ? 0 : (lname < rname ? -1: 1);
           }
-          
+
         }
-      });  
+      });
       self.sortOrder++;
     };
 
