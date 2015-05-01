@@ -15,6 +15,7 @@
       this.page = 1;
       this.paging = true;
       this.page_size = 1000;
+      this.sortOrder = 1;
 
       // default - 'root' is a special file type.
       this.current = ko.observable({
@@ -334,8 +335,16 @@
       });
     };
 
-    Filesystem.prototype.sort = function() {
+    // Sort by preference
+    Filesystem.prototype.sort = function(option) {
       var self = this;
+      var reverse = Math.pow(-1, self.sortOrder);
+      $(".arrow-down").hide();
+      $(".arrow-up").hide();
+      if (option === undefined) {
+        option = "name";
+      }
+      $("#sort-" + option + "-" + (self.sortOrder % 2 == 0 ? "up" : "down")).show();
       self.current().children.sort(function(left, right) {
         if (left.type == 'folder' && right.type != 'folder') {
           return -1;
@@ -344,9 +353,27 @@
         } else {
           var lname = left.name.toLowerCase();
           var rname = right.name.toLowerCase();
-          return lname == rname ? 0 : (lname < rname ? -1 : 1);
+          if (option === "name") {
+            return lname == rname ? 0 : (lname < rname ? -1*reverse : 1*reverse);
+          } else if (option === "recent" && left.modified != right.modified) {
+            if (left.modified > right.modified) {
+              return 1*reverse;
+            } else if (left.modified < right.modified) {
+              return -1*reverse;
+            }
+          } else if (option === "largest" && left.size != right.size) {
+            if (left.size > right.size) {
+              return 1*reverse;
+            } else if (left.size < right.size) {
+              return -1*reverse;
+            }
+          } else {
+            return lname == rname ? 0 : (lname < rname ? -1: 1);
+          }
+
         }
       });
+      self.sortOrder++;
     };
 
     return Filesystem;
