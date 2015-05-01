@@ -7,7 +7,7 @@
     //Create a search object
     var Search = function(account, account_key, query) {
       this.account = account;
-      this.key = account_key
+      this.key = account_key;
       this.q = query;
       this.results = null;
       this.request = null;
@@ -28,7 +28,7 @@
           callback();
         },
         error: function() {
-          alert("Error in search request!");
+          logger.error("Error with the search request.");
         },
         datatype: 'json'
       })
