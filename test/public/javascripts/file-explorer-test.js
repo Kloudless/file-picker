@@ -9,6 +9,7 @@
     computer: true,
     services: ['all'],
     types: ['all'],
+    display_backdrop: true,
   });
 
   /*
