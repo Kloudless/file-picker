@@ -102,6 +102,15 @@ The File Explorer has the following configuration options:
   The default is the file store service group.  If you specify an empty array,
   no services will show up.
 
+* `display_backdrop` : boolean
+
+  Chooser: _Optional (default: false)_
+
+  Saver: _Optional (default: false)_
+
+  If `true`, displays a shadow backdrop behind the File Explorer, and prevents the
+  page body from scrolling.
+
 #### Chooser options
 
 * `multiselect` : boolean
@@ -341,7 +350,7 @@ The File Explorer has the following configuration options:
 * `explorer.choosify(element)`
 
   This method binds a click handler that launches the Chooser to the DOM element.
-  
+
 * `explorer.save(files)`
 
   This method allows you to launch a Saver. See *Saver Options* for more information

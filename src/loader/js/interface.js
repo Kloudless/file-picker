@@ -137,7 +137,6 @@
 
     var body = document.getElementsByTagName("body")[0];
     body.appendChild(frame);
-    bodyOverflow = body.style.overflow;
     if (!backdropDiv){
       var div = document.createElement('div');
       backdropDiv = body.appendChild(div);
@@ -173,6 +172,7 @@
     this.create_folder = (options.create_folder === undefined) ? true : options.create_folder;
     this.account_key = (options.account_key === undefined) ? false : options.account_key;
     this.persist = (options.persist === undefined) ? "local" : options.persist;
+    this.display_backdrop = (options.display_backdrop === undefined) ? false : options.display_backdrop;
     this.services = options.services || null;
     this.files = options.files || [];
     this.types = options.types || [];
@@ -344,8 +344,11 @@
       duration: 200
     });
 
-    backdropDiv.style.display = 'block';
-    body.style.overflow = 'hidden'; 
+    if (self.display_backdrop) {
+      backdropDiv.style.display = 'block';
+      bodyOverflow = body.style.overflow;
+      body.style.overflow = 'hidden';
+    }
 
     self._fire('open');
 
@@ -375,9 +378,11 @@
           frames[self.exp_id].style.display = 'none';
         }
       });
-      
-      backdropDiv.style.display = 'none';
-      body.style.overflow = bodyOverflow; 
+
+      if (self.display_backdrop) {
+        backdropDiv.style.display = 'none';
+        body.style.overflow = bodyOverflow;
+      }
     }
 
     self._fire('close');
