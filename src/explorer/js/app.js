@@ -383,7 +383,7 @@
           require(['models/account'], function(Account) {
             var i, local_data, active;
             for (i = 0; i < accounts.length; i++) {
-              (function(local_data){
+              (function(local_data) {
                 var created = new Account(local_data, function(acc) {
                   if (acc.connected) {
                     explorer.manager.accounts.push(acc);

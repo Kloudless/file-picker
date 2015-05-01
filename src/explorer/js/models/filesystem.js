@@ -162,7 +162,7 @@
         }).map(function(child) {
           // Set custom attributes.
           child.parent_obs = self.current();
-          if(child.size == null){
+          if (child.size == null) {
             child.friendlySize = "";
           } else {
             child.friendlySize = util.formatSize(child.size);
