@@ -102,6 +102,15 @@ The File Explorer has the following configuration options:
   The default is the file store service group.  If you specify an empty array,
   no services will show up.
 
+* `display_backdrop` : boolean
+
+  Chooser: _Optional (default: false)_
+
+  Saver: _Optional (default: false)_ 
+  
+  If `true`, displays a shadow backdrop behind the File Explorer, and prevents the
+  page body from scrolling.
+
 #### Chooser options
 
 * `multiselect` : boolean
