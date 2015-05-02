@@ -202,8 +202,6 @@
     var self = this;
 
     if(["success", "cancel"].indexOf(event) != -1) {
-      // If modifying the list of events, also modify explorer's app.js postMessage
-      // method to ensure clean up occurs.
       self.close();
     }
 
@@ -367,6 +365,8 @@
       queuedAction[self.exp_id] = {method: self.close};
       return;
     }
+
+    self.message('CLOSING');
 
     removeClass(body, "kfe-active");
 

@@ -331,19 +331,6 @@
             action: action,
           };
 
-          if (['success', 'cancel'].indexOf(action) != -1) {
-            // File Explorer will close. Clean up.
-            // Hide search first since animation transitions need to complete.
-            if ($("#search-query").is(":visible"))
-              $("#search-back-button").click();
-            self.view_model.loading(false);
-            self.view_model.error('');
-            if (self.view_model.files.table) {
-              self.view_model.files.table.finderSelect('unHighlightAll');
-            }
-            self.fileManager.files.removeAll(); // Saver
-          }
-
           if (data !== undefined) {
             if (action === 'success') {
 
@@ -1065,6 +1052,19 @@
       }
     };
 
+    FileExplorer.prototype.cleanUp = function() {
+      // File Explorer will close. Clean up.
+      var self = this;
+      if ($("#search-query").is(":visible"))
+        $("#search-back-button").click();
+      self.view_model.loading(false);
+      self.view_model.error('');
+      if (self.view_model.files.table) {
+        self.view_model.files.table.finderSelect('unHighlightAll');
+      }
+      self.fileManager.files.removeAll(); // Saver
+    }
+
     ko.bindingHandlers.finderSelect = {
       init: function(element, valueAccessor) {
         var selector = $(element).finderSelect({
@@ -1198,6 +1198,11 @@
       window.ko = ko;
     }
 
+    /*
+     * Message Event listener, dispatch and handlers.
+     * TODO: Move to separate module?
+     */
+
     // Initialise to '#/' route.
     window.addEventListener('message', function(message) {
       logger.debug('Explorer hears message: ', message);
@@ -1210,84 +1215,94 @@
       if (contents.action == 'INIT') {
         router.run('#/');
       } else if (contents.action == 'DATA') {
-
-        // Similar to an INIT call, but this time, the explorer has some data
-        // to initialize the explorer
-        var data = contents.data;
-
-        // Differentiate between saver and chooser
-        // Check the flavor on init call
-        if (data.flavor) {
-          // refresh and go back to accounts if going from saver to chooser
-          // or vice versa
-          if (config.flavor !== data.flavor) {
-            logger.debug('SWITCHING FLAVORS');
-            router.setLocation('#/accounts');
-          }
-
-          config.flavor = data.flavor;
-          explorer.view_model.flavor(config.flavor);
-        }
-
-        if (data.flavor == 'saver') {
-
-          // Add files to fileManager
-          if (data.files && data.files.length > 0) {
-            // first clear all files.
-            explorer.fileManager.files.removeAll();
-            for (var i = 0; i < data.files.length; i++) {
-              var file = data.files[i];
-              explorer.fileManager.add(file.url, file.name);
-            }
-          }
-
-          // Remove computer
-          if (config.computer && services()[0].id == 'computer') {
-            services.shift();
-          }
-        } else if (data.flavor == 'chooser') {
-          // Add computer
-          if (config.computer && services()[0].id != 'computer') {
-            services.unshift({
-              id: 'computer',
-              name: 'My Computer',
-              logo: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png'
-            });
-          }
-        }
-
-        // Call sync if frame has already been initialized and there are differences
-        // between storage and current accounts
-        if (explorer.manager.accounts().length !== 0) {
-          var accounts = storage.loadAccounts(config.app_id, config.services);
-          var account_ids = {};
-          var local_accounts = explorer.manager.accounts();
-          var i, different = false;
-          for (i = 0; i < accounts.length; i++) {
-            var account = accounts[i];
-            account_ids[account.account] = true;
-          }
-          for (i = 0; i < local_accounts.length; i++) {
-            var local_account = local_accounts[i];
-            if (! local_account.account in account_ids) {
-              different = true;
-              break;
-            }
-          }
-          // logger.debug(different || accounts.length != local_accounts.length);
-          if (different || accounts.length != local_accounts.length) {
-            explorer.view_model.sync(accounts, true);
-          }
-        }
-
-        // account key data
-        if (data.keys) {
-          explorer.view_model.sync(data.keys, true);
-        }
-
-        router.run('#/');
+        dataMessageHandler(contents.data);
+      } else if (contents.action == 'CLOSING') {
+        explorer.cleanUp();
       }
     });
+
+    function dataMessageHandler(data) {
+      // Similar to an INIT call, but this time, the explorer has some data
+      // to initialize the explorer
+
+      /*
+       * NOTE: This code is bad practice. config.flavor should be an observable
+       * that is subscribed to by any methods wanting to be notified of a change.
+       * TODO: Change this.
+       */
+
+      // Differentiate between saver and chooser
+      // Check the flavor on init call
+      if (data.flavor) {
+        // refresh and go back to accounts if going from saver to chooser
+        // or vice versa
+        if (config.flavor !== data.flavor) {
+          logger.debug('SWITCHING FLAVORS');
+          router.setLocation('#/accounts');
+        }
+
+        config.flavor = data.flavor;
+        explorer.view_model.flavor(config.flavor);
+      }
+
+      if (data.flavor == 'saver') {
+
+        // Add files to fileManager
+        if (data.files && data.files.length > 0) {
+          // first clear all files.
+          explorer.fileManager.files.removeAll();
+          for (var i = 0; i < data.files.length; i++) {
+            var file = data.files[i];
+            explorer.fileManager.add(file.url, file.name);
+          }
+        }
+
+        // Remove computer
+        if (config.computer && services()[0].id == 'computer') {
+          services.shift();
+        }
+      } else if (data.flavor == 'chooser') {
+        // Add computer
+        if (config.computer && services()[0].id != 'computer') {
+          services.unshift({
+            id: 'computer',
+            name: 'My Computer',
+            logo: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png'
+          });
+        }
+      }
+
+      // Call sync if frame has already been initialized and there are differences
+      // between storage and current accounts
+      if (explorer.manager.accounts().length !== 0) {
+        var accounts = storage.loadAccounts(config.app_id, config.services);
+        var account_ids = {};
+        var local_accounts = explorer.manager.accounts();
+        var i, different = false;
+        for (i = 0; i < accounts.length; i++) {
+          var account = accounts[i];
+          account_ids[account.account] = true;
+        }
+        for (i = 0; i < local_accounts.length; i++) {
+          var local_account = local_accounts[i];
+          if (! local_account.account in account_ids) {
+            different = true;
+            break;
+          }
+        }
+        // logger.debug(different || accounts.length != local_accounts.length);
+        if (different || accounts.length != local_accounts.length) {
+          explorer.view_model.sync(accounts, true);
+        }
+      }
+
+      // account key data
+      if (data.keys) {
+        explorer.view_model.sync(data.keys, true);
+      }
+
+      router.run('#/');
+    }
 
     // Looking up chunk size. Since the drop location doesn't really
     // change we look it up based on that. The /drop end point for the
