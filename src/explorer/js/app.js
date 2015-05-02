@@ -822,6 +822,7 @@
               }, 250, function() {
                 $(".breadcrumbs, .new-folder-button").toggle();
             });
+            $("#search-query").val("");
           } else{
             $("#search-enable-button").addClass('search-active');
             $(".new-folder-button, .breadcrumbs").toggle();
@@ -834,8 +835,15 @@
             $("#search-query").toggle('slide', {
               direction: "right"
             }, 250);
+            $("#search-query").focus()
+              .off("keyup")
+              .on("keyup", function(e) {
+                if (e.keyCode == 27) { // Escape key
+                  $("#search-back-button").click();
+                  e.stopPropagation();
+                }
+              });
           }
-
         });
       }
 
