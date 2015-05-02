@@ -200,7 +200,10 @@
   // Fire an event handler. Called by the message listeners.
   window.Kloudless._fileWidget.prototype._fire = function(event, data) {
     var self = this;
+
     if(["success", "cancel"].indexOf(event) != -1) {
+      // If modifying the list of events, also modify explorer's app.js postMessage
+      // method to ensure clean up occurs.
       self.close();
     }
 

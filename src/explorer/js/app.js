@@ -150,9 +150,7 @@
               // All requests are done
               if (requestCountSuccess + requestCountError == explorer.fileManager.files().length) {
                 explorer.view_model.postMessage('success', saves);
-                explorer.view_model.loading(false);
                 logger.debug('Successfully uploaded files: ', saves);
-                explorer.fileManager.files.removeAll();
               }
             };
 
@@ -244,8 +242,6 @@
               // TODO handle case if requestCountError != 0
               if (requestCountSuccess + requestCountError == selections.length) {
                 explorer.view_model.postMessage('success', selections);
-                explorer.view_model.files.table.finderSelect('unHighlightAll');
-                explorer.view_model.loading(false);
               }
             };
 
@@ -296,8 +292,6 @@
               }
             } else {
               explorer.view_model.postMessage('success', selections);
-              explorer.view_model.files.table.finderSelect('unHighlightAll');
-              explorer.view_model.loading(false);
             }
             // assuming 'folders' or 'all' is part of what can be selected
           } else if (config.types.indexOf('all') != -1 || config.types.indexOf('folders') != -1) {
@@ -313,8 +307,6 @@
                 }
               }
               explorer.view_model.postMessage('success', [clone]);
-              explorer.view_model.files.table.finderSelect('unHighlightAll');
-              explorer.view_model.loading(false);
             } else {
               explorer.view_model.error('This folder cannot be selected. Please choose again.');
               explorer.view_model.loading(false);
@@ -328,30 +320,39 @@
         // Quit the file explorer.
         cancel: function() {
           logger.debug('Quitting!');
-          self.view_model.error('');
           // postMessage to indicate failure.
           explorer.view_model.postMessage('cancel');
-          if (explorer.view_model.files.table) {
-            explorer.view_model.files.table.finderSelect('unHighlightAll');
-          }
         },
 
         postMessage: function(action, data) {
           var post_data = {
-            exp_id: explorer.exp_id,
+            exp_id: self.exp_id,
             type: 'explorer',
             action: action,
           };
+
+          if (['success', 'cancel'].indexOf(action) != -1) {
+            // File Explorer will close. Clean up.
+            // Hide search first since animation transitions need to complete.
+            if ($("#search-query").is(":visible"))
+              $("#search-back-button").click();
+            self.view_model.loading(false);
+            self.view_model.error('');
+            if (self.view_model.files.table) {
+              self.view_model.files.table.finderSelect('unHighlightAll');
+            }
+            self.fileManager.files.removeAll(); // Saver
+          }
 
           if (data !== undefined) {
             if (action === 'success') {
 
               // Add in Account Key on success for files.
               if (config.account_key && config.user_data.trusted) {
-                var active_account = explorer.manager.active();
+                var active_account = self.manager.active();
                 var account_id = active_account.filesystem().id;
                 if (active_account.filesystem &&
-                    explorer.view_model.current() === 'files') {
+                    self.view_model.current() === 'files') {
                   for (var i = 0; i < data.length; i++) {
                     if (account_id == data[i].account) {
                       data[i]['account_key'] = {
@@ -807,19 +808,20 @@
         $(".search").off('click');
         $("#search-enable-button, #search-back-button").on('click', function() {
           $(".refresh-button, #search-back-button").toggle();
+          var duration = 150;
           if ($("#search-query").is(":visible")) {
             $("#search-enable-button").removeClass('search-active');
             explorer.view_model.files.refresh();
             //Slide along with search query
             $("#search-enable-button").animate({
               left: "+=360"
-            }, 250);
+            }, duration);
             $("#search-enable-button").animate({
               left: "-=360"
             }, 0);
             $("#search-query").toggle('slide', {
               direction: "right"
-              }, 250, function() {
+              }, duration, function() {
                 $(".breadcrumbs, .new-folder-button").toggle();
             });
             $("#search-query").val("");
@@ -831,10 +833,10 @@
             }, 0);
             $("#search-enable-button").animate({
               left: "-=360"
-            }, 250);
+            }, duration);
             $("#search-query").toggle('slide', {
               direction: "right"
-            }, 250);
+            }, duration);
             $("#search-query").focus()
               .off("keyup")
               .on("keyup", function(e) {
@@ -1054,7 +1056,6 @@
                 UploadComplete: function(files) {
                   $('#upload-button').text('Upload');
                   explorer.view_model.postMessage('success', selections);
-                  explorer.view_model.loading(false);
                   selections = [];
                   this.splice();
                 }
