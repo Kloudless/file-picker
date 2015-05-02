@@ -47,12 +47,13 @@
   require(['jquery', 'vendor/knockout', 'vendor/sammy',
            'vendor/loglevel', 'vendor/moment',
            'config', 'storage', 'accounts', 'files', 'auth',
+           'models/search',
            // Imports below don't need to be assigned to variables.
            'jqueryui', 'vendor/jquery-dropdown', 'vendor/jquery-scrollstop',
            'moxie', 'plupload', 'pluploadui', 'vendor/jquery.finderSelect',
            'iexd-transport'],
   function($, ko, sammy, logger, moment, config, storage, AccountManager,
-    FileManager, auth) {
+    FileManager, auth, Search) {
 
     // Initialise and configure.
     logger.setLevel(config.logLevel);
@@ -705,14 +706,12 @@
                 return;
               }
               self.view_model.loading(true);
-              require(['models/search'], function(Search) {
-                var currentAcc = explorer.manager.active().filesystem();
-                var s = new Search(currentAcc.id, currentAcc.key, query);
-                s.getSearch(function() {
-                  var fs = self.manager.active().filesystem();
-                  fs.display(fs.filterChildren(s.results.objects));
-                  self.view_model.loading(false);
-                });
+              var currentAcc = explorer.manager.active().filesystem();
+              var s = new Search(currentAcc.id, currentAcc.key, query);
+              s.getSearch(function() {
+                var fs = self.manager.active().filesystem();
+                fs.display(fs.filterChildren(s.results.objects));
+                self.view_model.loading(false);
               });
             })(self.view_model.files.searchQuery());
           },
