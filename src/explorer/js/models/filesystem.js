@@ -267,6 +267,7 @@
         el.parent_obs = self.current();
         el.type = 'newfolder';
         el.size = null;
+        el.friendlySize = null;
         el.modified = null;
 
         list.unshift(el);
