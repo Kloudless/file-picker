@@ -13,7 +13,7 @@
       this.request = null;
     };
 
-    Search.prototype.getSearch = function(callback) {
+    Search.prototype.search = function(callback, errback) {
       var self = this;
 
       self.request = $.ajax({
@@ -24,11 +24,13 @@
         },
         success: function(data) {
           self.results = data;
-          logger.debug('Search results on', self.q, ':', self.results);
-          callback();
+          logger.debug('[Account ' + self.account + '] Search results on ',
+                       self.q, ': ', self.results);
+          if (callback) callback();
         },
         error: function() {
-          logger.error("Error with the search request.");
+          logger.error('[Account ' + self.account + '] Search request failed.');
+          if (errback) errback();
         },
         datatype: 'json'
       })

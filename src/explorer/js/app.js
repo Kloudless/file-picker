@@ -457,7 +457,6 @@
             var self = this();
             return self.service;
           }, self.manager.active),
-          flavor: ko.observable(config.flavor),
           logout: function() {
             explorer.manager.accounts.removeAll();
             storage.removeAllAccounts(config.app_id);
@@ -708,9 +707,12 @@
               self.view_model.loading(true);
               var currentAcc = explorer.manager.active().filesystem();
               var s = new Search(currentAcc.id, currentAcc.key, query);
-              s.getSearch(function() {
+              s.search(function() {
                 var fs = self.manager.active().filesystem();
                 fs.display(fs.filterChildren(s.results.objects));
+                self.view_model.loading(false);
+              }, function() {
+                self.view_model.error("The search request was not successful.");
                 self.view_model.loading(false);
               });
             })(self.view_model.files.searchQuery());

@@ -26,6 +26,7 @@
         size: null,
         friendlySize: null,
         parent_obs: null,
+        path: '/',
         children: ko.observableArray()
       });
 
@@ -269,6 +270,7 @@
         el.size = null;
         el.friendlySize = null;
         el.modified = null;
+        el.path = self.path() ? "/" + self.path().join('/') + "/new" : self.path();
 
         list.unshift(el);
 

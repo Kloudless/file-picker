@@ -31,10 +31,12 @@
         a(data-bind='click: newdir, attr: {href: "#"}').new-folder-button
         // /ko
         a(data-bind='click: refresh, attr: {href: "#"}').refresh-button
+        // ko if: $root.flavor() == 'chooser'
         form.search-form(data-bind="submit: search")
           a#search-back-button(data-bind='click: refresh').search
           input#search-query(type="text", placeholder="Search", data-bind="textInput: searchQuery").search
           a#search-enable-button.search
+        // /ko
 
       //- Breadcrumbs
       .breadcrumbcontainer(data-bind='with: files')
@@ -121,7 +123,7 @@
         tbody(data-bind='finderSelect: $data')
           // ko foreach: cwd
           // ko ifnot: type == "disabled" || type == "newfolder"
-          tr(data-bind="click: $parent.navigate, attr: {'data-type': type}")
+          tr(data-bind="click: $parent.navigate, attr: {'data-type': type, 'title': path || ' '}")
             td
               span(data-bind='if: type == "folder"')
                 div.foldericon()
