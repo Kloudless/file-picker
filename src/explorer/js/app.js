@@ -708,8 +708,9 @@
               require(['models/search'], function(Search) {
                 var currentAcc = explorer.manager.active().filesystem();
                 var s = new Search(currentAcc.id, currentAcc.key, query);
-                s.getSearch( function() {
-                  self.manager.active().filesystem().display(s.results.objects);
+                s.getSearch(function() {
+                  var fs = self.manager.active().filesystem();
+                  fs.display(fs.filterChildren(s.results.objects));
                   self.view_model.loading(false);
                 });
               });

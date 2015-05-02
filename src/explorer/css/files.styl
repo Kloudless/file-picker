@@ -246,16 +246,16 @@
                 display: inline-block;
                 float: right;
             .search-form
-                float:right;
+                float: right;
                 .search
-                    float:right;
+                    float: right;
                 #search-enable-button
-                    background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") -1px -224px no-repeat
+                    background: unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") -1px -224px no-repeat
                     width: 24px
                     height: 24px
                     margin-right: 3px
                     margin-top: 9px
-                    position:relative;
+                    position: relative;
                     &.search-active
                         background-position: -1px -249px
                 #search-query
@@ -264,7 +264,8 @@
                     margin-right: -12px
                     margin-top: 8px
                     display: none;
-                    text-align:right;
+                    text-align: right;
+                    padding: 0 5px;
                 #search-back-button
                     background: url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png') 0px -146px no-repeat
                     width: 16px
@@ -419,7 +420,7 @@
                 cursor: pointer
                 &.info-row
                     cursor: auto
-                &:not(.info-row):hover
+                &:not(.info-row):not(.selected):hover
                     background-color: #fafcff
                     td
                         color:#222 !important
@@ -441,8 +442,7 @@
                     div.closeicon
                         width: 10px;
                         height: 10px;
-                        margin-bottom: 0px;
-                        margin-left: 4px;
+                        margin: 0px;
                         background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/modal_icons.png')") 0px 0px no-repeat
                     input
                         line-height: 14px;

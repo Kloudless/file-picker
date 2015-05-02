@@ -126,11 +126,11 @@
         logger.debug('Received refresh: ', data);
 
         // replace old values?
-        var oldArray;
+        var currentChildren;
         if (self.page == 1) {
-          oldArray = [];
+          currentChildren = [];
         } else {
-          oldArray = self.current().children();
+          currentChildren = self.current().children();
         }
 
         if (data.has_next) {
@@ -139,43 +139,10 @@
           self.paging = false;
         }
 
-        var newArray = data.objects.filter(function(child) {
-          // Filter types.
-          var extension = child.name.substr(child.name.lastIndexOf('.') + 1);
-          logger.debug('Filtering child: ', child.name, extension);
+        // Add filtered children.
+        ko.utils.arrayPushAll(currentChildren, self.filterChildren(data.objects));
 
-          if (child.type == 'folder' ||
-              (((config.types.length === 1 && config.types.indexOf('files') != -1) ||
-                (config.types.length === 1 && config.types.indexOf('all') != -1) ||
-                (config.types.indexOf(extension.toLowerCase()) != -1) ||
-                (config.types.indexOf('') != -1 && child.name.indexOf('.') == -1))
-                  && config.flavor == 'chooser')) {
-            logger.debug('Child passed type test.');
-            return true;
-          } else if (config.types.indexOf('folders') != -1 || config.flavor == 'saver') {
-            // add grayed out files
-            child.type = 'disabled';
-            return true;
-          }
-          logger.debug('Child failed type test.');
-          return false;
-        }).map(function(child) {
-          // Set custom attributes.
-          child.parent_obs = self.current();
-          if (child.size == null) {
-            child.friendlySize = "";
-          } else {
-            child.friendlySize = util.formatSize(child.size);
-          }
-          return child;
-        });
-
-        // add back old values
-        ko.utils.arrayPushAll(oldArray, newArray);
-        self.current().children(oldArray);
-
-        // sort array
-        self.sort();
+        self.display(currentChildren);
 
         logger.debug('Directory updated: ', self.current());
 
@@ -190,6 +157,48 @@
         logger.info('Refresh completed.');
 
         self.request = null;
+      });
+    }
+
+    Filesystem.prototype.display = function(files) {
+      // Be sure to call filterChildren on any new objects in
+      // files prior to calling this method with files.
+      var self = this;
+      self.current().children(files);
+      self.sort();
+    };
+
+    Filesystem.prototype.filterChildren = function(data) {
+      var self = this;
+      return data.filter(function(child) {
+        // Filter types.
+        var extension = child.name.substr(child.name.lastIndexOf('.') + 1);
+        logger.debug('Filtering child: ', child.name, extension);
+
+        if (child.type == 'folder' ||
+            (((config.types.length === 1 && config.types.indexOf('files') != -1) ||
+              (config.types.length === 1 && config.types.indexOf('all') != -1) ||
+              (config.types.indexOf(extension.toLowerCase()) != -1) ||
+              (config.types.indexOf('') != -1 && child.name.indexOf('.') == -1))
+             && config.flavor == 'chooser')) {
+          logger.debug('Child passed type test.');
+          return true;
+        } else if (config.types.indexOf('folders') != -1 || config.flavor == 'saver') {
+          // add grayed out files
+          child.type = 'disabled';
+          return true;
+        }
+        logger.debug('Child failed type test.');
+        return false;
+      }).map(function(child) {
+        // Set custom attributes.
+        child.parent_obs = self.current();
+        if (child.size == null) {
+          child.friendlySize = "";
+        } else {
+          child.friendlySize = util.formatSize(child.size);
+        }
+        return child;
       });
     }
 
@@ -332,12 +341,6 @@
 
         self.request = null;
       });
-    };
-
-    Filesystem.prototype.display = function(files) {
-      var self = this;
-      self.current().children(files);
-      self.sort();
     };
 
     // Sort by preference
