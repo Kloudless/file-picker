@@ -72,7 +72,7 @@
         'copy' : 'Copy',
         'egnyte' : 'Egnyte',
         's3' : 'Amazon S3',
-        'sharepoint': 'SharePoint',
+        'sharepoint': 'SharePoint Online',
         'onedrivebiz': 'OneDrive for Business',
         'azure': 'Azure Storage',
         'cmis' : 'CMIS',
