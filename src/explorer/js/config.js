@@ -75,6 +75,9 @@
             's3',
             'sharepoint',
             'onedrivebiz',
+            'hubspot',
+            'salesforce',
+            'smb',
             'azure',
             'cmis',
             'alfresco'
@@ -91,6 +94,9 @@
             'egnyte',
             'sharepoint',
             'onedrivebiz',
+            'hubspot',
+            'salesforce',
+            'smb',
             'cmis',
             'alfresco'
         ],
