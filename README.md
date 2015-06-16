@@ -46,8 +46,8 @@ It supports choosing files from the local machine as well as cloud storage.
 ### Saver
 
 The Saver allows your application to prompt a user to select a folder to save
-files to and file metadata will be returned to the developer.  It supports single
-and multiple files.
+files to. Metadata on the newly uploaded files will be returned to the developer.
+URLs to the files to upload must be provided.
 
 ### Configuration
 
@@ -247,7 +247,9 @@ The File Explorer has the following configuration options:
 
   This option should list files for the File Explorer to save. The format
   should be an array of Javascript Objects containing a file url and name.
-  You can specify up to 100 files.
+  You can specify up to 100 files. Each file will be uploaded via the Kloudless
+  API's [upload endpoint](http://developers.kloudless.com/docs#files-upload-a-file),
+  using the `url` attribute.
 
   ```javascript
     // Example initialization with files to save.
