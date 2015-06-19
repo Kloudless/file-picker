@@ -89,6 +89,7 @@
   var cl = document.getElementById('close-test');
   cl.addEventListener('click', function() {
     explorer.close();
+    second.close();
   });
 
   // Test second file explorer.
@@ -112,7 +113,6 @@
   });
 
   second.choosify(document.getElementById('folder-test'));
-
 
   // Test saver.
   var saver = window.Kloudless.explorer({
