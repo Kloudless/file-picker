@@ -16,6 +16,7 @@
       this.paging = true;
       this.page_size = 1000;
       this.sortOrder = 1;
+      this.sortOption = null;
 
       // default - 'root' is a special file type.
       this.current = ko.observable({
@@ -338,13 +339,20 @@
     // Sort by preference
     Filesystem.prototype.sort = function(option) {
       var self = this;
-      var reverse = Math.pow(-1, self.sortOrder);
+      
       $(".arrow-down").hide();
       $(".arrow-up").hide();
       if (option === undefined) {
-        option = "name";
+          option = "name";
+          self.sortOrder++;
+          if (self.sortOption != null) {
+            option = self.sortOption;
+          }
       }
-      $("#sort-" + option + "-" + (self.sortOrder % 2 == 0 ? "up" : "down")).show();
+      logger.warn(option)
+      self.sortOption = option;
+      var reverse = Math.pow(-1, self.sortOrder);
+      $("#sort-" + option + "-" + (reverse > 0 ? "up" : "down")).show();
       self.current().children.sort(function(left, right) {
         if (left.type == 'folder' && right.type != 'folder') {
           return -1;
