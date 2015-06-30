@@ -953,12 +953,34 @@
                     }
                   });
 
+                  // Find IE version number.
+                  function ieVersion() {
+                    // If browser is IE, return IE version.
+                    // Else for other browsers, return 0.
+                    var ua = window.navigator.userAgent;
+                    var msie = ua.indexOf("MSIE ");
+                    var trident = ua.indexOf('Trident/');
+                    if (msie > 0) {
+                      return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)));
+                    }
+                    if (trident > 0) {
+                      var rv = ua.indexOf('rv:');
+                      return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)));
+                    }
+                    return 0;
+                  }
+
                   // Add confirmation when closing tabs during uploading process
                   $(window).bind('beforeunload', function(){
-                    if (uploader.total.queued > 0) {
-                      var msg = ('Are you sure you want to close this tab? You have an' +
-                        ' upload in progress.');
-                      return msg;
+                    var ie = ieVersion();
+                    logger.debug("ie version: " + ie);
+                    // Add confirmation if not IE or IE 11 only.
+                    if (ie == 0 || ie == 11) {
+                      if (uploader.total.queued > 0) {
+                        var msg = ('Are you sure you want to close this tab? You have an' +
+                          ' upload in progress.');
+                        return msg;
+                      }
                     }
                   });
 
