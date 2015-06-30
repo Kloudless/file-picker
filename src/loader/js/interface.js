@@ -270,7 +270,7 @@
       exp.keys = options.keys;
     }
 
-    exp.on('no_drop_location', function() {
+    exp.on('noDropLocation', function() {
       console.log('ERROR: No upload location configured!');
     });
 
@@ -302,9 +302,7 @@
       return;
     }
 
-    var frame = frames[self.exp_id];
-    self.moveFrameToElement(frame, element);
-
+    self.moveFrameToElement(frames[self.exp_id], element);
     return self;
   };
 
@@ -315,15 +313,17 @@
     frame.style['opacity'] = '0';
     frame.style['height'] = '100%';
     frame.style['width'] = '100%';
-    frame.removeAttribute('class');
     frame.setAttribute('class', 'kloudless-modal-dropzone');
     frame.onload = function() {
       var frameDoc = frame.contentDocument || frame.contentWindow.document;
+
       var clickHandler = function() {
         self.computerView._open({
           flavor: 'computer'
         });
       };
+
+      frameDoc.body.addEventListener('click', clickHandler);
 
       self._on('viewSwitched', function(data) {
         if (data.newView === 'dropzone') {
@@ -339,25 +339,14 @@
         frameDoc.body.removeEventListener('click', clickHandler);
       });
 
-      // since #moveFrameToElement will override CSS properties, we need
-      // to retain original values so we can restore them.
+      // Since the drop event will override CSS properties, we need
+      // to retain original values so we can restore them on close.
       var style = window.getComputedStyle(element);
-      var savedStyle = {};
-      //for (var prop in style) {
-      //if (style.hasOwnProperty(prop)) {
-      //savedStyle[prop] = style[prop];
-      //}
-      //}
       var height = style['height'];
       var width = style['width'];
       var borderStyle = style['border-style'];
 
       self._on('close', function() {
-        //for (var prop in savedStyle) {
-        //if (savedStyle.hasOwnProperty(prop)) {
-        //element.style[prop] = savedStyle[prop];
-        //}
-        //}
         element.style['height'] = height;
         element.style['width'] = width;
         element.style['border-style'] = borderStyle;
@@ -370,7 +359,6 @@
         frameDoc.body.addEventListener('click', clickHandler);
       });
 
-      frameDoc.body.addEventListener('click', clickHandler);
     };
 
     element.appendChild(frame);
@@ -573,7 +561,8 @@ window.Kloudless._explorer.prototype.dropify = function(element) {
     app_id: self.app_id,
     flavor: 'computer',
     // Must be true for users to upload more than 1 file at a time
-    multiselect: self.multiselect
+    multiselect: self.multiselect,
+    computer: true
   });
 
   // copy over event handlers

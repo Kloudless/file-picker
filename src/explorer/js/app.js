@@ -63,7 +63,7 @@
 
     // Enable cors
     $.support.cors = true;
-    var dropZoneLoaded = false;
+    var dropzoneLoaded = false;
     var filesQueue = [];
 
     var service_names = {
@@ -97,7 +97,7 @@
       });
     }
 
-    if (config.computer) {
+    if (config.computer || config.flavor === 'dropper') {
       services.unshift({
         id: 'computer',
         name: 'My Computer',
@@ -759,14 +759,14 @@
 
       // When view is changed, the old view template is unloaded.
       if (to !== 'dropzone') {
-        dropZoneLoaded = false;
+        dropzoneLoaded = false;
       }
 
       if (to === 'dropzone') {
         var dz = $('#zzz');
 
         // Make sure to only load the dropzone once
-        if (!dropZoneLoaded) {
+        if (!dropzoneLoaded) {
           var dropzone = new mOxie.FileDrop({
             drop_zone: dz.get(0)
           });
@@ -782,7 +782,7 @@
           };
 
           dropzone.init();
-          dropZoneLoaded = true;
+          dropzoneLoaded = true;
         }
       }
 
@@ -1219,6 +1219,7 @@
       });
       // Switch to the computer view
       this.get('#/computer', function() {
+        logger.debug('Switching to computer view');
         explorer.switchViewTo('computer');
       });
       // Switch to the dropzone view
@@ -1389,7 +1390,7 @@
             services.shift();
           }
           config.computer = false;
-          explorer.view_model.postMessage('no_drop_location');
+          explorer.view_model.postMessage('noDropLocation');
       });
 
     // This signal is placed last and indicates all the JS has loaded
