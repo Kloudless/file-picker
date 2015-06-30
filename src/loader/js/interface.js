@@ -136,7 +136,11 @@
     frames[exp_id] = frame;
 
     var body = document.getElementsByTagName("body")[0];
-    body.appendChild(frame);
+
+    if (self.flavor !== 'dropper') {
+      body.appendChild(frame);
+    }
+
     if (!backdropDiv){
       var div = document.createElement('div');
       backdropDiv = body.appendChild(div);
@@ -149,6 +153,7 @@
   window.Kloudless._fileWidget = function(options) {
     this._setOptions(options);
     this.handlers = {};
+    this.computerViewHandlers = {};
   };
 
   // Set options.
@@ -191,9 +196,18 @@
 
   // Define handlers. New handlers will override pre-existing ones.
   window.Kloudless._fileWidget.prototype.on = function(event, handler) {
-    if (this.handlers[event] === undefined)
-      this.handlers[event] = [];
-    this.handlers[event].push(handler);
+    // Copy over event handlers to auxilliary computer view.
+    if (this.flavor === 'dropper') {
+      this._on(event, handler, this.computerViewHandlers);
+    }
+    return this._on(event, handler);
+  };
+
+  window.Kloudless._fileWidget.prototype._on = function(event, handler, handlerStore) {
+    var handlers = handlerStore || this.handlers;
+    if (handlers[event] === undefined)
+      handlers[event] = [];
+    handlers[event].push(handler);
     return this;
   };
 
@@ -256,6 +270,10 @@
       exp.keys = options.keys;
     }
 
+    exp.on('no_drop_location', function() {
+      console.log('ERROR: No upload location configured!');
+    });
+
     explorers[exp.exp_id] = exp;
 
     return exp;
@@ -271,6 +289,93 @@
     enumerable: false,
     value: window.Kloudless._explorer
   });
+
+  // Open the dropper
+  window.Kloudless._explorer.prototype.drop = function(element) {
+    var self = this;
+
+    if (!self.loaded) {
+      queuedAction[self.exp_id] = {
+        method: self.drop,
+        args: [element]
+      };
+      return;
+    }
+
+    var frame = frames[self.exp_id];
+    self.moveFrameToElement(frame, element);
+
+    return self;
+  };
+
+  window.Kloudless._explorer.prototype.moveFrameToElement = function(frame, element) {
+    var self = this;
+
+    frame.style['display'] = 'block';
+    frame.style['opacity'] = '0';
+    frame.style['height'] = '100%';
+    frame.style['width'] = '100%';
+    frame.removeAttribute('class');
+    frame.setAttribute('class', 'kloudless-modal-dropzone');
+    frame.onload = function() {
+      var frameDoc = frame.contentDocument || frame.contentWindow.document;
+      var clickHandler = function() {
+        self.computerView._open({
+          flavor: 'computer'
+        });
+      };
+
+      self._on('viewSwitched', function(data) {
+        if (data.newView === 'dropzone') {
+          frame.style['opacity'] = '1';
+        }
+      });
+
+      self._on('drop' ,function(data) {
+        element.style['width'] = '700px';
+        element.style['height'] = '515px';
+        element.style['border-style'] = 'none';
+        frame.style['opacity'] = '1';
+        frameDoc.body.removeEventListener('click', clickHandler);
+      });
+
+      // since #moveFrameToElement will override CSS properties, we need
+      // to retain original values so we can restore them.
+      var style = window.getComputedStyle(element);
+      var savedStyle = {};
+      //for (var prop in style) {
+      //if (style.hasOwnProperty(prop)) {
+      //savedStyle[prop] = style[prop];
+      //}
+      //}
+      var height = style['height'];
+      var width = style['width'];
+      var borderStyle = style['border-style'];
+
+      self._on('close', function() {
+        //for (var prop in savedStyle) {
+        //if (savedStyle.hasOwnProperty(prop)) {
+        //element.style[prop] = savedStyle[prop];
+        //}
+        //}
+        element.style['height'] = height;
+        element.style['width'] = width;
+        element.style['border-style'] = borderStyle;
+
+        self._open({
+          flavor: 'dropper'
+        });
+
+        // rebind click handler
+        frameDoc.body.addEventListener('click', clickHandler);
+      });
+
+      frameDoc.body.addEventListener('click', clickHandler);
+    };
+
+    element.appendChild(frame);
+    return frame;
+  };
 
   // Open the chooser
   window.Kloudless._explorer.prototype.choose = function() {
@@ -361,6 +466,10 @@
     var self = this;
     var body = document.getElementsByTagName("body")[0];
 
+    if (self.computerView) {
+      self.computerView.close();
+    }
+
     if (!self.loaded) {
       queuedAction[self.exp_id] = {method: self.close};
       return;
@@ -370,26 +479,29 @@
 
     removeClass(body, "kfe-active");
 
-    if(typeof(window.Kloudless._fileWidget['lastScrollTop']) != "undefined") {
-      if(isMobile) {
-        body.scrollTop = window.Kloudless._fileWidget['lastScrollTop'];
+    var lastScrollTop = window.Kloudless._fileWidget.lastScrollTop;
+    if (typeof(lastScrollTop) != "undefined") {
+      if (isMobile) {
+        body.scrollTop = lastScrollTop;
       }
+    }
 
+    if (self.flavor !== 'dropper') {
       FX.fadeOut(frames[self.exp_id],{
         duration: 200,
         complete: function() {
           frames[self.exp_id].style.display = 'none';
         }
       });
+    }
 
-      if (self.display_backdrop) {
-        backdropDiv.style.display = 'none';
-        body.style.overflow = bodyOverflow;
-      }
+    if (self.display_backdrop) {
+      backdropDiv.style.display = 'none';
+      body.style.overflow = bodyOverflow;
     }
 
     self._fire('close');
-  }
+  };
 
   // Send a message to the explorer frame
   window.Kloudless._explorer.prototype.message = function(action, data) {
@@ -450,5 +562,41 @@
       });
     }
     return this;
+  };
+
+// Bind a file exploring dropzone to an element.
+window.Kloudless._explorer.prototype.dropify = function(element) {
+  var self = this;
+
+  // create auxillary file explorer for computer view
+  self.computerView = window.Kloudless.explorer({
+    app_id: self.app_id,
+    flavor: 'computer',
+    // Must be true for users to upload more than 1 file at a time
+    multiselect: self.multiselect
+  });
+
+  // copy over event handlers
+  queuedAction[self.computerView.exp_id] = {
+    'method': function() {
+      self.computerView.handlers = self.computerViewHandlers;
+    }
+  };
+
+  if (element instanceof Array) {
+    for (var i = 0; i < element.length; i++) {
+      var el = element[i];
+      self.drop(el);
+    }
+  } else if (window.jQuery !== undefined && element instanceof window.jQuery) {
+    for (var i = 0; i < element.length; i++) {
+      var el = element.get(i);
+      self.drop(el);
+    }
+  } else {
+    self.drop(element);
   }
+  return this;
+};
+
 })();
