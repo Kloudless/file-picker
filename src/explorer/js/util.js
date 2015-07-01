@@ -29,6 +29,12 @@
     },
 
     /**
+     * IE Version
+     */
+    ieVersion: ieVersion,
+    isIE: isIE,
+
+    /**
       *Formats the sizes for files in the FileSystem
       */
 
