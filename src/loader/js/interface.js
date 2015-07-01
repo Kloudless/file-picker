@@ -290,22 +290,6 @@
     value: window.Kloudless._explorer
   });
 
-  // Open the dropper
-  window.Kloudless._explorer.prototype.drop = function(element) {
-    var self = this;
-
-    if (!self.loaded) {
-      queuedAction[self.exp_id] = {
-        method: self.drop,
-        args: [element]
-      };
-      return;
-    }
-
-    self.moveFrameToElement(frames[self.exp_id], element);
-    return self;
-  };
-
   window.Kloudless._explorer.prototype.moveFrameToElement = function(frame, element) {
     var self = this;
 
@@ -556,6 +540,27 @@
 window.Kloudless._explorer.prototype.dropify = function(element) {
   var self = this;
 
+  if (!self.loaded) {
+    queuedAction[self.exp_id] = {
+      method: self.dropify,
+      args: [element]
+    };
+    return;
+  }
+
+  var errorMsg = 'ERROR: Please specify a valid HTML element to dropify!';
+  if (element instanceof Array) {
+    if (element.length < 1) {
+      return console.log(errorMsg);
+    }
+    element = element[0];
+  } else if (window.jQuery !== undefined && element instanceof window.jQuery) {
+    if (element.length < 1) {
+      return console.log(errorMsg);
+    }
+    element = element.get(i);
+  }
+
   // create auxillary file explorer for computer view
   self.computerView = window.Kloudless.explorer({
     app_id: self.app_id,
@@ -572,20 +577,9 @@ window.Kloudless._explorer.prototype.dropify = function(element) {
     }
   };
 
-  if (element instanceof Array) {
-    for (var i = 0; i < element.length; i++) {
-      var el = element[i];
-      self.drop(el);
-    }
-  } else if (window.jQuery !== undefined && element instanceof window.jQuery) {
-    for (var i = 0; i < element.length; i++) {
-      var el = element.get(i);
-      self.drop(el);
-    }
-  } else {
-    self.drop(element);
-  }
-  return this;
+  self.moveFrameToElement(frames[self.exp_id], element);
+
+  return self;
 };
 
 })();

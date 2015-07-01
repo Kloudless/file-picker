@@ -24,7 +24,8 @@
       multiselect: JSON.parse(get_query_variable('multiselect')),
       link: JSON.parse(get_query_variable('link')),
       direct_link: JSON.parse(get_query_variable('direct_link')),
-      computer: JSON.parse(get_query_variable('computer')),
+      computer: JSON.parse(get_query_variable('computer')) ||
+        get_query_variable('flavor') === 'dropper',
       account_key: JSON.parse(get_query_variable('account_key')),
       services: JSON.parse(get_query_variable('services')),
       persist: JSON.parse(get_query_variable('persist')),

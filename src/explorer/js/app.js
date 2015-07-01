@@ -97,7 +97,7 @@
       });
     }
 
-    if (config.computer || config.flavor === 'dropper') {
+    if (config.computer) {
       services.unshift({
         id: 'computer',
         name: 'My Computer',
