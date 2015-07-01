@@ -66,6 +66,9 @@
     var dropzoneLoaded = false;
     var filesQueue = [];
 
+    // This can be generalized in the future with a config option
+    var startView = (config.flavor === 'dropzone') ? 'dropzone' : 'accounts';
+
     var service_names = {
         'dropbox' : 'Dropbox',
         'gdrive' : 'Google Drive',
@@ -121,13 +124,14 @@
 
       this.exp_id = config.exp_id;
 
-      // View model setup.
       var self = this;
+
+      // View model setup.
       this.view_model = {
         flavor: ko.observable(config.flavor),
 
         // The current view: alternates between 'files' and 'accounts'
-        current: ko.observable('accounts'),
+        current: ko.observable(startView),
 
         // Save all files in FileManager to the selected directory
         save: function() {
@@ -750,11 +754,6 @@
     // Switch views between 'accounts', 'files', and 'computer'.
     FileExplorer.prototype.switchViewTo = function(to) {
       var explorer = this;
-
-      explorer.view_model.postMessage('viewSwitched', {
-        newView: to
-      });
-
       explorer.view_model.current(to);
 
       // When view is changed, the old view template is unloaded.
@@ -763,7 +762,7 @@
       }
 
       if (to === 'dropzone') {
-        var dz = $('#zzz');
+        var dz = $('#dropzone');
 
         // Make sure to only load the dropzone once
         if (!dropzoneLoaded) {
@@ -1240,15 +1239,7 @@
       var accounts = storage.loadAccounts(config.app_id, config.services);
       logger.debug(accounts);
 
-      if (explorer.view_model.flavor() === 'dropper') {
-        this.get('#/', function(ctx) {
-          router.setLocation('#/dropzone');
-        });
-      } else if (explorer.view_model.flavor() === 'computer') {
-        this.get('#/', function(ctx) {
-          router.setLocation('#/computer');
-        });
-      } else if (accounts.length == 0) {
+      if (accounts.length == 0) {
         this.get('#/', function(ctx) {
           router.setLocation('#/accounts');
         });
@@ -1282,7 +1273,11 @@
       var contents = JSON.parse(message.data);
       // TODO: future config options
       if (contents.action == 'INIT') {
-        router.run('#/');
+        if (startView && startView !== 'accounts') {
+          router.run('#/' + startView);
+        } else {
+          router.run('#/');
+        }
       } else if (contents.action == 'DATA') {
         dataMessageHandler(contents.data);
       } else if (contents.action == 'CLOSING') {
@@ -1339,10 +1334,7 @@
             logo: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png'
           });
         }
-      } else if (data.flavor == 'computer') {
-        router.setLocation('#/computer');
-
-      } else if (data.flavor == 'dropper') {
+      } else if (data.flavor == 'dropzone') {
         router.setLocation('#/dropzone');
       }
 
@@ -1375,7 +1367,6 @@
         explorer.view_model.sync(data.keys, true);
       }
 
-      router.run('#/');
     }
 
     // Looking up chunk size. Since the drop location doesn't really
@@ -1390,7 +1381,6 @@
             services.shift();
           }
           config.computer = false;
-          explorer.view_model.postMessage('noDropLocation');
       });
 
     // This signal is placed last and indicates all the JS has loaded

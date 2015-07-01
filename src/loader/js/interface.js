@@ -111,7 +111,7 @@
   document.getElementsByTagName('head')[0].appendChild(style);
 
   // Initialise an iframe.
-  var initialise_frame = function(options) {
+  var initialise_frame = function(options, elementId) {
     var exp_id = Math.floor(Math.random() * Math.pow(10, 12));
     var frame = document.createElement('iframe');
 
@@ -137,7 +137,10 @@
 
     var body = document.getElementsByTagName("body")[0];
 
-    if (self.flavor !== 'dropper') {
+    if (elementId) {
+      var el = document.getElementById(elementId);
+      el.appendChild(frame);
+    } else {
       body.appendChild(frame);
     }
 
@@ -153,7 +156,7 @@
   window.Kloudless._fileWidget = function(options) {
     this._setOptions(options);
     this.handlers = {};
-    this.computerViewHandlers = {};
+    this.defaultHandlers = {};
   };
 
   // Set options.
@@ -167,6 +170,7 @@
     this.exp_id = options.exp_id;
 
     // These don't need to be passed for query variables
+    this.elementId = options.elementId;
     this.flavor = (options.flavor === undefined) ? 'chooser' : options.flavor;
     this.multiselect = (options.multiselect === undefined) ? false : options.multiselect;
     this.link = (options.link === undefined) ? true : options.link;
@@ -196,18 +200,9 @@
 
   // Define handlers. New handlers will override pre-existing ones.
   window.Kloudless._fileWidget.prototype.on = function(event, handler) {
-    // Copy over event handlers to auxilliary computer view.
-    if (this.flavor === 'dropper') {
-      this._on(event, handler, this.computerViewHandlers);
-    }
-    return this._on(event, handler);
-  };
-
-  window.Kloudless._fileWidget.prototype._on = function(event, handler, handlerStore) {
-    var handlers = handlerStore || this.handlers;
-    if (handlers[event] === undefined)
-      handlers[event] = [];
-    handlers[event].push(handler);
+    if (this.handlers[event] === undefined)
+      this.handlers[event] = [];
+    this.handlers[event].push(handler);
     return this;
   };
 
@@ -219,13 +214,20 @@
       self.close();
     }
 
+    var defaultHandler = self.defaultHandlers[event];
+    if (defaultHandler) {
+      window.setTimeout(function() {
+        defaultHandler.call(self, data);
+      }, 0);
+    }
+
     if (self.handlers[event] !== undefined) {
-      for (var i=0; i < self.handlers[event].length; i++) {
+      for (var i = 0; i < self.handlers[event].length; i++) {
         (function(handler) {
-          window.setTimeout(function(){
+          window.setTimeout(function() {
             handler.call(self, data);
           }, 0);
-        })(self.handlers[event][i])
+        })(self.handlers[event][i]);
       }
     }
 
@@ -263,16 +265,22 @@
       persist: exp.persist,
       types: exp.types,
       create_folder: exp.create_folder,
-    });
+    }, exp.elementId);
     exp.exp_id = id;
+
+    exp.defaultHandlers.close = function() {
+      var frame = frames[exp.exp_id];
+      FX.fadeOut(frame, {
+        duration: 200,
+        complete: function() {
+          frame.style.display = 'none';
+        }
+      });
+    };
 
     if (options.keys) {
       exp.keys = options.keys;
     }
-
-    exp.on('noDropLocation', function() {
-      console.log('ERROR: No upload location configured!');
-    });
 
     explorers[exp.exp_id] = exp;
 
@@ -290,64 +298,6 @@
     value: window.Kloudless._explorer
   });
 
-  window.Kloudless._explorer.prototype.moveFrameToElement = function(frame, element) {
-    var self = this;
-
-    frame.style['display'] = 'block';
-    frame.style['opacity'] = '0';
-    frame.style['height'] = '100%';
-    frame.style['width'] = '100%';
-    frame.setAttribute('class', 'kloudless-modal-dropzone');
-    frame.onload = function() {
-      var frameDoc = frame.contentDocument || frame.contentWindow.document;
-
-      var clickHandler = function() {
-        self.computerView._open({
-          flavor: 'computer'
-        });
-      };
-
-      frameDoc.body.addEventListener('click', clickHandler);
-
-      self._on('viewSwitched', function(data) {
-        if (data.newView === 'dropzone') {
-          frame.style['opacity'] = '1';
-        }
-      });
-
-      self._on('drop' ,function(data) {
-        element.style['width'] = '700px';
-        element.style['height'] = '515px';
-        element.style['border-style'] = 'none';
-        frame.style['opacity'] = '1';
-        frameDoc.body.removeEventListener('click', clickHandler);
-      });
-
-      // Since the drop event will override CSS properties, we need
-      // to retain original values so we can restore them on close.
-      var style = window.getComputedStyle(element);
-      var height = style['height'];
-      var width = style['width'];
-      var borderStyle = style['border-style'];
-
-      self._on('close', function() {
-        element.style['height'] = height;
-        element.style['width'] = width;
-        element.style['border-style'] = borderStyle;
-
-        self._open({
-          flavor: 'dropper'
-        });
-
-        // rebind click handler
-        frameDoc.body.addEventListener('click', clickHandler);
-      });
-
-    };
-
-    element.appendChild(frame);
-    return frame;
-  };
 
   // Open the chooser
   window.Kloudless._explorer.prototype.choose = function() {
@@ -438,10 +388,6 @@
     var self = this;
     var body = document.getElementsByTagName("body")[0];
 
-    if (self.computerView) {
-      self.computerView.close();
-    }
-
     if (!self.loaded) {
       queuedAction[self.exp_id] = {method: self.close};
       return;
@@ -456,15 +402,6 @@
       if (isMobile) {
         body.scrollTop = lastScrollTop;
       }
-    }
-
-    if (self.flavor !== 'dropper') {
-      FX.fadeOut(frames[self.exp_id],{
-        duration: 200,
-        complete: function() {
-          frames[self.exp_id].style.display = 'none';
-        }
-      });
     }
 
     if (self.display_backdrop) {
@@ -484,7 +421,7 @@
     }), window.Kloudless.explorerUrl);
 
     // console.log('Explorer message sent.');
-  }
+  };
 
   // Bind the file exploring dialogue to an element.
   window.Kloudless._explorer.prototype.choosify = function(element) {
@@ -536,50 +473,102 @@
     return this;
   };
 
-// Bind a file exploring dropzone to an element.
-window.Kloudless._explorer.prototype.dropify = function(element) {
-  var self = this;
-
-  if (!self.loaded) {
-    queuedAction[self.exp_id] = {
-      method: self.dropify,
-      args: [element]
-    };
-    return;
-  }
-
-  var errorMsg = 'ERROR: Please specify a valid HTML element to dropify!';
-  if (element instanceof Array) {
-    if (element.length < 1) {
-      return console.log(errorMsg);
-    }
-    element = element[0];
-  } else if (window.jQuery !== undefined && element instanceof window.jQuery) {
-    if (element.length < 1) {
-      return console.log(errorMsg);
-    }
-    element = element.get(i);
-  }
-
-  // create auxillary file explorer for computer view
-  self.computerView = window.Kloudless.explorer({
-    app_id: self.app_id,
-    flavor: 'computer',
-    // Must be true for users to upload more than 1 file at a time
-    multiselect: self.multiselect,
-    computer: true
-  });
-
-  // copy over event handlers
-  queuedAction[self.computerView.exp_id] = {
-    'method': function() {
-      self.computerView.handlers = self.computerViewHandlers;
-    }
+  window.Kloudless.dropzone = function(options) {
+    return new window.Kloudless._dropzone(options);
   };
 
-  self.moveFrameToElement(frames[self.exp_id], element);
+  window.Kloudless._dropzone = function(options) {
+    options = options || {};
+    this.elementId = options.elementId;
+    delete options.elementId;
+    if (!this.elementId) {
+      throw new Error('Please specify the elementId for the dropzone to be bound to.');
+    }
 
-  return self;
-};
+    this.dropExplorer = window.Kloudless.explorer({
+      app_id: options.app_id,
+      flavor: 'dropzone',
+      multiselect: options.multiselect,
+      elementId: this.elementId
+    });
+
+    this.clickExplorer = window.Kloudless.explorer(options);
+
+    this.dropExplorerFrame = frames[this.dropExplorer.exp_id];
+    this.clickExplorerFrame = frames[this.clickExplorer.exp_id];
+
+    this._configureFrame();
+  };
+
+  window.Kloudless._dropzone.prototype._configureFrame = function() {
+    var element = document.getElementById(this.elementId);
+    var frame = this.dropExplorerFrame;
+    var dropExp = this.dropExplorer;
+    var clickExp = this.clickExplorer;
+
+    // Override default close handler so frame isn't set to 'display: none'
+    dropExp.defaultHandlers.close = function() {
+      frame.style.opacity = '1';
+    };
+
+    frame.style['display'] = 'block';
+    frame.style['opacity'] = '1';
+    frame.style['height'] = '100%';
+    frame.style['width'] = '100%';
+    frame.setAttribute('class', 'kloudless-modal-dropzone');
+    frame.onload = function() {
+      var frameDoc = frame.contentDocument || frame.contentWindow.document;
+
+      var clickHandler = function() {
+        clickExp._open({
+          flavor: 'chooser'
+        });
+      };
+
+      frameDoc.body.addEventListener('click', clickHandler);
+
+      dropExp.on('drop' ,function(data) {
+        element.style['width'] = '700px';
+        element.style['height'] = '515px';
+        element.style['border-style'] = 'none';
+        frame.style['opacity'] = '1';
+        frameDoc.body.removeEventListener('click', clickHandler);
+      });
+
+      // Since the drop event will override CSS properties, we need
+      // to retain original values so we can restore them on close.
+      var style = window.getComputedStyle(element);
+      var height = style['height'];
+      var width = style['width'];
+      var borderStyle = style['border-style'];
+
+      dropExp.on('close', function() {
+        element.style['height'] = height;
+        element.style['width'] = width;
+        element.style['border-style'] = borderStyle;
+
+        dropExp._open({
+          flavor: 'dropzone'
+        });
+
+        // rebind click handler
+        frameDoc.body.addEventListener('click', clickHandler);
+      });
+
+    };
+
+    return frame;
+  };
+
+  window.Kloudless._dropzone.prototype.on = function(event, handler) {
+    this.dropExplorer.on(event, handler);
+    this.clickExplorer.on(event, handler);
+    return this;
+  };
+
+  window.Kloudless._dropzone.prototype.close = function() {
+    this.dropExplorer.close();
+    this.clickExplorer.close();
+  };
 
 })();
