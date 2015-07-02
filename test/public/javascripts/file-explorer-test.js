@@ -90,6 +90,8 @@
   cl.addEventListener('click', function() {
     explorer.close();
     second.close();
+    saver.close();
+    dropzone.close();
   });
 
   // Test second file explorer.
@@ -138,5 +140,42 @@
     /*{'url': 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/gdrive.png',
      'name': 'drive-logo.png'}*/
   ]);
+
+
+  // Test drop zone.
+  var dropzone = window.Kloudless.dropzone({
+    app_id: window.app_id,
+    elementId: 'dropzone',
+    computer: true, // This applies to the clickExplorer.
+    multiselect: true // Must be true if you want to upload more than 1 file at a time.
+  });
+
+  dropzone.on('open', function() {
+    console.log("File Explorer opened.");
+  });
+
+  dropzone.on('close', function() {
+    console.log("File Explorer closed.");
+  });
+
+  dropzone.on('success', function(files) {
+    addResultWithData('Files chosen:', files);
+  });
+
+  dropzone.on('selected', function(files) {
+    addResultWithData('Files selected:', files);
+  });
+
+  dropzone.on('startFileUpload', startFileUpload);
+
+  dropzone.on('finishFileUpload', finishFileUpload);
+
+  dropzone.on('cancel', function() {
+    addResult('File selection cancelled.');
+  });
+
+  dropzone.on('error', function(error) {
+    addResultWithData('An error occurred in file selection:', error);
+  });
 
 })();

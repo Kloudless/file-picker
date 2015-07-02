@@ -32,6 +32,9 @@
       'vendor/jquery-scrollstop': {
         deps: ['jquery']
       },
+      'jqueryui': {
+        deps: ['jquery']
+      },
       'plupload': {
         deps: ['jquery', 'moxie'],
         exports: 'plupload'
@@ -60,6 +63,11 @@
 
     // Enable cors
     $.support.cors = true;
+    var dropzoneLoaded = false;
+    var filesQueue = [];
+
+    // This can be generalized in the future with a config option
+    var startView = (config.flavor === 'dropzone') ? 'dropzone' : 'accounts';
 
     var service_names = {
         'dropbox' : 'Dropbox',
@@ -116,13 +124,14 @@
 
       this.exp_id = config.exp_id;
 
-      // View model setup.
       var self = this;
+
+      // View model setup.
       this.view_model = {
         flavor: ko.observable(config.flavor),
 
         // The current view: alternates between 'files' and 'accounts'
-        current: ko.observable('accounts'),
+        current: ko.observable(startView),
 
         // Save all files in FileManager to the selected directory
         save: function() {
@@ -130,15 +139,15 @@
           explorer.view_model.loading(true);
 
           // Grab the current location
-          var current = explorer.manager.active().filesystem().current()
-            , saves = [];
+          var current = explorer.manager.active().filesystem().current();
+          var saves = [];
 
           // If you can save here
           if (current.can_upload_files) {
-            var accountId = explorer.manager.active().filesystem().id
-              , accountKey = explorer.manager.active().filesystem().key;
-            var requestCountSuccess = 0
-              , requestCountError = 0;
+            var accountId = explorer.manager.active().filesystem().id;
+            var accountKey = explorer.manager.active().filesystem().key;
+            var requestCountSuccess = 0;
+            var requestCountError = 0;
 
             // Save Complete Callback
             var saveComplete = function(success) {
@@ -183,7 +192,7 @@
                   logger.warn('Error uploading file: ', status, err, xhr);
                   saveComplete(false);
                 });
-              })({name: file_data.name, url: file_data.url})
+              })({name: file_data.name, url: file_data.url});
             }
           } else {
             explorer.view_model.error('Files cannot be saved to this folder. Please choose again.');
@@ -197,9 +206,9 @@
           explorer.view_model.loading(true);
 
           // Clone the selections, removing the parent reference.
-          var current = explorer.manager.active().filesystem().current()
-            , selections = []
-            , clones = [];
+          var current = explorer.manager.active().filesystem().current();
+          var selections = [];
+          var clones = [];
 
           var table = self.view_model.files.table;
           if (table) {
@@ -210,8 +219,8 @@
           }
 
           for (var i = 0; i < selections.length; i++) {
-            var selection = selections[i]
-              , clone = {};
+            var selection = selections[i];
+            var clone = {};
             for (var attr in selection) {
               if (selection.hasOwnProperty(attr) && attr != 'parent_obs') {
                 clone[attr] = selection[attr];
@@ -226,10 +235,10 @@
             logger.debug('Files selected! ', selections);
             explorer.view_model.postMessage('selected', selections);
 
-            var accountId = explorer.manager.active().filesystem().id
-              , accountKey = explorer.manager.active().filesystem().key;
-            var requestCountSuccess = 0
-              , requestCountError = 0;
+            var accountId = explorer.manager.active().filesystem().id;
+            var accountKey = explorer.manager.active().filesystem().key;
+            var requestCountSuccess = 0;
+            var requestCountError = 0;
 
             // Selection Complete Callback
             var selectionComplete = function(success) {
@@ -347,7 +356,7 @@
                     if (account_id == data[i].account) {
                       data[i]['account_key'] = {
                         key: active_account.filesystem().key,
-                      }
+                      };
                     }
                   }
                 }
@@ -392,7 +401,7 @@
                   }
 
                   // if no valid accounts from local storage are loaded
-                  if (explorer.manager.accounts().length == 0) {
+                  if (explorer.manager.accounts().length === 0) {
                     router.setLocation('#/accounts');
                   } else {
                     router.setLocation('#/files');
@@ -423,7 +432,7 @@
                   }
 
                   // need to make sure on accounts view since... ^^^
-                  if (explorer.manager.accounts().length == 0) {
+                  if (explorer.manager.accounts().length === 0) {
                     router.setLocation('#/accounts');
                   }
                 });
@@ -464,8 +473,8 @@
           },
           // Returns hash mapping a string service name to an array of account objects.
           by_service: ko.computed(function() {
-            var accounts = this() // gimmick to register observer with KO
-              , output = {};
+            var accounts = this(); // gimmick to register observer with KO
+            var output = {};
 
             for (var i = 0; i < accounts.length; i++) {
               if (!(accounts[i].service in output)) {
@@ -547,7 +556,7 @@
               },
               on_fs_ready: function(err, result) {
                 if (err && error_message) {
-                  explorer.view_model.error(error_message)
+                  explorer.view_model.error(error_message);
                 } else if (err) {
                   explorer.view_model.error(err.message);
                 } else {
@@ -610,8 +619,8 @@
           navigate: function(file) {
             logger.debug('Navigating to file: ', file);
 
-            var target = file
-              , parent = self.manager.active().filesystem().PARENT_FLAG;
+            var target = file;
+            var parent = self.manager.active().filesystem().PARENT_FLAG;
             if (typeof file == 'string' && file == parent) {
               target = parent;
             }
@@ -620,7 +629,7 @@
               logger.debug('Navigation result: ', err, result);
               self.view_model.loading(false);
               if (err && error_message) {
-                return self.view_model.error(error_message)
+                return self.view_model.error(error_message);
               } else if (err) {
                 return self.view_model.error(err.message);
               }
@@ -635,7 +644,7 @@
             self.manager.active().filesystem().up(count, function(err, result) {
               self.view_model.loading(false);
               if (err && error_message) {
-                return self.view_model.error(error_message)
+                return self.view_model.error(error_message);
               } else if (err) {
                 return self.view_model.error(err.message);
               }
@@ -649,7 +658,7 @@
             self.manager.active().filesystem().mkdir(name, function(err, result) {
               // update first entry
               if (err && error_message) {
-                self.view_model.error(error_message)
+                self.view_model.error(error_message);
               } else if (err) {
                 self.view_model.error(err.message);
               } else {
@@ -659,18 +668,18 @@
                   self.view_model.files.navigate(dir);
                 }
               }
-              self.view_model.loading(false)
+              self.view_model.loading(false);
             });
           },
           newdir: function() {
             if (self.manager.active().filesystem().current().can_create_folders) {
-              self.manager.active().filesystem().newdir()
+              self.manager.active().filesystem().newdir();
             } else {
               self.view_model.error('Sorry! Folders cannot be created in this directory');
             }
           },
           rmdir: function() {
-            self.manager.active().filesystem().rmdir()
+            self.manager.active().filesystem().rmdir();
           },
           refresh: function() {
             logger.debug('Refreshing current directory');
@@ -678,15 +687,15 @@
             self.manager.active().filesystem().refresh(true, function(err, result) {
               self.view_model.loading(false);
               if (err && error_message) {
-                return self.view_model.error(error_message)
+                return self.view_model.error(error_message);
               } else if (err) {
-                return self.view_model.error(err.message)
+                return self.view_model.error(err.message);
               }
-              self.view_model.error('')
+              self.view_model.error('');
             });
           },
           sort: function(option) {
-            self.manager.active().filesystem().sort(option)
+            self.manager.active().filesystem().sort(option);
           },
           searchQuery: ko.observable(""),
           search: function() {
@@ -746,6 +755,35 @@
     FileExplorer.prototype.switchViewTo = function(to) {
       var explorer = this;
       explorer.view_model.current(to);
+
+      // When view is changed, the old view template is unloaded.
+      if (to !== 'dropzone') {
+        dropzoneLoaded = false;
+      }
+
+      if (to === 'dropzone') {
+        var dz = $('#dropzone');
+
+        // Make sure to only load the dropzone once
+        if (!dropzoneLoaded) {
+          var dropzone = new mOxie.FileDrop({
+            drop_zone: dz.get(0)
+          });
+
+          // Because templates are re-rendered on view change, don't add
+          // dropped files to the computer view uploader immediately.
+          // Instead, add it to a queue that will be processed after
+          // the router switches to the computer view.
+          dropzone.ondrop = function(event) {
+            explorer.view_model.postMessage('drop');
+            filesQueue.push(dropzone.files);
+            router.setLocation('#/computer');
+          };
+
+          dropzone.init();
+          dropzoneLoaded = true;
+        }
+      }
 
       if (to !== 'addconfirm') {
         $(auth.iframe).hide();
@@ -840,223 +878,235 @@
       }
 
       if (to == 'computer') {
-        $(function() {
-          var selections = [];
-          var filtered_types = [];
-          // if not default 'all' or 'files', add the mimetypes
-          if ((config.types.indexOf('all') == -1 && config.types.indexOf('files') == -1) ||
-              (config.types.length != 1)) {
-            filtered_types.push({
-              title: "Uploadable files",
-              extensions: config.types.join(",")
-            });
-          }
-
-          function formatFileObject(file) {
-            /**
-             * Format a file info dict to be emitted to the API.
-             *
-             * Returns a subset of the info (rather than returning a
-             * Pluploadfile object) to avoid exposing internals that may
-             * change.
-             */
-            return {
-              id: file.id,
-              name: file.name,
-              size: file.size,
-              mime_type: file.type
-            };
-          }
-
-          $("#uploader").plupload({
-              // Required
-              url: config.base_url + '/drop/' + config.app_id,
-              // browse_button: "uploader",
-
-              // Filters
-              filters : (function() {
-                var filters = {
-                  max_file_size: '50000mb',
-                  prevent_duplicates: false, // unique_names instead.
-                  mime_types: filtered_types
-                };
-
-                // Don't set to 0, because it forces 0 files to be selected.
-                // Happens even though the default is supposed to be 0.
-                if (!config.multiselect)
-                  filters['max_file_count'] = 1;
-
-                return filters;
-              })(),
-
-              // Multipart / Chunking
-              multipart: false,
-              chunk_size: config.chunk_size,
-              max_retries: 2,
-
-              // Parallelize
-              max_upload_slots: 6,
-
-              // Misc
-              runtimes : 'html5,flash',
-
-              // Rename files by clicking on their titles
-              rename: true,
-
-              // Unique file names
-              // This is set to false because we use the file ID
-              // to identify the file instead.
-              unique_names: false,
-
-              // Sort files
-              sortable: true,
-
-              // Enable ability to drag'n'drop files onto the widget (currently only HTML5 supports that)
-              dragdrop: true,
-
-              browse_button: 'custom-add',
-
-              container: 'custom-add-container',
-
-              // Views to activate
-              views: {
-                list: true,
-                thumbs: false, // Hide thumbs
-                active: 'list', // 'thumbs' is another possible view.
-              },
-
-              // Flash settings
-              flash_swf_url : '//static-cdn.kloudless.com/p/platform/explorer/Moxie.cdn.swf',
-
-              // Silverlight settings
-              silverlight_xap_url : '//static-cdn.kloudless.com/p/platform/explorer/Moxie.cdn.xap',
-
-              init: {
-                PostInit: function() {
-                  // enable the browse button
-                  $('#uploader_browse').removeAttr('disabled');
-                  var uploader = this;
-                  // Add pause/resume upload handler
-                  $('#upload-button').click(function() {
-                    if ($(this).text() == 'Upload') {
-                      $(this).text('Pause');
-                      uploader.start();
-                      explorer.view_model.loading(true);
-                    } else if ($(this).text() == 'Pause') {
-                      $(this).text('Resume');
-                      uploader.stop();
-                      explorer.view_model.loading(false);
-                    } else if ($(this).text() == 'Resume') {
-                      $(this).text('Pause');
-                      uploader.start();
-                      explorer.view_model.loading(true);
-                    }
-                  });
-
-                  // Add confirmation when closing tabs during uploading process
-                  $(window).bind('beforeunload', function(){
-                    // Add confirmation if not IE or IE 11 only.
-                    if (util.isIE == false || util.ieVersion == 11) {
-                      if (uploader.total.queued > 0) {
-                        var msg = ('Are you sure you want to close this tab? You have an' +
-                          ' upload in progress.');
-                        return msg;
-                      }
-                    }
-                  });
-
-                  // Add abort upload handler
-                  $('#cancel-button').click(function() {
-                    var msg = ('Are you sure you want to cancel? You have an' +
-                      ' upload in progress.');
-                    if (uploader.total.queued > 0) {
-                      uploader.stop();
-                      if (confirm(msg)) {
-                        $('#upload-button').text('Upload');
-
-                        var file_ids_to_abort = uploader.files.filter(function(f) {
-                            return $.inArray(f.status, [plupload.QUEUED, plupload.UPLOADING]) > -1;
-                        }).map(function(f) { return f.id; });
-
-                        uploader.splice();
-                        explorer.view_model.cancel();
-
-                        // Abort asynchronously.
-                        window.setTimeout(function() {
-                            $.each(file_ids_to_abort, function(index, id) {
-                               $.ajax({
-                                   url: config.base_url + '/drop/' + config.app_id +
-                                       '?file_id=' + id,
-                                   type: 'DELETE',
-                               });
-                            });
-                        }, 0);
-
-                      } else {
-                        uploader.start();
-                      }
-                    } else {
-                      explorer.view_model.cancel();
-                    }
-                  });
-                },
-                BeforeUpload: function(up, file) {
-                  /**
-                   * Called just before a file begins to upload. Called once
-                   * per file being uploaded.
-                   */
-                  up.settings.multipart_params = up.settings.multipart_params || {};
-                  up.settings.multipart_params['file_id'] = file.id;
-                  if (config.link) up.settings.multipart_params['link'] = true;
-
-                  up.settings.headers = up.settings.headers || {};
-                  // Not using up.id because it changes with every plUpload().
-                  up.settings.headers["X-Explorer-Id"] = explorer.id
-
-                  explorer.view_model.postMessage('startFileUpload',
-                    formatFileObject(file));
-                },
-                FileUploaded: function(up, file, info) {
-                  /**
-                   * Called just after a file has been successfully uploaded to
-                   * Kloudless. Called once per file being uploaded.
-                   */
-                  if (info.status == 200 || info.status == 201) {
-                    var responseData = JSON.parse(info.response);
-                    if (Object.keys(responseData).length > 5) {
-                      selections.push(responseData);
-                    }
-
-                    explorer.view_model.postMessage('finishFileUpload',
-                      formatFileObject(file));
-                  }
-                },
-                Error: function(up, args) {
-                  // file extension error
-                  if (args.code == plupload.FILE_EXTENSION_ERROR) {
-                    var filter_msg = 'Please upload files of the following types: ';
-                    filter_msg += config.types.join(", ") + '.';
-                    explorer.view_model.error(filter_msg);
-                  }
-                  else if (args.code == plupload.HTTP_ERROR) {
-                    logger.error("Error uploading file '" + args.file.name + "': " +
-                                 args.message);
-                    up.removeFile(args.file);
-                    up.stop();
-                    up.start();
-                  }
-                },
-                UploadComplete: function(files) {
-                  $('#upload-button').text('Upload');
-                  explorer.view_model.postMessage('success', selections);
-                  selections = [];
-                  this.splice();
-                }
-              }
-          });
-        });
+        initializePlUpload();
       }
     };
+
+    function initializePlUpload() {
+      $(function() {
+        var selections = [];
+        var filtered_types = [];
+        // if not default 'all' or 'files', add the mimetypes
+        if ((config.types.indexOf('all') == -1 && config.types.indexOf('files') == -1) ||
+            (config.types.length != 1)) {
+          filtered_types.push({
+            title: "Uploadable files",
+            extensions: config.types.join(",")
+          });
+        }
+
+        function formatFileObject(file) {
+          /**
+           * Format a file info dict to be emitted to the API.
+           *
+           * Returns a subset of the info (rather than returning a
+           * Pluploadfile object) to avoid exposing internals that may
+           * change.
+           */
+          return {
+            id: file.id,
+            name: file.name,
+            size: file.size,
+            mime_type: file.type
+          };
+        }
+
+        $('#uploader').plupload({
+          // Required
+          url: config.base_url + '/drop/' + config.app_id,
+          // browse_button: "uploader",
+
+          // Filters
+          filters : (function() {
+            var filters = {
+              max_file_size: '50000mb',
+              prevent_duplicates: false, // unique_names instead.
+              mime_types: filtered_types
+            };
+
+            // Don't set to 0, because it forces 0 files to be selected.
+            // Happens even though the default is supposed to be 0.
+            if (!config.multiselect)
+              filters['max_file_count'] = 1;
+
+            return filters;
+          })(),
+
+          // Multipart / Chunking
+          multipart: false,
+          chunk_size: config.chunk_size,
+          max_retries: 2,
+
+          // Parallelize
+          max_upload_slots: 6,
+
+          // Misc
+          runtimes : 'html5,flash',
+
+          // Rename files by clicking on their titles
+          rename: true,
+
+          // Unique file names
+          // This is set to false because we use the file ID
+          // to identify the file instead.
+          unique_names: false,
+
+          // Sort files
+          sortable: true,
+
+          // Enable ability to drag'n'drop files onto the widget (currently only HTML5 supports that)
+          dragdrop: true,
+
+          browse_button: 'custom-add',
+
+          container: 'custom-add-container',
+
+          // Views to activate
+          views: {
+            list: true,
+            thumbs: false, // Hide thumbs
+            active: 'list', // 'thumbs' is another possible view.
+          },
+
+          // Flash settings
+          flash_swf_url : '//static-cdn.kloudless.com/p/platform/explorer/Moxie.cdn.swf',
+
+          // Silverlight settings
+          silverlight_xap_url : '//static-cdn.kloudless.com/p/platform/explorer/Moxie.cdn.xap',
+
+          init: {
+            PostInit: function() {
+              var uploader = this;
+
+              // Add drag & dropped files
+              for (i = 0; i < filesQueue.length; i++) {
+                uploader.addFile(filesQueue[i]);
+              }
+              filesQueue = [];
+
+              // enable the browse button
+              $('#uploader_browse').removeAttr('disabled');
+              // Add pause/resume upload handler
+              $('#upload-button').click(function() {
+                if ($(this).text() == 'Upload') {
+                  $(this).text('Pause');
+                  uploader.start();
+                  explorer.view_model.loading(true);
+                } else if ($(this).text() == 'Pause') {
+                  $(this).text('Resume');
+                  uploader.stop();
+                  explorer.view_model.loading(false);
+                } else if ($(this).text() == 'Resume') {
+                  $(this).text('Pause');
+                  uploader.start();
+                  explorer.view_model.loading(true);
+                }
+              });
+
+              // Add confirmation when closing tabs during uploading process
+              $(window).bind('beforeunload', function() {
+                // Add confirmation if not IE or IE 11 only.
+                if (util.isIE == false || util.ieVersion == 11) {
+                  if (uploader.total.queued > 0) {
+                    var msg = ('Are you sure you want to close this tab? You have an' +
+                               ' upload in progress.');
+                    return msg;
+                  }
+                }
+              });
+
+              // Add abort upload handler
+              $('#cancel-button').click(function() {
+                var msg = ('Are you sure you want to cancel? You have an' +
+                           ' upload in progress.');
+                if (uploader.total.queued > 0) {
+                  uploader.stop();
+                  if (confirm(msg)) {
+                    $('#upload-button').text('Upload');
+
+                    var file_ids_to_abort = uploader.files.filter(function(f) {
+                      return $.inArray(f.status, [plupload.QUEUED, plupload.UPLOADING]) > -1;
+                    }).map(function(f) { return f.id; });
+
+                    uploader.splice();
+                    explorer.view_model.cancel();
+
+                    // Abort asynchronously.
+                    window.setTimeout(function() {
+                      $.each(file_ids_to_abort, function(index, id) {
+                        $.ajax({
+                          url: config.base_url + '/drop/' + config.app_id +
+                            '?file_id=' + id,
+                          type: 'DELETE',
+                        });
+                      });
+                    }, 0);
+
+                  } else {
+                    uploader.start();
+                  }
+                } else {
+                  explorer.view_model.cancel();
+                }
+              });
+            },
+            BeforeUpload: function(up, file) {
+              /**
+               * Called just before a file begins to upload. Called once
+               * per file being uploaded.
+               */
+              up.settings.multipart_params = up.settings.multipart_params || {};
+              up.settings.multipart_params['file_id'] = file.id;
+              if (config.link) up.settings.multipart_params['link'] = true;
+
+              up.settings.headers = up.settings.headers || {};
+              // Not using up.id because it changes with every plUpload().
+              up.settings.headers["X-Explorer-Id"] = explorer.id;
+
+              explorer.view_model.postMessage('startFileUpload',
+                                              formatFileObject(file));
+            },
+            FileUploaded: function(up, file, info) {
+              /**
+               * Called just after a file has been successfully uploaded to
+               * Kloudless. Called once per file being uploaded.
+               */
+              if (info.status == 200 || info.status == 201) {
+                var responseData = JSON.parse(info.response);
+                if (Object.keys(responseData).length > 5) {
+                  selections.push(responseData);
+                }
+
+                explorer.view_model.postMessage('finishFileUpload',
+                                                formatFileObject(file));
+              }
+            },
+            Error: function(up, args) {
+              // file extension error
+              if (args.code == plupload.FILE_EXTENSION_ERROR) {
+                var filter_msg = 'Please upload files of the following types: ';
+                filter_msg += config.types.join(", ") + '.';
+                explorer.view_model.error(filter_msg);
+              }
+              else if (args.code == plupload.HTTP_ERROR) {
+                logger.error("Error uploading file '" + args.file.name + "': " +
+                             args.message);
+                up.removeFile(args.file);
+                up.stop();
+                up.start();
+              }
+            },
+            UploadComplete: function(files) {
+              $('#upload-button').text('Upload');
+              explorer.view_model.postMessage('success', selections);
+              selections = [];
+              this.splice();
+            }
+          }
+        });
+
+      });
+    }
 
     FileExplorer.prototype.cleanUp = function() {
       // File Explorer will close. Clean up.
@@ -1069,7 +1119,7 @@
         self.view_model.files.table.finderSelect('unHighlightAll');
       }
       self.fileManager.files.removeAll(); // Saver
-    }
+    };
 
     ko.bindingHandlers.finderSelect = {
       init: function(element, valueAccessor) {
@@ -1128,7 +1178,7 @@
             break;
           }
         }
-        if (Object.keys(account_data).length == 0) {
+        if (Object.keys(account_data).length === 0) {
           logger.warn('Account failed to remove');
           alert('Error occurred. Please try again!');
           return;
@@ -1171,6 +1221,10 @@
         logger.debug('Switching to computer view');
         explorer.switchViewTo('computer');
       });
+      // Switch to the dropzone view
+      this.get('#/dropzone', function() {
+        explorer.switchViewTo('dropzone');
+      });
       // Confirm add account button
       this.get('#/addconfirm', function() {
         explorer.switchViewTo('addconfirm');
@@ -1185,7 +1239,7 @@
       var accounts = storage.loadAccounts(config.app_id, config.services);
       logger.debug(accounts);
 
-      if (accounts.length == 0) {
+      if (accounts.length === 0) {
         this.get('#/', function(ctx) {
           router.setLocation('#/accounts');
         });
@@ -1219,7 +1273,11 @@
       var contents = JSON.parse(message.data);
       // TODO: future config options
       if (contents.action == 'INIT') {
-        router.run('#/');
+        if (startView && startView !== 'accounts') {
+          router.run('#/' + startView);
+        } else {
+          router.run('#/');
+        }
       } else if (contents.action == 'DATA') {
         dataMessageHandler(contents.data);
       } else if (contents.action == 'CLOSING') {
@@ -1276,6 +1334,8 @@
             logo: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png'
           });
         }
+      } else if (data.flavor == 'dropzone') {
+        router.setLocation('#/dropzone');
       }
 
       // Call sync if frame has already been initialized and there are differences
@@ -1307,7 +1367,6 @@
         explorer.view_model.sync(data.keys, true);
       }
 
-      router.run('#/');
     }
 
     // Looking up chunk size. Since the drop location doesn't really

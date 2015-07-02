@@ -19,7 +19,7 @@
   }
 
   function isMobile() {
-    return ( navigator.userAgent.match(/(iPad|iPhone|iPod|android|Android)/g) ? true : false )
+    return (navigator.userAgent.match(/(iPad|iPhone|iPod|android|Android)/g) ? true : false);
   }
 
   var FX = {
@@ -32,9 +32,9 @@
       }
     },
     animate: function(options) {
-      var start = new Date;
+      var start = new Date();
       var id = setInterval(function() {
-        var timePassed = new Date - start;
+        var timePassed = new Date() - start;
         var progress = timePassed / options.duration;
         if (progress > 1) {
           progress = 1;
@@ -111,7 +111,7 @@
   document.getElementsByTagName('head')[0].appendChild(style);
 
   // Initialise an iframe.
-  var initialise_frame = function(options) {
+  var initialise_frame = function(options, elementId) {
     var exp_id = Math.floor(Math.random() * Math.pow(10, 12));
     var frame = document.createElement('iframe');
 
@@ -136,7 +136,14 @@
     frames[exp_id] = frame;
 
     var body = document.getElementsByTagName("body")[0];
-    body.appendChild(frame);
+
+    if (elementId) {
+      var el = document.getElementById(elementId);
+      el.appendChild(frame);
+    } else {
+      body.appendChild(frame);
+    }
+
     if (!backdropDiv){
       var div = document.createElement('div');
       backdropDiv = body.appendChild(div);
@@ -149,6 +156,7 @@
   window.Kloudless._fileWidget = function(options) {
     this._setOptions(options);
     this.handlers = {};
+    this.defaultHandlers = {};
   };
 
   // Set options.
@@ -162,12 +170,13 @@
     this.exp_id = options.exp_id;
 
     // These don't need to be passed for query variables
+    this.elementId = options.elementId;
     this.flavor = (options.flavor === undefined) ? 'chooser' : options.flavor;
     this.multiselect = (options.multiselect === undefined) ? false : options.multiselect;
     this.link = (options.link === undefined) ? true : options.link;
     this.direct_link = (options.direct_link === undefined) ? false : options.direct_link;
     this.computer = (options.computer === undefined) ? false : options.computer;
-    this.copy_to_upload_location = ((options.copy_to_upload_location == undefined) ?
+    this.copy_to_upload_location = ((options.copy_to_upload_location === undefined) ?
                                     false : options.copy_to_upload_location);
     this.create_folder = (options.create_folder === undefined) ? true : options.create_folder;
     this.account_key = (options.account_key === undefined) ? false : options.account_key;
@@ -205,13 +214,20 @@
       self.close();
     }
 
+    var defaultHandler = self.defaultHandlers[event];
+    if (defaultHandler) {
+      window.setTimeout(function() {
+        defaultHandler.call(self, data);
+      }, 0);
+    }
+
     if (self.handlers[event] !== undefined) {
-      for (var i=0; i < self.handlers[event].length; i++) {
+      for (var i = 0; i < self.handlers[event].length; i++) {
         (function(handler) {
-          window.setTimeout(function(){
+          window.setTimeout(function() {
             handler.call(self, data);
           }, 0);
-        })(self.handlers[event][i])
+        })(self.handlers[event][i]);
       }
     }
 
@@ -249,8 +265,18 @@
       persist: exp.persist,
       types: exp.types,
       create_folder: exp.create_folder,
-    });
+    }, exp.elementId);
     exp.exp_id = id;
+
+    exp.defaultHandlers.close = function() {
+      var frame = frames[exp.exp_id];
+      FX.fadeOut(frame, {
+        duration: 200,
+        complete: function() {
+          frame.style.display = 'none';
+        }
+      });
+    };
 
     if (options.keys) {
       exp.keys = options.keys;
@@ -271,6 +297,7 @@
     enumerable: false,
     value: window.Kloudless._explorer
   });
+
 
   // Open the chooser
   window.Kloudless._explorer.prototype.choose = function() {
@@ -370,26 +397,20 @@
 
     removeClass(body, "kfe-active");
 
-    if(typeof(window.Kloudless._fileWidget['lastScrollTop']) != "undefined") {
-      if(isMobile) {
-        body.scrollTop = window.Kloudless._fileWidget['lastScrollTop'];
-      }
-
-      FX.fadeOut(frames[self.exp_id],{
-        duration: 200,
-        complete: function() {
-          frames[self.exp_id].style.display = 'none';
-        }
-      });
-
-      if (self.display_backdrop) {
-        backdropDiv.style.display = 'none';
-        body.style.overflow = bodyOverflow;
+    var lastScrollTop = window.Kloudless._fileWidget.lastScrollTop;
+    if (typeof(lastScrollTop) != "undefined") {
+      if (isMobile) {
+        body.scrollTop = lastScrollTop;
       }
     }
 
+    if (self.display_backdrop) {
+      backdropDiv.style.display = 'none';
+      body.style.overflow = bodyOverflow;
+    }
+
     self._fire('close');
-  }
+  };
 
   // Send a message to the explorer frame
   window.Kloudless._explorer.prototype.message = function(action, data) {
@@ -400,7 +421,7 @@
     }), window.Kloudless.explorerUrl);
 
     // console.log('Explorer message sent.');
-  }
+  };
 
   // Bind the file exploring dialogue to an element.
   window.Kloudless._explorer.prototype.choosify = function(element) {
@@ -450,5 +471,104 @@
       });
     }
     return this;
-  }
+  };
+
+  window.Kloudless.dropzone = function(options) {
+    return new window.Kloudless._dropzone(options);
+  };
+
+  window.Kloudless._dropzone = function(options) {
+    options = options || {};
+    this.elementId = options.elementId;
+    delete options.elementId;
+    if (!this.elementId) {
+      throw new Error('Please specify the elementId for the dropzone to be bound to.');
+    }
+
+    this.dropExplorer = window.Kloudless.explorer({
+      app_id: options.app_id,
+      flavor: 'dropzone',
+      multiselect: options.multiselect,
+      elementId: this.elementId
+    });
+
+    this.clickExplorer = window.Kloudless.explorer(options);
+
+    this.dropExplorerFrame = frames[this.dropExplorer.exp_id];
+    this.clickExplorerFrame = frames[this.clickExplorer.exp_id];
+
+    this._configureFrame();
+  };
+
+  window.Kloudless._dropzone.prototype._configureFrame = function() {
+    var element = document.getElementById(this.elementId);
+    var frame = this.dropExplorerFrame;
+    var dropExp = this.dropExplorer;
+    var clickExp = this.clickExplorer;
+
+    // Override default close handler so frame isn't set to 'display: none'
+    dropExp.defaultHandlers.close = function() {
+      frame.style.opacity = '1';
+    };
+
+    frame.style['display'] = 'block';
+    frame.style['opacity'] = '1';
+    frame.style['height'] = '100%';
+    frame.style['width'] = '100%';
+    frame.setAttribute('class', 'kloudless-modal-dropzone');
+    frame.onload = function() {
+      var frameDoc = frame.contentDocument || frame.contentWindow.document;
+
+      var clickHandler = function() {
+        clickExp._open({
+          flavor: 'chooser'
+        });
+      };
+
+      frameDoc.body.addEventListener('click', clickHandler);
+
+      dropExp.on('drop' ,function(data) {
+        element.style['width'] = '700px';
+        element.style['height'] = '515px';
+        element.style['border-style'] = 'none';
+        frame.style['opacity'] = '1';
+        frameDoc.body.removeEventListener('click', clickHandler);
+      });
+
+      // Since the drop event will override CSS properties, we need
+      // to retain original values so we can restore them on close.
+      var style = window.getComputedStyle(element);
+      var height = style['height'];
+      var width = style['width'];
+      var borderStyle = style['border-style'];
+
+      dropExp.on('close', function() {
+        element.style['height'] = height;
+        element.style['width'] = width;
+        element.style['border-style'] = borderStyle;
+
+        dropExp._open({
+          flavor: 'dropzone'
+        });
+
+        // rebind click handler
+        frameDoc.body.addEventListener('click', clickHandler);
+      });
+
+    };
+
+    return frame;
+  };
+
+  window.Kloudless._dropzone.prototype.on = function(event, handler) {
+    this.dropExplorer.on(event, handler);
+    this.clickExplorer.on(event, handler);
+    return this;
+  };
+
+  window.Kloudless._dropzone.prototype.close = function() {
+    this.dropExplorer.close();
+    this.clickExplorer.close();
+  };
+
 })();
