@@ -1116,6 +1116,8 @@
     FileExplorer.prototype.cleanUp = function() {
       // File Explorer will close. Clean up.
       var self = this;
+      processingConfirm = false;
+
       if ($("#search-query").is(":visible"))
         $("#search-back-button").click();
       self.view_model.loading(false);
