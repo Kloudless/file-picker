@@ -508,6 +508,7 @@ var dropzone = window.Kloudless.dropzone({
     multiselect: true, // To upload more than 1 file.
 
     // Chooser options below:
+    computer: true,
     link: true,
     services: ['all'],
     types: ['all'],
