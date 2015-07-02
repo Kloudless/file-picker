@@ -65,6 +65,7 @@
     $.support.cors = true;
     var dropzoneLoaded = false;
     var filesQueue = [];
+    var processingConfirm = false;
 
     // This can be generalized in the future with a config option
     var startView = (config.flavor === 'dropzone') ? 'dropzone' : 'accounts';
@@ -202,6 +203,8 @@
 
         // Select a file.
         confirm: function() {
+          if (processingConfirm) return;
+
           // Set loading to true
           explorer.view_model.loading(true);
 
@@ -254,6 +257,7 @@
               // TODO handle case if requestCountError != 0
               if (requestCountSuccess + requestCountError == selections.length) {
                 explorer.view_model.postMessage('success', selections);
+                processingConfirm = false;
               }
             };
 
@@ -300,6 +304,7 @@
               }
             } else if (config.link) {
               for (var i=0; i < selections.length; i++) {
+                processingConfirm = true;
                 createLink(i);
               }
             } else {
@@ -1111,6 +1116,8 @@
     FileExplorer.prototype.cleanUp = function() {
       // File Explorer will close. Clean up.
       var self = this;
+      processingConfirm = false;
+
       if ($("#search-query").is(":visible"))
         $("#search-back-button").click();
       self.view_model.loading(false);
