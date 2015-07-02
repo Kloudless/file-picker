@@ -374,7 +374,7 @@ The File Explorer has the following configuration options:
   Invokes a callback method on a particular event. See the `Events` section above
   for a list of event names, as well as the arguments the corresponding callback
   methods will be invoked with.
-  
+
 * `explorer.close()`
 
   This method closes the explorer window.
@@ -484,7 +484,7 @@ Upload Location must be configured as described for the Chooser.
 * `dropzone.on(event, callback)`
 
   See `explorer.on(event, callback)` for more information.
-  
+
 * `explorer.close()`
 
   See `explorer.close()` for more information.
@@ -513,7 +513,7 @@ dropzone.on('success', function(files) {
 });
 
 // See the File Explorer's Example section for other events.
-```    
+```
 
 ## Browser Support
 
