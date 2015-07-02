@@ -491,6 +491,8 @@ Upload Location must be configured as described for the Chooser.
 
 #### Example
 
+[Visit our JS Fiddle example of the Dropzone!](https://jsfiddle.net/vinodchandru/8cy20hhL/embedded/)
+
 HTML
 
 ```html
@@ -503,7 +505,12 @@ JavaScript
 var dropzone = window.Kloudless.dropzone({
     app_id: "Your App ID",
     elementId: 'dropzone',
-    multiselect: true // To upload more than 1 file.
+    multiselect: true, // To upload more than 1 file.
+
+    // Chooser options below:
+    link: true,
+    services: ['all'],
+    types: ['all'],
 });
 
 // All of the Chooser's events are supported.
