@@ -139,15 +139,15 @@
           explorer.view_model.loading(true);
 
           // Grab the current location
-          var current = explorer.manager.active().filesystem().current()
-            , saves = [];
+          var current = explorer.manager.active().filesystem().current();
+          var saves = [];
 
           // If you can save here
           if (current.can_upload_files) {
-            var accountId = explorer.manager.active().filesystem().id
-              , accountKey = explorer.manager.active().filesystem().key;
-            var requestCountSuccess = 0
-              , requestCountError = 0;
+            var accountId = explorer.manager.active().filesystem().id;
+            var accountKey = explorer.manager.active().filesystem().key;
+            var requestCountSuccess = 0;
+            var requestCountError = 0;
 
             // Save Complete Callback
             var saveComplete = function(success) {
@@ -192,7 +192,7 @@
                   logger.warn('Error uploading file: ', status, err, xhr);
                   saveComplete(false);
                 });
-              })({name: file_data.name, url: file_data.url})
+              })({name: file_data.name, url: file_data.url});
             }
           } else {
             explorer.view_model.error('Files cannot be saved to this folder. Please choose again.');
@@ -206,9 +206,9 @@
           explorer.view_model.loading(true);
 
           // Clone the selections, removing the parent reference.
-          var current = explorer.manager.active().filesystem().current()
-            , selections = []
-            , clones = [];
+          var current = explorer.manager.active().filesystem().current();
+          var selections = [];
+          var clones = [];
 
           var table = self.view_model.files.table;
           if (table) {
@@ -219,8 +219,8 @@
           }
 
           for (var i = 0; i < selections.length; i++) {
-            var selection = selections[i]
-              , clone = {};
+            var selection = selections[i];
+            var clone = {};
             for (var attr in selection) {
               if (selection.hasOwnProperty(attr) && attr != 'parent_obs') {
                 clone[attr] = selection[attr];
@@ -235,10 +235,10 @@
             logger.debug('Files selected! ', selections);
             explorer.view_model.postMessage('selected', selections);
 
-            var accountId = explorer.manager.active().filesystem().id
-              , accountKey = explorer.manager.active().filesystem().key;
-            var requestCountSuccess = 0
-              , requestCountError = 0;
+            var accountId = explorer.manager.active().filesystem().id;
+            var accountKey = explorer.manager.active().filesystem().key;
+            var requestCountSuccess = 0;
+            var requestCountError = 0;
 
             // Selection Complete Callback
             var selectionComplete = function(success) {
@@ -356,7 +356,7 @@
                     if (account_id == data[i].account) {
                       data[i]['account_key'] = {
                         key: active_account.filesystem().key,
-                      }
+                      };
                     }
                   }
                 }
@@ -401,7 +401,7 @@
                   }
 
                   // if no valid accounts from local storage are loaded
-                  if (explorer.manager.accounts().length == 0) {
+                  if (explorer.manager.accounts().length === 0) {
                     router.setLocation('#/accounts');
                   } else {
                     router.setLocation('#/files');
@@ -432,7 +432,7 @@
                   }
 
                   // need to make sure on accounts view since... ^^^
-                  if (explorer.manager.accounts().length == 0) {
+                  if (explorer.manager.accounts().length === 0) {
                     router.setLocation('#/accounts');
                   }
                 });
@@ -473,8 +473,8 @@
           },
           // Returns hash mapping a string service name to an array of account objects.
           by_service: ko.computed(function() {
-            var accounts = this() // gimmick to register observer with KO
-              , output = {};
+            var accounts = this(); // gimmick to register observer with KO
+            var output = {};
 
             for (var i = 0; i < accounts.length; i++) {
               if (!(accounts[i].service in output)) {
@@ -556,7 +556,7 @@
               },
               on_fs_ready: function(err, result) {
                 if (err && error_message) {
-                  explorer.view_model.error(error_message)
+                  explorer.view_model.error(error_message);
                 } else if (err) {
                   explorer.view_model.error(err.message);
                 } else {
@@ -619,8 +619,8 @@
           navigate: function(file) {
             logger.debug('Navigating to file: ', file);
 
-            var target = file
-              , parent = self.manager.active().filesystem().PARENT_FLAG;
+            var target = file;
+            var parent = self.manager.active().filesystem().PARENT_FLAG;
             if (typeof file == 'string' && file == parent) {
               target = parent;
             }
@@ -629,7 +629,7 @@
               logger.debug('Navigation result: ', err, result);
               self.view_model.loading(false);
               if (err && error_message) {
-                return self.view_model.error(error_message)
+                return self.view_model.error(error_message);
               } else if (err) {
                 return self.view_model.error(err.message);
               }
@@ -644,7 +644,7 @@
             self.manager.active().filesystem().up(count, function(err, result) {
               self.view_model.loading(false);
               if (err && error_message) {
-                return self.view_model.error(error_message)
+                return self.view_model.error(error_message);
               } else if (err) {
                 return self.view_model.error(err.message);
               }
@@ -658,7 +658,7 @@
             self.manager.active().filesystem().mkdir(name, function(err, result) {
               // update first entry
               if (err && error_message) {
-                self.view_model.error(error_message)
+                self.view_model.error(error_message);
               } else if (err) {
                 self.view_model.error(err.message);
               } else {
@@ -668,18 +668,18 @@
                   self.view_model.files.navigate(dir);
                 }
               }
-              self.view_model.loading(false)
+              self.view_model.loading(false);
             });
           },
           newdir: function() {
             if (self.manager.active().filesystem().current().can_create_folders) {
-              self.manager.active().filesystem().newdir()
+              self.manager.active().filesystem().newdir();
             } else {
               self.view_model.error('Sorry! Folders cannot be created in this directory');
             }
           },
           rmdir: function() {
-            self.manager.active().filesystem().rmdir()
+            self.manager.active().filesystem().rmdir();
           },
           refresh: function() {
             logger.debug('Refreshing current directory');
@@ -687,15 +687,15 @@
             self.manager.active().filesystem().refresh(true, function(err, result) {
               self.view_model.loading(false);
               if (err && error_message) {
-                return self.view_model.error(error_message)
+                return self.view_model.error(error_message);
               } else if (err) {
-                return self.view_model.error(err.message)
+                return self.view_model.error(err.message);
               }
-              self.view_model.error('')
+              self.view_model.error('');
             });
           },
           sort: function(option) {
-            self.manager.active().filesystem().sort(option)
+            self.manager.active().filesystem().sort(option);
           },
           searchQuery: ko.observable(""),
           search: function() {
@@ -1061,7 +1061,7 @@
 
               up.settings.headers = up.settings.headers || {};
               // Not using up.id because it changes with every plUpload().
-              up.settings.headers["X-Explorer-Id"] = explorer.id
+              up.settings.headers["X-Explorer-Id"] = explorer.id;
 
               explorer.view_model.postMessage('startFileUpload',
                                               formatFileObject(file));
@@ -1119,7 +1119,7 @@
         self.view_model.files.table.finderSelect('unHighlightAll');
       }
       self.fileManager.files.removeAll(); // Saver
-    }
+    };
 
     ko.bindingHandlers.finderSelect = {
       init: function(element, valueAccessor) {
@@ -1178,7 +1178,7 @@
             break;
           }
         }
-        if (Object.keys(account_data).length == 0) {
+        if (Object.keys(account_data).length === 0) {
           logger.warn('Account failed to remove');
           alert('Error occurred. Please try again!');
           return;
@@ -1239,7 +1239,7 @@
       var accounts = storage.loadAccounts(config.app_id, config.services);
       logger.debug(accounts);
 
-      if (accounts.length == 0) {
+      if (accounts.length === 0) {
         this.get('#/', function(ctx) {
           router.setLocation('#/accounts');
         });

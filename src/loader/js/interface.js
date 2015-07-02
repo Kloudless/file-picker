@@ -19,7 +19,7 @@
   }
 
   function isMobile() {
-    return ( navigator.userAgent.match(/(iPad|iPhone|iPod|android|Android)/g) ? true : false )
+    return (navigator.userAgent.match(/(iPad|iPhone|iPod|android|Android)/g) ? true : false);
   }
 
   var FX = {
@@ -32,9 +32,9 @@
       }
     },
     animate: function(options) {
-      var start = new Date;
+      var start = new Date();
       var id = setInterval(function() {
-        var timePassed = new Date - start;
+        var timePassed = new Date() - start;
         var progress = timePassed / options.duration;
         if (progress > 1) {
           progress = 1;
@@ -176,7 +176,7 @@
     this.link = (options.link === undefined) ? true : options.link;
     this.direct_link = (options.direct_link === undefined) ? false : options.direct_link;
     this.computer = (options.computer === undefined) ? false : options.computer;
-    this.copy_to_upload_location = ((options.copy_to_upload_location == undefined) ?
+    this.copy_to_upload_location = ((options.copy_to_upload_location === undefined) ?
                                     false : options.copy_to_upload_location);
     this.create_folder = (options.create_folder === undefined) ? true : options.create_folder;
     this.account_key = (options.account_key === undefined) ? false : options.account_key;
