@@ -517,22 +517,18 @@
     frame.style['width'] = '100%';
     frame.setAttribute('class', 'kloudless-modal-dropzone');
     frame.onload = function() {
-      var frameDoc = frame.contentDocument || frame.contentWindow.document;
 
-      var clickHandler = function() {
+      dropExp.on('dropzoneClicked', function() {
         clickExp._open({
           flavor: 'chooser'
         });
-      };
-
-      frameDoc.body.addEventListener('click', clickHandler);
+      });
 
       dropExp.on('drop' ,function(data) {
         element.style['width'] = '700px';
         element.style['height'] = '515px';
         element.style['border-style'] = 'none';
         frame.style['opacity'] = '1';
-        frameDoc.body.removeEventListener('click', clickHandler);
       });
 
       // Since the drop event will override CSS properties, we need
@@ -550,9 +546,6 @@
         dropExp._open({
           flavor: 'dropzone'
         });
-
-        // rebind click handler
-        frameDoc.body.addEventListener('click', clickHandler);
       });
 
     };

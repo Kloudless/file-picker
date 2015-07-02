@@ -768,6 +768,9 @@
 
       if (to === 'dropzone') {
         var dz = $('#dropzone');
+        dz.on('click', function() {
+          explorer.view_model.postMessage('dropzoneClicked');
+        });
 
         // Make sure to only load the dropzone once
         if (!dropzoneLoaded) {
