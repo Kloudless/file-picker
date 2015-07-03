@@ -485,7 +485,7 @@ Upload Location must be configured as described for the Chooser.
 
   See `explorer.on(event, callback)` for more information.
 
-* `explorer.close()`
+* `dropzone.close()`
 
   See `explorer.close()` for more information.
 
