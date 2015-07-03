@@ -46,8 +46,8 @@ It supports choosing files from the local machine as well as cloud storage.
 ##### Dropzone
 
 The Dropzone is a variety of the Chooser that opens when files are dragged and
-dropped into it rather than only when clicked. See the `Dropzone` section for more
-information.
+dropped into it rather than only when clicked. See the [Dropzone](#dropzone-1)
+section for more information.
 
 ### Saver
 
