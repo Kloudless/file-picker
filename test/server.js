@@ -17,6 +17,15 @@ app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, '..')));
 
+app.use(function(req, res, next) { 
+  res.set({
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': 0,
+  });
+  next();
+});
+
 app.get('/', function(req, res) {
   res.render('index', {app_id: process.env.KLOUDLESS_APP_ID});
 });

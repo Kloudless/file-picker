@@ -558,6 +558,9 @@
                   explorer.view_model.loading(true);
                   router.setLocation('#/files');
                 }
+                else {
+                  router.setLocation('#/accounts');
+                }
               },
               on_fs_ready: function(err, result) {
                 if (err && error_message) {
@@ -1275,7 +1278,7 @@
 
     // Initialise to '#/' route.
     window.addEventListener('message', function(message) {
-      logger.debug('Explorer hears message: ', message);
+      logger.debug('Explorer hears message: ', message.data);
       if (message.origin !== config.origin) {
         return;
       }
