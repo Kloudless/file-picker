@@ -922,6 +922,11 @@
           };
         }
 
+        // Default cancel button action.
+        $('#cancel-button').click(function() {
+          explorer.view_model.cancel();
+        });
+
         $('#uploader').plupload({
           // Required
           url: config.base_url + '/drop/' + config.app_id,
@@ -1027,7 +1032,8 @@
               });
 
               // Add abort upload handler
-              $('#cancel-button').click(function() {
+              $('#cancel-button').off();
+              $('#cancel-button').on('click', function() {
                 var msg = ('Are you sure you want to cancel? You have an' +
                            ' upload in progress.');
                 if (uploader.total.queued > 0) {
