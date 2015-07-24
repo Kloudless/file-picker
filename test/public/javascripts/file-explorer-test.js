@@ -95,7 +95,7 @@
   });
 
   // Test second file explorer.
-  var second = window.Kloudless.explorer({
+  var second = window.Kloudless2.explorer({
     app_id: window.app_id,
     multiselect: true,
     link: false,
@@ -143,7 +143,7 @@
 
 
   // Test drop zone.
-  var dropzone = window.Kloudless.dropzone({
+  var dropzone = window.Kloudless2.dropzone({
     app_id: window.app_id,
     elementId: 'dropzone',
     computer: true, // This applies to the clickExplorer.

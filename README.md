@@ -59,6 +59,19 @@ URLs to the files to upload must be provided.
 
 The File Explorer has the following configuration options:
 
+#### Script Tag
+
+The following attributes can be set on the `<script>` tag used to include the
+File Explorer JavaScript on the page.
+
+* `data-kloudless-object` : string
+
+  _Optional_. Default: `Kloudless`
+
+  Specifies a different name for the `Kloudless` object bound to `window`.
+  e.g. `data-kloudless-object="Kloudless2"` would make the Kloudless object
+  accessible via `window.Kloudless2`.
+
 #### Chooser and Saver
 
 * `app_id` : string
