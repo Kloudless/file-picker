@@ -132,11 +132,20 @@
 
   // Set options.
   Kloudless._fileWidget.prototype._setOptions = function(options) {
+    /*
+     * This method has historically set data on `this`, and passed it in
+     * via the querystring. Since this isn't scalable, and pollutes the
+     * self/this namespace, we should store it namespaced under an `options`
+     * object for future options, and pass it in via the DATA call for vars
+     * not essential to instantiation.
+     */
+
     options = options || {};
     if (!options.app_id) {
       throw new Error('You need to specify an app ID.');
     }
 
+    this.options = options;
     this.app_id = options.app_id;
     this.exp_id = options.exp_id;
 
@@ -253,10 +262,6 @@
       });
     };
 
-    if (options.keys) {
-      exp.keys = options.keys;
-    }
-
     explorers[exp.exp_id] = exp;
 
     return exp;
@@ -333,13 +338,8 @@
     var self = this;
     var body = document.getElementsByTagName("body")[0];
 
+    data['options'] = this.options
     self.message('DATA', data);
-
-    if (self.keys) {
-      self.message('DATA', {
-        keys: self.keys,
-      });
-    }
 
     // Store the last scrollTop value so we can reset it when the explorer closes
     Kloudless._fileWidget['lastScrollTop'] = body.scrollTop;

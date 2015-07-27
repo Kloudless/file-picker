@@ -1,7 +1,8 @@
 (function() {
   'use strict';
 
-  define(['jquery', 'text!config.json'], function($, config_text) {
+  define(['jquery', 'text!config.json', 'vendor/knockout'],
+         function($, config_text, ko) {
 
     var get_query_variable = function(name) {
       name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -38,6 +39,8 @@
       }),
       user_data: {}, // Get asynchronously.
       copy_to_upload_location: JSON.parse(get_query_variable('copy_to_upload_location')),
+      upload_location_account: ko.observable(),
+      upload_location_folder: ko.observable(),
       create_folder: JSON.parse(get_query_variable('create_folder')),
       chunk_size: 5*1024*1024,
     };

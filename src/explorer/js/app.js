@@ -287,13 +287,20 @@
               // Move to upload location.
               for (var i=0; i<selections.length; i++) {
                 (function(i) {
+                  var data = {
+                    account: 'upload_location'
+                  }
+                  if (config.upload_location_account()) {
+                    data['drop_account'] = config.upload_location_account()
+                    data['parent_id'] = config.upload_location_folder()
+                  }
                   $.ajax({
                     url: (config.base_url + '/v0/accounts/' + accountId + '/files/' +
                           selections[i].id + '/copy/?link=' + config.link),
                     type: 'POST',
                     contentType: 'application/json',
                     headers: { Authorization: 'AccountKey ' + accountKey },
-                    data: JSON.stringify({ account: 'upload_location' }),
+                    data: JSON.stringify(data),
                   }).done(function(data) {
                     selections[i] = data;
                     selectionComplete(true);
@@ -1079,6 +1086,11 @@
               up.settings.headers = up.settings.headers || {};
               // Not using up.id because it changes with every plUpload().
               up.settings.headers["X-Explorer-Id"] = explorer.id;
+              if (config.upload_location_account() && config.upload_location_folder()) {
+                // A specifc Upload Location is being used.
+                up.settings.headers['X-Drop-Account'] = config.upload_location_account();
+                up.settings.headers['X-Drop-Folder'] = config.upload_location_folder();
+              }
 
               explorer.view_model.postMessage('startFileUpload',
                                               formatFileObject(file));
@@ -1381,9 +1393,21 @@
         }
       }
 
+      /*
+       * Options
+       */
+
+      if (! data.options)
+        return
+
       // account key data
-      if (data.keys) {
-        explorer.view_model.sync(data.keys, true);
+      if (data.options.keys) {
+        explorer.view_model.sync(data.options.keys, true);
+      }
+
+      if (data.options.upload_location_account) {
+        config.upload_location_account(data.options.upload_location_account)
+        config.upload_location_folder(data.options.upload_location_folder)
       }
 
     }

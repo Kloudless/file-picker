@@ -70,7 +70,8 @@ File Explorer JavaScript on the page.
 
   Specifies a different name for the `Kloudless` object bound to `window`.
   e.g. `data-kloudless-object="Kloudless2"` would make the Kloudless object
-  accessible via `window.Kloudless2`.
+  accessible via `window.Kloudless2`. Do not use the `async` attribute on the
+  script tag if this is used.
 
 #### Chooser and Saver
 
@@ -87,10 +88,9 @@ File Explorer JavaScript on the page.
 
   Chooser: _Optional (default: false)_
 
-  Saver: _Optional (default: false)_
+  Saver: _Optional (default: false)_ Coming Soon
 
   This option allows users to upload/download files directly from/to their computer.
-  Saving to the computer is currently unavailable and will be coming soon.
 
   __Configuring the Chooser's Upload Location__
 
@@ -98,6 +98,11 @@ File Explorer JavaScript on the page.
   The Upload Location can be set in the [developer portal](https://developers.kloudless.com)
   under 'App Details', by selecting a folder in a storage service such as Amazon S3.
   All local files from a user will be uploaded there.
+
+  __Note on the Saver__
+
+  The Computer can only be saved to if the Saver is provided a single file to save.
+  Saving to the Computer is currently unavailable and will be coming soon.
 
 * `persist` : string
 
@@ -176,6 +181,22 @@ File Explorer JavaScript on the page.
   The copying happens in the background asynchronously and will eventually complete.
   The metadata provided in the callback to the `success` event is that of the
   copied file(s) and not that of the original file(s).
+
+* `upload_location_account` : string
+
+  Chooser: _Optional (default: null)_
+
+  If multiple Upload Locations are configured via the developer portal, this
+  specifies the Account ID of the Upload Location to use.
+  `upload_location_folder` must also be provided.
+
+* `upload_location_folder` : string
+
+  Chooser: _Optional (default: null)_
+
+  If multiple Upload Locations are configured via the developer portal, this
+  specifies the Folder ID of the Upload Location to use.
+  `upload_location_account` must also be provided.
 
 * `create_folder` : boolean
 
