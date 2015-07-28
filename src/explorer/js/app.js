@@ -66,6 +66,7 @@
     var dropzoneLoaded = false;
     var filesQueue = [];
     var processingConfirm = false;
+    var loadedDropConfig = false;
 
     // This can be generalized in the future with a config option
     var startView = (config.flavor === 'dropzone') ? 'dropzone' : 'accounts';
@@ -1397,34 +1398,42 @@
        * Options
        */
 
-      if (! data.options)
-        return
-
       // account key data
-      if (data.options.keys) {
+      if (data.options && data.options.keys) {
         explorer.view_model.sync(data.options.keys, true);
       }
 
-      if (data.options.upload_location_account) {
+      if (data.options && data.options.upload_location_account) {
         config.upload_location_account(data.options.upload_location_account)
         config.upload_location_folder(data.options.upload_location_folder)
       }
 
-    }
-
-    // Looking up chunk size. Since the drop location doesn't really
-    // change we look it up based on that. The /drop end point for the
-    // API returns the chunk size for that drop location.
-    $.get(config.base_url + '/drop/' + config.app_id, {},
-      function(drop_information) {
-        config.chunk_size = drop_information.chunk_size;
-      }).fail(function() {
-        // Disable computer if no drop location is set.
+      if (config.computer && !loadedDropConfig) {
+        // Looking up chunk size. Since the drop location doesn't really
+        // change we look it up based on that. The /drop end point for the
+        // API returns the chunk size for that drop location.
+        $.ajax({
+          method: 'GET',
+          url: config.base_url + '/drop/' + config.app_id,
+          beforeSend: function(xhr) {
+            if (config.upload_location_account()) {
+              xhr.setRequestHeader('X-Drop-Account', config.upload_location_account());
+              xhr.setRequestHeader('X-Drop-Folder', config.upload_location_folder());
+            }
+          },
+        }).done(function(drop_information) {
+          config.chunk_size = drop_information.chunk_size;
+          loadedDropConfig = true;
+        }).fail(function() {
+          // Disable computer if no drop location is set.
           if (config.computer && services()[0].id == 'computer') {
             services.shift();
           }
           config.computer = false;
-      });
+        });
+      }
+
+    }
 
     // This signal is placed last and indicates all the JS has loaded
     // and events can be received.
