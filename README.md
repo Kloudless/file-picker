@@ -187,7 +187,10 @@ File Explorer JavaScript on the page.
   Chooser: _Optional (default: null)_
 
   If multiple Upload Locations are configured via the developer portal, this
-  specifies the Account ID of the Upload Location to use.
+  specifies the Account ID of the Upload Location to use. This option is not
+  required if only one Upload Location is configured. The Account ID is a number
+  that can be found in the File Explorer Upload Locations section of the
+  [App Details](http://developers.kloudless.com/applications/*/details) page.
   `upload_location_folder` must also be provided.
 
 * `upload_location_folder` : string
@@ -195,7 +198,10 @@ File Explorer JavaScript on the page.
   Chooser: _Optional (default: null)_
 
   If multiple Upload Locations are configured via the developer portal, this
-  specifies the Folder ID of the Upload Location to use.
+  specifies the Folder ID of the Upload Location to use. This option is not required
+  if only one Upload Location is configured. The Folder ID is an encoded string that
+  can be found on the File Explorer Upload Locations section of the
+  [App Details](http://developers.kloudless.com/applications/*/details) page.
   `upload_location_account` must also be provided.
 
 * `create_folder` : boolean
