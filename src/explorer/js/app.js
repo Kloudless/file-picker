@@ -95,11 +95,13 @@
 
     for (var i = 0; i < config.services.length; i++) {
       var service = config.services[i];
-      services.push({
-        id: service,
-        name: service_names[service],
-        logo: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/' + service + '.png'
-      });
+      if (service_names[service] !== undefined) {
+        services.push({
+          id: service,
+          name: service_names[service],
+          logo: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/' + service + '.png'
+        });
+      }
     }
 
     if (config.computer) {
