@@ -428,7 +428,7 @@ HTML file. You can then create an element on the page to launch the explorer.
 <body>
   <button id="file-explorer">Explore!</button>
   <script type="text/javascript" src="https://static-cdn.kloudless.com/p/platform/sdk/kloudless.explorer.js"></script>
-  <script type="text/javscript">
+  <script type="text/javascript">
       // Explorer initialization JS here.
   </script>
 </body>
