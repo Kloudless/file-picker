@@ -662,7 +662,7 @@ Then navigate to `localhost:3000` and click the buttons to test.
   available at, and follow the Usage notes above.
 * Navigate to the page you included the loader at and use the File Explorer!
 
-### Misc. Development Notes
+## Misc. Development Notes
 
 * Need to implement automated testing!!!
 * In order to switch folders, we change the current() pointer and then
@@ -672,7 +672,7 @@ Then navigate to `localhost:3000` and click the buttons to test.
   the router, because the hash will prevent the route from being fired twice
   consecutively. Use the hash to switch between pages of the application.
 
-### Security Vulnerabilities
+## Security Vulnerabilities
 
 If you have discovered a security vulnerability with this library or any other
 part of Kloudless, we appreciate your help in disclosing it to us privately by
