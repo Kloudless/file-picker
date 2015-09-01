@@ -135,6 +135,65 @@ File Explorer JavaScript on the page.
   If `true`, displays a shadow backdrop behind the File Explorer, and prevents the
   page body from scrolling.
 
+* `create_folder` : boolean
+
+  Chooser: _Optional (default: true)_
+
+  Saver: _Optional (default: true)_
+
+  If `true`, the user will be able to create folders in their cloud storage
+  accounts.
+
+* `account_key` : boolean
+
+  Chooser: _Optional (default: false)_
+
+  Saver: _Optional (default: false)_
+
+  This option will include [Account Keys](https://developers.kloudless.com/docs#account-keys)
+  in addition to the other response data, to allow you to make further requests to the API
+  or save the Account Keys easily.
+
+  ```javascript
+    // Example response with an Account Key in the metadata.
+    [{
+        ...
+        account_key: {
+          key: "the_account_key",
+        },
+        ...
+     }]
+  ```
+
+  Only File Explorers launched from Trusted Domains can make use of this option.
+  You can add a Trusted Domain on the App Details page.
+
+  In addition, care should
+  be taken to ensure no malicious JavaScript or XSS vulnerabilities are present
+  on the page, as the Account Key provides complete access to that user's account.
+  To guard against this, you can make requests from a backend server using
+  the API Key instead.
+
+* `keys` : array
+
+  Chooser: _Optional (default: [])_
+
+  Saver: _Optional (default: [])_
+
+  This option should list [Account Keys](https://developers.kloudless.com/docs#account-keys)
+  for accounts the File Explorer should be initialized with. The File Explorer will make API
+  requests for additional information on the accounts and display them
+  in the list of accounts the user has connected.
+
+  ```javascript
+    // Example initialization with Account Keys to import.
+    explorer({
+      ...
+      keys: ["abcdefghijklmn", "opqrstuvwxyz"]
+      ...
+    });
+  ```
+
 #### Chooser options
 
 * `multiselect` : boolean
@@ -204,15 +263,6 @@ File Explorer JavaScript on the page.
   [App Details](http://developers.kloudless.com/applications/*/details) page.
   `upload_location_account` must also be provided.
 
-* `create_folder` : boolean
-
-  Chooser: _Optional (default: true)_
-
-  Saver: _Optional (default: true)_
-
-  If `true`, the user will be able to create folders in their cloud storage
-  accounts.
-
 * `types` : array
 
   Chooser: _Default: ['all']_
@@ -238,52 +288,6 @@ File Explorer JavaScript on the page.
   * `videos`
 
   * `audio`
-
-* `account_key` : boolean
-
-  Chooser: _Optional (default: false)_
-
-  This option will include [Account Keys](https://developers.kloudless.com/docs#account-keys)
-  in addition to the other response data, to allow you to make further requests to the API
-  or save the Account Keys easily.
-
-  ```javascript
-    // Example response with an Account Key in the metadata.
-    [{
-        ...
-        account_key: {
-          key: "the_account_key",
-        },
-        ...
-     }]
-  ```
-
-  Only File Explorers launched from Trusted Domains can make use of this option.
-  You can add a Trusted Domain on the App Details page.
-
-  In addition, care should
-  be taken to ensure no malicious JavaScript or XSS vulnerabilities are present
-  on the page, as the Account Key provides complete access to that user's account.
-  To guard against this, you can make requests from a backend server using
-  the API Key instead.
-
-* `keys` : array
-
-  Chooser: _Optional (default: [])_
-
-  This option should list [Account Keys](https://developers.kloudless.com/docs#account-keys)
-  for accounts the File Explorer should be initialized with. The File Explorer will make API
-  requests for additional information on the accounts and display them
-  in the list of accounts the user has connected.
-
-  ```javascript
-    // Example initialization with Account Keys to import.
-    explorer({
-      ...
-      keys: ["abcdefghijklmn", "opqrstuvwxyz"]
-      ...
-    });
-  ```
 
 #### Saver options
 

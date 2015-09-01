@@ -84,7 +84,8 @@
             'smb',
             'azure',
             'cmis',
-            'alfresco'
+            'alfresco',
+            'jive'
         ],
         file_store: [
             'dropbox',
@@ -102,7 +103,8 @@
             'salesforce',
             'smb',
             'cmis',
-            'alfresco'
+            'alfresco',
+            'jive'
         ],
         object_store: [
             'azure',

@@ -90,6 +90,7 @@
         'azure': 'Azure Storage',
         'cmis' : 'CMIS',
         'alfresco' : 'Alfresco',
+        'jive' : 'Jive'
       },
       services = ko.observableArray();
 
