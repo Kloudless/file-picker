@@ -360,24 +360,32 @@
           };
 
           if (data !== undefined) {
-            if (action === 'success') {
-
+            if (['selected', 'success', 'addAccount'].indexOf(action) > -1 &&
+                config.account_key && config.user_data.trusted) {
               // Add in Account Key on success for files.
-              if (config.account_key && config.user_data.trusted) {
-                var active_account = self.manager.active();
-                var account_id = active_account.filesystem().id;
-                if (active_account.filesystem &&
-                    self.view_model.current() === 'files') {
-                  for (var i = 0; i < data.length; i++) {
-                    if (account_id == data[i].account) {
-                      data[i]['account_key'] = {
-                        key: active_account.filesystem().key,
-                      };
-                    }
-                  }
-                }
+              var accountMap = {}
+              ko.utils.arrayForEach(self.manager.accounts(), function(account) {
+                accountMap[account.account] = account;
+              });
+
+              // Separate variable for cases where it isn't an array,
+              // to reuse code.
+              var addKeyToData = data;
+              var accountIdField = 'account';
+              if (action == 'addAccount') {
+                addKeyToData = [data];
+                accountIdField = 'id';
               }
 
+              // Add Account Key
+              ko.utils.arrayForEach(addKeyToData, function(d) {
+                var account = accountMap[d[accountIdField]];
+                if (account !== undefined) {
+                  d['account_key'] = {
+                    key: account.filesystem().key
+                  }
+                }
+              });
             }
             post_data.data = data;
           }

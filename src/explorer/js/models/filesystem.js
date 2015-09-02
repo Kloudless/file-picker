@@ -221,12 +221,9 @@
         this.path.pop();
         this.current(this.current().parent_obs);
       } else if (next.type == 'folder') {
-        var target = this.current().children().reduce(function(a, b) {
-          if (b.id == next.id) {
-            return b;
-          }
-          return a;
-        }, null);
+        var target = ko.utils.arrayFirst(this.current().children(), function(f) {
+          return f.id == next.id;
+        });
 
         if (target === null) {
           return callback(new Error('Target file does not exist.'), null);

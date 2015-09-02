@@ -34,12 +34,9 @@
 
     // Retrieve an account by Account ID. Returns null if account not found.
     AccountManager.prototype.getByAccount = function(account_id) {
-      return this.accounts().reduce(function(a, b) {
-        if (b.account == account_id) {
-          return b;
-        }
-        return a;
-      }, null);
+      return ko.utils.arrayFirst(this.accounts(), function(a) {
+        return a.account == account_id;
+      });
     };
 
     return AccountManager;
