@@ -72,6 +72,7 @@
     var startView = (config.flavor === 'dropzone') ? 'dropzone' : 'accounts';
 
     var service_names = {
+        'cq5' : 'Adobe CQ5',
         'dropbox' : 'Dropbox',
         'gdrive' : 'Google Drive',
         'box' : 'Box',
@@ -90,7 +91,8 @@
         'azure': 'Azure Storage',
         'cmis' : 'CMIS',
         'alfresco' : 'Alfresco',
-        'jive' : 'Jive'
+        'jive' : 'Jive',
+        'webdav': 'WebDAV',
       },
       services = ko.observableArray();
 

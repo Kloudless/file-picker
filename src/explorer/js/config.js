@@ -85,7 +85,9 @@
             'azure',
             'cmis',
             'alfresco',
-            'jive'
+            'jive',
+            'webdav',
+            'cq5',
         ],
         file_store: [
             'dropbox',
@@ -104,7 +106,9 @@
             'smb',
             'cmis',
             'alfresco',
-            'jive'
+            'jive',
+            'webdav',
+            'cq5',
         ],
         object_store: [
             'azure',
