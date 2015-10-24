@@ -91,6 +91,7 @@
         'azure': 'Azure Storage',
         'cmis' : 'CMIS',
         'alfresco' : 'Alfresco',
+        'alfresco_cloud': 'Alfresco Cloud',
         'jive' : 'Jive',
         'webdav': 'WebDAV',
       },
