@@ -174,6 +174,24 @@
               }
             };
 
+            var overwrite = false; 
+            for (var i = 0; i < explorer.fileManager.files().length; i++) {              
+              for (var k = 0; k < (current.children().length - 1); k++) {
+                if (current.children()[k].name == explorer.fileManager.files()[i].name) {
+                  var choseOverwrite = window.confirm("Duplicate file names detected." + 
+                                                      " Click OK to overwrite and replace all duplicates" +
+                                                      " or CANCEL to proceed without overwriting.");
+                  if (choseOverwrite) {
+                    overwrite = true;
+                  }
+                  break; 
+                }
+              } 
+              if (overwrite == true) {
+                break; 
+              }
+            }
+
             for (var i = 0; i < explorer.fileManager.files().length; i++) {
               var f = explorer.fileManager.files()[i];
               var file_data = {
@@ -187,7 +205,7 @@
                 explorer.view_model.postMessage('startFileUpload', event_data);
 
                 var request = $.ajax({
-                  url: config.base_url + '/v0/accounts/' + accountId + '/files/',
+                  url: config.base_url + '/v0/accounts/' + accountId + '/files/?overwrite=' + overwrite,
                   type: 'POST',
                   contentType: 'application/json',
                   headers: { Authorization: 'AccountKey ' + accountKey },
