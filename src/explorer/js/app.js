@@ -173,24 +173,22 @@
                 logger.debug('Successfully uploaded files: ', saves);
               }
             };
-            var choseSomething = false;
-            var overwrite = false; 
-            for (var i = 0; i < explorer.fileManager.files().length; i++) {              
+
+            var choseOverwrite = false;
+            var overwrite = false;
+            for (var i = 0; i < explorer.fileManager.files().length; i++) {
               for (var k = 0; k < (current.children().length); k++) {
                 if (current.children()[k].name == explorer.fileManager.files()[i].name) {
-                  var choseOverwrite = window.confirm("Duplicate file names detected." + 
-                                                      " Click OK to overwrite and replace all duplicates" +
-                                                      " or CANCEL to proceed without overwriting.");
-                  choseSomething = true;
-                  if (choseOverwrite) {
-                    overwrite = true;
-                  }
-                  break; 
+                  overwrite = window.confirm(
+                    "Files already exist with the same names as the ones being uploaded." +
+                    " Click OK to overwrite existing files with the same name" +
+                    " or Cancel to proceed without overwriting.");
+                  choseOverwrite = true;
+                  break;
                 }
-              } 
-              if (choseSomething == true) {
-                break; 
               }
+              if (choseOverwrite)
+                break;
             }
 
             for (var i = 0; i < explorer.fileManager.files().length; i++) {
