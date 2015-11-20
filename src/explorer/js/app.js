@@ -288,7 +288,7 @@
 
             // Add the link at the last possible moment for error/async handling
             var createLink = function(selection_index) {
-              var linkData = $.extend({}, config.link_options);
+              var linkData = $.extend({}, config.link_options());
               linkData.file_id = selections[selection_index].id;
               var request = $.ajax({
                 url: config.base_url + '/v0/accounts/' + accountId + '/links/',
@@ -318,8 +318,11 @@
                     data['parent_id'] = config.upload_location_folder()
                   }
                   $.ajax({
-                    url: (config.base_url + '/v0/accounts/' + accountId + '/files/' +
-                          selections[i].id + '/copy/?link=' + config.link),
+                    url: (
+                      config.base_url + '/v0/accounts/' + accountId + '/files/' +
+                        selections[i].id + '/copy/?link=' + config.link +
+                        '&link_options=' + encodeURIComponent(JSON.stringify(config.link_options()))
+                    ),
                     type: 'POST',
                     contentType: 'application/json',
                     headers: { Authorization: 'AccountKey ' + accountKey },
@@ -1112,7 +1115,10 @@
                */
               up.settings.multipart_params = up.settings.multipart_params || {};
               up.settings.multipart_params['file_id'] = file.id;
-              if (config.link) up.settings.multipart_params['link'] = true;
+              if (config.link) {
+                up.settings.multipart_params['link'] = true;
+                up.settings.multipart_params['link_options'] = JSON.stringify(config.link_options());
+              }
 
               up.settings.headers = up.settings.headers || {};
               // Not using up.id because it changes with every plUpload().
@@ -1349,8 +1355,8 @@
     });
 
     function dataMessageHandler(data) {
-      // Similar to an INIT call, but this time, the explorer has some data
-      // to initialize the explorer
+      // Used to initialize the explorer with data and config options.
+      // Can also be used to update config options.
 
       /*
        * NOTE: This code is bad practice. config.flavor should be an observable
@@ -1434,9 +1440,9 @@
         explorer.view_model.sync(data.options.keys, true);
       }
 
-      if (data.options && data.options.upload_location_account) {
-        config.upload_location_account(data.options.upload_location_account)
-        config.upload_location_folder(data.options.upload_location_folder)
+      // Update other config info
+      if (data.options) {
+        config.update(data.options);
       }
 
       if (config.computer && !loadedDropConfig) {

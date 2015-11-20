@@ -24,7 +24,7 @@
       flavor: get_query_variable('flavor'),
       multiselect: JSON.parse(get_query_variable('multiselect')),
       link: JSON.parse(get_query_variable('link')),
-      link_options: JSON.parse(get_query_variable('link_options')),
+      link_options: ko.observable({}),
       computer: JSON.parse(get_query_variable('computer')) ||
         get_query_variable('flavor') === 'dropzone',
       account_key: JSON.parse(get_query_variable('account_key')),
@@ -43,6 +43,22 @@
       upload_location_folder: ko.observable(),
       create_folder: JSON.parse(get_query_variable('create_folder')),
       chunk_size: 5*1024*1024,
+    };
+
+    config.update = function (data) {
+      var configKeys = Object.keys(config);
+
+      $.each(data, function(k, v) {
+        if (configKeys.indexOf(k) === -1)
+          return;
+
+        // Ignore setting non-observables as that behavior is not expected
+        // and the rest of the app cannot respond to it.
+        if (typeof config[k] === 'function' && config[k].notifySubscribers) {
+          // This is a ko.observable
+          config[k](v);
+        }
+      });
     };
 
     // Get user_data
@@ -114,7 +130,8 @@
         ],
         object_store: [
             'azure',
-            's3']
+            's3',
+        ]
     };
 
     var groups = [];

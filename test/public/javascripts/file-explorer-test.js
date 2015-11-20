@@ -11,6 +11,7 @@
     types: ['all'],
     display_backdrop: true,
   });
+  window.chooser1 = explorer;
 
   /*
    * Helper methods
@@ -103,6 +104,7 @@
     services: ['file_store'],
     types: ['folders']
   });
+  window.chooser2 = second;
 
   second.on('success', function(files) {
     addResultWithData('Folder selected:', files);
@@ -121,6 +123,7 @@
     app_id: window.app_id,
     flavor: 'saver',
   });
+  window.saver = saver;
 
   saver.on('success', function(files) {
     addResultWithData('Saved files:', files);
@@ -147,8 +150,9 @@
     app_id: window.app_id,
     elementId: 'dropzone',
     computer: true, // This applies to the clickExplorer.
-    multiselect: true // Must be true if you want to upload more than 1 file at a time.
+    multiselect: true, // Must be true if you want to upload more than 1 file at a time.
   });
+  window.dropzone = dropzone;
 
   dropzone.on('open', function() {
     console.log("File Explorer opened.");
