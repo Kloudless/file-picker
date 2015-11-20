@@ -399,7 +399,12 @@ File Explorer JavaScript on the page.
 
   Fired when a file upload completes successfully (once per file being
   uploaded). `file` contains the same information as in `startFileUpload`
-  above. This event is only fired when the user uploads a file via the
+  above, with an additional field `metadata` that contains the full metadata
+  of the file provided by the Kloudless API in response to the upload. The
+  `metadata` is the same as the file metadata provided via the `success`
+  event for each file.
+
+  This event is only fired when the user uploads a file via the
   Chooser's Computer option or the Saver.
 
 ### Methods

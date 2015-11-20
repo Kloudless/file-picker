@@ -35,11 +35,11 @@
   }
 
   function startFileUpload(file) {
-    addResult('File upload started: ' + file.name)
+    addResultWithData("File upload started:", file);
   }
 
   function finishFileUpload(file) {
-    addResult('File upload finished: ' + file.name);
+    addResultWithData("File upload finished:", file);
   }
 
   /*

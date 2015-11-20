@@ -211,6 +211,7 @@
                   data: JSON.stringify(file_data)
                 }).done(function(data) {
                   saves.push(data);
+                  event_data.metadata = data;
                   explorer.view_model.postMessage('finishFileUpload', event_data);
                   saveComplete(true);
                 }).fail(function(xhr, status, err) {
@@ -1136,8 +1137,9 @@
                   selections.push(responseData);
                 }
 
-                explorer.view_model.postMessage('finishFileUpload',
-                                                formatFileObject(file));
+                var data = formatFileObject(file);
+                data.metadata = responseData;
+                explorer.view_model.postMessage('finishFileUpload', data);
               }
             },
             Error: function(up, args) {
