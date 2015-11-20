@@ -95,7 +95,7 @@
       '&origin=' + encodeURIComponent(window.location.protocol + '//' + window.location.host) +
       '&multiselect=' + options.multiselect +
       '&link=' + options.link +
-      '&direct_link=' + options.direct_link +
+      '&link_options=' + JSON.stringify(options.link_options) +
       '&computer=' + options.computer +
       '&copy_to_upload_location=' + options.copy_to_upload_location +
       '&services=' + JSON.stringify(options.services) +
@@ -154,7 +154,7 @@
     this.flavor = (options.flavor === undefined) ? 'chooser' : options.flavor;
     this.multiselect = (options.multiselect === undefined) ? false : options.multiselect;
     this.link = (options.link === undefined) ? true : options.link;
-    this.direct_link = (options.direct_link === undefined) ? false : options.direct_link;
+    this.link_options = (options.link_options === undefined) ? {} : options.link_options;
     this.computer = (options.computer === undefined) ? false : options.computer;
     this.copy_to_upload_location = ((options.copy_to_upload_location === undefined) ?
                                     false : options.copy_to_upload_location);
@@ -174,6 +174,9 @@
     this.types = this.types.map(function(type) {
       return type.substr(type.lastIndexOf('.') + 1);
     });
+
+    // Backwards compatibility
+    this.link_options.direct = (options.direct_link === undefined) ? false : options.direct_link;
 
     return this;
   };
@@ -241,7 +244,7 @@
       flavor: exp.flavor,
       multiselect: exp.multiselect,
       link: exp.link,
-      direct_link: exp.direct_link,
+      link_options: exp.link_options,
       computer: exp.computer,
       copy_to_upload_location: exp.copy_to_upload_location,
       account_key: exp.account_key,

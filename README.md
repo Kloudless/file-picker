@@ -219,14 +219,27 @@ File Explorer JavaScript on the page.
     // }]
   ```
 
-* `direct_link` : boolean
+* `link_options` : Object
 
-  Chooser: _Optional (default: false)_
+  Chooser: _Optional (default: {})_
 
-  This option is specific to links generated through the file explorer. If
-  `false`, the link redirects to the cloud storage service to view the file. If
-  `true`, the link will download the file instead. See the `direct`
-  [attribute](https://developers.kloudless.com/docs#links) for more details.
+  The `link_options` object provides parameters to use when the File Explorer
+  creates links. See the
+  [documentation for creating links](https://developers.kloudless.com/docs/latest#links-create-a-link)
+  for a full list of the possible options available.
+  Note that links to selected files are only created if the `link`
+  configuration option is set to `true`.
+
+  For example:
+
+  ```javascript
+      ...,
+      link_options: {
+        direct: true,
+        expiration: "2020-10-12T00:00:00"
+      },
+      ...
+  ```
 
 * `copy_to_upload_location` : boolean
 

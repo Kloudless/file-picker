@@ -24,7 +24,7 @@
       flavor: get_query_variable('flavor'),
       multiselect: JSON.parse(get_query_variable('multiselect')),
       link: JSON.parse(get_query_variable('link')),
-      direct_link: JSON.parse(get_query_variable('direct_link')),
+      link_options: JSON.parse(get_query_variable('link_options')),
       computer: JSON.parse(get_query_variable('computer')) ||
         get_query_variable('flavor') === 'dropzone',
       account_key: JSON.parse(get_query_variable('account_key')),

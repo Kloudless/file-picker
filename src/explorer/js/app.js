@@ -287,17 +287,15 @@
 
             // Add the link at the last possible moment for error/async handling
             var createLink = function(selection_index) {
+              var linkData = $.extend({}, config.link_options);
+              linkData.file_id = selections[selection_index].id;
               var request = $.ajax({
                 url: config.base_url + '/v0/accounts/' + accountId + '/links/',
                 type: 'POST',
                 headers: {
                   Authorization: 'AccountKey ' + accountKey
                 },
-                data: {
-                  // TODO: add other parameters
-                  file_id: selections[selection_index].id,
-                  direct: config.direct_link
-                }
+                data: linkData,
               }).done(function(data) {
                 selections[selection_index]['link'] = data['url'];
                 selectionComplete(true);
