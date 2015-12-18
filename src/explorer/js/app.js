@@ -1095,10 +1095,17 @@
                     // Abort asynchronously.
                     window.setTimeout(function() {
                       $.each(file_ids_to_abort, function(index, id) {
+                        var headers = {"X-Explorer-Id": explorer.id};
+                        if (config.upload_location_account() && config.upload_location_folder()) {
+                          // A specific Upload Location is being used.
+                          headers['X-Drop-Account'] = config.upload_location_account();
+                          headers['X-Drop-Folder'] = config.upload_location_folder();
+                        }
                         $.ajax({
                           url: config.base_url + '/drop/' + config.app_id +
                             '?file_id=' + id,
                           type: 'DELETE',
+                          headers: headers,
                         });
                       });
                     }, 0);
@@ -1128,7 +1135,7 @@
               // Not using up.id because it changes with every plUpload().
               up.settings.headers["X-Explorer-Id"] = explorer.id;
               if (config.upload_location_account() && config.upload_location_folder()) {
-                // A specifc Upload Location is being used.
+                // A specific Upload Location is being used.
                 up.settings.headers['X-Drop-Account'] = config.upload_location_account();
                 up.settings.headers['X-Drop-Folder'] = config.upload_location_folder();
               }
