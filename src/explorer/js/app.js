@@ -998,7 +998,9 @@
           max_upload_slots: 6,
 
           // Misc
-          runtimes : 'html5,flash',
+          // See http://www.plupload.com/docs/Frequently-Asked-Questions#when-to-use-chunking-and-when-not
+          // for omitting flash when chunking is possible.
+          runtimes : 'html5' + (config.chunk_size === null ? ',flash' : ''),
 
           // Rename files by clicking on their titles
           rename: true,
@@ -1115,6 +1117,7 @@
                */
               up.settings.multipart_params = up.settings.multipart_params || {};
               up.settings.multipart_params['file_id'] = file.id;
+              up.settings.multipart_params['file_size'] = file.size;
               if (config.link) {
                 up.settings.multipart_params['link'] = true;
                 up.settings.multipart_params['link_options'] = JSON.stringify(config.link_options());
