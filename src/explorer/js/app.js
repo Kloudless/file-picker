@@ -990,7 +990,8 @@
           })(),
 
           // Multipart / Chunking
-          multipart: false,
+          multipart: true,
+          multipart_params: {},
           chunk_size: config.chunk_size,
           max_retries: 2,
 
