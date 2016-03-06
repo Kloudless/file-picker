@@ -18,17 +18,15 @@
       this.sortOrder = 1;
       this.sortOption = null;
 
-      // default - 'root' is a special file type.
+      // default - 'root'
+      // This is later replaced with updated metadata.
       this.current = ko.observable({
         id: 'root',
         name: 'root',
-        type: 'root',
-        modified: null,
-        size: null,
-        friendlySize: null,
+        type: 'folder',
         parent_obs: null,
         path: '/',
-        children: ko.observableArray()
+        children: ko.observableArray(),
       });
 
       this.cwd = ko.computed(function() {
@@ -47,10 +45,10 @@
             Authorization: 'AccountKey ' + fs.key
           }
         }).done(function(data) {
-          var current = fs.current();
+          var updatedCurrent = fs.filterChildren([data])[0];
+          updatedCurrent.children = fs.current().children
+          fs.current(updatedCurrent);
           success = true;
-          current.can_create_folders = data.can_create_folders;
-          current.can_upload_files = data.can_upload_files;
         }).fail(function(xhr, status, err) {
           logger.warn('Retrieving root folder failed: ', status, err, xhr);
           callback(new Error("failed to retrieve root folder"), null);
@@ -215,7 +213,7 @@
 
       if (typeof next == 'string' && next == this.PARENT_FLAG) {
         logger.debug('Shifting to parent...');
-        if (this.current().type == 'root') {
+        if (this.current().id === 'root') {
           return callback(new Error('Attempting to navigate above root.'), null);
         }
         this.path.pop();
@@ -243,7 +241,7 @@
     // Go up a certain number of directories.
     Filesystem.prototype.up = function(count, callback) {
       while (count > 0) {
-        if (this.current().type == 'root') {
+        if (this.current().id === 'root') {
           return callback(new Error('Attempting to navigate above root.'), null);
         }
         this.path.pop();
