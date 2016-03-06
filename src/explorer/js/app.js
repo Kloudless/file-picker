@@ -132,6 +132,11 @@
 
       this.exp_id = config.exp_id;
 
+      // Track the last cancellation so Chooser responses received after
+      // a cancellation are ignored. Saves are allowed to proceed due to
+      // the new file already having been saved to the location.
+      this.lastCancelTime = new Date();
+
       var self = this;
 
       // View model setup.
@@ -267,6 +272,7 @@
             var accountKey = explorer.manager.active().filesystem().key;
             var requestCountSuccess = 0;
             var requestCountError = 0;
+            var lastCancelTime = explorer.lastCancelTime;
 
             // Selection Complete Callback
             var selectionComplete = function(success) {
@@ -276,6 +282,13 @@
               else {
                 requestCountError++;
                 logger.warn('Error with ajax requests for selection');
+              }
+
+              if (explorer.lastCancelTime > lastCancelTime) {
+                logger.info("A cancellation occurred prior to the operation " +
+                            "being completed. Ignoring response.")
+                processingConfirm = false;
+                return;
               }
 
               // All requests are done
@@ -370,6 +383,7 @@
         // Quit the file explorer.
         cancel: function() {
           logger.debug('Quitting!');
+          explorer.lastCancelTime = new Date()
           // postMessage to indicate failure.
           explorer.view_model.postMessage('cancel');
         },
