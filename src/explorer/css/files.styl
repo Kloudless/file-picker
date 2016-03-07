@@ -51,6 +51,8 @@
                 ul.dropdown-menu
                     border-radius: 0
                     padding: 0
+                    max-height: 400px
+                    overflow-y: scroll
                 ul li a
                     padding: 0.5rem
                     &:hover
@@ -111,7 +113,6 @@
                 div.crumbmenuwrap
                     display: none
                     position: absolute
-                    top: 30px
                     padding-top: 13px
                     top: 39px
                     left: -10px
@@ -120,9 +121,10 @@
                     background: transparent
                     list-style: none
                     width: 250px
-                    border-radius: 5px
-                    overflow: hidden;
+                    max-height: 400px
+                    overflow-y: scroll
                     border: 1px solid #bbb
+                    border-radius: 5px
                     margin: 0
                     li
                         background: #fff
