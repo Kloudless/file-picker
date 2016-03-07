@@ -1,28 +1,7 @@
 .computer
   .computerinner
     header
-      //- Select account
-      .accountselect(data-bind='with: accounts')
-        button.button.accountsbutton(href="#")
-          img.accounticon(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png"}')
-          div.name My Computer
-          div.arrow
-        div#account-dropdown.dropdown.dropdown-tip
-          ul.dropdown-menu
-            // ko foreach: all
-            li
-              a(data-bind='attr: {href: "#/files/" + account}')
-                img.accounticon(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/" + service + ".png"}')
-                div.accountname(data-bind='text: account_name')
-            // /ko
-            li
-              a(href='#/computer')
-                div.computericon
-                span My Computer
-            li
-              a(href='#/accounts')
-                div.accountsicon
-                span Accounts
+      include selector
 
     //- Current Upload View
     div#uploader

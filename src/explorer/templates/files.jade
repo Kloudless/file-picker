@@ -1,36 +1,14 @@
 .files
   .filesinner
     header
-      //- Select account
-      .accountselect(data-bind='with: accounts')
-        button.button.accountsbutton(href="#")
-          img.accounticon(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/" + active() + ".png"}')
-          div.name(data-bind='text: name')
-          div.arrow
-        div#account-dropdown.dropdown.dropdown-tip
-          ul.dropdown-menu
-            // ko foreach: all
-            li(data-bind='attr: {title: $parent.friendly_name(service) + ": " + account_name}')
-              a(data-bind='attr: {href: "#/files/" + account}')
-                img.accounticon(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/" + service + ".png"}')
-                div.accountname(data-bind='text: account_name')
-            // /ko
-            // ko if: computer()
-            li
-              a(href='#/computer')
-                div.computericon
-                span My Computer
-            // /ko
-            li
-              a(href='#/accounts')
-                div.accountsicon
-                span Accounts
+      include selector
+
       //- Actions
       .actions(data-bind='with: files')
         // ko if: allow_newdir
-        a(data-bind='click: newdir, attr: {href: "#"}').new-folder-button
+        a(data-bind='click: newdir').new-folder-button
         // /ko
-        a(data-bind='click: refresh, attr: {href: "#"}').refresh-button
+        a(data-bind='click: refresh').refresh-button
         // ko if: $root.flavor() == 'chooser'
         form.search-form(data-bind="submit: search")
           a#search-back-button(data-bind='click: refresh').search
@@ -159,7 +137,7 @@
         div.kloading(data-bind='visible: loading')
         div.error(data-alert, data-bind='visible: error().length > 0')
           div.error-text(data-bind='text: error, attr: {title: error}')
-          a.close(href='#')
+          a.close
         // ko if: files.all().length == 1 && flavor() == 'saver'
         input.kloudless-saver-name(data-bind='value: files.all()[0].name')
         // /ko

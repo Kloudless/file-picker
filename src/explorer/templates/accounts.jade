@@ -3,7 +3,7 @@
     //- Back button
     .back
       .backcontain(data-bind='if: accounts.all().length > 0')
-        a.backbtn(href='#/files')
+        a.backbtn(data-bind='click: $root.setLocation.bind($data, "#/files")')
           div.arrow
         // ko if: logo_url
         img.klogo(data-bind='attr: {src: logo_url}')
@@ -41,11 +41,11 @@
                 ul.accountnames
                   li.account
                     div
-                      a(data-bind='attr: {href: "#/files/" + account}, text: account_name')
+                      a(data-bind='click: $root.setLocation.bind($data, "#/files/" + account), text: account_name')
                     //-.unlink
-                    a.alert(data-bind='attr: {href: "#/account/disconnect/" + account}', onClick='return confirm("If you remove this account, you will no longer be able to explore. Are you sure?")')
+                    a.alert(data-bind='click: function (data, element) { if (!confirm("If you remove this account, you will no longer be able to explore. Are you sure?")) return false; $root.setLocation("#/account/disconnect/" + account) }')
                 //-.refresh(data-bind='if: !connected')
-                //-  a.button(data-bind='attr: {href: "#/account/reconnect/" + account}') Refresh
+                //-  a.button(data-bind='click: $root.setLocation.bind($data, "#/account/reconnect/" + account)') Refresh
             // ko if: $index() === ($parent.all().length - 1) && $parent.computer()
             li.linked-service
               div.servicename
@@ -55,7 +55,7 @@
                 ul.accountnames
                   li.account
                     div
-                      a(data-bind='attr: {href: "#/computer"}, text: "Upload from your computer"')
+                      a(data-bind='click: $root.setLocation.bind($data, "#/computer"), text: "Upload from your computer"')
             // /ko
 
       // ko if: $parent.services.length > 0

@@ -143,7 +143,7 @@
       this.view_model = {
         flavor: ko.observable(config.flavor),
 
-        // The current view: alternates between 'files' and 'accounts'
+        // The current view: alternates between 'files', 'accounts', 'computer', etc.
         current: ko.observable(startView),
 
         // Save all files in FileManager to the selected directory
@@ -502,6 +502,14 @@
           });
         },
 
+        setLocation: function (path) {
+          /*
+           We override setLocation in the router, so this let's us bypass the
+           hash actually changing.
+           */
+          router.setLocation(path);
+        },
+
         // Request states.
         error: ko.observable(''),
         loading: ko.observable(true),
@@ -513,20 +521,22 @@
           // List of all account objects.
           all: self.manager.accounts,
           // Current active service
-          active: ko.computed(function() {
-            var self = this();
-            return self.service;
-          }, self.manager.active),
+          active: ko.pureComputed(function() {
+            if (this.view_model.current() === 'computer')
+              return 'computer';
+            return this.manager.active().service;
+          }, self),
           logout: function() {
             explorer.manager.accounts.removeAll();
             storage.removeAllAccounts(config.app_id);
             router.setLocation('#/accounts');
           },
           // Current active service name
-          name: ko.computed(function() {
-            var self = this();
-            return self.account_name;
-          }, self.manager.active),
+          name: ko.pureComputed(function() {
+            if (this.view_model.current() === 'computer')
+              return 'My Computer';
+            return this.manager.active().account_name;
+          }, self),
           // return friendly names by service
           friendly_name: function(service_name) {
             return service_names[service_name];
@@ -858,14 +868,11 @@
       if ($("#search-query").is(":visible"))
         $("#search-back-button").trigger("click");
 
+      if ($('.accountsbutton'))
+        $('.accountsbutton').dropdown('hide');
+
       // Initialise jQuery dropdown plugin.
       if (to == 'files' || to == 'computer') {
-        // TODO: maybe remove later
-        $('.dropdown-menu li a').off('click');
-        $('.dropdown-menu li a').on('click', function(e) {
-          $('.accountsbutton').dropdown('hide');
-          // $('.accountsbutton').click();
-        });
         $('.accountsbutton').dropdown('attach', ['#account-dropdown']);
 
         // Since we're not using foundation, add click handler to 'x'
@@ -1243,6 +1250,12 @@
     var router = sammy(function() {
       var self = this;
 
+      // Override setLocation to disable history modifications.
+      this.disable_push_state = true;
+      this.setLocation = function (path) {
+        self.runRoute('get', path);
+      }
+
       /*
        * Routes
        */
@@ -1346,10 +1359,12 @@
 
     });
 
+
     // Expose hooks for debugging.
     if (config.debug) {
       window.explorer = explorer;
       window.ko = ko;
+      window.router = router;
     }
 
     /*
