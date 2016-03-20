@@ -15,9 +15,10 @@
     AccountManager.prototype.addAccount = function(service, callbacks) {
       logger.debug('Starting authentication.');
       var response = Authenticator.authenticate(service, function(data) {
-        logger.debug('Authenticated for: ', data.service);
-        var created = new Account(data, callbacks.on_account_ready,
-            callbacks.on_fs_ready);
+        logger.debug('Authenticated for: ', data.service || data.scope);
+        var created = new Account(
+          {scheme: 'Bearer', key: data.access_token},
+          callbacks.on_account_ready, callbacks.on_fs_ready);
       });
 
       if (response.authUsingIEXDFrame) {

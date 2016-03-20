@@ -5,9 +5,9 @@
     function(ko, logger, $, config) {
 
     //Create a search object
-    var Search = function(account, account_key, query) {
+    var Search = function(account, key, query) {
       this.account = account;
-      this.key = account_key;
+      this.key = key;
       this.q = query;
       this.results = null;
       this.request = null;
@@ -20,7 +20,7 @@
         url: config.base_url + '/v0/accounts/' + self.account + "/search/?q=" + self.q,
         type: 'GET',
         headers: {
-          Authorization: 'AccountKey ' + self.key
+          Authorization: self.key.scheme + ' ' + self.key.key
         },
         success: function(data) {
           self.results = data;

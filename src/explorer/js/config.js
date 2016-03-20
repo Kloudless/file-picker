@@ -1,8 +1,9 @@
 (function() {
   'use strict';
 
-  define(['jquery', 'text!config.json', 'vendor/knockout'],
-         function($, config_text, ko) {
+  define(
+    ['jquery', 'text!config.json', 'vendor/knockout'],
+    function($, config_text, ko) {
 
     var get_query_variable = function(name) {
       name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -27,7 +28,7 @@
       link_options: ko.observable({}),
       computer: JSON.parse(get_query_variable('computer')) ||
         get_query_variable('flavor') === 'dropzone',
-      account_key: JSON.parse(get_query_variable('account_key')),
+      retrieve_token: ko.observable(),
       services: JSON.parse(get_query_variable('services')),
       persist: JSON.parse(get_query_variable('persist')),
       types: JSON.parse(get_query_variable('types')).map(function(str) {
@@ -39,10 +40,14 @@
       }),
       user_data: {}, // Get asynchronously.
       copy_to_upload_location: JSON.parse(get_query_variable('copy_to_upload_location')),
+      api_version: get_query_variable('api_version') || 'v0',
       upload_location_account: ko.observable(),
       upload_location_folder: ko.observable(),
       create_folder: JSON.parse(get_query_variable('create_folder')),
       chunk_size: 5*1024*1024,
+
+      // b/w compatibility
+      account_key: JSON.parse(get_query_variable('account_key')),
     };
 
     config.update = function (data) {
@@ -63,7 +68,7 @@
 
     // Get user_data
     var query_params = {app_id: config.app_id}
-    if (config.account_key) {
+    if (config.account_key || config.retrieve_token()) {
       // Only do origin check if we need to.
       query_params['origin'] = config.origin
     }

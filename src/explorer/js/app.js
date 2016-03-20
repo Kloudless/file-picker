@@ -158,7 +158,7 @@
           // If you can save here
           if (current.can_upload_files) {
             var accountId = explorer.manager.active().filesystem().id;
-            var accountKey = explorer.manager.active().filesystem().key;
+            var authKey = explorer.manager.active().filesystem().key;
             var requestCountSuccess = 0;
             var requestCountError = 0;
 
@@ -212,7 +212,7 @@
                   url: config.base_url + '/v0/accounts/' + accountId + '/files/?overwrite=' + overwrite,
                   type: 'POST',
                   contentType: 'application/json',
-                  headers: { Authorization: 'AccountKey ' + accountKey },
+                  headers: { Authorization: authKey.scheme + ' ' + authKey.key },
                   data: JSON.stringify(file_data)
                 }).done(function(data) {
                   saves.push(data);
@@ -269,7 +269,7 @@
             explorer.view_model.postMessage('selected', selections);
 
             var accountId = explorer.manager.active().filesystem().id;
-            var accountKey = explorer.manager.active().filesystem().key;
+            var authKey = explorer.manager.active().filesystem().key;
             var requestCountSuccess = 0;
             var requestCountError = 0;
             var lastCancelTime = explorer.lastCancelTime;
@@ -307,7 +307,7 @@
                 url: config.base_url + '/v0/accounts/' + accountId + '/links/',
                 type: 'POST',
                 headers: {
-                  Authorization: 'AccountKey ' + accountKey
+                  Authorization: authKey.scheme + ' ' + authKey.key
                 },
                 data: linkData,
               }).done(function(data) {
@@ -338,7 +338,7 @@
                     ),
                     type: 'POST',
                     contentType: 'application/json',
-                    headers: { Authorization: 'AccountKey ' + accountKey },
+                    headers: { Authorization: authKey.scheme + ' ' + authkey.key },
                     data: JSON.stringify(data),
                   }).done(function(data) {
                     selections[i] = data;
@@ -397,8 +397,10 @@
 
           if (data !== undefined) {
             if (['selected', 'success', 'addAccount'].indexOf(action) > -1 &&
-                config.account_key && config.user_data.trusted) {
-              // Add in Account Key on success for files.
+                (config.account_key || config.retrieve_token())
+                && config.user_data.trusted) {
+              // Add in OAuth Token on success for files.
+
               var accountMap = {}
               ko.utils.arrayForEach(self.manager.accounts(), function(account) {
                 accountMap[account.account] = account;
@@ -413,13 +415,15 @@
                 accountIdField = 'id';
               }
 
-              // Add Account Key
+              // Add OAuth Token
               ko.utils.arrayForEach(addKeyToData, function(d) {
                 var account = accountMap[d[accountIdField]];
                 if (account !== undefined) {
-                  d['account_key'] = {
-                    key: account.filesystem().key
-                  }
+                  var keyIdent = 'account_key'
+                  if (config.retrieve_token())
+                    d.bearer_token = {key: account.bearer_token}
+                  if (config.account_key)
+                    d.account_key = {key: account.account_key}
                 }
               });
             }
@@ -446,7 +450,11 @@
             for (i = 0; i < accounts.length; i++) {
               (function(local_data) {
                 var created = new Account(local_data, function(acc) {
-                  if (acc.connected) {
+
+                  // Don't allow duplicate accounts
+                  explorer.manager.removeAccount(acc.account);
+
+                  if (acc.connected()) {
                     explorer.manager.accounts.push(acc);
 
                     if (!active) {
@@ -778,8 +786,8 @@
                 return;
               }
               self.view_model.loading(true);
-              var currentAcc = explorer.manager.active().filesystem();
-              var s = new Search(currentAcc.id, currentAcc.key, query);
+              var currentFs = explorer.manager.active().filesystem();
+              var s = new Search(currentFs.id, currentFs.key, query);
               s.search(function() {
                 var fs = self.manager.active().filesystem();
                 fs.display(fs.filterChildren(s.results.objects));
@@ -1294,7 +1302,7 @@
           url: config.base_url + '/v0/accounts/' + account_data.account,
           type: 'DELETE',
           headers: {
-            Authorization: 'AccountKey ' + account_data.account_key
+            Authorization: account_data.key.scheme + ' ' + account_data.key.key
           }
         }).done(function(data) {
           explorer.manager.removeAccount(account_data.account);
@@ -1382,6 +1390,7 @@
       var contents = JSON.parse(message.data);
       // TODO: future config options
       if (contents.action == 'INIT') {
+        dataMessageHandler(contents.data)
         if (startView && startView !== 'accounts') {
           router.run('#/' + startView);
         } else {
@@ -1403,6 +1412,11 @@
        * that is subscribed to by any methods wanting to be notified of a change.
        * TODO: Change this.
        */
+
+      if (!data) {
+        logger.error("dataMessageHandler: No data found to configure with.")
+        return
+      }
 
       // Differentiate between saver and chooser
       // Check the flavor on init call
@@ -1447,6 +1461,13 @@
         router.setLocation('#/dropzone');
       }
 
+
+      // Primary way of updating config options
+      if (data.options) {
+        config.update(data.options);
+      }
+
+
       // Call sync if frame has already been initialized and there are differences
       // between storage and current accounts
       if (explorer.manager.accounts().length !== 0) {
@@ -1467,7 +1488,10 @@
         }
         // logger.debug(different || accounts.length != local_accounts.length);
         if (different || accounts.length != local_accounts.length) {
-          explorer.view_model.sync(accounts, true);
+          // Call asynchronously to give other options some time to load.
+          window.setTimeout(function () {
+            explorer.view_model.sync(accounts, true);
+          }, 0);
         }
       }
 
@@ -1475,14 +1499,24 @@
        * Options
        */
 
-      // account key data
+      // account key and token data
+
       if (data.options && data.options.keys) {
-        explorer.view_model.sync(data.options.keys, true);
+        window.setTimeout(function () {
+          explorer.view_model.sync(
+            data.options.keys.map(function (k) {
+              return {key: k, scheme: 'AccountKey'};
+            }), true);
+        }, 0);
       }
 
-      // Update other config info
-      if (data.options) {
-        config.update(data.options);
+      if (data.options && data.options.tokens) {
+        window.setTimeout(function () {
+          explorer.view_model.sync(
+            data.options.tokens.map(function (k) {
+              return {key: k, scheme: 'Bearer'};
+            }), true);
+        }, 0);
       }
 
       if (config.computer && !loadedDropConfig) {

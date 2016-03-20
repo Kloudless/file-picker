@@ -227,7 +227,7 @@
 
     exp.on('load', function() {
       // TODO: INIT post message with all config variables
-      exp.message('INIT', null);
+      exp.message('INIT', {options: options});
 
       exp.loaded = true;
       if (queuedAction[exp.exp_id]) {

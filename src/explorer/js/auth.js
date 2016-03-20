@@ -93,14 +93,18 @@
 
     // Display popup window
     var authenticate = function (service, callback) {
-      var url = config.base_url + '/services/' + service
-        , query_params = {
-            app_id: config.app_id,
-            referrer: 'explorer',
-            retrieve_account_key: 'true',
-            request_id: util.randomID(),
-            origin: window.location.protocol + '//' + window.location.host,
-        };
+      var url = config.base_url + '/' + config.api_version + '/oauth/'
+      var randomID = util.randomID();
+      var query_params = {
+        client_id: config.app_id,
+        response_type: 'token',
+        redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
+        scope: service,
+        state: randomID,
+        request_id: randomID,
+        origin: window.location.protocol + '//' + window.location.host,
+        referrer: 'explorer',
+      };
 
       var opt
         , h = 500
@@ -157,7 +161,11 @@
       var close,
         popupCallback = function(response) {
           close();
-          callback(response.data);
+          if (response.data && response.data.state === randomID) {
+            callback(response.data);
+          } else {
+            logger.error("Received state doesn't match sent state.")
+          }
         };
 
       if (util.supportsPopupPostMessage()) { // open popup directly

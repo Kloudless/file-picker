@@ -42,7 +42,7 @@
           url: config.base_url + '/v0/accounts/' + fs.id + '/folders/root',
           type: 'GET',
           headers: {
-            Authorization: 'AccountKey ' + fs.key
+            Authorization: fs.key.scheme + ' ' + fs.key.key
           }
         }).done(function(data) {
           var updatedCurrent = fs.filterChildren([data])[0];
@@ -112,7 +112,7 @@
         url: page_url,
         type: 'GET',
         headers: {
-          Authorization: 'AccountKey ' + self.key
+          Authorization: self.key.scheme + ' ' + self.key.key
         }
       });
 
@@ -120,7 +120,7 @@
         url: page_url,
         type: 'GET',
         headers: {
-          Authorization: 'AccountKey ' + self.key
+          Authorization: self.key.scheme + ' ' + self.key.key
         }
       }).done(function(data) {
         logger.debug('Received refresh: ', data);
@@ -318,7 +318,7 @@
         url: config.base_url + '/v0/accounts/' + self.id + '/folders/',
         type: 'POST',
         headers: {
-          Authorization: 'AccountKey ' + self.key
+          Authorization: self.key.scheme + ' ' + self.key.key
         },
         data: {
           name: folder_name,

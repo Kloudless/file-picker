@@ -26,7 +26,7 @@
 
       var initialize_account = function(data) {
         if (!data) {
-          callback(new Error("Account data empty"), null);
+          filesystem_callback(new Error("Account data empty"), null);
           return;
         }
 
@@ -43,20 +43,36 @@
         // Application stuff.
         self.connected = ko.observable(true);
         self.account_key = data.account_key;
-        self.account_key_expiry = data.account_key_expiry;
+        self.bearer_token = data.bearer_token;
         logger.info('Account creation finished. Building filesystem...');
 
-        self.filesystem = ko.observable(new Filesystem(self.account,
-            self.account_key, filesystem_callback));
+        self.key = {};
+        if (self.bearer_token) {
+          self.key.key = self.bearer_token;
+          self.key.scheme = "Bearer";
+        } else {
+          self.key.key = self.account_key;
+          self.key.scheme = "AccountKey";
+        }
+        self.filesystem = ko.observable(
+          new Filesystem(self.account, self.key, filesystem_callback));
 
-        account_callback(self);
+        var callback = function () { account_callback(self) }
+        if (config.account_key && !self.account_key) {
+          self.includeAccountKey(callback);
+        } else if (config.retrieve_token() && !self.bearer_token) {
+          self.includeBearerToken(callback);
+        } else {
+          callback();
+        }
       };
 
-      // if initializing as a single key
-      if (typeof(data) != typeof({})) {
-        self.data_from_key(data, initialize_account);
-      } else {
+      // If data is an object with 'account', then we already have account data
+      // to initialize with. Otherwise, fetch the data from the Key.
+      if (data.account) {
         initialize_account(data);
+      } else {
+        self.data_from_key(data, initialize_account);
       }
     };
 
@@ -85,10 +101,10 @@
       }
 
       self.request = $.ajax({
-        url: config.base_url + '/v0/accounts/?active=True',
+        url: config.base_url + '/' + config.api_version + '/accounts/?active=True',
         type: 'GET',
         headers: {
-          Authorization: 'AccountKey ' + key
+          Authorization: key.scheme + ' ' + key.key
         },
       }).done(function(data) {
         logger.debug('Retrieving account succeeded.');
@@ -100,14 +116,66 @@
           var acct = accts[0];
           acct.account_name = acct.account;
           acct.account = acct.id;
-          acct.account_key = key;
-          callback(acct);
+
+          if (key.scheme === 'AccountKey') {
+            acct.account_key = key.key
+          } else {
+            acct.bearer_token = key.key
+          }
+
+          callback(acct)
         }
       }).fail(function(xhr, status, err) {
         logger.debug('Retrieving account failed.');
         callback(null);
       }).always(function() {
         self.request = null;
+      });
+    }
+
+    Account.prototype.includeAccountKey = function(callback) {
+      /*
+       Only called when OAuth tokens are in use.
+       */
+      var self = this;
+      $.ajax({
+        url: config.base_url + '/' + config.api_version + '/accounts/' +
+          self.account + '/keys',
+        type: 'GET',
+        headers: {
+          Authorization: self.key.scheme + ' ' + self.key.key
+        },
+      }).done(function(data) {
+        if (data.objects.length > 0) {
+          self.account_key = data.objects[0].key
+        }
+      }).fail(function(xhr, status, err) {
+        logger.debug('Retrieving the account key via OAuth token failed.');
+      }).always(function() {
+        callback()
+      });
+    }
+
+    Account.prototype.includeBearerToken = function(callback) {
+      /*
+       Only called when Account Keys are in use and bearer tokens need to be
+       returned.
+       Does not delete the existing account key.
+       */
+      var self = this;
+      $.ajax({
+        url: config.base_url + '/' + config.api_version + '/accounts/' +
+          self.account + '/token_from_key',
+        type: 'POST',
+        headers: {
+          Authorization: self.key.scheme + ' ' + self.key.key
+        },
+      }).done(function(data) {
+        self.bearer_token = data.access_token
+      }).fail(function(xhr, status, err) {
+        logger.debug('Retrieving the OAuth token via the account key failed.');
+      }).always(function() {
+        callback()
       });
     }
 

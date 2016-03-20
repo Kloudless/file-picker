@@ -146,20 +146,27 @@ File Explorer JavaScript on the page.
 
 * `account_key` : boolean
 
+  This option is deprecated as OAuth 2.0 Tokens are used to authenticated accounts
+  now instead of Account Keys. Please use the `retrieve_token` option below instead.
+  Existing Account Keys can be converted to OAuth Tokens using
+  [this endpoint](https://developers.kloudless.com/docs/v0/storage#account-keys-account-key-oauth-token).
+
+* `retrieve_token` : boolean
+
   Chooser: _Optional (default: false)_
 
   Saver: _Optional (default: false)_
 
-  This option will include [Account Keys](https://developers.kloudless.com/docs#account-keys)
+  This option will include [Bearer Tokens](https://developers.kloudless.com/docs/v0/authentication)
   in addition to the other response data, to allow you to make further requests to the API
-  or save the Account Keys easily.
+  or save the OAuth Tokens for future use.
 
   ```javascript
-    // Example response with an Account Key in the metadata.
+    // Example response with an OAuth Token in the metadata.
     [{
         ...
-        account_key: {
-          key: "the_account_key",
+        bearer_token: {
+          key: "the_token",
         },
         ...
      }]
@@ -170,26 +177,31 @@ File Explorer JavaScript on the page.
 
   In addition, care should
   be taken to ensure no malicious JavaScript or XSS vulnerabilities are present
-  on the page, as the Account Key provides complete access to that user's account.
-  To guard against this, you can make requests from a backend server using
-  the API Key instead.
+  on the page, as the Bearer Token provides complete access to that user's account.
 
 * `keys` : array
+
+  This option is deprecated as OAuth 2.0 Tokens are used to authenticated accounts
+  now instead of Account Keys. Please use the `tokens` option below instead.
+  Existing Account Keys can be converted to OAuth Tokens using
+  [this endpoint](https://developers.kloudless.com/docs/v0/storage#account-keys-account-key-oauth-token).
+
+* `tokens` : array
 
   Chooser: _Optional (default: [])_
 
   Saver: _Optional (default: [])_
 
-  This option should list [Account Keys](https://developers.kloudless.com/docs#account-keys)
+  This option should list [OAuth 2.0 Tokens](https://developers.kloudless.com/docs/v0/authentication)
   for accounts the File Explorer should be initialized with. The File Explorer will make API
   requests for additional information on the accounts and display them
   in the list of accounts the user has connected.
 
   ```javascript
-    // Example initialization with Account Keys to import.
+    // Example initialization with OAuth Tokens to import.
     explorer({
       ...
-      keys: ["abcdefghijklmn", "opqrstuvwxyz"]
+      tokens: ["abcdefghijklmn", "opqrstuvwxyz"]
       ...
     });
   ```
