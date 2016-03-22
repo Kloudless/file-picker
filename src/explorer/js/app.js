@@ -338,7 +338,7 @@
                     ),
                     type: 'POST',
                     contentType: 'application/json',
-                    headers: { Authorization: authKey.scheme + ' ' + authkey.key },
+                    headers: { Authorization: authKey.scheme + ' ' + authKey.key },
                     data: JSON.stringify(data),
                   }).done(function(data) {
                     selections[i] = data;
