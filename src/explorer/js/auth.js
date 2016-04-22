@@ -105,6 +105,8 @@
         origin: window.location.protocol + '//' + window.location.host,
         referrer: 'explorer',
       };
+      if (config.account_key)
+        query_params['account_key'] = 1
 
       var opt
         , h = 500
