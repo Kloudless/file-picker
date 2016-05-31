@@ -80,7 +80,6 @@
         'skydrive' : 'OneDrive',
         'sugarsync' : 'SugarSync',
         'sharefile' : 'Citrix ShareFile',
-        'copy' : 'Copy',
         'egnyte' : 'Egnyte',
         's3' : 'Amazon S3',
         'sharepoint': 'SharePoint Online',
