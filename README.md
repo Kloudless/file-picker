@@ -313,6 +313,9 @@ File Explorer JavaScript on the page.
   * `videos`
 
   * `audio`
+  
+To filter by file extension, include the extension in the array without the period (`.`) prefix.
+For example, `['pdf', 'jpg', 'jpeg', 'png']`.
 
 #### Saver options
 
