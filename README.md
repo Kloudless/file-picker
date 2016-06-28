@@ -414,11 +414,13 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
 
 * `startFileUpload(file)`
 
-  Fired when a file upload starts (once per file being uploaded). This event is
-  only fired when the user uploads a file via the Chooser's Computer option
-  or the Saver. For the Chooser, `file` is an object containing keys
-  `id`, `name`, `size` and `mime_type`. For the Saver, it contains `url` and
-  `name`.
+  Fired when a file upload starts, or is requested to be retried by a user
+  after encountering errors (see the `uploads_pause_on_error` option).
+  This event is only fired when the user uploads a file via the Chooser's
+  Computer option or the Saver. For the Chooser, `file` is an object containing
+  keys `id`, `name`, `size` and `mime_type`. For the Saver, it contains `url`
+  and `name`.
+  This event is fired per file and not per chunk.
 
 * `finishFileUpload(file)`
 
