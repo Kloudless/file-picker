@@ -288,6 +288,16 @@ File Explorer JavaScript on the page.
   [App Details](http://developers.kloudless.com/applications/*/details) page.
   `upload_location_account` must also be provided.
 
+* `uploads_pause_on_error` : boolean
+
+  Chooser: _Optional (default: true)_
+
+  If `true`, uploads using the Computer option will pause if errors are encountered,
+  giving the user the option to retry the upload by clicking 'Resume'. The user could
+  also remove the file that is failing to upload from the queue.
+  If `false`, the file that encounters errors will be skipped and excluded from the
+  list of files returned in the `success` callback.
+
 * `types` : array
 
   Chooser: _Default: ['all']_

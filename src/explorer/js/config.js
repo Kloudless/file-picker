@@ -43,6 +43,7 @@
       api_version: get_query_variable('api_version') || 'v0',
       upload_location_account: ko.observable(),
       upload_location_folder: ko.observable(),
+      uploads_pause_on_error: ko.observable(true),
       create_folder: JSON.parse(get_query_variable('create_folder')),
       chunk_size: 5*1024*1024,
 

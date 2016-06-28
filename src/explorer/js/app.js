@@ -1168,6 +1168,7 @@
                 up.settings.headers['X-Drop-Folder'] = config.upload_location_folder();
               }
 
+              explorer.view_model.error('');
               explorer.view_model.postMessage('startFileUpload',
                                               formatFileObject(file));
             },
@@ -1197,9 +1198,30 @@
               else if (args.code == plupload.HTTP_ERROR) {
                 logger.error("Error uploading file '" + args.file.name + "': " +
                              args.message);
-                up.removeFile(args.file);
-                up.stop();
-                up.start();
+                if (config.uploads_pause_on_error()) {
+                  explorer.view_model.error(
+                    "Uploading has been paused due to errors. Resume to retry.")
+
+                  // Reset the % loaded for the file in the UI
+                  // plupload only resets file.loaded in handleError(),
+                  // so we need to fix file.percent.
+                  args.file.percent = Math.ceil(args.file.loaded / args.file.size * 100);
+                  args.file.status = plupload.UPLOADING;
+                  up.trigger('UploadFile', args.file);
+
+                  setTimeout(function() {
+                    // Update the UI after re-queueing the file to allow the file to be
+                    // deleted from the queue if needed.
+                    args.file.status = plupload.QUEUED;
+                    up.trigger('UploadFile', args.file);
+                  }, 50);
+
+                  $('#upload-button').click(); // Pause the upload.
+                } else {
+                  up.removeFile(args.file);
+                  up.stop();
+                  up.start();
+                }
               }
             },
             UploadComplete: function(files) {
