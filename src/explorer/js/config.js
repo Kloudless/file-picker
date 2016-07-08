@@ -1,9 +1,8 @@
 (function() {
   'use strict';
 
-  define(
-    ['jquery', 'text!config.json', 'vendor/knockout'],
-    function($, config_text, ko) {
+  define(['jquery', 'text!config.json', 'vendor/knockout'],
+  function($, config_text, ko) {
 
     var get_query_variable = function(name) {
       name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -38,7 +37,7 @@
          */
         return str.toLowerCase();
       }),
-      user_data: {}, // Get asynchronously.
+      user_data: ko.observable(), // Get asynchronously.
       copy_to_upload_location: JSON.parse(get_query_variable('copy_to_upload_location')),
       api_version: get_query_variable('api_version') || 'v0',
       upload_location_account: ko.observable(),
@@ -68,19 +67,22 @@
     };
 
     // Get user_data
-    var query_params = {app_id: config.app_id}
-    if (config.account_key || config.retrieve_token()) {
-      // Only do origin check if we need to.
-      query_params['origin'] = config.origin
+    var retrieveConfig = function() {
+      var query_params = {app_id: config.app_id}
+      if (config.account_key || config.retrieve_token()) {
+        // Only do origin check if we need to.
+        query_params['origin'] = config.origin
+      }
+      $.get(
+        config.base_url + "/file-explorer/config/",
+        query_params,
+        function(config_data) {
+          config.user_data((config_data && config_data.user_data) || {});
+        }
+      );
     }
-    $.get(config.base_url + "/file-explorer/config/", query_params,
-          function(config_data) {
-            config.user_data = (config_data && config_data.user_data) || {};
-
-            if (config.onReceiveUserData) {
-              config.onReceiveUserData(config.user_data);
-            }
-          });
+    config.retrieve_token.subscribe(function() { retrieveConfig(); });
+    retrieveConfig();
 
     if (config.types.indexOf('folders') != -1 && config.types.length === 1) {
         config.computer = false;

@@ -397,7 +397,7 @@
           if (data !== undefined) {
             if (['selected', 'success', 'addAccount'].indexOf(action) > -1 &&
                 (config.account_key || config.retrieve_token())
-                && config.user_data.trusted) {
+                && config.user_data().trusted) {
               // Add in OAuth Token on success for files.
 
               var accountMap = {}
@@ -816,9 +816,9 @@
 
       };
 
-      config.onReceiveUserData = function(userData) {
-        this.view_model.logo_url(userData.logo_url);
-      }.bind(this);
+      config.user_data.subscribe(function(userData) {
+        self.view_model.logo_url(userData.logo_url);
+      });
 
       this.view_model.files.searchQuery.extend({
         rateLimit: {
