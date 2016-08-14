@@ -43,6 +43,7 @@
       upload_location_account: ko.observable(),
       upload_location_folder: ko.observable(),
       uploads_pause_on_error: ko.observable(true),
+      upload_location_uri: ko.observable(get_query_variable('upload_location_uri')),
       create_folder: JSON.parse(get_query_variable('create_folder')),
       chunk_size: 5*1024*1024,
 
@@ -71,7 +72,10 @@
       var query_params = {app_id: config.app_id}
       if (config.account_key || config.retrieve_token()) {
         // Only do origin check if we need to.
-        query_params['origin'] = config.origin
+        query_params['origin'] = config.origin;
+      }
+      if (config.upload_location_uri()) {
+        query_params['upload_location_uri'] = config.upload_location_uri();
       }
       $.get(
         config.base_url + "/file-explorer/config/",
@@ -81,7 +85,7 @@
         }
       );
     }
-    config.retrieve_token.subscribe(function() { retrieveConfig(); });
+    config.retrieve_token.subscribe(retrieveConfig);
     retrieveConfig();
 
     if (config.types.indexOf('folders') != -1 && config.types.length === 1) {

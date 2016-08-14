@@ -97,6 +97,7 @@
       '&link=' + options.link +
       '&computer=' + options.computer +
       '&copy_to_upload_location=' + options.copy_to_upload_location +
+      '&upload_location_uri=' + options.upload_location_uri +
       '&services=' + JSON.stringify(options.services) +
       '&persist=' + JSON.stringify(options.persist) +
       '&account_key=' + options.account_key +
@@ -156,6 +157,7 @@
     this.computer = (options.computer === undefined) ? false : options.computer;
     this.copy_to_upload_location = ((options.copy_to_upload_location === undefined) ?
                                     false : options.copy_to_upload_location);
+    this.upload_location_uri = window.encodeURIComponent(options.upload_location_uri || '');
     this.create_folder = (options.create_folder === undefined) ? true : options.create_folder;
     this.account_key = (options.account_key === undefined) ? false : options.account_key;
     this.persist = (options.persist === undefined) ? "local" : options.persist;
@@ -246,6 +248,7 @@
       link: exp.link,
       computer: exp.computer,
       copy_to_upload_location: exp.copy_to_upload_location,
+      upload_location_uri: exp.upload_location_uri,
       account_key: exp.account_key,
       services: exp.services,
       persist: exp.persist,

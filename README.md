@@ -628,7 +628,7 @@ dropzone.on('success', function(files) {
 
 * Chrome 17+
 * Firefox 21+
-* IE 9+
+* IE 11+
 * Safari 6+
 * Opera 15+
 

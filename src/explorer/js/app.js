@@ -329,6 +329,9 @@
                     data['drop_account'] = config.upload_location_account()
                     data['parent_id'] = config.upload_location_folder()
                   }
+                  else if (config.upload_location_uri()) {
+                    data['drop_uri'] = config.upload_location_uri()
+                  }
                   $.ajax({
                     url: (
                       config.base_url + '/v0/accounts/' + accountId + '/files/' +
@@ -975,6 +978,9 @@
           });
         }
 
+        var upload_url = (config.upload_location_uri() ||
+                          (config.base_url + '/drop/' + config.app_id))
+
         function formatFileObject(file) {
           /**
            * Format a file info dict to be emitted to the API.
@@ -998,7 +1004,7 @@
 
         $('#uploader').plupload({
           // Required
-          url: config.base_url + '/drop/' + config.app_id,
+          url: upload_url,
           // browse_button: "uploader",
 
           // Filters
@@ -1018,7 +1024,7 @@
           })(),
 
           // Multipart / Chunking
-          multipart: true,
+          multipart: false,
           multipart_params: {},
           chunk_size: config.chunk_size,
           max_retries: 2,
@@ -1029,7 +1035,7 @@
           // Misc
           // See http://www.plupload.com/docs/Frequently-Asked-Questions#when-to-use-chunking-and-when-not
           // for omitting flash when chunking is possible.
-          runtimes : 'html5' + (config.chunk_size === null ? ',flash' : ''),
+          runtimes : 'html5',
 
           // Rename files by clicking on their titles
           rename: true,
@@ -1055,12 +1061,6 @@
             thumbs: false, // Hide thumbs
             active: 'list', // 'thumbs' is another possible view.
           },
-
-          // Flash settings
-          flash_swf_url : '//static-cdn.kloudless.com/p/platform/explorer/Moxie.cdn.swf',
-
-          // Silverlight settings
-          silverlight_xap_url : '//static-cdn.kloudless.com/p/platform/explorer/Moxie.cdn.xap',
 
           init: {
             PostInit: function() {
@@ -1129,9 +1129,14 @@
                           headers['X-Drop-Account'] = config.upload_location_account();
                           headers['X-Drop-Folder'] = config.upload_location_folder();
                         }
+
+                        // Add a query parameter.
+                        var parser = document.createElement('a');
+                        parser.href = upload_url
+                        parser.search += "file_id=" + id
+
                         $.ajax({
-                          url: config.base_url + '/drop/' + config.app_id +
-                            '?file_id=' + id,
+                          url: parser.href,
                           type: 'DELETE',
                           headers: headers,
                         });
@@ -1197,7 +1202,7 @@
               }
               else if (args.code == plupload.HTTP_ERROR) {
                 logger.error("Error uploading file '" + args.file.name + "': " +
-                             args.message);
+                             args.response);
                 if (config.uploads_pause_on_error()) {
                   explorer.view_model.error(
                     "Uploading has been paused due to errors. Resume to retry.")
@@ -1540,7 +1545,7 @@
         }, 0);
       }
 
-      if (config.computer && !loadedDropConfig) {
+      if (config.computer && !loadedDropConfig && !config.upload_location_uri()) {
         // Looking up chunk size. Since the drop location doesn't really
         // change we look it up based on that. The /drop end point for the
         // API returns the chunk size for that drop location.
