@@ -13,7 +13,6 @@
       this.path = ko.observableArray();
       this.request = null; // The currently active request.
       this.page = 1;
-      this.paging = true;
       this.page_size = 1000;
       this.sortOrder = 1;
       this.sortOption = null;
@@ -87,9 +86,8 @@
         return callback(null, self.current().children);
       }
 
-      // reset paging and page
+      // reset page
       self.page = 1;
-      self.paging = true;
 
       self.getPage(callback);
     };
@@ -101,20 +99,15 @@
         callback = function(){};
       }
 
-      if (!self.paging) {
+      if (!self.page) {
         callback(null, self.current().children);
         return;
       }
+
       var page_url = config.base_url + '/v0/accounts/' + self.id + '/folders/' + self.current().id + '/contents';
       page_url += '?page=' + self.page + '&page_size=' + self.page_size;
 
-      logger.debug('Firing page refresh: ', {
-        url: page_url,
-        type: 'GET',
-        headers: {
-          Authorization: self.key.scheme + ' ' + self.key.key
-        }
-      });
+      logger.debug('Loading the next page of infinite scroll data.');
 
       self.request = $.ajax({
         url: page_url,
@@ -123,9 +116,8 @@
           Authorization: self.key.scheme + ' ' + self.key.key
         }
       }).done(function(data) {
-        logger.debug('Received refresh: ', data);
+        logger.debug('Received new data.');
 
-        // replace old values?
         var currentChildren;
         if (self.page == 1) {
           currentChildren = [];
@@ -133,11 +125,7 @@
           currentChildren = self.current().children();
         }
 
-        if (data.has_next) {
-          self.page += 1;
-        } else {
-          self.paging = false;
-        }
+        self.page = data.next_page;
 
         // Add filtered children.
         ko.utils.arrayPushAll(currentChildren, self.filterChildren(data.objects));
@@ -154,7 +142,7 @@
           callback(new Error(err), null);
         }
       }).always(function() {
-        logger.info('Refresh completed.');
+        logger.info('Refresh/pagination completed.');
 
         self.request = null;
       });

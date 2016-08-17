@@ -73,7 +73,7 @@
           th(data-bind='click: sort("recent")') Updated
             .arrow-up#sort-recent-up
             .arrow-down#sort-recent-down
-    div.iewrapper
+    #fs-scroller.iewrapper
       table(data-bind='with: files').clickable
         // ko if: cwd().length == 0 && !$root.loading()
         tbody
@@ -98,7 +98,7 @@
             td.updated()
 
         // /ko
-        tbody(data-bind='finderSelect: $data')
+        tbody#fs-view-body(data-bind='finderSelect: $data')
           // ko foreach: cwd
           // ko ifnot: type == "disabled" || type == "newfolder"
           tr(data-bind="click: $parent.navigate, attr: {'data-type': type, 'title': path || ' '}")

@@ -897,19 +897,16 @@
 
       // Initialise infinite scroll
       if (to == 'files') {
-        $(".filesinner table").off("scrollstop");
-        $(".filesinner table").on("scrollstop", function(e) {
-          var headerHeight = $('.filesinner table thead tr:first').height();
-          var scrolled = $('.filesinner table').scrollTop();
-          var tableHeight = $('.filesinner table').outerHeight();
-          var contentHeight = $('.filesinner table tbody').outerHeight() + headerHeight;
+        $("#fs-scroller").off("scrollstop");
+        $("#fs-scroller").on("scrollstop", function(e) {
+          var scrolled = $(this).scrollTop();
+          var tableHeight = $(this).outerHeight();
+          var contentHeight = $("#fs-view-body").outerHeight();
 
           // load more
           if ((scrolled + tableHeight) >= contentHeight) {
-            logger.debug('Infinite Scroll... load more...');
             explorer.view_model.loading(true);
             explorer.manager.active().filesystem().getPage(function() {
-              // TODO: extra handling?!
               explorer.view_model.loading(false);
             });
           }
