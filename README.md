@@ -288,6 +288,20 @@ File Explorer JavaScript on the page.
   [App Details](http://developers.kloudless.com/applications/*/details) page.
   `upload_location_account` must also be provided.
 
+* `upload_location_uri` : string
+
+  Chooser: _Optional (default: null)_
+  
+  If you would prefer the Computer uploads completely bypass Kloudless-managed Upload
+  Locations and be received by your server directly instead, use this
+  option to provide a custom HTTP URI to perform the chunked Plupload upload to. Each
+  chunk sent to the URI contains identifying information for the upload in the
+  query parameters and the binary content of the chunk in the body. The File Explorer
+  expects a successful response to each chunk, as well as file metadata in the Kloudless
+  API format after the final chunk. Please check the network requests of a successful
+  Computer upload in the demo File Explore via your browser's debugger for more information
+  on this advanced capability, or contact our support team for assistance.
+
 * `uploads_pause_on_error` : boolean
 
   Chooser: _Optional (default: true)_
