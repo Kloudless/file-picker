@@ -157,7 +157,7 @@ File Explorer JavaScript on the page.
 
   Saver: _Optional (default: false)_
 
-  This option will include [Bearer Tokens](https://developers.kloudless.com/docs/v0/authentication)
+  This option will include [Bearer Tokens](https://developers.kloudless.com/docs/latest/authentication)
   in addition to the other response data, to allow you to make further requests to the API
   or save the OAuth Tokens for future use.
 
@@ -192,7 +192,7 @@ File Explorer JavaScript on the page.
 
   Saver: _Optional (default: [])_
 
-  This option should list [OAuth 2.0 Tokens](https://developers.kloudless.com/docs/v0/authentication)
+  This option should list [OAuth 2.0 Tokens](https://developers.kloudless.com/docs/latest/authentication)
   for accounts the File Explorer should be initialized with. The File Explorer will make API
   requests for additional information on the accounts and display them
   in the list of accounts the user has connected.

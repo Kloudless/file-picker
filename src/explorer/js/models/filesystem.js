@@ -38,7 +38,7 @@
       (function(fs) {
         var success = false;
         var request = $.ajax({
-          url: config.base_url + '/v0/accounts/' + fs.id + '/folders/root',
+          url: config.getAccountUrl(fs.id, 'storage', '/folders/root'),
           type: 'GET',
           headers: {
             Authorization: fs.key.scheme + ' ' + fs.key.key
@@ -104,7 +104,7 @@
         return;
       }
 
-      var page_url = config.base_url + '/v0/accounts/' + self.id + '/folders/' + self.current().id + '/contents';
+      var page_url = config.getAccountUrl(self.id, 'storage', '/folders/' + self.current().id + '/contents');
       page_url += '?page=' + self.page + '&page_size=' + self.page_size;
 
       logger.debug('Loading the next page of infinite scroll data.');
@@ -303,7 +303,7 @@
       }
 
       self.request = $.ajax({
-        url: config.base_url + '/v0/accounts/' + self.id + '/folders/',
+        url: config.getAccountUrl(self.id, 'storage', '/folders/'),
         type: 'POST',
         headers: {
           Authorization: self.key.scheme + ' ' + self.key.key

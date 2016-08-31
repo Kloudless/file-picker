@@ -17,7 +17,7 @@
       var self = this;
 
       self.request = $.ajax({
-        url: config.base_url + '/v0/accounts/' + self.account + "/search/?q=" + self.q,
+        url: config.getAccountUrl(self.account, 'storage', '/search/?q=' + self.q),
         type: 'GET',
         headers: {
           Authorization: self.key.scheme + ' ' + self.key.key

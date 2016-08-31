@@ -208,7 +208,7 @@
                 explorer.view_model.postMessage('startFileUpload', event_data);
 
                 var request = $.ajax({
-                  url: config.base_url + '/v0/accounts/' + accountId + '/files/?overwrite=' + overwrite,
+                  url: config.getAccountUrl(accountId, 'storage', '/files/?overwrite=' + overwrite),
                   type: 'POST',
                   contentType: 'application/json',
                   headers: { Authorization: authKey.scheme + ' ' + authKey.key },
@@ -303,7 +303,7 @@
               var linkData = $.extend({}, config.link_options());
               linkData.file_id = selections[selection_index].id;
               var request = $.ajax({
-                url: config.base_url + '/v0/accounts/' + accountId + '/links/',
+                url: config.getAccountUrl(accountId, 'storage', '/links/'),
                 type: 'POST',
                 headers: {
                   Authorization: authKey.scheme + ' ' + authKey.key
@@ -333,8 +333,8 @@
                     data['drop_uri'] = config.upload_location_uri()
                   }
                   $.ajax({
-                    url: (
-                      config.base_url + '/v0/accounts/' + accountId + '/files/' +
+                    url: config.getAccountUrl(
+                      accountId, 'storage', '/files/' +
                         selections[i].id + '/copy/?link=' + config.link +
                         '&link_options=' + encodeURIComponent(JSON.stringify(config.link_options()))
                     ),
@@ -1322,7 +1322,7 @@
           return;
         }
         var request = $.ajax({
-          url: config.base_url + '/v0/accounts/' + account_data.account,
+          url: config.getAccountUrl(account_data.account),
           type: 'DELETE',
           headers: {
             Authorization: account_data.key.scheme + ' ' + account_data.key.key
@@ -1525,6 +1525,7 @@
       // account key and token data
 
       if (data.options && data.options.keys) {
+        config.api_version = 'v0';
         window.setTimeout(function () {
           explorer.view_model.sync(
             data.options.keys.map(function (k) {

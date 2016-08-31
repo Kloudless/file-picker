@@ -101,7 +101,7 @@
       }
 
       self.request = $.ajax({
-        url: config.base_url + '/' + config.api_version + '/accounts/?active=True',
+        url: config.getAccountUrl() + '?active=True',
         type: 'GET',
         headers: {
           Authorization: key.scheme + ' ' + key.key
@@ -139,8 +139,7 @@
        */
       var self = this;
       $.ajax({
-        url: config.base_url + '/' + config.api_version + '/accounts/' +
-          self.account + '/keys',
+        url: config.base_url + '/v0/accounts/' + self.account + '/keys',
         type: 'GET',
         headers: {
           Authorization: self.key.scheme + ' ' + self.key.key
@@ -164,8 +163,7 @@
        */
       var self = this;
       $.ajax({
-        url: config.base_url + '/' + config.api_version + '/accounts/' +
-          self.account + '/token_from_key',
+        url: config.base_url + '/v0/accounts/' + self.account + '/token_from_key',
         type: 'POST',
         headers: {
           Authorization: self.key.scheme + ' ' + self.key.key

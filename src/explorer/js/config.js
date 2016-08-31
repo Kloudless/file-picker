@@ -39,7 +39,7 @@
       }),
       user_data: ko.observable(), // Get asynchronously.
       copy_to_upload_location: JSON.parse(get_query_variable('copy_to_upload_location')),
-      api_version: get_query_variable('api_version') || 'v0',
+      api_version: get_query_variable('api_version'),
       upload_location_account: ko.observable(),
       upload_location_folder: ko.observable(),
       uploads_pause_on_error: ko.observable(true),
@@ -50,6 +50,22 @@
       // b/w compatibility
       account_key: JSON.parse(get_query_variable('account_key')),
     };
+
+    if (config.debug) {
+        window.config = config;
+    }
+
+    if (config.types.indexOf('folders') != -1 && config.types.length === 1) {
+        config.computer = false;
+    }
+
+    if (!config.api_version) {
+      config.api_version = 'v1';
+      if (config.account_key) {
+        // Also forced to v0 in app.js if keys are provided.
+        config.api_version = 'v0';
+      }
+    }
 
     config.update = function (data) {
       var configKeys = Object.keys(config);
@@ -67,7 +83,10 @@
       });
     };
 
-    // Get user_data
+
+    /*
+     * Get user_data
+     */
     var retrieveConfig = function() {
       var query_params = {app_id: config.app_id}
       if (config.account_key || config.retrieve_token()) {
@@ -88,11 +107,29 @@
     config.retrieve_token.subscribe(retrieveConfig);
     retrieveConfig();
 
-    if (config.types.indexOf('folders') != -1 && config.types.length === 1) {
-        config.computer = false;
+    /*
+     * Create API server URLs
+     */
+    config.getAccountUrl = function(accountId, api, path) {
+      var url = config.base_url + '/' + config.api_version + '/accounts/';
+      if (!accountId) return url;
+
+      url += accountId + '/';
+
+      if (config.api_version === 'v0')
+        api = ''
+      else if (!api)
+        api = 'storage';
+
+      if (path)
+        url += (api ? api + '/' : '') + path.replace(/^\/+/g, '')
+
+      return url;
     }
 
+
     // Service aliases
+
     var services = {
         all: [
             'dropbox',
@@ -160,7 +197,9 @@
         }).concat(groups);
     }
 
-    // Type aliases.
+
+    // Type aliases
+
     var aliases = {
       all: [
         'all'
@@ -417,10 +456,6 @@
     // default to 'all'
     if (config.types.length === 0) {
         config.types.push('all');
-    }
-
-    if (config.debug) {
-        window.config = config;
     }
 
     return config;
