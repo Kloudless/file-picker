@@ -121,10 +121,16 @@ File Explorer JavaScript on the page.
   Saver: _Optional (default: ['file_store'])_
 
   This option specifies which services to allow a user to explore. You can enumerate
-  the specific [services](https://developers.kloudless.com/docs#accounts) or
-  [service groups](https://developers.kloudless.com/docs#accounts).
-  The default is the file store service group.  If you specify an empty array,
+  the specific [services](https://developers.kloudless.com/docs/latest/authentication#accounts) or
+  use a service group listed below as a shortcut.
+  The default is the `file_store` service group.  If you specify an empty array,
   no services will show up.
+  
+  Service groups:
+  
+  * `file_store`: All File Storage services.
+  * `object_store`: All Object Storage services.
+  * `all`: All storage services.
 
 * `display_backdrop` : boolean
 
@@ -237,7 +243,7 @@ File Explorer JavaScript on the page.
 
   The `link_options` object provides parameters to use when the File Explorer
   creates links. See the
-  [documentation for creating links](https://developers.kloudless.com/docs/latest#links-create-a-link)
+  [documentation for creating links](https://developers.kloudless.com/docs/latest/storage#links-create-a-link)
   for a full list of the possible options available.
   Note that links to selected files are only created if the `link`
   configuration option is set to `true`.
@@ -350,7 +356,7 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
   This option should list files for the File Explorer to save. The format
   should be an array of Javascript Objects containing a file url and name.
   You can specify up to 100 files. Each file will be uploaded via the Kloudless
-  API's [upload endpoint](http://developers.kloudless.com/docs#files-upload-a-file),
+  API's [upload endpoint](https://developers.kloudless.com/docs/latest/storage#files-upload-a-file),
   using the `url` attribute.
 
   ```javascript
@@ -757,4 +763,4 @@ emailing security@kloudless.com.
 
 Feel free to contact us at support@kloudless.com with any feedback or
 questions. Other methods to contact us are listed
-[here](https://developers.kloudless.com/docs#getting-help).
+[here](https://developers.kloudless.com/docs/v1/core#getting-help).
