@@ -308,10 +308,11 @@
         headers: {
           Authorization: self.key.scheme + ' ' + self.key.key
         },
-        data: {
+        contentType: 'application/json',
+        data: JSON.stringify({
           name: folder_name,
           parent_id: self.current().id
-        }
+        }),
       }).done(function(data) {
         logger.debug('Create new folder succeeded.');
 

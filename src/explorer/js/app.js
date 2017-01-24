@@ -308,7 +308,8 @@
                 headers: {
                   Authorization: authKey.scheme + ' ' + authKey.key
                 },
-                data: linkData,
+                contentType: 'application/json',
+                data: JSON.stringify(linkData),
               }).done(function(data) {
                 selections[selection_index]['link'] = data['url'];
                 selectionComplete(true);
