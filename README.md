@@ -4,7 +4,7 @@ The [Kloudless](https://kloudless.com) File Explorer is a JavaScript library
 that allows your users to browse and select files and folders from their
 storage services. It comes in two modes: a chooser and a saver.
 
-[Visit our JSFiddle example of the File Explorer!](http://jsfiddle.net/pseudonumos/PB565/embedded/)
+[Visit our JSBin example of the File Explorer!](https://output.jsbin.com/wilowep/)
 
 ![fe.gif](http://i.imgur.com/xO2QcyD.gif)
 
@@ -574,7 +574,7 @@ var files = [{
 explorer.save(files);
 ```
 
-[Visit our JS Fiddle example of the File Explorer!](http://jsfiddle.net/pseudonumos/PB565/embedded/)
+[Visit our JSBin example of the File Explorer!](https://output.jsbin.com/wilowep/)
 
 ### Dropzone
 
