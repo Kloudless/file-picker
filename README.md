@@ -612,7 +612,7 @@ Upload Location must be configured as described for the Chooser.
 
 #### Example
 
-[Visit our JS Fiddle example of the Dropzone!](https://jsfiddle.net/vinodchandru/8cy20hhL/embedded/)
+[Visit our JSBin example of the Dropzone!](https://output.jsbin.com/vakura/)
 
 HTML
 
