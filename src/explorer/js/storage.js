@@ -48,7 +48,7 @@
         // Return an array of accounts, initialize if necessary
         // the appData is stringified
         storage.loadAccounts = function (appId, services) {
-            if (!storage.container) return;
+            if (!storage.container) return [];
 
             var key = 'k-' + appId, appData = storage.container[key];
             if (!appData || appData.length === 0) {
