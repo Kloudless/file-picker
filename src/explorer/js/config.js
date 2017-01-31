@@ -49,6 +49,8 @@
 
       // b/w compatibility
       account_key: JSON.parse(get_query_variable('account_key')),
+
+      show_account_selector: ko.observable(true)
     };
 
     if (config.debug) {

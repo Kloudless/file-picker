@@ -1,6 +1,6 @@
 //- Select account
 .accountselect(data-bind='with: accounts')
-  button.button.accountsbutton
+  button.button.accountsbutton(data-bind='visible: show_account_selector')
     img.accounticon(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/" + active() + ".png"}')
     div.name(data-bind='text: name')
     div.arrow
