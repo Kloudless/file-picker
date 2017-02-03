@@ -6,7 +6,7 @@
 
   /*
    * Track all variables
-   * 
+   *
    * Kloudless object, frames, explorers.
    */
 
@@ -29,6 +29,11 @@
 
   Kloudless.explorerUrl = EXPLORER_URL;
 
+  if(Kloudless.explorerUrl.indexOf('://') === -1){
+    Kloudless.explorerUrl = window.location.protocol + '//' +
+                            window.location.host + Kloudless.explorerUrl;
+  }
+  
   // Keep track of all frames and explorers
   Kloudless._frames = {};
   Kloudless._explorers = {};
@@ -466,7 +471,7 @@
   };
 
 
-  /* 
+  /*
    * Dropzone
    */
 
