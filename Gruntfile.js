@@ -307,6 +307,16 @@ module.exports = function(grunt) {
           spawn: false,
         },
       },
+    },
+    cacheBust: {
+      deploy: {
+        options: {
+          assets: ['dist/**/*.js', 'dist/**/*.css'],
+          deleteOriginals: true,
+          separator: '-'
+        },
+        src: 'dist/explorer/explorer.html'
+      }
     }
   });
 
@@ -323,6 +333,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.loadNpmTasks('grunt-exec');
+  grunt.loadNpmTasks('grunt-cache-bust');
 
   // Options
   inlines.EXPLORER_URL = grunt.option('url') || 'http://localhost:3000/file-explorer';
@@ -375,5 +386,6 @@ module.exports = function(grunt) {
     'requirejs',
     'copy:deploy_min',
     'clean:temp',
+    'cacheBust:deploy'
   ]);
 };
