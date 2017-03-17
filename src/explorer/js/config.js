@@ -25,6 +25,7 @@
       multiselect: JSON.parse(get_query_variable('multiselect')),
       link: JSON.parse(get_query_variable('link')),
       link_options: ko.observable({}),
+      account_management: ko.observable(true),
       computer: JSON.parse(get_query_variable('computer')) ||
         get_query_variable('flavor') === 'dropzone',
       retrieve_token: ko.observable(),
@@ -49,8 +50,6 @@
 
       // b/w compatibility
       account_key: JSON.parse(get_query_variable('account_key')),
-
-      show_account_selector: ko.observable(true)
     };
 
     if (config.debug) {

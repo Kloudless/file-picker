@@ -132,6 +132,18 @@ File Explorer JavaScript on the page.
   * `object_store`: All Object Storage services.
   * `all`: All storage services.
 
+* `account_management` : boolean
+
+  Chooser: _Optional (default: true)_
+
+  Saver: _Optional (default: true)_
+
+  If `false`, hides the Account menu entry in the dropdown. This can be
+  combined with the `tokens` option to ensure a user only browses a pre-defined
+  list of accounts and also does not disconnect any of the accounts. If account
+  disconnection is permitted, set `services` to `[]` rather than disabling the
+  `account_management` option.
+
 * `display_backdrop` : boolean
 
   Chooser: _Optional (default: false)_

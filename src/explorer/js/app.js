@@ -661,7 +661,7 @@
           computer: function() {
             return config.computer && explorer.view_model.flavor() == 'chooser';
           },
-          show_account_selector: config.show_account_selector
+          account_management: config.account_management,
         },
 
         // addconfirm view model
