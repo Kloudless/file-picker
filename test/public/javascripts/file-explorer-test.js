@@ -102,7 +102,7 @@
     link: false,
     computer: true,
     services: ['file_store'],
-    types: ['folders']
+    types: ['folders'],
   });
   window.chooser2 = second;
 

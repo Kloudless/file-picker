@@ -1482,10 +1482,15 @@
             logo: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png'
           });
         }
+        // Default to computer view if account management is disabled and no
+        // tokens are provided.
+        if (config.computer && !config.account_management() &&
+            !(data.options && data.options.tokens && data.options.tokens.length > 0)) {
+          router.setLocation('#/computer');
+        }
       } else if (data.flavor == 'dropzone') {
         router.setLocation('#/dropzone');
       }
-
 
       // Primary way of updating config options
       if (data.options) {
