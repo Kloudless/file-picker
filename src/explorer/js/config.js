@@ -132,29 +132,6 @@
     // Service aliases
 
     var services = {
-        all: [
-            'dropbox',
-            'gdrive',
-            'box',
-            'evernote',
-            'skydrive',
-            'sugarsync',
-            'sharefile',
-            'egnyte',
-            's3',
-            'sharepoint',
-            'onedrivebiz',
-            'hubspot',
-            'salesforce',
-            'smb',
-            'azure',
-            'cmis',
-            'alfresco',
-            'alfresco_cloud',
-            'jive',
-            'webdav',
-            'cq5',
-        ],
         file_store: [
             'dropbox',
             'gdrive',
@@ -175,12 +152,14 @@
             'jive',
             'webdav',
             'cq5',
+            'ftp',
         ],
         object_store: [
             'azure',
             's3',
         ]
     };
+    services.all = services.file_store.concat(services.object_store);
 
     var groups = [];
     if (config.services == undefined) {

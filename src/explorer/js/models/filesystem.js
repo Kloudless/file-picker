@@ -119,7 +119,7 @@
         logger.debug('Received new data.');
 
         var currentChildren;
-        if (self.page == 1) {
+        if (self.page === 1 || self.page === data.next_page) {
           currentChildren = [];
         } else {
           currentChildren = self.current().children();

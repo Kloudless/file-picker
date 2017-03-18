@@ -72,27 +72,28 @@
     var startView = (config.flavor === 'dropzone') ? 'dropzone' : 'accounts';
 
     var service_names = {
-        'cq5' : 'Adobe CQ5',
-        'dropbox' : 'Dropbox',
-        'gdrive' : 'Google Drive',
-        'box' : 'Box',
-        'evernote' : 'Evernote',
-        'skydrive' : 'OneDrive',
-        'sugarsync' : 'SugarSync',
-        'sharefile' : 'Citrix ShareFile',
-        'egnyte' : 'Egnyte',
-        's3' : 'Amazon S3',
-        'sharepoint': 'SharePoint Online',
-        'onedrivebiz': 'OneDrive for Business',
-        'smb': 'SMB',
-        'hubspot': 'Hubspot Files',
-        'salesforce': 'Salesforce Files',
-        'azure': 'Azure Storage',
-        'cmis' : 'CMIS',
-        'alfresco' : 'Alfresco',
-        'alfresco_cloud': 'Alfresco Cloud',
-        'jive' : 'Jive',
-        'webdav': 'WebDAV',
+        cq5 : 'Adobe CQ5',
+        dropbox : 'Dropbox',
+        gdrive : 'Google Drive',
+        box : 'Box',
+        evernote : 'Evernote',
+        skydrive : 'OneDrive',
+        sugarsync : 'SugarSync',
+        sharefile : 'Citrix ShareFile',
+        egnyte : 'Egnyte',
+        s3 : 'Amazon S3',
+        sharepoint: 'SharePoint Online',
+        onedrivebiz: 'OneDrive for Business',
+        smb: 'SMB',
+        hubspot: 'Hubspot Files',
+        salesforce: 'Salesforce Files',
+        azure: 'Azure Storage',
+        cmis : 'CMIS',
+        alfresco : 'Alfresco',
+        alfresco_cloud: 'Alfresco Cloud',
+        jive : 'Jive',
+        webdav: 'WebDAV',
+        ftp: 'FTP',
       },
       services = ko.observableArray();
 
@@ -269,9 +270,24 @@
 
             var accountId = explorer.manager.active().filesystem().id;
             var authKey = explorer.manager.active().filesystem().key;
+            var lastCancelTime = explorer.lastCancelTime;
+
             var requestCountSuccess = 0;
             var requestCountError = 0;
-            var lastCancelTime = explorer.lastCancelTime;
+            var requestCountStarted = 0;
+            var maxRequestsInProgress = 4;
+            var requestsToLaunch = [];
+
+            var requestLauncherInterval = window.setInterval(function() {
+              var requestsComplete = requestCountSuccess + requestCountError;
+              var requestsInProgress = requestCountStarted - requestsComplete;
+              while (requestsToLaunch.length > 0 &&
+                     requestsInProgress < maxRequestsInProgress) {
+                var callData = requestsToLaunch.shift();
+                callData.fn(callData.i);
+                requestsInProgress = requestCountStarted - requestsComplete;
+              }
+            }, 200);
 
             // Selection Complete Callback
             var selectionComplete = function(success) {
@@ -287,12 +303,14 @@
                 logger.info("A cancellation occurred prior to the operation " +
                             "being completed. Ignoring response.")
                 processingConfirm = false;
+                window.clearInterval(requestLauncherInterval);
                 return;
               }
 
               // All requests are done
               // TODO handle case if requestCountError != 0
               if (requestCountSuccess + requestCountError == selections.length) {
+                window.clearInterval(requestLauncherInterval);
                 explorer.view_model.postMessage('success', selections);
                 processingConfirm = false;
               }
@@ -302,6 +320,7 @@
             var createLink = function(selection_index) {
               var linkData = $.extend({}, config.link_options());
               linkData.file_id = selections[selection_index].id;
+
               var request = $.ajax({
                 url: config.getAccountUrl(accountId, 'storage', '/links/'),
                 type: 'POST',
@@ -317,44 +336,49 @@
                 logger.warn('Error creating link: ', status, err, xhr);
                 selectionComplete(false);
               });
+              requestCountStarted += 1;
             };
+
+            var moveToDrop = function(selection_index) {
+              var data = {
+                account: 'upload_location'
+              }
+              if (config.upload_location_account()) {
+                data['drop_account'] = config.upload_location_account()
+                data['parent_id'] = config.upload_location_folder()
+              }
+              else if (config.upload_location_uri()) {
+                data['drop_uri'] = config.upload_location_uri()
+              }
+
+              $.ajax({
+                url: config.getAccountUrl(
+                  accountId, 'storage', '/files/' +
+                    selections[selection_index].id + '/copy/?link=' + config.link +
+                    '&link_options=' + encodeURIComponent(JSON.stringify(config.link_options()))
+                ),
+                type: 'POST',
+                contentType: 'application/json',
+                headers: { Authorization: authKey.scheme + ' ' + authKey.key },
+                data: JSON.stringify(data),
+              }).done(function(data) {
+                selections[selection_index] = data;
+                selectionComplete(true);
+              }).fail(function() {
+                selectionComplete(false);
+              });
+              requestCountStarted += 1;
+            }
 
             if (config.copy_to_upload_location) {
               // Move to upload location.
               for (var i=0; i<selections.length; i++) {
-                (function(i) {
-                  var data = {
-                    account: 'upload_location'
-                  }
-                  if (config.upload_location_account()) {
-                    data['drop_account'] = config.upload_location_account()
-                    data['parent_id'] = config.upload_location_folder()
-                  }
-                  else if (config.upload_location_uri()) {
-                    data['drop_uri'] = config.upload_location_uri()
-                  }
-                  $.ajax({
-                    url: config.getAccountUrl(
-                      accountId, 'storage', '/files/' +
-                        selections[i].id + '/copy/?link=' + config.link +
-                        '&link_options=' + encodeURIComponent(JSON.stringify(config.link_options()))
-                    ),
-                    type: 'POST',
-                    contentType: 'application/json',
-                    headers: { Authorization: authKey.scheme + ' ' + authKey.key },
-                    data: JSON.stringify(data),
-                  }).done(function(data) {
-                    selections[i] = data;
-                    selectionComplete(true);
-                  }).fail(function() {
-                    selectionComplete(false);
-                  });
-                })(i);
+                requestsToLaunch.push({fn: moveToDrop, i: i});
               }
             } else if (config.link) {
               for (var i=0; i < selections.length; i++) {
                 processingConfirm = true;
-                createLink(i);
+                requestsToLaunch.push({fn: createLink, i: i});
               }
             } else {
               explorer.view_model.postMessage('success', selections);
