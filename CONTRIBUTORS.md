@@ -14,14 +14,14 @@ Contribution, under the MIT License.
 
 # Contributors
 
-Leo Zhang @ilikebits
-Vinod Chandru @vinodc
-Timothy Liu @pseudonumos
-Chris Kuehl @chriskuehl
-Edward Look @edwlook
-Steven Cheng @chengsteven
-Alice Cai @ahcai
-Joeson Chiang @joesonchiang
-Jackson Broussard @jbrsrd
-Katie Low @ktmellow
-Artem Pisarev @artemas
+* Leo Zhang [@ilikebits](https://github.com/ilikebits)
+* Timothy Liu [@pseudonumos](https://github.com/pseudonumos)
+* Vinod Chandru [@vinodc](https://github.com/vinodc)
+* Chris Kuehl [@chriskuehl](https://github.com/chriskuehl)
+* Edward Look [@edwlook](https://github.com/edwlook)
+* Steven Cheng [@chengsteven](https://github.com/chengsteven)
+* Alice Cai [@ahcai](https://github.com/ahcai)
+* Joeson Chiang [@joesonchiang](https://github.com/joesonchiang)
+* Jackson Broussard [@jbrsrd](https://github.com/jbrsrd)
+* Katie Low [@ktmellow](https://github.com/ktmellow)
+* Artem Pisarev [@artemas](https://github.com/artemas)
