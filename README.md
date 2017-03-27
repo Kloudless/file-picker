@@ -121,7 +121,7 @@ File Explorer JavaScript on the page.
   Saver: _Optional (default: ['file_store'])_
 
   This option specifies which services to allow a user to explore. You can enumerate
-  the specific [services](https://developers.kloudless.com/docs/latest/authentication#accounts) or
+  the specific [services](https://developers.kloudless.com/docs/latest/core#introduction-supported-services) or
   use a service group listed below as a shortcut.
   The default is the `file_store` service group.  If you specify an empty array,
   no services will show up.
