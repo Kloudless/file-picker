@@ -183,7 +183,9 @@
     // Backwards compatibility for direct_link
     if (!this.options.link_options)
       this.options.link_options = {};
-    this.options.link_options.direct = (options.direct_link === undefined) ? false : options.direct_link;
+    if (options.direct_link !== undefined &&
+        this.options.link_options.direct === undefined)
+      this.options.link_options.direct = options.direct_link;
 
     return this;
   };
