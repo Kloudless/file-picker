@@ -99,7 +99,7 @@
         client_id: config.app_id,
         response_type: 'token',
         redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
-        scope: service,
+        scope: service + ':normal.storage',
         state: randomID,
         request_id: randomID,
         origin: window.location.protocol + '//' + window.location.host,
