@@ -8,10 +8,10 @@
         };
 
         // set the storage container
-        if (config.persist == "local") {
-            storage.container = localStorage;
-        } else if (config.persist == "session") {
-            storage.container = sessionStorage;
+        if (config.persist == "local" && window.localStorage) {
+            storage.container = window.localStorage;
+        } else if (config.persist == "session" && window.sessionStorage) {
+            storage.container = window.sessionStorage;
         } else {
             storage.container = null;
         }
