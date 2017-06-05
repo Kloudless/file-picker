@@ -3,9 +3,12 @@ if (!process.env.KLOUDLESS_APP_ID) {
   process.exit(1);
 }
 
-var express = require('express')
-  , morgan = require('morgan')
-  , path = require('path');
+var express = require('express'),
+    morgan = require('morgan'),
+    path = require('path'),
+    http = require('http'),
+    https = require('https'),
+    fs = require('fs');
 
 var app = express();
 
@@ -33,6 +36,16 @@ app.get('/file-explorer', function(req, res) {
   res.render('file-explorer', {app_id: process.env.KLOUDLESS_APP_ID});
 });
 
-app.listen(app.get('port'), function(){
+var server;
+
+if (process.env.SSL_CERT) {
+  var privateKey  = fs.readFileSync(process.env.SSL_KEY, 'utf8');
+  var certificate = fs.readFileSync(process.env.SSL_CERT, 'utf8');
+  server = https.createServer({key: privateKey, cert: certificate}, app);
+} else {
+  server = http.createServer(app);
+}
+
+server.listen(app.get('port'), function() {
   console.log('Express server listening on port ' + app.get('port'));
 });

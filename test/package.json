@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon -d 1 --watch ../dist/ --watch . server.js"
+    "start": "nodemon -d 1 --watch ../dist/ --watch . server.js",
+    "ssl": "SSL_KEY=key.pem SSL_CERT=cert.pem nodemon -d 1 --watch ../dist/ --watch . server.js"
   },
   "dependencies": {
     "express": "4.9.0",
