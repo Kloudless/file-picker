@@ -12,8 +12,11 @@
             storage.container = window.localStorage;
         } else if (config.persist == "session" && window.sessionStorage) {
             storage.container = window.sessionStorage;
-        } else {
+        } else if (config.persist == "none") {
             storage.container = null;
+        } else {
+            // Temporary container.
+            storage.container = {};
         }
 
         // Pass in accounts from an account manager
