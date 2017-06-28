@@ -116,6 +116,10 @@
       });
     }
 
+    $.ajaxSetup({
+      headers: { Origin: window.location.origin } 
+    });
+
     // Explorer declaration.
     var FileExplorer = function() {
       this.manager = new AccountManager();
