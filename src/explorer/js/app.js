@@ -1304,7 +1304,7 @@
     var explorer = new FileExplorer();
     // TODO: we can display err.message if the new error handling is deployed
     // for now use default error message
-    var error_message = "Error! Please try again or contact support@kloudless.com";
+    var error_message = "Error! Please try again or contact support.";
 
     // Router.
     var first_account = true;
