@@ -48,6 +48,7 @@
       upload_location_uri: ko.observable(get_query_variable('upload_location_uri')),
       create_folder: JSON.parse(get_query_variable('create_folder')),
       chunk_size: 5*1024*1024,
+      locale: ko.observable('en'),
 
       // b/w compatibility
       account_key: JSON.parse(get_query_variable('account_key')),

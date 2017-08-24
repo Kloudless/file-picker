@@ -5,7 +5,7 @@
 
     //- Current Upload View
     div#uploader
-      p Your browser doesn't have Flash, Silverlight or HTML5 support.
+      p(data-bind='translate: "computer/nosupport"') Your browser doesn't have Flash, Silverlight or HTML5 support.
 
     //- Footer buttons
     footer
@@ -15,8 +15,8 @@
           div.error-text(data-bind='text: error, attr: {title: error}')
           a.close(href='#')
         .buttonscontainer.right
-          a#cancel-button(href='javascript:void(0)').button.reg Cancel
-          a#upload-button.button.blue(href='javascript:void(0)') Upload
+          a#cancel-button(href='javascript:void(0)', data-bind='translate: "global/cancel"').button.reg Cancel
+          a#upload-button.button.blue(href='javascript:void(0)', data-bind='translate: "global/upload"') Upload
         div(data-bind='template: {name: "powered-by-kl-footer"}')
 
     //- Debug info, since we don't have proper UI elements

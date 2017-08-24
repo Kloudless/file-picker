@@ -76,6 +76,35 @@ module.exports = function(grunt) {
     },
     // Copy files.
     copy: {
+      // Copy localization files
+      localization: {
+        files: [{ // CLDR Data
+          // this is copying data from ALL of the cultures with CLDR data, but only the language files needed
+          // will be loaded by the browser.  It would be possible to filter this data (i.e. replace '**' with something
+          // like '@(en|es)', but copying all of the available cultures allows additional languages to be added
+          // without modifying the gruntfile (and also allows for the possibility of programatically adding cultures
+          // in the future)
+          src: [
+            path.join('supplemental', 'likelySubtags.json'),
+            path.join('main', '**', 'numbers.json'),
+            path.join('supplemental', 'numberingSystems.json'),
+            path.join('main', '**', 'ca-gregorian.json'),
+            path.join('main', '**', 'timeZoneNames.json'),
+            path.join('supplemental', 'timeData.json'),
+            path.join('supplemental', 'weekData.json')
+          ],
+          dest: path.join(TMP_PATH, 'localization', 'cldr-data/'),
+          cwd: path.join(DIR, 'bower_components', 'cldr-data'),
+          expand: true,
+          filter: 'isFile'
+        }, { // messages
+          src: path.join('*.json'),
+          cwd: path.join(DIR, 'src', 'explorer', 'localization', 'messages'),
+          dest: path.join(TMP_PATH, 'localization', 'messages'),
+          expand: true,
+          filter: 'isFile'
+        }]
+      },
       // Copy vendor files from Bower into temporary directory.
       vendor: {
         files: [{
@@ -130,6 +159,27 @@ module.exports = function(grunt) {
         }, {
           src: path.join(DIR, 'bower_components', 'momentjs', 'moment.js'),
           dest: path.join(TMP_PATH, 'js', 'vendor', 'moment.js')
+        }, {
+          src: [
+            'cldr.js',
+            path.join('cldr', 'event.js'),
+            path.join('cldr', 'supplemental.js')
+          ],
+          dest: path.join(TMP_PATH, 'js', 'vendor'),
+          cwd: path.join(DIR, 'bower_components', 'cldrjs', 'dist'),
+          expand: true,
+          filter: 'isFile'
+        }, {
+          src: [
+            'globalize.js',
+            path.join('globalize', 'number.js'),
+            path.join('globalize', 'date.js'),
+            path.join('globalize', 'message.js')
+          ],
+          dest: path.join(TMP_PATH, 'js', 'vendor'),
+          cwd: path.join(DIR, 'bower_components', 'globalize', 'dist'),
+          expand: true,
+          filter: 'isFile'
         }]
       },
       // Copy minified vendor files from Bower into temporary directory.
@@ -183,6 +233,27 @@ module.exports = function(grunt) {
         }, {
           src: path.join(DIR, 'bower_components', 'momentjs', 'min', 'moment.min.js'),
           dest: path.join(TMP_PATH, 'js', 'vendor', 'moment.js')
+        }, {
+          src: [
+            'cldr.js',
+            path.join('cldr', 'event.js'),
+            path.join('cldr', 'supplemental.js')
+          ],
+          dest: path.join(TMP_PATH, 'js', 'vendor'),
+          cwd: path.join(DIR, 'bower_components', 'cldrjs', 'dist'),
+          expand: true,
+          filter: 'isFile'
+        }, {
+          src: [
+            'globalize.js',
+            path.join('globalize', 'number.js'),
+            path.join('globalize', 'date.js'),
+            path.join('globalize', 'message.js')
+          ],
+          dest: path.join(TMP_PATH, 'js', 'vendor'),
+          cwd: path.join(DIR, 'bower_components', 'globalize', 'dist'),
+          expand: true,
+          filter: 'isFile'
         }]
       },
       // Copy library directory into temporary directory.
@@ -237,6 +308,16 @@ module.exports = function(grunt) {
           dest: path.join(EXPLORER_DEST, 'js'),
           expand: true,
           flatten: true,
+        }, {
+          cwd: path.join(TMP_PATH, 'localization'),
+          src: '**',
+          dest: path.join(EXPLORER_DEST, 'localization'),
+          expand: true
+        }, {
+          cwd: path.join(TMP_PATH, 'js', 'vendor', 'plupload', 'i18n'),
+          src: '**',
+          dest: path.join(EXPLORER_DEST, 'js', 'vendor', 'plupload', 'i18n'),
+          expand: true
         }]
       }
     },
@@ -347,6 +428,7 @@ module.exports = function(grunt) {
     'loader_css',
     'uglify:dev',
     'copy:app',
+    'copy:localization',
     'copy:deploy'
   ]);
 
@@ -364,6 +446,7 @@ module.exports = function(grunt) {
     'build',
     'copy:vendor',
     'copy:vendor_min',
+    'copy:localization',
     'copy:lib',
     'jade',
     'includes',
