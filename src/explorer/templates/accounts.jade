@@ -11,7 +11,7 @@
         // ko ifnot: logo_url
         img.klogo(src='https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/kloudless32x33.png')
         // /ko
-        span Manage your cloud storage accounts here.
+        span(data-bind='translate: "accounts/manage"') Manage your cloud storage accounts here.
       .nobackcontain(data-bind='if: accounts.all().length < 1')
         div.nobackbtn
         // ko if: logo_url
@@ -20,15 +20,15 @@
         // ko ifnot: logo_url
         img.klogo(src='https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/kloudless32x33.png')
         // /ko
-        span Welcome! Please choose a service to connect.
+        span(data-bind='translate: "accounts/chooseaccount"') Welcome! Please choose a service to connect.
     a.closeexplorer(data-bind='click: cancel')
 
 
   .containall
     .connectedaccounts(data-bind='with: accounts')
       div.header(data-bind='if: all().length > 0')
-        .intro-message Connected accounts
-        .logout-message(data-bind='click: logout') logout
+        .intro-message(data-bind='translate: "accounts/connectedaccounts"') Connected accounts
+        .logout-message(data-bind='click: logout, translate: "accounts/logout"') logout
         //- Linked accounts
         //- Each service group
         ul.linked-services
@@ -43,24 +43,24 @@
                     div
                       a(data-bind='click: $root.setLocation.bind($data, "#/files/" + account), text: account_name')
                     //-.unlink
-                    a.alert(data-bind='click: function (data, element) { if (!confirm("If you remove this account, you will no longer be able to explore. Are you sure?")) return false; $root.setLocation("#/account/disconnect/" + account) }')
+                    a.alert(data-bind='click: function (data, element) { if (!$root.localizedConfirmPopup("accounts/confirmRemove")) return false; $root.setLocation("#/account/disconnect/" + account) }')
                 //-.refresh(data-bind='if: !connected')
                 //-  a.button(data-bind='click: $root.setLocation.bind($data, "#/account/reconnect/" + account)') Refresh
             // ko if: $index() === ($parent.all().length - 1) && $parent.computer()
             li.linked-service
               div.servicename
                 img.servicelogo(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png"}')
-                span(data-bind='text: "Upload"')
+                span(data-bind='text: "Upload", translate: "accounts/upload"')
               div.accounts
                 ul.accountnames
                   li.account
                     div
-                      a(data-bind='click: $root.setLocation.bind($data, "#/computer"), text: "Upload from your computer"')
+                      a(data-bind='click: $root.setLocation.bind($data, "#/computer"), text: "Upload from your computer", translate: "accounts/uploadfromcomputer"')
             // /ko
 
       // ko if: $parent.services.length > 0
       .row(data-bind='if: all().length > 0')
-        div.intro-message.more Connect more!
+        div.intro-message.more(data-bind='translate: "accounts/connectmore"') Connect more!
       // /ko
 
     //- Add a new account.
@@ -72,5 +72,5 @@
             div.service
               img.servicelogo(data-bind='attr: {src: logo}')
               span.servicename-container
-                span.servicename(data-bind='text: name')
+                span.servicename(data-bind='text: $root.accounts.friendly_name(id)')
         // /ko
