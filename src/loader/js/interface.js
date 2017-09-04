@@ -98,6 +98,7 @@
       '&exp_id=' + exp_id +
       '&flavor=' + options.flavor +
       '&origin=' + encodeURIComponent(window.location.protocol + '//' + window.location.host) +
+      '&custom_css=' + encodeURIComponent(options.custom_css) +
       '&multiselect=' + options.multiselect +
       '&link=' + options.link +
       '&computer=' + options.computer +
@@ -153,7 +154,7 @@
     this.options = options;
     this.app_id = options.app_id;
     this.exp_id = options.exp_id;
-
+    this.custom_css = (options.custom_css) ? options.custom_css : false;
     // These don't need to be passed for query variables
     this.elementId = options.elementId;
     this.flavor = (options.flavor === undefined) ? 'chooser' : options.flavor;
@@ -251,6 +252,7 @@
       app_id: exp.app_id,
       exp_id: exp.exp_id,
       flavor: exp.flavor,
+      custom_css: exp.custom_css,
       multiselect: exp.multiselect,
       link: exp.link,
       computer: exp.computer,

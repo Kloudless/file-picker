@@ -6,10 +6,11 @@
     app_id: window.app_id,
     multiselect: true,
     link: false,
+    custom_css: '/stylesheets/custom.css',
     computer: true,
     services: ['all'],
     types: ['all'],
-    display_backdrop: true,
+    display_backdrop: true
   });
   window.chooser1 = explorer;
 

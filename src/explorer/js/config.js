@@ -20,6 +20,7 @@
       exp_id: get_query_variable('exp_id'),
       app_id: get_query_variable('app_id'),
       origin: get_query_variable('origin'),
+      custom_css: get_query_variable('custom_css'),
       // data options move to post messaging
       flavor: get_query_variable('flavor'),
       multiselect: JSON.parse(get_query_variable('multiselect')),
@@ -56,8 +57,10 @@
         window.config = config;
     }
 
+
+
     if (config.types.indexOf('folders') != -1 && config.types.length === 1) {
-        config.computer = false;
+      config.computer = false;
     }
 
     if (!config.api_version) {
@@ -83,8 +86,41 @@
         }
       });
     };
+    /*
+       *Check custom cc and include
+       */
+    var custom_css_include = function () {
+      if (String(config.custom_css) !== "false" && config.user_data().trusted) {
+        if ("//" === config.custom_css.substring(0, 2)) {
+          config.custom_css = config.origin.split("/")[0] + config.custom_css;
+        } else if (!config.custom_css.match(/^https?:/)) {
+          config.custom_css = config.origin.replace(/\/+$/, "") + "/"
+            + config.custom_css.replace(/^\/+/, "");
+        }
 
-
+        var expression = /^https?:\/\/\w+(\.\w+)*(:[0-9]+)?\/?(\/[.\w\?=\&]*)*$/;
+        var regex = new RegExp(expression);
+        if (config.custom_css.match(regex)) {
+          var cssId = 'custom_style';
+          if (!document.getElementById(cssId)) {
+            var head = document.getElementsByTagName('head')[0];
+            var link = document.createElement('link');
+            link.id = cssId;
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = config.custom_css;
+            link.media = 'all';
+            head.appendChild(link);
+          } else {
+            document.getElementById(cssId).href = config.custom_css;
+          }
+        } else {
+          window.console.log("Custom Style link incorrect format: "
+            + config.custom_css);
+        }
+      }
+    };
+    
     /*
      * Get user_data
      */
@@ -102,6 +138,7 @@
         query_params,
         function(config_data) {
           config.user_data((config_data && config_data.user_data) || {});
+          custom_css_include();
         }
       );
     }

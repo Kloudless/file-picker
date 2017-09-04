@@ -75,6 +75,20 @@ File Explorer JavaScript on the page.
 
 #### Chooser and Saver
 
+* `custom_css` : string
+
+  Chooser: _Optional (default: null)_
+
+  Saver: _Optional (default: null)_
+
+  An optional stylesheet URL to load to override existing styles.
+  Supports `(http|https)://domain.com/path/to.css`, `//domain.com/path/to.css`, 
+  and `/path/to.css` formats.
+
+  The domain the File Explorer is launched from must be added to the application's list
+  of [Trusted Domains](https://developers.kloudless.com/applications/*/details) for the
+  `custom_css` property to be used.
+
 * `app_id` : string
 
   Chooser: _Required_
