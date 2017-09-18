@@ -21,7 +21,7 @@
       }
     },
     "accounts": {
-      "confirmRemove": "If you remove this account, you will no longer be able to explore. Are you sure?",
+      "confirmRemove": "If you remove this account, you will no longer be able to explore it. Are you sure?",
       "connectedaccounts": "Connected accounts",
       "logout": "logout",
       "manage": "Manage your cloud storage accounts here.",

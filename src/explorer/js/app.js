@@ -608,7 +608,8 @@
 
             explorer.manager.addAccount(service, {
               on_confirm_with_iexd: function() {
-                explorer.view_model.addconfirm.serviceName = localization.formatAndWrapMessage('servicenames/' + service)
+                explorer.view_model.addconfirm.serviceName =
+                  localization.formatAndWrapMessage('servicenames/' + service);
                 explorer.view_model.addconfirm.serviceLogo =
                   services().filter(function(s) {
                     return s.id === service;

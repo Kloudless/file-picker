@@ -40,9 +40,8 @@
     isIE: isIE,
 
     /**
-      *Formats the sizes for files in the FileSystem.
+      * Formats the sizes for files in the FileSystem.
       */
-
     formatSize: function(size){
       var fileSize;
       var unitOfMeasure;
@@ -62,7 +61,8 @@
           unitOfMeasure = 'files/sizes/gb';
         }
 
-        // map the result so that it can be used directly with the ko translate binding handler
+        // map the result so that it can be used directly with the ko
+        // translate binding handler
         return {
           message: unitOfMeasure,
           variables: {
@@ -72,15 +72,18 @@
       },
 
     /**
-     * Gets the base URL (one level above the js folder) for loading any scripts or JSON files
-     * figures out the base url based on the script tag for either app.js (dev) or explorer.js (production)
+     * Gets the base URL (one level above the js folder) for loading any
+     * scripts or JSON files. Figures out the base url based on the script tag
+     * for either app.js (dev) or explorer.js (production)
      */
     getBaseUrl: function() {
       // get the app.js (for dev) or explorer.js (for production) script tag
-      var scriptUrl = $('script[src*=\'app.js\'], script[src*=\'explorer.js\']').first().attr('src').split('/');
+      var scriptUrl = $('script[src*=\'app.js\'], script[src*=\'explorer.js\']').
+            first().attr('src').split('/');
 
-      // then remove the script file name and 'js' directory parts from the url and return the result
-      return scriptUrl.slice(0, scriptUrl.length-2).join('/'); // remove the script file name and 'js' directory parts from the url
+      // then remove the script file name and 'js' directory parts from the url
+      // and return the result
+      return scriptUrl.slice(0, scriptUrl.length-2).join('/');
     },
 
     /**
