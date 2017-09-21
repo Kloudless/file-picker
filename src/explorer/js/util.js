@@ -38,7 +38,10 @@
      */
     ieVersion: ieVersion,
     isIE: isIE,
-
+    /**
+     * isMobile (check if agent is mobile)
+     */
+    isMobile: (!!navigator.userAgent.match(/(iPad|iPhone|iPod|android|Android)/g)),
     /**
       * Formats the sizes for files in the FileSystem.
       */
