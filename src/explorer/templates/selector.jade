@@ -14,10 +14,10 @@
       // ko if: computer()
       li(data-bind='click: $root.setLocation.bind($data, "#/computer")')
         div.computericon
-        span My Computer
+        span(data-bind='translate: "selector/mycomputer"') My Computer
       // /ko
       // ko if: account_management()
       li(data-bind='click: $root.setLocation.bind($data, "#/accounts")')
         div.accountsicon
-        span Accounts
+        span(data-bind='translate: "selector/accounts"') Accounts
       // /ko
