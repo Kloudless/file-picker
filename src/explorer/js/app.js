@@ -8,7 +8,9 @@
       'jqueryui': 'vendor/jquery-ui',
       'moxie': 'vendor/plupload/moxie',
       'plupload': 'vendor/plupload/plupload.dev',
-      'pluploadui': 'vendor/plupload/jquery.ui.plupload/jquery.ui.plupload'
+      'pluploadui': 'vendor/plupload/jquery.ui.plupload/jquery.ui.plupload',
+      'cldr': 'vendor/cldr',
+      'globalize': 'vendor/globalize'
     },
     shim: {
       'vendor/jquery-cookie': {
@@ -50,13 +52,13 @@
   require(['jquery', 'vendor/knockout', 'vendor/sammy',
            'vendor/loglevel', 'vendor/moment',
            'config', 'storage', 'accounts', 'files', 'auth',
-           'models/search', 'util',
+           'models/search', 'util', 'localization',
            // Imports below don't need to be assigned to variables.
            'jqueryui', 'vendor/jquery-dropdown', 'vendor/jquery-scrollstop',
            'moxie', 'plupload', 'pluploadui', 'vendor/jquery.finderSelect',
            'iexd-transport'],
   function($, ko, sammy, logger, moment, config, storage, AccountManager,
-    FileManager, auth, Search, util) {
+    FileManager, auth, Search, util, localization) {
 
     // Initialise and configure.
     logger.setLevel(config.logLevel);
@@ -549,6 +551,10 @@
         error: ko.observable(''),
         loading: ko.observable(true),
 
+        localizedConfirmPopup: function(token, variables) {
+          return confirm(localization.formatAndWrapMessage(token, variables));
+        },
+
         logo_url: ko.observable(),
 
         // Accounts view model.
@@ -574,7 +580,7 @@
           }, self),
           // return friendly names by service
           friendly_name: function(service_name) {
-            return service_names[service_name];
+            return localization.formatAndWrapMessage('servicenames/' + service_name);
           },
           // Returns hash mapping a string service name to an array of account objects.
           by_service: ko.computed(function() {
@@ -602,7 +608,7 @@
 
             explorer.manager.addAccount(service, {
               on_confirm_with_iexd: function() {
-                explorer.view_model.addconfirm.serviceName = service_names[service];
+                explorer.view_model.addconfirm.serviceName = localization.formatAndWrapMessage('servicenames/' + service)
                 explorer.view_model.addconfirm.serviceLogo =
                   services().filter(function(s) {
                     return s.id === service;
@@ -712,7 +718,7 @@
           service_friendly: ko.computed(function() {
             var self = this();
             var name = self.service;
-            return service_names[name];
+            return localization.formatAndWrapMessage('servicenames/' + name);
           }, self.manager.active),
           // Compute current working directory.
           cwd: ko.computed(function() {
@@ -848,6 +854,16 @@
       config.user_data.subscribe(function(userData) {
         self.view_model.logo_url(userData.logo_url);
       });
+
+      var setLocale = function (locale) {
+        localization.setCurrentLocale(locale);
+      };
+
+      // update the locale when the config changes
+      config.locale.subscribe(setLocale);
+
+      // load the default locale
+      setLocale(config.locale());
 
       this.view_model.files.searchQuery.extend({
         rateLimit: {

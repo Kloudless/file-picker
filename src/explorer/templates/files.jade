@@ -12,7 +12,7 @@
         // ko if: $root.flavor() == 'chooser'
         form.search-form(data-bind="submit: search")
           a#search-back-button(data-bind='click: refresh').search
-          input#search-query(type="text", placeholder="Search", data-bind="textInput: searchQuery").search
+          input#search-query(type="text", placeholder="Search", data-bind="textInput: searchQuery, translate: {placeholder: { message: \"files/search\" }}").search
           a#search-enable-button.search
         // /ko
 
@@ -64,13 +64,13 @@
     table(data-bind='with: files').clickable
       thead
         tr
-          th(data-bind='click: sort("name")') Name
+          th(data-bind='click: sort("name"), translate: "files/name"') Name
             .arrow-up#sort-name-up
             .arrow-down#sort-name-down
-          th(data-bind='click: sort("largest")') Size
+          th(data-bind='click: sort("largest"), translate: "files/size"') Size
             .arrow-up#sort-largest-up
             .arrow-down#sort-largest-down
-          th(data-bind='click: sort("recent")') Updated
+          th(data-bind='click: sort("recent"), translate: "files/updated"') Updated
             .arrow-up#sort-recent-up
             .arrow-down#sort-recent-down
     #fs-scroller.iewrapper
@@ -79,7 +79,7 @@
         tbody
           tr.info-row(align="center")
             td.info-cell
-              div No Files Found
+              div(data-bind='translate: "files/nofilesfound"') No Files Found
         // /ko
         // ko if: cwd().length > 0 && cwd()[0].type == "newfolder"
         tbody
@@ -88,7 +88,7 @@
               span()
                 div.foldericon()
               span()
-                input.new-folder-name(data-bind='attr: {value: "Untitled Folder"}')
+                input.new-folder-name(data-bind='attr: {value: "Untitled Folder"}, translate: {value: { message: "files/untitledfolder" }}')
               span(data-bind='click: mkdir')
                 span.save-button.inline-button Save
               span(data-bind='click: rmdir')
@@ -109,16 +109,21 @@
                 div.fileicon()
               span(data-bind='text: name')
 
-            td.size(data-bind='text: friendlySize')
+            // ko if: (friendlySize == null || friendlySize == "")
+            td.size
+            // /ko
+            // ko ifnot: (friendlySize == null || friendlySize == "")
+            td.size(data-bind='translate: { html: friendlySize }')
+            // /ko
 
             // ko if: (modified == null || modified == "") && created
-            td.updated(data-bind='text: moment(new Date(created.substring(0,19))).format("MMM DD   h:mm a")')
+            td.updated(data-bind='formatDate: created')
             // /ko
             // ko if: (modified == null || modified == "") && (created == null || created == "")
             td.updated
             // /ko
             // ko ifnot: modified == null || modified == ""
-            td.updated(data-bind='text: moment(new Date(modified.substring(0,19))).format("MMM DD   h:mm a")')
+            td.updated(data-bind='formatDate: modified')
             // /ko
           // /ko
           // ko if: type == "disabled"
@@ -127,7 +132,7 @@
               span
                 div.fileicon()
               span(data-bind='text: name')
-            td.updated(data-bind='text: moment(new Date(modified)).format("MMM DD   h:mm a")')
+            td.updated(data-bind='formatDate: modified')
           // /ko
           // /ko
 
@@ -142,12 +147,12 @@
         input.kloudless-saver-name(data-bind='value: files.all()[0].name')
         // /ko
         .buttonscontainer
-          a(data-bind='click: cancel').button.reg Cancel
+          a(data-bind='click: cancel, translate: "global/cancel"').button.reg Cancel
           // ko if: flavor() == 'chooser'
-          a(data-bind='click: confirm').button.blue Select
+          a(data-bind='click: confirm, translate: "global/select"').button.blue Select
           // /ko
           // ko if: flavor() == 'saver'
-          a(data-bind='click: save').button.blue Save
+          a(data-bind='click: save, translate: "global/save"').button.blue Save
           // /ko
         div(data-bind='template: {name: "powered-by-kl-footer"}')
 
