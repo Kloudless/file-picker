@@ -25,7 +25,7 @@
       'vendor/sammy': {
         deps: ['jquery']
       },
-      'vendor/jqueryui': {
+      'vendor/jquery-ui': {
         deps: ['jquery']
       },
       'vendor/jquery-dropdown': {
@@ -42,7 +42,7 @@
         exports: 'plupload'
       },
       'pluploadui': {
-        deps: ['jquery', 'plupload'],
+        deps: ['jquery', 'jqueryui', 'plupload'],
         exports: 'pluploadui'
       }
     },
@@ -71,52 +71,15 @@
     var loadedDropConfig = false;
 
     // This can be generalized in the future with a config option
-    var startView = (config.flavor === 'dropzone') ? 'dropzone' : 'accounts';
+    var startView = (config.flavor() === 'dropzone') ? 'dropzone' : 'accounts';
 
-    var service_names = {
-        cq5 : 'Adobe CQ5',
-        dropbox : 'Dropbox',
-        gdrive : 'Google Drive',
-        box : 'Box',
-        evernote : 'Evernote',
-        skydrive : 'OneDrive',
-        sugarsync : 'SugarSync',
-        sharefile : 'Citrix ShareFile',
-        egnyte : 'Egnyte',
-        s3 : 'Amazon S3',
-        sharepoint: 'SharePoint Online',
-        onedrivebiz: 'OneDrive for Business',
-        smb: 'SMB',
-        hubspot: 'Hubspot Files',
-        salesforce: 'Salesforce Files',
-        azure: 'Azure Storage',
-        cmis : 'CMIS',
-        alfresco : 'Alfresco',
-        alfresco_cloud: 'Alfresco Cloud',
-        jive : 'Jive',
-        webdav: 'WebDAV',
-        ftp: 'FTP',
-      },
-      services = ko.observableArray();
-
-    for (var i = 0; i < config.services.length; i++) {
-      var service = config.services[i];
-      if (service_names[service] !== undefined) {
-        services.push({
-          id: service,
-          name: service_names[service],
-          logo: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/' + service + '.png'
-        });
-      }
-    }
-
-    if (config.computer) {
-      services.unshift({
-        id: 'computer',
-        name: 'My Computer',
-        logo: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png'
+    var services = ko.pureComputed(function() {
+      var services = {};
+      ko.utils.arrayForEach(config.visible_services(), function(service) {
+        services[service.id] = service;
       });
-    }
+      return services;
+    });
 
     // Explorer declaration.
     var FileExplorer = function() {
@@ -143,7 +106,7 @@
 
       // View model setup.
       this.view_model = {
-        flavor: ko.observable(config.flavor),
+        flavor: config.flavor,
 
         // The current view: alternates between 'files', 'accounts', 'computer', etc.
         current: ko.observable(startView),
@@ -492,15 +455,14 @@
                     }
 
                     if (!loadStorage) {
-                      storage.storeAccounts(config.app_id, explorer.manager.accounts(),
-                          config.services);
+                      storage.storeAccounts(config.app_id, explorer.manager.accounts());
                     }
                   }
 
                   // if no valid accounts from local storage are loaded
                   if (explorer.manager.accounts().length === 0) {
                     router.setLocation('#/accounts');
-                  } else {
+                  } else if (config.flavor() !== 'dropzone') {
                     router.setLocation('#/files');
                   }
                 }, function(err, result) {
@@ -511,8 +473,7 @@
                     logger.warn('failed to load account from localStorage');
                     explorer.manager.removeAccount(local_data.account);
                     // store accounts
-                    storage.storeAccounts(config.app_id, explorer.manager.accounts(),
-                        config.services);
+                    storage.storeAccounts(config.app_id, explorer.manager.accounts());
                   // else if it errors on folder contents, we should show an error
                   } else if (err) {
                     logger.warn('failed to refresh filesystem', err);
@@ -578,10 +539,7 @@
               return 'My Computer';
             return this.manager.active().account_name;
           }, self),
-          // return friendly names by service
-          friendly_name: function(service_name) {
-            return localization.formatAndWrapMessage('servicenames/' + service_name);
-          },
+
           // Returns hash mapping a string service name to an array of account objects.
           by_service: ko.computed(function() {
             var accounts = this(); // gimmick to register observer with KO
@@ -596,6 +554,7 @@
 
             return output;
           }, self.manager.accounts),
+
           // Connect new account.
           connect: function(service) {
             // if clicking on computer, switch to computer view
@@ -605,15 +564,12 @@
             }
 
             logger.debug('Account connection invoked for service: ' + service + '.');
+            var serviceData = services()[service];
 
             explorer.manager.addAccount(service, {
               on_confirm_with_iexd: function() {
-                explorer.view_model.addconfirm.serviceName =
-                  localization.formatAndWrapMessage('servicenames/' + service);
-                explorer.view_model.addconfirm.serviceLogo =
-                  services().filter(function(s) {
-                    return s.id === service;
-                  })[0].logo;
+                explorer.view_model.addconfirm.serviceName = serviceData.name;
+                explorer.view_model.addconfirm.serviceLogo = serviceData.logo;
 
                 router.setLocation('#/addconfirm');
 
@@ -684,14 +640,11 @@
                 }
 
                 // store accounts
-                storage.storeAccounts(config.app_id, explorer.manager.accounts(),
-                    config.services);
+                storage.storeAccounts(config.app_id, explorer.manager.accounts());
               }
             });
           },
-          computer: function() {
-            return config.computer && explorer.view_model.flavor() == 'chooser';
-          },
+          computer: config.visible_computer,
           account_management: config.account_management,
         },
 
@@ -713,13 +666,13 @@
           }, self.manager.active),
           // Return active service
           service: ko.computed(function() {
-            var self = this();
-            return self.service;
+            return this().service;
           }, self.manager.active),
           service_friendly: ko.computed(function() {
-            var self = this();
-            var name = self.service;
-            return localization.formatAndWrapMessage('servicenames/' + name);
+            if (!this().service)
+              return "";
+
+            return services()[this().service].name;
           }, self.manager.active),
           // Compute current working directory.
           cwd: ko.computed(function() {
@@ -847,9 +800,6 @@
 
         // List of supported services. Used to render things on the accounts page.
         services: services,
-        // List of friendly names
-        service_names: service_names
-
       };
 
       config.user_data.subscribe(function(userData) {
@@ -1107,7 +1057,7 @@
               var uploader = this;
 
               // Add drag & dropped files
-              for (i = 0; i < filesQueue.length; i++) {
+              for (var i = 0; i < filesQueue.length; i++) {
                 uploader.addFile(filesQueue[i]);
               }
               filesQueue = [];
@@ -1375,8 +1325,7 @@
           // post message for account
           explorer.view_model.postMessage('deleteAccount', account_data.account);
           // store accounts
-          storage.storeAccounts(config.app_id, explorer.manager.accounts(),
-              config.services);
+          storage.storeAccounts(config.app_id, explorer.manager.accounts());
         }).fail(function(xhr, status, err) {
           logger.warn('Account failed to remove');
           alert('Error occurred. Please try again!');
@@ -1415,24 +1364,22 @@
        * Additional initialization steps.
        */
 
-      // Default to the accounts page if no accounts in local storage
-      // storage.removeAllAccounts(config.app_id);
-      var accounts = storage.loadAccounts(config.app_id, config.services);
-      logger.debug(accounts);
-
-      if (accounts.length === 0) {
-        this.get('#/', function(ctx) {
-          router.setLocation('#/accounts');
-        });
-      } else {
-        // Load from local storage or configuration
-        this.get('#/', function(ctx) {
-          explorer.view_model.sync(accounts, true);
-        });
-      }
-
+      this.get('#/', function(ctx) {
+        router.setLocation('#/accounts');
+      });
     });
 
+    var accountSub = config.visible_services.subscribe(function() {
+      accountSub.dispose();
+
+      // Default to the accounts page if no accounts in local storage
+      // storage.removeAllAccounts(config.app_id);
+      var accounts = storage.loadAccounts(config.app_id);
+
+      if (accounts.length > 0) {
+        explorer.view_model.sync(accounts, true);
+      }
+    });
 
     // Expose hooks for debugging.
     if (config.debug) {
@@ -1488,18 +1435,21 @@
       // Check the flavor on init call
       if (data.flavor) {
         // refresh and go back to accounts if going from saver to chooser
-        // or vice versa
-        if (config.flavor !== data.flavor) {
+        // or vice versa        
+        if (config.flavor() !== data.flavor) {
           logger.debug('SWITCHING FLAVORS');
           router.setLocation('#/accounts');
         }
 
-        config.flavor = data.flavor;
-        explorer.view_model.flavor(config.flavor);
+        config.flavor(data.flavor);
+      }
+
+      // Primary way of updating config options
+      if (data.options) {
+        config.update(data.options);
       }
 
       if (data.flavor == 'saver') {
-
         // Add files to fileManager
         if (data.files && data.files.length > 0) {
           // first clear all files.
@@ -1509,23 +1459,10 @@
             explorer.fileManager.add(file.url, file.name);
           }
         }
-
-        // Remove computer
-        if (config.computer && services()[0].id == 'computer') {
-          services.shift();
-        }
       } else if (data.flavor == 'chooser') {
-        // Add computer
-        if (config.computer && services()[0].id != 'computer') {
-          services.unshift({
-            id: 'computer',
-            name: 'My Computer',
-            logo: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png'
-          });
-        }
         // Default to computer view if account management is disabled and no
         // tokens are provided.
-        if (config.computer && !config.account_management() &&
+        if (config.visible_computer() && !config.account_management() &&
             !(data.options && data.options.tokens && data.options.tokens.length > 0)) {
           router.setLocation('#/computer');
         }
@@ -1533,24 +1470,18 @@
         router.setLocation('#/dropzone');
       }
 
-      // Primary way of updating config options
-      if (data.options) {
-        config.update(data.options);
-      }
-
-
       // Call sync if frame has already been initialized and there are differences
       // between storage and current accounts
       if (explorer.manager.accounts().length !== 0) {
-        var accounts = storage.loadAccounts(config.app_id, config.services);
+        var accounts = storage.loadAccounts(config.app_id);
         var account_ids = {};
         var local_accounts = explorer.manager.accounts();
         var i, different = false;
-        for (i = 0; i < accounts.length; i++) {
+        for (var i = 0; i < accounts.length; i++) {
           var account = accounts[i];
           account_ids[account.account] = true;
         }
-        for (i = 0; i < local_accounts.length; i++) {
+        for (var i = 0; i < local_accounts.length; i++) {
           var local_account = local_accounts[i];
           if (! local_account.account in account_ids) {
             different = true;
@@ -1591,7 +1522,7 @@
         }, 0);
       }
 
-      if (config.computer && !loadedDropConfig && !config.upload_location_uri()) {
+      if (config.visible_computer() && !loadedDropConfig && !config.upload_location_uri()) {
         // Looking up chunk size. Since the drop location doesn't really
         // change we look it up based on that. The /drop end point for the
         // API returns the chunk size for that drop location.
@@ -1609,10 +1540,8 @@
           loadedDropConfig = true;
         }).fail(function() {
           // Disable computer if no drop location is set.
-          if (config.computer && services()[0].id == 'computer') {
-            services.shift();
-          }
-          config.computer = false;
+          logger.warn("Disabling Computer since no Upload Location set.");
+          config.computer(false);
         });
       }
 

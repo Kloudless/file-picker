@@ -1,8 +1,8 @@
 (function() {
   'use strict';
 
-  define(['jquery', 'text!config.json', 'vendor/knockout'],
-  function($, config_text, ko) {
+  define(['jquery', 'text!config.json', 'vendor/knockout', 'localization'],
+  function($, config_text, ko, localization) {
 
     var get_query_variable = function(name) {
       name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -22,15 +22,17 @@
       origin: get_query_variable('origin'),
       custom_css: get_query_variable('custom_css'),
       // data options move to post messaging
-      flavor: get_query_variable('flavor'),
+      flavor: ko.observable(get_query_variable('flavor')),
       multiselect: JSON.parse(get_query_variable('multiselect')),
       link: JSON.parse(get_query_variable('link')),
       link_options: ko.observable({}),
       account_management: ko.observable(true),
-      computer: JSON.parse(get_query_variable('computer')) ||
-        get_query_variable('flavor') === 'dropzone',
       retrieve_token: ko.observable(),
+      computer: ko.observable(
+        JSON.parse(get_query_variable('computer')) ||
+          get_query_variable('flavor') === 'dropzone'),
       services: JSON.parse(get_query_variable('services')),
+      visible_services: ko.observableArray().extend({ rateLimit: 500 }),
       persist: JSON.parse(get_query_variable('persist')),
       types: JSON.parse(get_query_variable('types')).map(function(str) {
         /**
@@ -56,12 +58,6 @@
 
     if (config.debug) {
         window.config = config;
-    }
-
-
-
-    if (config.types.indexOf('folders') != -1 && config.types.length === 1) {
-      config.computer = false;
     }
 
     if (!config.api_version) {
@@ -147,6 +143,81 @@
     retrieveConfig();
 
     /*
+     * Get service data
+     */
+    var retrieveServices = function() {
+      $.get(
+        config.base_url + '/' + config.api_version + '/public/services',
+        {apis: 'storage'},
+        function(serviceData) {
+          if (config.services == undefined) {
+            config.services = ['file_store'];
+          }
+          else if (config.services.indexOf('all') > -1) {
+            config.services = ['file_store', 'object_store'];
+          }
+          var objStoreServices = ['s3', 'azure'];
+
+          ko.utils.arrayForEach(serviceData.objects, function(serviceDatum) {
+            var serviceCategory = 'file_store';
+            if (objStoreServices.indexOf(serviceDatum.name) > -1) {
+              serviceCategory = 'object_store';
+            }
+            if (config.services.indexOf(serviceDatum.name) > -1 ||
+                config.services.indexOf(serviceCategory) > -1) {
+
+              var localeName = localization.formatAndWrapMessage(
+                'servicenames/' + serviceDatum.name);
+              if (localeName.indexOf('/') > -1)
+                localeName = serviceDatum.friendly_name;
+
+              config.visible_services.push({
+                id: serviceDatum.name,
+                name: localeName,
+                logo: serviceDatum.logo_url || (
+                  'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/' +
+                    serviceDatum.name + '.png'),
+              });
+              config.visible_services.sort(function(left, right) {
+                return left.name == right.name ? 0 :
+                  (left.name < right.name ? -1 : 1);
+              });
+            }
+          });
+        }
+      );
+    };
+
+    // Handle the Computer service being enabled/disabled.
+
+    config.visible_computer = ko.computed(function() {
+      return config.computer() && config.flavor() != 'saver' &&
+        // Types other than 'folders' are present.
+        (
+          config.types.length === 0 || config.types.filter(function (f) {
+            return f != 'folders'
+          }).length > 0
+        );
+    });
+
+    config.visible_computer.subscribe(function(computerEnabled) {
+      if (computerEnabled && !(config.visible_services()[0] || {}).computer) {
+        config.visible_services.unshift({
+          computer: true,
+          id: 'computer',
+          name: 'My Computer',
+          logo: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png'
+        });
+      }
+      else if (!computerEnabled &&
+               (config.visible_services()[0] || {}).computer) {
+        config.visible_services.shift();
+      }
+    });
+
+    retrieveServices();
+
+    /*
      * Create API server URLs
      */
     config.getAccountUrl = function(accountId, api, path) {
@@ -164,55 +235,6 @@
         url += (api ? api + '/' : '') + path.replace(/^\/+/g, '')
 
       return url;
-    }
-
-
-    // Service aliases
-
-    var services = {
-        file_store: [
-            'dropbox',
-            'gdrive',
-            'box',
-            'evernote',
-            'skydrive',
-            'sugarsync',
-            'sharefile',
-            'egnyte',
-            'sharepoint',
-            'onedrivebiz',
-            'hubspot',
-            'salesforce',
-            'smb',
-            'cmis',
-            'alfresco',
-            'alfresco_cloud',
-            'jive',
-            'webdav',
-            'cq5',
-            'ftp',
-        ],
-        object_store: [
-            'azure',
-            's3',
-        ]
-    };
-    services.all = services.file_store.concat(services.object_store);
-
-    var groups = [];
-    if (config.services == undefined) {
-        config.services = [];
-        config.services = config.services.concat(services.file_store);
-    } else if (config.services.length == 0) {
-        config.services = [];
-    } else {
-        config.services = config.services.filter(function(service) {
-          if (service in services) {
-            groups = groups.concat(services[service]);
-            return false;
-          }
-          return true;
-        }).concat(groups);
     }
 
 

@@ -7,8 +7,8 @@
   div#account-dropdown.dropdown.dropdown-tip
     ul.dropdown-menu
       // ko foreach: all
-      li(data-bind='attr: {title: $parent.friendly_name(service) + ": " + account_name}, click: $root.setLocation.bind($data, "#/files/" + account)')
-        img.accounticon(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/" + service + ".png"}')
+      li(data-bind='attr: {title: $root.services()[service].name + ": " + account_name}, click: $root.setLocation.bind($data, "#/files/" + account)')
+        img.accounticon(data-bind='attr: {src: $root.services()[service].logo}')
         div.accountname(data-bind='text: account_name')
       // /ko
       // ko if: computer()

@@ -35,8 +35,8 @@
           div.service-group(data-bind='foreach: {data: Object.keys(ko.toJS(by_service)), as: "service"}')
             li.linked-service
               div.servicename
-                img.servicelogo(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/" + service + ".png"}')
-                span(data-bind='text: $parent.friendly_name(service)')
+                img.servicelogo(data-bind='attr: {src: $root.services()[service].logo}')
+                span(data-bind='text: $root.services()[service].name')
               div.accounts(data-bind='foreach: ko.toJS($parent.by_service)[service]')
                 ul.accountnames
                   li.account
@@ -58,19 +58,19 @@
                       a(data-bind='click: $root.setLocation.bind($data, "#/computer"), text: "Upload from your computer", translate: "accounts/uploadfromcomputer"')
             // /ko
 
-      // ko if: $parent.services.length > 0
+      // ko if: Object.values($parent.services()).length > 0
       .row(data-bind='if: all().length > 0')
         div.intro-message.more(data-bind='translate: "accounts/connectmore"') Connect more!
       // /ko
 
     //- Add a new account.
     .connectmore
-      ul.small-block-grid-2.medium-block-grid-4.large-block-grid-6.add-account(data-bind='foreach: {data: services, as: "service"}')
+      ul.small-block-grid-2.medium-block-grid-4.large-block-grid-6.add-account(data-bind='foreach: {data: Object.values(services()), as: "service"}')
         // ko ifnot: $parent.accounts.all().length > 0 && service.id == 'computer'
         li
           a(data-bind='click: $parent.accounts.connect.bind(null, id)')
             div.service
               img.servicelogo(data-bind='attr: {src: logo}')
               span.servicename-container
-                span.servicename(data-bind='text: $root.accounts.friendly_name(id)')
+                span.servicename(data-bind='text: service.name')
         // /ko

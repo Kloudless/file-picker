@@ -1,19 +1,6 @@
 (function() {
   'use strict';
 
-  // Test file explorer.
-  var explorer = window.Kloudless.explorer({
-    app_id: window.app_id,
-    multiselect: true,
-    link: false,
-    custom_css: '/stylesheets/custom.css',
-    computer: true,
-    services: ['all'],
-    types: ['all'],
-    display_backdrop: true
-  });
-  window.chooser1 = explorer;
-
   /*
    * Helper methods
    */
@@ -48,9 +35,21 @@
    * Event Handlers
    */
 
-  /* Uncomment the line below to test out event queueing
-   * till the File Explorer is ready.
-   */
+  // Test file explorer.
+  var explorer = window.Kloudless.explorer({
+    app_id: window.app_id,
+    multiselect: true,
+    link: false,
+    custom_css: '/stylesheets/custom.css',
+    computer: true,
+    services: ['all'],
+    types: ['all'],
+    display_backdrop: true
+  });
+  window.chooser1 = explorer;
+
+  // Uncomment the line below to test out event queueing
+  // till the File Explorer is ready.
   // explorer.choose();
 
   explorer.on('success', function(files) {
@@ -141,10 +140,8 @@
   saver.savify(document.getElementById('saver-test'), [
     {'url': 'http://kloudl.es/l/VfGt5lyl7tSFCbt0jvxd/logo.png',
      'name': 'kloudless logo.png'},
-    /*{'url': 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/gdrive.png',
-     'name': 'drive-logo.png'}*/
+    //{'url': 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/gdrive.png', 'name': 'drive-logo.png'}
   ]);
-
 
   // Test drop zone.
   var dropzone = window.Kloudless2.dropzone({

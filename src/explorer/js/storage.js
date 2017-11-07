@@ -20,8 +20,12 @@
         }
 
         // Pass in accounts from an account manager
-        storage.storeAccounts = function (appId, accounts, services) {
+        storage.storeAccounts = function (appId, accounts) {
             if (!storage.container) return;
+
+            var serviceNames = config.visible_services().map(function(service) {
+                return service.id;
+            });
 
             var key = 'k-' + appId, appData = storage.container[key];
             if (!appData || appData.length == 0) {
@@ -30,16 +34,16 @@
                 appData = JSON.parse(appData);
             }
 
-            // add accounts from the manager
+            // add accounts from the manager for currently visible services.
             var i, account, array = [];
             for (i = 0; i < accounts.length; i++) {
                 account = accounts[i];
                 array.push(JSON.stringify(account));
             }
-            // add accounts not in services
+            // add accounts already saved for currently invisible services.
             for (i = 0; i < appData.accounts.length; i++) {
                 account = JSON.parse(appData.accounts[i]);
-                if (services.indexOf(account.service) == -1) {
+                if (serviceNames.indexOf(account.service) == -1) {
                     array.push(appData.accounts[i]);
                 }
             }
@@ -50,9 +54,12 @@
 
         // Return an array of accounts, initialize if necessary
         // the appData is stringified
-        storage.loadAccounts = function (appId, services) {
+        storage.loadAccounts = function (appId) {
             if (!storage.container) return [];
 
+            var serviceNames = config.visible_services().map(function(service) {
+                return service.id;
+            });
             var key = 'k-' + appId, appData = storage.container[key];
             if (!appData || appData.length === 0) {
                 appData = {};
@@ -66,7 +73,8 @@
             var i, array = [], accounts = appData.accounts;
             for (i = 0; i < accounts.length; i++) {
                 var acc = JSON.parse(accounts[i]);
-                if (services.indexOf(acc.service) != -1) {
+                if (serviceNames.length === 0 || // Not loaded yet
+                    serviceNames.indexOf(acc.service) != -1) {
                     array.push(acc);
                 }
             }
