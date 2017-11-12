@@ -146,52 +146,56 @@
     /*
      * Get service data
      */
-    var retrieveServices = function() {
-      $.get(
-        config.base_url + '/' + config.api_version + '/public/services',
-        {apis: 'storage'},
-        function(serviceData) {
-          if (config.services == undefined) {
-            config.services = ['file_store'];
-          }
-          else if (config.services.indexOf('all') > -1) {
-            config.services = ['file_store', 'object_store'];
-          }
-          var objStoreServices = ['s3', 'azure'];
+    config._retrievedServices = false;
+    $.get(
+      config.base_url + '/' + config.api_version + '/public/services',
+      {apis: 'storage'},
+      function(serviceData) {          
+        config._retrievedServices = true;
 
-          ko.utils.arrayForEach(serviceData.objects, function(serviceDatum) {
-            var serviceCategory = 'file_store';
-            if (objStoreServices.indexOf(serviceDatum.name) > -1) {
-              serviceCategory = 'object_store';
-            }
-            if (config.services.indexOf(serviceDatum.name) > -1 ||
-                config.services.indexOf(serviceCategory) > -1) {
-
-              var localeName = localization.formatAndWrapMessage(
-                'servicenames/' + serviceDatum.name);
-              if (localeName.indexOf('/') > -1)
-                localeName = serviceDatum.friendly_name;
-
-              config.visible_services.push({
-                id: serviceDatum.name,
-                name: localeName,
-                logo: serviceDatum.logo_url || (
-                  config.static_path + '/webapp/sources/' +
-                    serviceDatum.name + '.png'),
-              });
-              config.visible_services.sort(function(left, right) {
-                return left.name == right.name ? 0 :
-                  (left.name < right.name ? -1 : 1);
-              });
-            }
-          });
+        if (config.services == undefined) {
+          config.services = ['file_store'];
         }
-      );
-    };
+        else if (config.services.indexOf('all') > -1) {
+          config.services = ['file_store', 'object_store'];
+        }
+        var objStoreServices = ['s3', 'azure'];
+
+        ko.utils.arrayForEach(serviceData.objects, function(serviceDatum) {
+          var serviceCategory = 'file_store';
+          if (objStoreServices.indexOf(serviceDatum.name) > -1) {
+            serviceCategory = 'object_store';
+          }
+          if (config.services.indexOf(serviceDatum.name) > -1 ||
+              config.services.indexOf(serviceCategory) > -1) {
+
+            var localeName = localization.formatAndWrapMessage(
+              'servicenames/' + serviceDatum.name);
+            if (localeName.indexOf('/') > -1)
+              localeName = serviceDatum.friendly_name;
+
+            config.visible_services.push({
+              id: serviceDatum.name,
+              name: localeName,
+              logo: serviceDatum.logo_url || (
+                config.static_path + '/webapp/sources/' +
+                  serviceDatum.name + '.png'),
+            });
+            config.visible_services.sort(function(left, right) {
+              return left.name == right.name ? 0 :
+                (left.name < right.name ? -1 : 1);
+            });
+          }
+        });
+
+        config.visible_computer.subscribe(toggleComputer);
+        toggleComputer(config.visible_computer());
+      }
+    );
 
     // Handle the Computer service being enabled/disabled.
 
-    config.visible_computer = ko.computed(function() {
+    config.visible_computer = ko.pureComputed(function() {
       return config.computer() && config.flavor() != 'saver' &&
         // Types other than 'folders' are present.
         (
@@ -201,7 +205,8 @@
         );
     });
 
-    config.visible_computer.subscribe(function(computerEnabled) {
+    var toggleComputer = function(computerEnabled) {
+      // Called after services are retrieved.
       if (computerEnabled && !(config.visible_services()[0] || {}).computer) {
         config.visible_services.unshift({
           computer: true,
@@ -214,9 +219,7 @@
                (config.visible_services()[0] || {}).computer) {
         config.visible_services.shift();
       }
-    });
-
-    retrieveServices();
+    };
 
     /*
      * Create API server URLs

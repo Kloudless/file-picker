@@ -516,7 +516,9 @@
           return confirm(localization.formatAndWrapMessage(token, variables));
         },
 
-        logo_url: ko.observable(),
+        logo_url: ko.pureComputed(function() {
+          return (config.user_data() || {}).logo_url || '';
+        }),
 
         static: function(path) {
           return config.static_path + '/' + path.trim('/');
@@ -535,8 +537,8 @@
           }, self),
 
           active_logo: ko.pureComputed(function() {
-            return config.static_path + '/webapp/sources/' + this.active() +
-              ".png";
+            return config.static_path + '/webapp/sources/' +
+              this.view_model.accounts.active() + ".png";
           }, self),
           
           logout: function() {
@@ -813,10 +815,6 @@
         // List of supported services. Used to render things on the accounts page.
         services: services,
       };
-
-      config.user_data.subscribe(function(userData) {
-        self.view_model.logo_url(userData.logo_url);
-      });
 
       var setLocale = function (locale) {
         localization.setCurrentLocale(locale);
@@ -1383,8 +1381,9 @@
 
     var accountSub = config.visible_services.subscribe(function() {
       // This is only for the initial load.
-      // The config rate limits notifications to this observable,
-      // so it would only trigger once.
+      if (!config._retrievedServices)
+        return
+
       accountSub.dispose();
 
       // Default to the accounts page if no accounts in local storage
@@ -1553,6 +1552,7 @@
         }).done(function(drop_information) {
           config.chunk_size = drop_information.chunk_size;
           loadedDropConfig = true;
+          config.computer(true);
         }).fail(function() {
           // Disable computer if no drop location is set.
           logger.warn("Disabling Computer since no Upload Location set.");

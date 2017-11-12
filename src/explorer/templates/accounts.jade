@@ -5,21 +5,11 @@
       .backcontain(data-bind='if: accounts.all().length > 0')
         a.backbtn(data-bind='click: $root.setLocation.bind($data, "#/files")')
           div.arrow
-        // ko if: logo_url
-        img.klogo(data-bind='attr: {src: logo_url}')
-        // /ko
-        // ko ifnot: logo_url
-        img.klogo(data-bind='attr: {src: $root.static("/ext-assets/kloudless32x33.png")}')
-        // /ko
+        img.klogo(data-bind='attr: {src: logo_url() || $root.static("/ext-assets/kloudless32x33.png")}')
         span(data-bind='translate: "accounts/manage"') Manage your cloud storage accounts here.
       .nobackcontain(data-bind='if: accounts.all().length < 1')
         div.nobackbtn
-        // ko if: logo_url
-        img.klogo(data-bind='attr: {src: logo_url}')
-        // /ko
-        // ko ifnot: logo_url
-        img.klogo(data-bind='attr: {src: $root.static("/ext-assets/kloudless32x33.png")}')
-        // /ko
+        img.klogo(data-bind='attr: {src: logo_url() || $root.static("/ext-assets/kloudless32x33.png")}')
         span(data-bind='translate: "accounts/chooseaccount"') Welcome! Please choose a service to connect.
     a.closeexplorer(data-bind='click: cancel')
 
@@ -49,7 +39,7 @@
             // ko if: $index() === ($parent.all().length - 1) && $parent.computer()
             li.linked-service
               div.servicename
-                img.servicelogo(data-bind='attr: {src: $root.statc("/webapp/sources/computer.png")}')
+                img.servicelogo(data-bind='attr: {src: $root.static("/webapp/sources/computer.png")}')
                 span(data-bind='text: "Upload", translate: "accounts/upload"')
               div.accounts
                 ul.accountnames

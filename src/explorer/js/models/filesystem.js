@@ -168,10 +168,10 @@
               (config.types.length === 1 && config.types.indexOf('all') != -1) ||
               (config.types.indexOf(extension.toLowerCase()) != -1) ||
               (config.types.indexOf('') != -1 && child.name.indexOf('.') == -1))
-             && config.flavor == 'chooser')) {
+             && config.flavor() == 'chooser')) {
           logger.debug('Child passed type test.');
           return true;
-        } else if (config.types.indexOf('folders') != -1 || config.flavor == 'saver') {
+        } else if (config.types.indexOf('folders') != -1 || config.flavor() == 'saver') {
           // add grayed out files
           child.type = 'disabled';
           return true;
