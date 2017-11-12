@@ -87,14 +87,6 @@
     console.log("File Explorer closed.");
   });
 
-  var cl = document.getElementById('close-test');
-  cl.addEventListener('click', function() {
-    explorer.close();
-    second.close();
-    saver.close();
-    dropzone.close();
-  });
-
   // Test second file explorer.
   var second = window.Kloudless2.explorer({
     app_id: window.app_id,
@@ -178,6 +170,15 @@
 
   dropzone.on('error', function(error) {
     addResultWithData('An error occurred in file selection:', error);
+  });
+
+  // Test close
+  var cl = document.getElementById('close-test');
+  cl.addEventListener('click', function() {
+    explorer.close();
+    second.close();
+    saver.close();
+    dropzone.close();
   });
 
 })();

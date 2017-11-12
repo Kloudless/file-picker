@@ -1,3 +1,5 @@
+@import 'variables'
+
 div.accounts
     background:#fdfdfd
     height:100%
@@ -71,7 +73,7 @@ div.accounts
         z-index: 10
         width: 16px
         height: 16px
-        background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px -146px no-repeat
+        background:url($icons_sheet) 0px -146px no-repeat
 
     .intro-message
         float: left;
@@ -138,7 +140,7 @@ div.accounts
                     @media only screen and (max-width: 400px)
                         font-size:14px
                     &:before
-                        background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") -1px 64px no-repeat
+                        background:url($icons_sheet) -1px 64px no-repeat
                         width: 16px
                         height: 16px
                         display: inline-block
@@ -164,7 +166,7 @@ div.accounts
                     float: right
                     width:16px
                     height:16px
-                    background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") no-repeat -1px -173px
+                    background:url($icons_sheet) no-repeat -1px -173px
                     margin-top:5px
     .connectmore
         a

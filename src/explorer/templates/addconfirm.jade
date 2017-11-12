@@ -9,7 +9,7 @@
         img.klogo(data-bind='attr: {src: logo_url}')
         // /ko
         // ko ifnot: logo_url
-        img.klogo(src='https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/kloudless32x33.png')
+        img.klogo(data-bind='attr: {src: $root.static("/ext-assets/kloudless32x33.png")}')
         // /ko
         span(data-bind='translate: "addconfirm/confirm"') Confirm account connection.
 
@@ -17,12 +17,12 @@
     p.confirm(data-bind='translate: {html: { message: "addconfirm/clickbelow", variables: { serviceName: addconfirm.serviceName }}}') Click below to connect your #[span(data-bind="text: addconfirm.serviceName")] account.
     p.imageholder
       img(data-bind='attr: {src: addconfirm.serviceLogo}')
-      img(src='https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/launch_site/support-plus.png')
+      img(data-bind='attr: {src: $root.static("/launch_site/support-plus.png")}')
       // ko if: logo_url
       img(data-bind='attr: {src: logo_url}', width=55, height=55)
       // /ko
       // ko ifnot: logo_url
-      img(src='https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/static/kloudless_logomark.png', width=55, height=55)
+      img(data-bind='attr: {src: $root.static("/static/kloudless_logomark.png")}', width=55, height=55)
       // /ko
     .buttonscontainer
       a.button.reg(data-bind='click: $root.setLocation.bind($data, "#/"), translate: "global/cancel"') Cancel

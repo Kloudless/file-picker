@@ -1,3 +1,5 @@
+@import 'variables'
+
 .files
     padding:20px
     header
@@ -29,7 +31,7 @@
                     float:left
                     top:10px
                     left:8px
-                    background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px -49px no-repeat
+                    background: url($icons_sheet) 0px -49px no-repeat
                 div.crumbmenuwrap
                     display: none
                     position: absolute
@@ -110,7 +112,7 @@
                     div
                         display: inline-block
                     div.foldericon
-                        background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px -42px no-repeat
+                        background: url($icons_sheet) 0px -42px no-repeat
                         width: 24px
                         height: 24px
                         margin-right: 5px
@@ -151,7 +153,7 @@
         .actions
             float: right;
             .refresh-button
-                background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px -193px no-repeat
+                background: url($icons_sheet) 0px -193px no-repeat
                 width: 24px
                 height: 24px
                 margin-right: 7px
@@ -160,7 +162,7 @@
                 display: inline-block;
                 float: right;
             .new-folder-button
-                background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px -68px no-repeat
+                background: url($icons_sheet) 0px -68px no-repeat
                 width: 24px
                 height: 24px
                 margin-right: 7px
@@ -172,7 +174,7 @@
                 .search
                     float: right;
                 #search-enable-button
-                    background: unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") -1px -224px no-repeat
+                    background: url($icons_sheet) -1px -224px no-repeat
                     width: 24px
                     height: 24px
                     margin-right: 3px
@@ -189,7 +191,7 @@
                     text-align: right;
                     padding: 0 5px;
                 #search-back-button
-                    background: url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png') 0px -146px no-repeat
+                    background: url($icons_sheet) 0px -146px no-repeat
                     width: 16px
                     height: 16px
                     margin-right: 7px
@@ -358,14 +360,14 @@
                         margin-bottom:-5px
                         display:inline-block
                     div.foldericon
-                        background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px -25px no-repeat
+                        background: url($icons_sheet) 0px -25px no-repeat
                     div.fileicon
-                        background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px 0px no-repeat
+                        background: url($icons_sheet) 0px 0px no-repeat
                     div.closeicon
                         width: 10px;
                         height: 10px;
                         margin: 0px;
-                        background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/modal_icons.png')") 0px 0px no-repeat
+                        background: url($static_path + '/ext-assets/modal_icons.png') 0px 0px no-repeat
                     input
                         line-height: 14px;
                         height: 26px;
@@ -451,7 +453,7 @@
             margin-bottom:1px
 
     .kloading
-        background: unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/loading_21x21.gif')") no-repeat center center;
+        background: url($loading_icon) no-repeat center center;
         width: 655px
         height: 350px
         top:100px
@@ -482,4 +484,4 @@
             margin-right: -10px
             width: 16px
             height: 16px
-            background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px -146px no-repeat
+            background: url($icons_sheet) 0px -146px no-repeat

@@ -1,3 +1,5 @@
+@import 'variables'
+
 .computer
     padding:20px
     header
@@ -70,7 +72,7 @@
                                 white-space: nowrap
                                 overflow: hidden
                             div .ui-icon-circle-minus
-                                background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") no-repeat -0px -146px
+                                background: url($icons_sheet) no-repeat -0px -146px
                                 width: 16px
                                 height: 16px
                                 margin-top: -5px
@@ -194,7 +196,7 @@
             margin-bottom:1px
 
     .kloading
-        background: unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/loading_21x21.gif')") no-repeat center center;
+        background: url($loading_icon) no-repeat center center;
         width: 0px
         height: 0px
         top:0
@@ -225,7 +227,7 @@
             margin-right: -10px
             width: 16px
             height: 16px
-            background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px -146px no-repeat
+            background: url($icons_sheet) 0px -146px no-repeat
 
 ul.plupload_filelist_content
     margin: 0

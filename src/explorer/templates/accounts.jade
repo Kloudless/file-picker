@@ -9,7 +9,7 @@
         img.klogo(data-bind='attr: {src: logo_url}')
         // /ko
         // ko ifnot: logo_url
-        img.klogo(src='https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/kloudless32x33.png')
+        img.klogo(data-bind='attr: {src: $root.static("/ext-assets/kloudless32x33.png")}')
         // /ko
         span(data-bind='translate: "accounts/manage"') Manage your cloud storage accounts here.
       .nobackcontain(data-bind='if: accounts.all().length < 1')
@@ -18,7 +18,7 @@
         img.klogo(data-bind='attr: {src: logo_url}')
         // /ko
         // ko ifnot: logo_url
-        img.klogo(src='https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/kloudless32x33.png')
+        img.klogo(data-bind='attr: {src: $root.static("/ext-assets/kloudless32x33.png")}')
         // /ko
         span(data-bind='translate: "accounts/chooseaccount"') Welcome! Please choose a service to connect.
     a.closeexplorer(data-bind='click: cancel')
@@ -49,7 +49,7 @@
             // ko if: $index() === ($parent.all().length - 1) && $parent.computer()
             li.linked-service
               div.servicename
-                img.servicelogo(data-bind='attr: {src: "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png"}')
+                img.servicelogo(data-bind='attr: {src: $root.statc("/webapp/sources/computer.png")}')
                 span(data-bind='text: "Upload", translate: "accounts/upload"')
               div.accounts
                 ul.accountnames

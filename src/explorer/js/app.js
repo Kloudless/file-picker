@@ -518,21 +518,33 @@
 
         logo_url: ko.observable(),
 
+        static: function(path) {
+          return config.static_path + '/' + path.trim('/');
+        },
+
         // Accounts view model.
         accounts: {
           // List of all account objects.
           all: self.manager.accounts,
+
           // Current active service
           active: ko.pureComputed(function() {
             if (this.view_model.current() === 'computer')
               return 'computer';
             return this.manager.active().service;
           }, self),
+
+          active_logo: ko.pureComputed(function() {
+            return config.static_path + '/webapp/sources/' + this.active() +
+              ".png";
+          }, self),
+          
           logout: function() {
             explorer.manager.accounts.removeAll();
             storage.removeAllAccounts(config.app_id);
             router.setLocation('#/accounts');
           },
+
           // Current active service name
           name: ko.pureComputed(function() {
             if (this.view_model.current() === 'computer')
@@ -1370,6 +1382,9 @@
     });
 
     var accountSub = config.visible_services.subscribe(function() {
+      // This is only for the initial load.
+      // The config rate limits notifications to this observable,
+      // so it would only trigger once.
       accountSub.dispose();
 
       // Default to the accounts page if no accounts in local storage
@@ -1435,7 +1450,7 @@
       // Check the flavor on init call
       if (data.flavor) {
         // refresh and go back to accounts if going from saver to chooser
-        // or vice versa        
+        // or vice versa
         if (config.flavor() !== data.flavor) {
           logger.debug('SWITCHING FLAVORS');
           router.setLocation('#/accounts');

@@ -11,12 +11,9 @@
       return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     };
 
-    var config_file = JSON.parse(config_text);
+    var config = JSON.parse(config_text);
 
-    var config = {
-      debug: config_file['debug'],
-      logLevel: config_file['logLevel'],
-      base_url: config_file['base_url'],
+    Object.assign(config, {
       exp_id: get_query_variable('exp_id'),
       app_id: get_query_variable('app_id'),
       origin: get_query_variable('origin'),
@@ -32,7 +29,11 @@
         JSON.parse(get_query_variable('computer')) ||
           get_query_variable('flavor') === 'dropzone'),
       services: JSON.parse(get_query_variable('services')),
-      visible_services: ko.observableArray().extend({ rateLimit: 500 }),
+      visible_services: ko.observableArray().extend({
+        // We want the initial load to trigger one run of initialization
+        // logic only.
+        rateLimit: 500
+      }),
       persist: JSON.parse(get_query_variable('persist')),
       types: JSON.parse(get_query_variable('types')).map(function(str) {
         /**
@@ -54,7 +55,7 @@
 
       // b/w compatibility
       account_key: JSON.parse(get_query_variable('account_key')),
-    };
+    });
 
     if (config.debug) {
         window.config = config;
@@ -175,7 +176,7 @@
                 id: serviceDatum.name,
                 name: localeName,
                 logo: serviceDatum.logo_url || (
-                  'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/' +
+                  config.static_path + '/webapp/sources/' +
                     serviceDatum.name + '.png'),
               });
               config.visible_services.sort(function(left, right) {
@@ -206,7 +207,7 @@
           computer: true,
           id: 'computer',
           name: 'My Computer',
-          logo: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer.png'
+          logo: config.static_path + '/webapp/sources/computer.png'
         });
       }
       else if (!computerEnabled &&

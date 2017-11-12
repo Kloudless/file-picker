@@ -1,3 +1,5 @@
+@import 'variables'
+
 .accountselect
     width:200px
     margin-right:10px
@@ -66,7 +68,7 @@
                     display:inline-block
                     margin-bottom:-4px
                 div.accountsicon
-                    background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/settings_popup_icons.png')") -19px -15px no-repeat
+                    background: url($static_path + '/ext-assets/settings_popup_icons.png') -19px -15px no-repeat
                     height: 16px
                     width: 16px
                     display: inline-block
@@ -74,7 +76,7 @@
                     margin-right: 7px
                     margin-left: 2px
                 div.computericon
-                    background:unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/computer_icon.png')") -3px 0px no-repeat
+                    background: url($static_path + '/webapp/sources/computer_icon.png') -3px 0px no-repeat
                     height: 16px
                     width: 20px
                     display: inline-block
