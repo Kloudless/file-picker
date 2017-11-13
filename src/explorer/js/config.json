@@ -2,5 +2,5 @@
     "debug": true,
     "logLevel": 1,
     "base_url": "https://api.kloudless.com",
-    "static_path": "https://s3-us-west-2.amazonaws.com/kloudless-static-assets"
+    "static_path": "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com"
 }
