@@ -141,6 +141,12 @@ module.exports = function(grunt) {
           src: path.join(DIR, 'bower_components', 'momentjs', 'moment.js'),
           dest: path.join(TMP_PATH, 'js', 'vendor', 'moment.js')
         }, {
+          cwd: path.join(DIR, 'bower_components', 'requirejs-plugins'),
+          src: '**/*',
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'requirejs-plugins'),
+          expand: true,
+          filter: 'isFile'
+        }, {
           src: [
             'cldr.js',
             path.join('cldr', 'event.js'),

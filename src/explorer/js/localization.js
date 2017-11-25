@@ -44,11 +44,21 @@
     'globalize',
     'util',
 
+    // localization data
+    'json!../localization/cldr-data/supplemental/likelySubtags.json',
+    'json!../localization/cldr-data/supplemental/timeData.json',
+    'json!../localization/cldr-data/supplemental/weekData.json',
+    'json!../localization/cldr-data/main/en/ca-gregorian.json',
+    'json!../localization/cldr-data/main/en/numbers.json',
+    'json!../localization/cldr-data/main/en/timeZoneNames.json',
+    'json!../localization/messages/en.json',
+
     // Globalize modules
     'globalize/date',
     'globalize/message',
-    'globalize/number'
-  ], function ($, ko, globalize, util) {
+    'globalize/number',
+  ], function ($, ko, globalize, util,
+               likelySubtags, timeData, weekData, caGregorian, numbers, timeZoneNames, messages) {
 
     // Used to wrap text when in the TEST locale
     // e.g. "#This is a localized string#"
@@ -178,20 +188,42 @@
 
                 globalize.loadMessages(messagesDataStatusXhr[0]);
 
-                var globalizeLocaleObject = globalize(effectiveLocale.id);
-
-                loadedLocales[effectiveLocale.id] = {
-                  globalize: globalizeLocaleObject,
-                  locale: effectiveLocale
-                };
-                currentLocale(loadedLocales[effectiveLocale.id]);
+                this.updateCurrentLocaleOfKo(effectiveLocale);
 
                 return callback();
-              }
+              }.bind(this)
             );
         }
       },
 
+      /**
+       * Update current locale of knockout
+       *
+       * @param {Object} effectiveLocale
+       */
+      updateCurrentLocaleOfKo: function (effectiveLocale) {
+          var globalizeLocaleObject = globalize(effectiveLocale.id);
+
+          loadedLocales[effectiveLocale.id] = {
+              globalize: globalizeLocaleObject,
+              locale: effectiveLocale
+          };
+          currentLocale(loadedLocales[effectiveLocale.id]);
+      },
+
+      /**
+       * Load 'en' cldr data.
+       * If you want to load different locale data.
+       * Modify the loading path in `define` function on the beginning of this file.
+       */
+      loadDefaultLocaleData: function () {
+          globalize.load(likelySubtags, timeData, weekData, caGregorian, numbers, timeZoneNames);
+          globalize.loadMessages(messages);
+
+          var effectiveLocale = this.getEffectiveLocale('en');
+
+          this.updateCurrentLocaleOfKo(effectiveLocale);
+      },
 
       /**
        * Returns the currently selected locale
