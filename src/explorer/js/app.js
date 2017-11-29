@@ -10,7 +10,8 @@
       'plupload': 'vendor/plupload/plupload.dev',
       'pluploadui': 'vendor/plupload/jquery.ui.plupload/jquery.ui.plupload',
       'cldr': 'vendor/cldr',
-      'globalize': 'vendor/globalize'
+      'globalize': 'vendor/globalize',
+      'json': 'vendor/requirejs-plugins/src/json',
     },
     shim: {
       'vendor/jquery-cookie': {
@@ -816,15 +817,6 @@
         services: services,
       };
 
-      var setLocale = function (locale) {
-        localization.setCurrentLocale(locale);
-      };
-
-      // update the locale when the config changes
-      config.locale.subscribe(setLocale);
-
-      // load the default locale
-      setLocale(config.locale());
 
       this.view_model.files.searchQuery.extend({
         rateLimit: {

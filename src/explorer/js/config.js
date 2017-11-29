@@ -501,6 +501,12 @@
     if (config.types.length === 0) {
         config.types.push('all');
     }
+      
+    // update the locale when the config changes
+    config.locale.subscribe(localization.setCurrentLocale);
+
+    // load the default locale
+    localization.loadDefaultLocaleData();
 
     return config;
   });
