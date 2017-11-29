@@ -1,0 +1,236 @@
+.mobile-view
+    .actions
+        width 100%
+    .buttonscontainer
+        position inherit
+        .button
+            width 100%
+            margin-top 5px
+            font-size 2em
+            padding 50px
+    .computer
+        header
+            .accountselect
+                width 100%
+            button.accountsbutton div.name
+                width auto
+                height auto
+        .buttonscontainer
+            right 0
+    .right
+        float inherit
+    .files
+        padding inherit
+        header
+            .accountselect
+                height auto
+                width 100%
+                div#account-dropdown.dropdown
+                    height auto
+                    width 100%
+                    ul.dropdown-menu
+                        li
+                            font-size 2em
+                            padding 1em
+                            height auto
+                            line-height inherit
+                            div.accountname
+                                width auto
+                                height auto
+                                vertical-align: bottom
+                            img.accounticon
+                                height 30px
+                                width auto
+                    ul.dropdown-menu
+                        width 100%
+                        max-width 100%
+                        max-height inherit
+                button.accountsbutton
+                    padding 1.5em
+                    font-size 2em
+                    height auto
+                    div.name
+                        width auto
+                        height auto
+                    img.accounticon
+                        width auto
+                        height auto
+            .actions
+                float inherit
+            .new-folder-button
+                background url(https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/icons_fileexplorer_large.png) 0px -345px no-repeat
+                width 112px
+                height 112px
+            .refresh-button
+                background url(https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/icons_fileexplorer_large.png) 0px -900px no-repeat
+                width 75px
+                height 112px
+                margin-right 15px
+                margin-left 15px
+            .search-form
+                float inherit
+                #search-enable-button.search-active
+                    background-position: -1px -214px
+                #search-enable-button
+                    background url(https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/icons_fileexplorer_large.png) 0px -1015px no-repeat
+                    width 112px
+                    height 112px
+                #search-back-button
+                    background url(https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/icons_fileexplorer_large.png) 0px -770px no-repeat
+                    width 87px
+                    height 112px
+                #search-query
+                    height 112px
+                    width 75%
+                    text-align left
+                    font-size 4em
+            .breadcrumbcontainer
+                height auto
+                width 100%
+                .breadcrumbs
+                    margin 25px 0 0 25px;
+                    height auto;
+                    > *
+                        color #2a8eff
+                        font-size 2em
+                        line-height 2em
+                        a div.foldericon
+                            background url("https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/file_explorer_spritesheet.png") 0px -110px no-repeat
+                            width 60px
+                            height 60px
+            div.crumbutton
+                width 60px
+                height 60px
+                &:before
+                    width 60px
+                    height 60px
+                    background url("https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/file_explorer_spritesheet.png") -4px -124px no-repeat
+                    margin-top 0
+                    left 8px
+                ul.crumbmenu
+                    width auto
+                    li a
+                        height 100%
+                        font-size 2em
+                        line-height: 1.4em;
+        table
+            display inherit
+            height auto
+            width 100%
+            thead
+                height auto
+                tr th
+                    font-size 2.5em
+                    &:first-child
+                        adding-left 0
+                        line-height inherit
+                        float none
+                    &:nth-child(2)
+                        width 215px
+            tbody tr td
+                font-size 2.5em
+                &:nth-child(2), &:nth-child(3)
+                    width 215px
+            &.clickable tbody tr
+                height auto
+                &.newfolder
+                    padding-bottom 15px
+                    td
+                        width 20em !important
+                        height 2em !important
+                        line-height inherit
+                        font-size 2em !important
+                td span
+                    &.inline-button
+                        font-size inherit
+                    input
+                        height auto
+                    div
+                        width 60px
+                        height 60px
+                        vertical-align middle
+                        margin-right inherit
+                        margin-bottom inherit
+                        display inline-block
+                        &.closeicon
+                            background url(https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/file_explorer_spritesheet.png) 15px -367px no-repeat
+                        &.fileicon
+                            background url(https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/file_explorer_spritesheet.png) 0 0 no-repeat
+                        &.foldericon
+                                background url(https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/file_explorer_spritesheet.png) 0px -60px no-repeat
+    #fs-scroller
+        height 60em
+        width 100%
+    div.iewrapper
+        height 60em
+        width 100%
+        tbody tr td
+            height 60px
+            min-height 0
+            line-height inherit
+    
+    .textcontainer
+        font-size 2em
+        width 100%
+        position inherit
+        margin-top 35px
+        text-align center
+        span
+            font-size inherit
+        img
+            height auto
+    .kloading
+        background: url(https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/loading_21x21.gif) no-repeat center center;
+        width: 655px;
+        background-size: 60px;
+        height: 90px;
+        top: 741px;
+        left: 160px;
+        position: absolute;
+        z-index: 1;
+        
+    div.accounts
+        .intro-message, .logout-message
+            font-size 2em
+        li.linked-service
+            div.servicename
+                width 100%
+                font-size: 1.5em
+            div.accounts
+                width 100%
+                font-size: 1.5em
+                ul.accountnames
+                    li.account
+                        margin: 0;
+                        list-style: none;
+                        padding: 5px 5% 0 5%;
+                        div
+                            width auto
+                            height: auto
+                            line-height 60px
+                            a
+                                font-size 2em
+                    a.alert
+                        width 75px
+                        height 45px
+                        background url(https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/file_explorer_spritesheet.png) 0px -426px no-repeat
+                        margin-top 8px;
+                a.closeexplorer
+                    top 25px
+                    right 28px
+                    width 25px
+                    height 25px
+                    background unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px -312px no-repeat
+                    background-size 50px
+        .connectmore div.service
+            width 100%
+            font-size 1.5em
+            span.servicename
+                font-size: 1em
+        .back
+            font-size: 2em
+    .medium-block-grid-4 > li
+        width 50%
+        text-align center
+        
+    

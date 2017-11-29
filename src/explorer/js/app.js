@@ -82,6 +82,12 @@
       return services;
     });
 
+    /*
+    * Add mobile view class to body if mobile
+    * */
+    if(util.isMobile){
+      $("body").addClass('mobile-view');
+    }
     // Explorer declaration.
     var FileExplorer = function() {
       this.manager = new AccountManager();
@@ -1082,7 +1088,6 @@
                   explorer.view_model.loading(true);
                 }
               });
-
               // Add confirmation when closing tabs during uploading process
               $(window).bind('beforeunload', function() {
                 // Add confirmation if not IE or IE 11 only.
