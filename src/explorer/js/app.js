@@ -528,7 +528,8 @@
         }),
 
         static: function(path) {
-          return config.static_path + '/' + path.trim('/');
+          return config.static_path.replace(/\/$/, '') + '/' +
+            path.replace(/^\//, '');
         },
 
         // Accounts view model.

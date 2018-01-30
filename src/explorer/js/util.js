@@ -86,7 +86,12 @@
 
       // then remove the script file name and 'js' directory parts from the url
       // and return the result
-      return scriptUrl.slice(0, scriptUrl.length-2).join('/');
+
+      var scriptDepth = 1;
+      if (scriptUrl[scriptUrl.length - 1] === 'app.js')
+        scriptDepth = 2;
+
+      return scriptUrl.slice(0, scriptUrl.length - scriptDepth).join('/');
     },
 
     /**
