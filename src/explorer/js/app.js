@@ -553,6 +553,7 @@
             explorer.manager.accounts.removeAll();
             storage.removeAllAccounts(config.app_id);
             router.setLocation('#/accounts');
+            explorer.view_model.postMessage('logout');
           },
 
           // Current active service name
