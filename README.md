@@ -480,6 +480,11 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
   This event is only fired when the user uploads a file via the
   Chooser's Computer option or the Saver.
 
+* `logout()`
+
+  Fired when the user clicks the logout link in the File Explorer, which
+  clears the local state of accounts connected to the File Explorer.
+
 ### Methods
 
 * `Kloudless.explorer(options)`
