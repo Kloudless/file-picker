@@ -7,9 +7,11 @@
   div#account-dropdown.dropdown.dropdown-tip
     ul.dropdown-menu
       // ko foreach: all
+      // ko if: $root.services()[service]
       li(data-bind='attr: {title: $root.services()[service].name + ": " + account_name}, click: $root.setLocation.bind($data, "#/files/" + account)')
         img.accounticon(data-bind='attr: {src: $root.services()[service].logo}')
         div.accountname(data-bind='text: account_name')
+      // /ko
       // /ko
       // ko if: computer()
       li(data-bind='click: $root.setLocation.bind($data, "#/computer")')
