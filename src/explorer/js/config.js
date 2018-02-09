@@ -147,6 +147,47 @@
      * Get service data
      */
     config._retrievedServices = false;
+
+    /*
+     * compare function for sorting service order
+     */
+    var serviceOrderCompare = function () {
+      // this anonymous function will execute instantly and return compare function
+      var servicesOrder;
+      if (config.services) {
+        servicesOrder = {};
+        // exchange the key and value of config.services
+        for (var i = 0; i < config.services.length; i++) {
+          servicesOrder[config.services[i]] = i;
+        }
+        // servicesOrder is like
+        // {ftp: 0, gdrive: 1, dropbox: 2, box: 3}
+      }
+
+      /**
+       * compare function for sorting service order
+       *
+       * @param {Object} left - element of config.visible_services
+       * @param {Object} right - element of config.visible_services
+       *
+       * config.visible_services[0] = {
+       *    id: ,
+       *    name: ,
+       *    logo:
+       * }
+       */
+      return function (left, right) {
+        if (servicesOrder) {
+          return left.id === right.id ? 0 :
+            (servicesOrder[left.id] < servicesOrder[right.id] ? -1 : 1);
+        } else {
+          // if not specify the service order, use alphabetical order
+          return left.name === right.name ? 0 :
+            (left.name < right.name ? -1 : 1);
+        }
+      };
+    }();
+
     $.get(
       config.base_url + '/' + config.api_version + '/public/services',
       {apis: 'storage'},
@@ -181,10 +222,7 @@
                 config.static_path + '/webapp/sources/' +
                   serviceDatum.name + '.png'),
             });
-            config.visible_services.sort(function(left, right) {
-              return left.name == right.name ? 0 :
-                (left.name < right.name ? -1 : 1);
-            });
+            config.visible_services.sort(serviceOrderCompare);
           }
         });
 
