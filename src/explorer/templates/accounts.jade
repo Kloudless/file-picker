@@ -23,7 +23,7 @@
         //- Each service group
         ul.linked-services
           div.service-group(data-bind='foreach: {data: Object.keys(ko.toJS(by_service)), as: "service"}')
-            li.linked-service
+            li.linked-service(data-bind='if: $root.services()[service]')
               div.servicename
                 img.servicelogo(data-bind='attr: {src: $root.services()[service].logo}')
                 span(data-bind='text: $root.services()[service].name')

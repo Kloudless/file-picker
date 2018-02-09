@@ -693,6 +693,8 @@
           service_friendly: ko.computed(function() {
             if (!this().service)
               return "";
+            if (!services()[this().service])
+              return "";
 
             return services()[this().service].name;
           }, self.manager.active),
