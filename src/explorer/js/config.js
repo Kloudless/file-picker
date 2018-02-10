@@ -96,7 +96,7 @@
             + config.custom_css.replace(/^\/+/, "");
         }
 
-        var expression = /^https?:\/\/\w+(\.\w+)*(:[0-9]+)?\/?(\/[.\w\?=\&]*)*$/;
+        var expression = /^https?:\/\/\w[\.\w\-]*(:[0-9]+)?[^\s<>'"]*$/;
         var regex = new RegExp(expression);
         if (config.custom_css.match(regex)) {
           var cssId = 'custom_style';
@@ -124,7 +124,8 @@
      */
     var retrieveConfig = function() {
       var query_params = {app_id: config.app_id}
-      if (config.account_key || config.retrieve_token()) {
+      if (config.account_key || config.retrieve_token()
+          || String(config.custom_css) !== "false") {
         // Only do origin check if we need to.
         query_params['origin'] = config.origin;
       }
