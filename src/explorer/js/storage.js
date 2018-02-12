@@ -23,7 +23,7 @@
         storage.storeAccounts = function (appId, accounts) {
             if (!storage.container) return;
 
-            var serviceNames = config.visible_services().map(function(service) {
+            var serviceNames = config.all_services().map(function(service) {
                 return service.id;
             });
 
@@ -57,7 +57,7 @@
         storage.loadAccounts = function (appId) {
             if (!storage.container) return [];
 
-            var serviceNames = config.visible_services().map(function(service) {
+            var serviceNames = config.all_services().map(function(service) {
                 return service.id;
             });
             var key = 'k-' + appId, appData = storage.container[key];

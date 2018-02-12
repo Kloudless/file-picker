@@ -76,7 +76,7 @@
 
     var services = ko.pureComputed(function() {
       var services = {};
-      ko.utils.arrayForEach(config.visible_services(), function(service) {
+      ko.utils.arrayForEach(config.all_services(), function(service) {
         services[service.id] = service;
       });
       return services;
@@ -1380,7 +1380,7 @@
       });
     });
 
-    var accountSub = config.visible_services.subscribe(function() {
+    var accountSub = config.all_services.subscribe(function() {
       // This is only for the initial load.
       if (!config._retrievedServices)
         return

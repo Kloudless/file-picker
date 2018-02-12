@@ -29,7 +29,7 @@
         JSON.parse(get_query_variable('computer')) ||
           get_query_variable('flavor') === 'dropzone'),
       services: JSON.parse(get_query_variable('services')),
-      visible_services: ko.observableArray().extend({
+      all_services: ko.observableArray().extend({
         // We want the initial load to trigger one run of initialization
         // logic only.
         rateLimit: 500
@@ -168,10 +168,10 @@
       /**
        * compare function for sorting service order
        *
-       * @param {Object} left - element of config.visible_services
-       * @param {Object} right - element of config.visible_services
+       * @param {Object} left - element of config.all_services
+       * @param {Object} right - element of config.all_services
        *
-       * config.visible_services[0] = {
+       * config.all_services[0] = {
        *    id: ,
        *    name: ,
        *    logo:
@@ -208,23 +208,27 @@
           if (objStoreServices.indexOf(serviceDatum.name) > -1) {
             serviceCategory = 'object_store';
           }
+
+          var localeName = localization.formatAndWrapMessage(
+            'servicenames/' + serviceDatum.name);
+          if (localeName.indexOf('/') > -1)
+            localeName = serviceDatum.friendly_name;
+
+          var service = {
+            id: serviceDatum.name,
+            name: localeName,
+            logo: serviceDatum.logo_url || (
+              config.static_path + '/webapp/sources/' +
+              serviceDatum.name + '.png'),
+            visible: false
+          };
+
           if (config.services.indexOf(serviceDatum.name) > -1 ||
               config.services.indexOf(serviceCategory) > -1) {
-
-            var localeName = localization.formatAndWrapMessage(
-              'servicenames/' + serviceDatum.name);
-            if (localeName.indexOf('/') > -1)
-              localeName = serviceDatum.friendly_name;
-
-            config.visible_services.push({
-              id: serviceDatum.name,
-              name: localeName,
-              logo: serviceDatum.logo_url || (
-                config.static_path + '/webapp/sources/' +
-                  serviceDatum.name + '.png'),
-            });
-            config.visible_services.sort(serviceOrderCompare);
+            service.visible = true;
           }
+          config.all_services.push(service);
+          config.all_services.sort(serviceOrderCompare);
         });
 
         config.visible_computer.subscribe(toggleComputer);
@@ -246,8 +250,8 @@
 
     var toggleComputer = function(computerEnabled) {
       // Called after services are retrieved.
-      if (computerEnabled && !(config.visible_services()[0] || {}).computer) {
-        config.visible_services.unshift({
+      if (computerEnabled && !(config.all_services()[0] || {}).computer) {
+        config.all_services.unshift({
           computer: true,
           id: 'computer',
           name: 'My Computer',
@@ -255,8 +259,8 @@
         });
       }
       else if (!computerEnabled &&
-               (config.visible_services()[0] || {}).computer) {
-        config.visible_services.shift();
+               (config.all_services()[0] || {}).computer) {
+        config.all_services.shift();
       }
     };
 

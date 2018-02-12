@@ -48,7 +48,7 @@
                       a(data-bind='click: $root.setLocation.bind($data, "#/computer"), text: "Upload from your computer", translate: "accounts/uploadfromcomputer"')
             // /ko
 
-      // ko if: Object.values($parent.services()).length > 0
+      // ko if: Object.values($parent.services()).filter(function (service) {return service.visible}).length > 0
       .row(data-bind='if: all().length > 0')
         div.intro-message.more(data-bind='translate: "accounts/connectmore"') Connect more!
       // /ko
@@ -56,7 +56,7 @@
     //- Add a new account.
     .connectmore
       ul.small-block-grid-2.medium-block-grid-4.large-block-grid-6.add-account(data-bind='foreach: {data: Object.values(services()), as: "service"}')
-        // ko ifnot: $parent.accounts.all().length > 0 && service.id == 'computer'
+        // ko ifnot: $parent.accounts.all().length > 0 && service.id == 'computer' || !service.visible
         li
           a(data-bind='click: $parent.accounts.connect.bind(null, id)')
             div.service
