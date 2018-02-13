@@ -154,9 +154,8 @@
      */
     var serviceOrderCompare = function () {
       // this anonymous function will execute instantly and return compare function
-      var servicesOrder;
+      var servicesOrder = {};
       if (config.services) {
-        servicesOrder = {};
         // exchange the key and value of config.services
         for (var i = 0; i < config.services.length; i++) {
           servicesOrder[config.services[i]] = i;
@@ -178,7 +177,7 @@
        * }
        */
       return function (left, right) {
-        if (servicesOrder) {
+        if (servicesOrder[left.id] && servicesOrder[right.id]) {
           return left.id === right.id ? 0 :
             (servicesOrder[left.id] < servicesOrder[right.id] ? -1 : 1);
         } else {
@@ -208,7 +207,6 @@
           if (objStoreServices.indexOf(serviceDatum.name) > -1) {
             serviceCategory = 'object_store';
           }
-
           var localeName = localization.formatAndWrapMessage(
             'servicenames/' + serviceDatum.name);
           if (localeName.indexOf('/') > -1)
