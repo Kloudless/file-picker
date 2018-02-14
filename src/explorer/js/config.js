@@ -255,6 +255,7 @@
           computer: true,
           id: 'computer',
           name: 'My Computer',
+          visible: true,
           logo: config.static_path + '/webapp/sources/computer.png'
         });
       }
