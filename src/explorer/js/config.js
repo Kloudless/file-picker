@@ -262,8 +262,9 @@
             service.visible = true;
           }
           config.all_services.push(service);
-          config.all_services.sort(serviceOrderCompare);
         });
+
+        config.all_services.sort(serviceOrderCompare);
 
         config.visible_computer.subscribe(toggleComputer);
         toggleComputer(config.visible_computer());
