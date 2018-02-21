@@ -36,7 +36,7 @@
                     a.alert(data-bind='click: function (data, element) { if (!$root.localizedConfirmPopup("accounts/confirmRemove")) return false; $root.setLocation("#/account/disconnect/" + account) }')
                 //-.refresh(data-bind='if: !connected')
                 //-  a.button(data-bind='click: $root.setLocation.bind($data, "#/account/reconnect/" + account)') Refresh
-            // ko if: $index() === ($parent.all().length - 1) && $parent.computer()
+            // ko if: $index() === (Object.keys($parent.by_service()).length - 1) && $parent.computer()
             li.linked-service
               div.servicename
                 img.servicelogo(data-bind='attr: {src: $root.static("/webapp/sources/computer.png")}')

@@ -158,10 +158,44 @@
       if (config.services) {
         // exchange the key and value of config.services
         for (var i = 0; i < config.services.length; i++) {
-          servicesOrder[config.services[i]] = i;
+          if (servicesOrder[config.services[i]] === undefined) {
+            servicesOrder[config.services[i]] = i;
+            if (config.services === 'all') {
+              // break because 'all' cover whole services
+              break;
+            }
+          }
         }
         // servicesOrder is like
-        // {ftp: 0, gdrive: 1, dropbox: 2, box: 3}
+        // {ftp: 0, gdrive: 1, object_store:2, all: 3}
+      }
+
+      /**
+       * Get the minimum index
+       * If the service doesn't exist in config.services,
+       * this function will return Number.MAX_SAFE_INTEGER
+       *
+       * @param {Object} service
+       * @returns {number}
+       */
+      function getServiceOrderIndex (service) {
+        var allIndex = servicesOrder.all;
+        var categoryIndex = servicesOrder[service.category];
+        var idIndex = servicesOrder[service.id];
+
+        var minIndex = Number.MAX_SAFE_INTEGER;
+
+        if (allIndex !== undefined) {
+          minIndex = allIndex;
+        }
+        if (categoryIndex !== undefined) {
+          minIndex = Math.min(minIndex, categoryIndex);
+        }
+        if (idIndex !== undefined) {
+          minIndex = Math.min(minIndex, idIndex);
+        }
+
+        return minIndex;
       }
 
       /**
@@ -177,13 +211,14 @@
        * }
        */
       return function (left, right) {
-        if (servicesOrder[left.id] && servicesOrder[right.id]) {
-          return left.id === right.id ? 0 :
-            (servicesOrder[left.id] < servicesOrder[right.id] ? -1 : 1);
-        } else {
-          // if not specify the service order, use alphabetical order
+        var leftIndex = getServiceOrderIndex(left);
+        var rightIndex = getServiceOrderIndex(right);
+        if (leftIndex === rightIndex) {
+          // if the indices are equal, use alphabetical order
           return left.name === right.name ? 0 :
             (left.name < right.name ? -1 : 1);
+        } else {
+          return leftIndex < rightIndex ? -1 : 1;
         }
       };
     }();
@@ -218,6 +253,7 @@
             logo: serviceDatum.logo_url || (
               config.static_path + '/webapp/sources/' +
               serviceDatum.name + '.png'),
+            category: serviceCategory,
             visible: false
           };
 
@@ -226,8 +262,9 @@
             service.visible = true;
           }
           config.all_services.push(service);
-          config.all_services.sort(serviceOrderCompare);
         });
+
+        config.all_services.sort(serviceOrderCompare);
 
         config.visible_computer.subscribe(toggleComputer);
         toggleComputer(config.visible_computer());
