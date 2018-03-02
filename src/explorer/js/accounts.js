@@ -31,6 +31,16 @@
       this.accounts.remove(function(account) {
         return account.account == account_id;
       });
+      // Remove the account from this.active
+      if(this.active().account === account_id) {
+        if (this.accounts()[0] !== undefined) {
+          logger.debug("Change the active account to ", this.accounts()[0]);
+          this.active(this.accounts()[0]);
+        } else {
+          logger.debug("Change the active account to an empty object");
+          this.active({});
+        }
+      }
     };
 
     // Retrieve an account by Account ID. Returns null if account not found.
