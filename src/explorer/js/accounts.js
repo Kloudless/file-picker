@@ -26,6 +26,21 @@
       }
     };
 
+   /**
+    * Add authed account
+    * @param {object} authedAccount - account object
+    */
+    AccountManager.prototype.addAuthedAccount = function(authedAccount) {
+      logger.debug("Add authed account");
+
+      // Don't allow duplicate accounts
+      this.accounts.remove(function(account) {
+        return account.account === authedAccount.account;
+      });
+
+      this.accounts.push(authedAccount);
+    };
+
     // Remove an account by Account ID.
     AccountManager.prototype.removeAccount = function(account_id) {
       this.accounts.remove(function(account) {
