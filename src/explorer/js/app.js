@@ -450,11 +450,8 @@
               (function(local_data) {
                 var created = new Account(local_data, function(acc) {
 
-                  // Don't allow duplicate accounts
-                  explorer.manager.removeAccount(acc.account);
-
                   if (acc.connected()) {
-                    explorer.manager.accounts.push(acc);
+                    explorer.manager.addAuthedAccount(acc);
 
                     if (!active) {
                       active = true;
