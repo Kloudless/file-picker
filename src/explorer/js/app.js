@@ -517,6 +517,13 @@
         loading: ko.observable(true),
 
         localizedConfirmPopup: function(token, variables) {
+          try{
+            window.top.document
+          } catch(e) {
+            //DOMException: the widget is embedded by a page from different domain
+            //we cannot inspect if allow-modals is set in the parent page, so assume it is disabled
+            return true;
+          }
           return confirm(localization.formatAndWrapMessage(token, variables));
         },
 
