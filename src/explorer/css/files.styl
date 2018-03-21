@@ -87,6 +87,9 @@
                 display: inline-block
                 @media only screen and (max-width: 500px)
                     margin-top: 10px
+                // patch for Freshdesk integration
+                @media only screen and (max-width: 600px)
+                    width: 250px
             .breadcrumbs > *
                 color:#2A8EFF
                 font-size:16px
@@ -122,7 +125,9 @@
                         overflow: hidden
                         text-overflow: ellipsis
                         max-width: 200px
-
+                        // patch for Freshdesk integration
+                        @media only screen and (max-width: 600px)
+                            width: 95px
             .breadcrumbs > *:not(:last-child)
                 a
                     div.foldertext:hover
@@ -190,6 +195,9 @@
                     display: none;
                     text-align: right;
                     padding: 0 5px;
+                    // patch for Freshdesk integration
+                    @media only screen and (max-width: 600px)
+                        width: 280px
                 #search-back-button
                     background: url($icons_sheet) 0px -146px no-repeat
                     width: 16px
