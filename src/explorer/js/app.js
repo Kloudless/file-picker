@@ -716,14 +716,21 @@
           // Relative navigation.
           navigate: function(file) {
             logger.debug('Navigating to file: ', file);
-
             var target = file;
             var parent = self.manager.active().filesystem().PARENT_FLAG;
             if (typeof file == 'string' && file == parent) {
               target = parent;
             }
+            // remove properties that are only for internal use
+            // IE 11 does not support Object.assign
+            var target2 = {};
+            Object.keys(target).forEach(function(key){
+              target2[key] = target[key];
+            });
+            delete target2.friendlySize;
+
             self.view_model.loading(true);
-            self.manager.active().filesystem().navigate(target, function(err, result) {
+            self.manager.active().filesystem().navigate(target2, function(err, result) {
               logger.debug('Navigation result: ', err, result);
               self.view_model.loading(false);
               if (err && error_message) {
