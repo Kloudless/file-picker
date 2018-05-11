@@ -1162,6 +1162,26 @@
                   explorer.view_model.cancel();
                 }
               });
+
+              $(window).off('offline').on('offline', function(ev) {
+                if (uploader.state == plupload.STARTED) {
+                  uploader.stop();
+                  uploader._offline_pause = true;
+                  $('#upload-button').text('Resume');
+                  explorer.view_model.error(
+                    'Uploading has been paused due to disconnection.');
+                }
+              });
+        
+              $(window).off('online').on('online', function(ev) {
+                if (uploader._offline_pause) {
+                  uploader._offline_pause = false;
+                  uploader.start();
+                  $('#upload-button').text('Pause');
+                  explorer.view_model.error('');
+                }
+              });
+              
             },
             BeforeUpload: function(up, file) {
               /**
