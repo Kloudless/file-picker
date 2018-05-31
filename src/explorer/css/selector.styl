@@ -21,12 +21,14 @@
         line-height:40px
         padding:0 10px
         margin:0
+        position: relative
         img.accounticon
             height: 16px
             width: 20px
-            margin-right: 5px
-            margin-top: -20px
-            margin-left: -2px
+            position: absolute
+            top: 0px
+            left: 5px
+            margin: 12px 0
         div.name
             text-overflow:ellipsis
             white-space:nowrap
@@ -35,15 +37,20 @@
             height: 35px
             width: 140px
             display: inline-block
+            position: absolute
+            top: 0px
+            left: 30px;
         div.arrow
-            margin-bottom: 12px
-            margin-left: 5px
             height:0px
             width:0px
             border-left: 4px solid transparent
             border-right: 4px solid transparent
             border-top: 4px solid #AAA
             display: inline-block
+            position: absolute
+            top: 0px
+            right: 10px
+            margin: 18px 0px
     div#account-dropdown.dropdown
         ul.dropdown-menu
             border-radius: 0
