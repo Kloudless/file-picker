@@ -66,8 +66,12 @@
                         text-align:left
                         height: 25px
                         line-height: 25px
+                        position: relative
                         div.foldericon
                             margin: 0 5px 3px 0
+                        div.foldertext
+                            position: absolute
+                            top: 2px
                         &:last-child
                             border: none
                 &:hover
@@ -119,12 +123,14 @@
                         width: 24px
                         height: 24px
                         margin-right: 5px
-                        margin-bottom: 12px
+                        margin-top: 5px
+                        vertical-align: top;
                     div.foldertext
                         white-space: nowrap
                         overflow: hidden
                         text-overflow: ellipsis
                         max-width: 200px
+                        vertical-align: top;
                         // patch for Freshdesk integration
                         @media only screen and (max-width: 600px)
                             width: 95px
@@ -142,7 +148,7 @@
                 content: ">"
                 color:#aaa
                 margin:0px 8px
-                top: -15px
+                position: static
                 .crumb
                     overflow:hidden
                     white-space:nowrap
