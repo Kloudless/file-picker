@@ -57,7 +57,7 @@
            // Imports below don't need to be assigned to variables.
            'jqueryui', 'vendor/jquery-dropdown', 'vendor/jquery-scrollstop',
            'moxie', 'plupload', 'pluploadui', 'vendor/jquery.finderSelect',
-           'iexd-transport'],
+           'iexd-transport', 'polyfills'],
   function($, ko, sammy, logger, moment, config, storage, AccountManager,
     FileManager, auth, Search, util, localization) {
 
