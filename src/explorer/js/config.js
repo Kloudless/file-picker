@@ -1,7 +1,9 @@
 (function() {
   'use strict';
 
-  define(['jquery', 'text!config.json', 'vendor/knockout', 'localization'],
+  define(['jquery', 'text!config.json', 'vendor/knockout', 'localization',
+          // Imports below don't need to be assigned to variables.
+          'polyfills'],
   function($, config_text, ko, localization) {
 
     var get_query_variable = function(name) {
