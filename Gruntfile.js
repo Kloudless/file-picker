@@ -330,6 +330,16 @@ module.exports = function(grunt) {
           dest: path.join(EXPLORER_DEST, 'js', 'vendor', 'plupload', 'i18n'),
           expand: true
         }]
+      },
+      // Copy Images
+      images: {
+          files: [{
+              cwd: path.join(EXPLORER_SRC, 'img'),
+              src: path.join('.', '**', '*.*'),
+              dest: path.join(EXPLORER_DEST, 'img/'),
+              expand: true,
+              filter: 'isFile'
+          }]
       }
     },
     // Compile RequireJS dependencies.
@@ -440,7 +450,8 @@ module.exports = function(grunt) {
     'uglify:dev',
     'copy:app',
     'copy:localization',
-    'copy:deploy'
+    'copy:deploy',
+    'copy:images'
   ]);
 
   // Rebuild everything to dev targets.
@@ -468,6 +479,7 @@ module.exports = function(grunt) {
     'copy:app',
     'requirejs',
     'copy:deploy_min',
+    'copy:images',
     'clean:temp',
   ]);
 };
