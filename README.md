@@ -8,6 +8,32 @@ storage services. It comes in two modes: a chooser and a saver.
 
 ![fe.gif](http://i.imgur.com/xO2QcyD.gif)
 
+## Table of Contents
+* [Usage](#usage)
+    * [Chooser](#chooser)
+      * [Dropzone](#dropzone)
+    * [Saver](#saver)
+    * [Configuration](#configuration)
+      * [Script Tag](#script-tag)
+      * [Chooser and Saver](#chooser-and-saver)
+      * [Chooser options](#chooser-options)
+      * [Saver options](#saver-options)
+    * [Events](#events)
+    * [Methods](#methods)
+    * [Example](#example)
+    * [Dropzone](#dropzone-1)
+      * [Configuration](#configuration-1)
+      * [Methods](#methods-1)
+      * [Example](#example-1)
+* [Browser Support](#browser-support)
+* [Contributing](#contributing)
+    * [Building](#building)
+    * [Testing](#testing)
+* [Self-hosting](#self-hosting)
+* [Misc. Development Notes](#misc-development-notes)
+* [Security Vulnerabilities](#security-vulnerabilities)
+* [Support](#support)
+
 ## Usage
 
 Embedding the Kloudless javascript library will expose a global
