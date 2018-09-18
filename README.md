@@ -11,7 +11,7 @@ storage services. It comes in two modes: a chooser and a saver.
 ## Table of Contents
 * [Usage](#usage)
     * [Chooser](#chooser)
-          * [Dropzone](#dropzone)
+      * [Dropzone](#dropzone)
     * [Saver](#saver)
     * [Configuration](#configuration)
       * [Script Tag](#script-tag)
