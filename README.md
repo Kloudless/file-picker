@@ -1,12 +1,21 @@
 # Kloudless File Explorer
 
 The [Kloudless](https://kloudless.com) File Explorer is a JavaScript library
-that allows your users to browse and select files and folders from their
-storage services. It comes in two modes: a chooser and a saver.
+that allows your users to browse and select files and folders from the following
+storage services:
+
+Services | -
+----------------- | ------------------
+Amazon S3 | Azure Storage
+Bitcasa | Box
+Citrix Sharefile | Barracuda Copy
+Dropbox | Google Drive
+OneDrive | OneDrive Business
+Egnyte | Sharepoint
+SugarSync | Local Computer
 
 [Visit our JSBin example of the File Explorer!](https://output.jsbin.com/wilowep/)
-
-![fe.gif](http://i.imgur.com/xO2QcyD.gif)
+![kloudless-file-explorer.gif](http://i.imgur.com/xO2QcyD.gif =529x356)
 
 ## Table of Contents
 * [Usage](#usage)
@@ -60,7 +69,7 @@ Be sure to serve the page via a web server, as pages opened via the
 file URI scheme (`file://`) cannot receive messages sent via postMessage
 due to security concerns.
 
-The File Explorer can be configured to be either a chooser or a saver.
+The File Explorer can be configured to be either a file [chooser](#chooser) or a file [saver](#saver).
 An `iframe` will be created by the JS library to view the explorer.
 
 ### Chooser
