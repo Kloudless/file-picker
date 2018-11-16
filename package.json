@@ -1,7 +1,20 @@
 {
-  "name": "kloudless-file-picker-iframe",
+  "name": "@kloudless/file-explorer",
   "version": "1.0.0",
-  "private": true,
+  "author": "Kloudless <hello@kloudless.com> (https://kloudless.com)",
+  "description": "The Kloudless File Explorer is a JavaScript library that allows your users to browse and select files and folders from their storage services. It comes in two modes: a chooser and a saver.",
+  "keywords": ["kloudless", "file picker", "file explorer", "cloud storage"],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/kloudless/file-explorer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kloudless/file-explorer/issues",
+    "email": "support@kloudless.com"
+  },
+  "homepage": "https://kloudless.com/products/file-explorer",
+  "browser": "./dist/loader/js/loader.js",
+  "license": "MIT",
   "scripts": {
     "build": "grunt dev -f"
   },
