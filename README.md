@@ -4,18 +4,23 @@ The [Kloudless](https://kloudless.com) File Explorer is a JavaScript library
 that allows your users to browse and select files and folders from the following
 storage services:
 
-Services | -
------------------ | ------------------
-Amazon S3 | Azure Storage
-Bitcasa | Box
-Citrix Sharefile | Barracuda Copy
-Dropbox | Google Drive
-OneDrive | OneDrive Business
-Egnyte | Sharepoint
-SugarSync | Local Computer
+<table>
+  <thead>
+    <tr><th colspan="4">Services</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Adobe CQ5</td><td>Alfresco Cloud</td><td>Alfresco</td><td>Amazon S3</td></tr>
+    <tr><td>Azure Storage</td><td>Box</td><td>CMIS</td><td>Citrix Sharefile</td></tr>
+    <tr><td>Dropbox</td><td>Egnyte</td><td>Evernote</td><td>FTP</td></tr>
+    <tr><td>Google Drive</td><td>HubSpot Files</td><td>Jive</td><td>OneDrive for Business</td></tr>
+    <tr><td>OneDrive</td><td>SMB</td><td>Salesforce Files</td><td>SharePoint Online</td></tr>
+    <tr><td>SugarSync</td><td>WebDAV</td><td></td><td></td></tr>
+  </tbody>
+</table>
 
 [Visit our JSBin example of the File Explorer!](https://output.jsbin.com/wilowep/)
-![kloudless-file-explorer.gif](http://i.imgur.com/xO2QcyD.gif =529x356)
+
+<img src="http://i.imgur.com/xO2QcyD.gif" width="650" />
 
 ## Table of Contents
 * [Usage](#usage)
