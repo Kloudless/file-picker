@@ -15,6 +15,16 @@
 
     var config = JSON.parse(config_text);
 
+    var copy_to_upload_location = get_query_variable('copy_to_upload_location');
+    if (copy_to_upload_location !== 'sync' &&
+        copy_to_upload_location !== 'async') {
+      if (copy_to_upload_location === 'true') {
+        copy_to_upload_location = true;
+      } else {
+        copy_to_upload_location = null;
+      }
+    }
+
     Object.assign(config, {
       exp_id: get_query_variable('exp_id'),
       app_id: get_query_variable('app_id'),
@@ -45,7 +55,7 @@
         return str.toLowerCase();
       }),
       user_data: ko.observable(), // Get asynchronously.
-      copy_to_upload_location: JSON.parse(get_query_variable('copy_to_upload_location')),
+      copy_to_upload_location: copy_to_upload_location,
       api_version: get_query_variable('api_version'),
       upload_location_account: ko.observable(),
       upload_location_folder: ko.observable(),

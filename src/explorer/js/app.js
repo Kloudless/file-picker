@@ -318,10 +318,47 @@
               requestCountStarted += 1;
             };
 
+            var pollTask = function(task_id, callbacks) {
+              var POLLING_INTERVAL = 3000; // in millisecond
+              callbacks = callbacks || {};
+              setTimeout(function() {
+                $.ajax({
+                  url: config.getAccountUrl(accountId, 'tasks', '/' + task_id),
+                  type: 'GET',
+                  headers: { Authorization: authKey.scheme + ' ' + authKey.key },
+                }).done(function(data) {
+                  if (data.state && data.state.toUpperCase() === 'PENDING') {
+                    pollTask(task_id, callbacks);
+                  } else {
+                    callbacks.onComplete && callbacks.onComplete(data);
+                  }
+                }).fail(function(xhr, status, err) {
+                  callbacks.onError && callbacks.onError(err);
+                });
+              }, POLLING_INTERVAL);
+            };
+
             var moveToDrop = function(selection_index) {
+              var copyMode = config.copy_to_upload_location;
+              var isTask = (copyMode === 'sync' || copyMode === 'async');
+              var url = config.getAccountUrl(
+                accountId, 'storage', '/files/' +
+                  selections[selection_index].id + '/copy/?link=' + config.link +
+                  '&link_options=' + encodeURIComponent(JSON.stringify(config.link_options()))
+              );
               var data = {
                 account: 'upload_location'
               }
+              var ajax = function(url) {
+                return $.ajax({
+                  url: url,
+                  type: 'POST',
+                  contentType: 'application/json',
+                  headers: { Authorization: authKey.scheme + ' ' + authKey.key },
+                  data: JSON.stringify(data),
+                });
+              };
+
               if (config.upload_location_account()) {
                 data['drop_account'] = config.upload_location_account()
                 data['parent_id'] = config.upload_location_folder()
@@ -330,19 +367,24 @@
                 data['drop_uri'] = config.upload_location_uri()
               }
 
-              $.ajax({
-                url: config.getAccountUrl(
-                  accountId, 'storage', '/files/' +
-                    selections[selection_index].id + '/copy/?link=' + config.link +
-                    '&link_options=' + encodeURIComponent(JSON.stringify(config.link_options()))
-                ),
-                type: 'POST',
-                contentType: 'application/json',
-                headers: { Authorization: authKey.scheme + ' ' + authKey.key },
-                data: JSON.stringify(data),
-              }).done(function(data) {
-                selections[selection_index] = data;
-                selectionComplete(true);
+              ajax(isTask ? url + '&return_type=task' : url).done(function(res) {
+                if (copyMode === 'sync') {
+                  // polling for the result (file metadata)
+                  var taskInfo = 'Task[' + res.id + '] ';
+                  pollTask(res.id, {
+                    onComplete: function(metadata) {
+                      selections[selection_index] = metadata;
+                      selectionComplete(true);
+                    },
+                    onError: function(err) {
+                      logger.error(taskInfo + 'failed: ' + JSON.stringify(err));
+                      selectionComplete(false);
+                    },
+                  });
+                } else {
+                  selections[selection_index] = res;
+                  selectionComplete(true);
+                }
               }).fail(function() {
                 selectionComplete(false);
               });

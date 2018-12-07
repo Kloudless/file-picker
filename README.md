@@ -296,6 +296,9 @@ File Explorer JavaScript on the page.
   This option adds an additional parameter to the Chooser's response with a
   link to the file chosen in the file explorer.
 
+  Use with the `copy_to_upload_location` to generate a link to the newly
+  copied file that is returned in the callback.
+
   ```javascript
     // Response
     // [{
@@ -327,18 +330,28 @@ File Explorer JavaScript on the page.
       ...
   ```
 
-* `copy_to_upload_location` : boolean
+* `copy_to_upload_location` : string
 
-  Chooser: _Optional (default: false)_
+  Chooser: _Optional (default: null)_
 
-  If `true`, this option will copy any file selected by the user from cloud storage
-  to the location files uploaded from the user's computer are placed in.
+  If this option is set, it will copy any file selected by the user from cloud storage
+  to the location that files uploaded from the user's computer are placed in.
   An Upload Location must be configured via the developer portal to make use of
   this option.
 
-  The copying happens in the background asynchronously and will eventually complete.
-  The metadata provided in the callback to the `success` event is that of the
-  copied file(s) and not that of the original file(s).
+  This option accepts two values:
+  * `'async'`: Triggers an asynchronous copy and immediately returns a Task ID
+    in the `success` event callback that can be checked using the
+    [Kloudless Task API](https://developers.kloudless.com/docs/latest/core#asynchronous-requests-and-the-task-api)
+    for the copied file's metadata.
+  * `'sync'`: Triggers a synchronous API request to copy the file and polls
+    till the copying is complete. The `success` event callback receives the
+    newly uploaded file's metadata.
+
+  The deprecated `true` option returns the new file's hypothetical metadata
+  even though the copy has not yet completed. Please migrate to using
+  `'sync'` instead for similar behavior with a guarantee that the copy is
+  successful.
 
 * `upload_location_account` : string
 
