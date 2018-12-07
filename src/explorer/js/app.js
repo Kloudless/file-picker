@@ -71,6 +71,13 @@
     var processingConfirm = false;
     var loadedDropConfig = false;
 
+    // Set Kloudless source header
+    $.ajaxSetup({
+      headers: {
+        "X-Kloudless-Source": "file-explorer"
+      }
+    });
+
     // This can be generalized in the future with a config option
     var startView = (config.flavor() === 'dropzone') ? 'dropzone' : 'accounts';
 
