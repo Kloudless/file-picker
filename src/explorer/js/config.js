@@ -237,7 +237,7 @@
         else if (config.services.indexOf('all') > -1) {
           config.services = ['file_store', 'object_store'];
         }
-        var objStoreServices = ['s3', 'azure'];
+        var objStoreServices = ['s3', 'azure', 's3_compatible'];
 
         ko.utils.arrayForEach(serviceData.objects, function(serviceDatum) {
           var serviceCategory = 'file_store';
