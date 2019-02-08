@@ -18,7 +18,7 @@ storage services:
   </tbody>
 </table>
 
-[Visit our JSBin example of the File Explorer!](https://output.jsbin.com/wilowep/)
+[Visit our JSBin example of the File Explorer!](https://output.jsbin.com/tuwodin/)
 
 <img src="http://i.imgur.com/xO2QcyD.gif" width="650" />
 
@@ -645,7 +645,7 @@ var files = [{
 explorer.save(files);
 ```
 
-[Visit our JSBin example of the File Explorer!](https://output.jsbin.com/wilowep/)
+[Visit our JSBin example of the File Explorer!](https://output.jsbin.com/tuwodin/)
 
 ### Dropzone
 
