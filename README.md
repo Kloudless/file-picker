@@ -20,7 +20,9 @@ storage services:
 
 [Visit our JSBin example of the File Explorer!](https://output.jsbin.com/tuwodin/)
 
-<img src="http://i.imgur.com/xO2QcyD.gif" width="650" />
+<p align="center">
+  <img src="img/demo.gif" width="650" />
+</p>
 
 ## Table of Contents
 * [Usage](#usage)
