@@ -162,7 +162,7 @@
     this.link = (options.link === undefined) ? true : options.link;
     this.computer = (options.computer === undefined) ? false : options.computer;
     this.copy_to_upload_location = ((options.copy_to_upload_location === undefined) ?
-                                    false : options.copy_to_upload_location);
+                                    null : options.copy_to_upload_location);
     this.upload_location_uri = window.encodeURIComponent(options.upload_location_uri || '');
     this.create_folder = (options.create_folder === undefined) ? true : options.create_folder;
     this.account_key = (options.account_key === undefined) ? false : options.account_key;
