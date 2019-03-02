@@ -5,8 +5,6 @@
   "dependencies": {
     "foundation": "5.2.3",
     "jquery-ui": "1.10.4",
-    "knockout": "3.2.0",
-    "sammy": "0.7.5",
     "requirejs": "2.1.14",
     "loglevel": "1.4.1",
     "momentjs": "2.7.0",

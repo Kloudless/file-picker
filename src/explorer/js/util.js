@@ -77,19 +77,21 @@
     /**
      * Gets the base URL (one level above the js folder) for loading any
      * scripts or JSON files. Figures out the base url based on the script tag
-     * for either app.js (dev) or explorer.js (production)
+     * for explorer.js
      */
     getBaseUrl: function() {
-      // get the app.js (for dev) or explorer.js (for production) script tag
-      var scriptUrl = $('script[src*=\'app.js\'], script[src*=\'explorer.js\']').
-            first().attr('src').split('/');
+      // get the explorer.js script tag
+      var scriptUrl = $('script[src*=\'explorer.js\']').first().attr('src')
+        .split('/');
 
       // then remove the script file name and 'js' directory parts from the url
       // and return the result
-
+      // in production src="https://static-cdn.kloudless.com/p/platform/sdk/kloudless.explorer.js"
+      // in dev src="/dist/explorer/js/explorer.js"
       var scriptDepth = 1;
-      if (scriptUrl[scriptUrl.length - 1] === 'app.js')
+      if (process.env.NODE_ENV == 'development') {
         scriptDepth = 2;
+      }
 
       return scriptUrl.slice(0, scriptUrl.length - scriptDepth).join('/');
     },

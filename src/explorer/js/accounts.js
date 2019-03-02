@@ -1,103 +1,100 @@
-(function() {
-  'use strict';
+import ko from 'knockout';
+import logger from 'loglevel';
+import Account from './models/account';
+import Authenticator from './auth';
 
-  define(['vendor/knockout', 'vendor/loglevel', 'models/account',
-          'auth', 'config', ],
-         function(ko, logger, Account, Authenticator, config) {
-    // Construct an AccountManager, which abstracts the process of
-    // connecting and disconnecting accounts.
-    var AccountManager = function() {
-      this.accounts = ko.observableArray([]);
-      this.active = ko.observable({});
-    };
+'use strict';
 
-    // Connect an account of a particular service, then fire callbacks on init.
-    AccountManager.prototype.addAccount = function(service, callbacks) {
-      logger.debug('Starting authentication.');
-      var response = Authenticator.authenticate(service, function(data) {
-        logger.debug('Authenticated for: ', data.service || data.scope);
-        var created = new Account(
-          {scheme: 'Bearer', key: data.access_token},
-          callbacks.on_account_ready, callbacks.on_fs_ready);
-      });
+var AccountManager = function () {
+  this.accounts = ko.observableArray([]);
+  this.active = ko.observable({});
+};
 
-      if (response.authUsingIEXDFrame) {
-        callbacks.on_confirm_with_iexd();
-      }
-    };
-
-   /**
-    * Add authed account
-    * @param {object} authedAccount - account object
-    */
-    AccountManager.prototype.addAuthedAccount = function(authedAccount) {
-      logger.debug("Add authed account");
-
-      // Don't allow duplicate accounts
-      this.accounts.remove(function(account) {
-        return account.account === authedAccount.account;
-      });
-
-      this.accounts.push(authedAccount);
-    };
-
-    // Remove an account by Account ID.
-    AccountManager.prototype.removeAccount = function(account_id) {
-      this.accounts.remove(function(account) {
-        return account.account == account_id;
-      });
-      // Remove the account from this.active
-      if(this.active().account === account_id) {
-        if (this.accounts()[0] !== undefined) {
-          logger.debug("Change the active account to ", this.accounts()[0]);
-          this.active(this.accounts()[0]);
-        } else {
-          logger.debug("Change the active account to an empty object");
-          this.active({});
-        }
-      }
-    };
-
-    // Send a DELETE request to server to delete the account, then call
-    // removeAccount().
-    AccountManager.prototype.deleteAccount = function(account_id, on_success_callback) {
-      var account_data = {};
-      var accounts = this.accounts();
-      for (var i = 0; i < accounts.length; i++) {
-        if (accounts[i].account == account_id) {
-          account_data = accounts[i];
-          break;
-        }
-      }
-      if (Object.keys(account_data).length === 0) {
-        logger.warn('Account failed to remove');
-        alert('Error occurred. Please try again!');
-        return;
-      }
-      var request = $.ajax({
-        url: config.getAccountUrl(account_data.account),
-        type: 'DELETE',
-        headers: {
-          Authorization: account_data.key.scheme + ' ' + account_data.key.key
-        }
-      }).done(function(data) {
-        this.removeAccount(account_data.account);
-        on_success_callback(account_data);
-      }.bind(this)).fail(function(xhr, status, err) {
-        logger.warn('Account failed to remove');
-        alert('Error occurred. Please try again!');
-      }).always(function() {
-        request = null;
-      });
-    };
-
-    // Retrieve an account by Account ID. Returns null if account not found.
-    AccountManager.prototype.getByAccount = function(account_id) {
-      return ko.utils.arrayFirst(this.accounts(), function(a) {
-        return a.account == account_id;
-      });
-    };
-
-    return AccountManager;
+// Connect an account of a particular service, then fire callbacks on init.
+AccountManager.prototype.addAccount = function (service, callbacks) {
+  logger.debug('Starting authentication.');
+  var response = Authenticator.authenticate(service, function (data) {
+    logger.debug('Authenticated for: ', data.service || data.scope);
+    var created = new Account(
+      {scheme: 'Bearer', key: data.access_token},
+      callbacks.on_account_ready, callbacks.on_fs_ready);
   });
-})();
+
+  if (response.authUsingIEXDFrame) {
+    callbacks.on_confirm_with_iexd();
+  }
+};
+
+/**
+ * Add authed account
+ * @param {object} authedAccount - account object
+ */
+AccountManager.prototype.addAuthedAccount = function (authedAccount) {
+  logger.debug("Add authed account");
+
+  // Don't allow duplicate accounts
+  this.accounts.remove(function (account) {
+    return account.account === authedAccount.account;
+  });
+
+  this.accounts.push(authedAccount);
+};
+
+// Remove an account by Account ID.
+AccountManager.prototype.removeAccount = function (account_id) {
+  this.accounts.remove(function (account) {
+    return account.account == account_id;
+  });
+  // Remove the account from this.active
+  if (this.active().account === account_id) {
+    if (this.accounts()[0] !== undefined) {
+      logger.debug("Change the active account to ", this.accounts()[0]);
+      this.active(this.accounts()[0]);
+    } else {
+      logger.debug("Change the active account to an empty object");
+      this.active({});
+    }
+  }
+};
+
+// Send a DELETE request to server to delete the account, then call
+// removeAccount().
+AccountManager.prototype.deleteAccount = function (account_id, on_success_callback) {
+  var account_data = {};
+  var accounts = this.accounts();
+  for (var i = 0; i < accounts.length; i++) {
+    if (accounts[i].account == account_id) {
+      account_data = accounts[i];
+      break;
+    }
+  }
+  if (Object.keys(account_data).length === 0) {
+    logger.warn('Account failed to remove');
+    alert('Error occurred. Please try again!');
+    return;
+  }
+  var request = $.ajax({
+    url: config.getAccountUrl(account_data.account),
+    type: 'DELETE',
+    headers: {
+      Authorization: account_data.key.scheme + ' ' + account_data.key.key
+    }
+  }).done(function (data) {
+    this.removeAccount(account_data.account);
+    on_success_callback(account_data);
+  }.bind(this)).fail(function (xhr, status, err) {
+    logger.warn('Account failed to remove');
+    alert('Error occurred. Please try again!');
+  }).always(function () {
+    request = null;
+  });
+};
+
+// Retrieve an account by Account ID. Returns null if account not found.
+AccountManager.prototype.getByAccount = function (account_id) {
+  return ko.utils.arrayFirst(this.accounts(), function (a) {
+    return a.account == account_id;
+  });
+};
+
+export default AccountManager;

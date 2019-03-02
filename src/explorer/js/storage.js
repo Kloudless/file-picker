@@ -1,113 +1,111 @@
-(function () {
-    'use strict';
+import config from './config';
 
-    define(['config'], function(config) {
+'use strict';
 
-        var storage = {
-            container: null
-        };
 
-        // set the storage container
-        if (config.persist == "local" && window.localStorage) {
-            storage.container = window.localStorage;
-        } else if (config.persist == "session" && window.sessionStorage) {
-            storage.container = window.sessionStorage;
-        } else if (config.persist == "none") {
-            storage.container = null;
-        } else {
-            // Temporary container.
-            storage.container = {};
-        }
+var storage = {
+  container: null
+};
 
-        // Pass in accounts from an account manager
-        storage.storeAccounts = function (appId, accounts) {
-            if (!storage.container) return;
+// set the storage container
+if (config.persist == "local" && window.localStorage) {
+  storage.container = window.localStorage;
+} else if (config.persist == "session" && window.sessionStorage) {
+  storage.container = window.sessionStorage;
+} else if (config.persist == "none") {
+  storage.container = null;
+} else {
+  // Temporary container.
+  storage.container = {};
+}
 
-            var serviceNames = config.all_services().map(function(service) {
-                return service.id;
-            });
+// Pass in accounts from an account manager
+storage.storeAccounts = function (appId, accounts) {
+  if (!storage.container) return;
 
-            var key = 'k-' + appId, appData = storage.container[key];
-            if (!appData || appData.length == 0) {
-                appData = {}
-            } else {
-                appData = JSON.parse(appData);
-            }
+  var serviceNames = config.all_services().map(function (service) {
+    return service.id;
+  });
 
-            // add accounts from the manager for currently visible services.
-            var i, account, array = [];
-            for (i = 0; i < accounts.length; i++) {
-                account = accounts[i];
-                array.push(JSON.stringify(account));
-            }
-            // add accounts already saved for currently invisible services.
-            for (i = 0; i < appData.accounts.length; i++) {
-                account = JSON.parse(appData.accounts[i]);
-                if (serviceNames.indexOf(account.service) == -1) {
-                    array.push(appData.accounts[i]);
-                }
-            }
-            // store the final array
-            appData.accounts = array;
-            storage.container[key] = JSON.stringify(appData);
-        };
+  var key = 'k-' + appId, appData = storage.container[key];
+  if (!appData || appData.length == 0) {
+    appData = {}
+  } else {
+    appData = JSON.parse(appData);
+  }
 
-        // Return an array of accounts, initialize if necessary
-        // the appData is stringified
-        storage.loadAccounts = function (appId) {
-            if (!storage.container) return [];
+  // add accounts from the manager for currently visible services.
+  var i, account, array = [];
+  for (i = 0; i < accounts.length; i++) {
+    account = accounts[i];
+    array.push(JSON.stringify(account));
+  }
+  // add accounts already saved for currently invisible services.
+  for (i = 0; i < appData.accounts.length; i++) {
+    account = JSON.parse(appData.accounts[i]);
+    if (serviceNames.indexOf(account.service) == -1) {
+      array.push(appData.accounts[i]);
+    }
+  }
+  // store the final array
+  appData.accounts = array;
+  storage.container[key] = JSON.stringify(appData);
+};
 
-            var serviceNames = config.all_services().map(function(service) {
-                return service.id;
-            });
-            var key = 'k-' + appId, appData = storage.container[key];
-            if (!appData || appData.length === 0) {
-                appData = {};
-                appData.accounts = [];
-                storage.container[key] = JSON.stringify(appData);
-                return appData.accounts;
-            }
+// Return an array of accounts, initialize if necessary
+// the appData is stringified
+storage.loadAccounts = function (appId) {
+  if (!storage.container) return [];
 
-            appData = JSON.parse(appData);
-            // accounts also needs to be parsed
-            var i, array = [], accounts = appData.accounts;
-            for (i = 0; i < accounts.length; i++) {
-                var acc = JSON.parse(accounts[i]);
-                if (serviceNames.length === 0 || // Not loaded yet
-                    serviceNames.indexOf(acc.service) != -1) {
-                    array.push(acc);
-                }
-            }
-            return array;
-        };
+  var serviceNames = config.all_services().map(function (service) {
+    return service.id;
+  });
+  var key = 'k-' + appId, appData = storage.container[key];
+  if (!appData || appData.length === 0) {
+    appData = {};
+    appData.accounts = [];
+    storage.container[key] = JSON.stringify(appData);
+    return appData.accounts;
+  }
 
-        storage.removeAllAccounts = function (appId) {
-            if (!storage.container) return;
+  appData = JSON.parse(appData);
+  // accounts also needs to be parsed
+  var i, array = [], accounts = appData.accounts;
+  for (i = 0; i < accounts.length; i++) {
+    var acc = JSON.parse(accounts[i]);
+    if (serviceNames.length === 0 || // Not loaded yet
+      serviceNames.indexOf(acc.service) != -1) {
+      array.push(acc);
+    }
+  }
+  return array;
+};
 
-            var key = 'k-' + appId, appData = storage.container[key];
-            if (!appData || appData.length == 0) {
-                appData = {};
-                appData.accounts = [];
-                storage.container[key] = JSON.stringify(appData);
-            } else {
-                appData = JSON.parse(appData);
-                appData.accounts = [];
-                storage.container[key] = JSON.stringify(appData);
-            }
-        };
+storage.removeAllAccounts = function (appId) {
+  if (!storage.container) return;
 
-        storage.storeId = function(explorerId) {
-            if (!storage.container) return;
-            var key = 'k-explorerId';
-            storage.container[key] = explorerId;
-        }
+  var key = 'k-' + appId, appData = storage.container[key];
+  if (!appData || appData.length == 0) {
+    appData = {};
+    appData.accounts = [];
+    storage.container[key] = JSON.stringify(appData);
+  } else {
+    appData = JSON.parse(appData);
+    appData.accounts = [];
+    storage.container[key] = JSON.stringify(appData);
+  }
+};
 
-        storage.loadId = function() {
-            if (!storage.container) return;
-            var key = 'k-explorerId';
-            return storage.container[key];
-        }
+storage.storeId = function (explorerId) {
+  if (!storage.container) return;
+  var key = 'k-explorerId';
+  storage.container[key] = explorerId;
+}
 
-        return storage;
-    });
-})();
+storage.loadId = function () {
+  if (!storage.container) return;
+  var key = 'k-explorerId';
+  return storage.container[key];
+}
+
+export default storage;

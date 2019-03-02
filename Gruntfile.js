@@ -1,6 +1,8 @@
 /* eslint-disable func-names */
 const path = require('path');
 const cssoStylus = require('csso-stylus');
+var webpackDevConfig = require('./build/webpack.dev.conf.js');
+var webpackProdConfig = require('./build/webpack.prod.conf.js');
 
 const DIR = __dirname;
 const EXPLORER_SRC = path.join(DIR, 'src', 'explorer');
@@ -17,6 +19,11 @@ module.exports = function (grunt) {
   grunt.initConfig({
     // Read package.json.
     pkg: grunt.file.readJSON('package.json'),
+    // webpack config
+    webpack: {
+      dev: webpackDevConfig,
+      prod: webpackProdConfig,
+    },
     // Compile Jade templates.
     jade: {
       // Compile file explorer Jade templates into deployment directory.
@@ -327,19 +334,6 @@ module.exports = function (grunt) {
         }],
       },
     },
-    // Compile RequireJS dependencies.
-    requirejs: {
-      // Compile RequireJS dependencies from temporary directory into deployment directory.
-      compile: {
-        options: {
-          baseUrl: path.join(TMP_PATH, 'js'),
-          mainConfigFile: path.join(TMP_PATH, 'js', 'app.js'),
-          name: path.join('vendor', 'almond'),
-          include: ['app'],
-          out: path.join(TMP_PATH, 'explorer.js'),
-        },
-      },
-    },
     // Compile and minify JS files.
     uglify: {
       options: {
@@ -399,6 +393,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.loadNpmTasks('grunt-exec');
+  grunt.loadNpmTasks('grunt-webpack');
 
   // Options
   inlines.EXPLORER_URL = grunt.option('url') || 'http://localhost:3000/file-explorer';
@@ -411,13 +406,14 @@ module.exports = function (grunt) {
   // Refresh stuff you've been developing.
   grunt.registerTask('default', [
     'clean:deploy',
+    'webpack:dev',
     'jade',
     'includes',
     'stylus:dev',
     'uglify:dev',
     'copy:app',
     'copy:localization',
-    'copy:deploy',
+    'copy:deploy_min',
   ]);
 
   // Rebuild everything to dev targets.
@@ -432,6 +428,7 @@ module.exports = function (grunt) {
   grunt.registerTask('deploy', [
     'clean:deploy',
     'build',
+    'webpack:prod',
     'copy:vendor',
     'copy:vendor_min',
     'copy:localization',
@@ -440,7 +437,6 @@ module.exports = function (grunt) {
     'includes',
     'stylus:deploy',
     'copy:app',
-    'requirejs',
     'copy:deploy_min',
     'clean:temp',
   ]);
