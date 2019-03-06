@@ -108,7 +108,8 @@
       '&persist=' + JSON.stringify(options.persist) +
       '&account_key=' + options.account_key +
       '&create_folder=' + options.create_folder +
-      '&types=' + JSON.stringify(options.types));
+      '&types=' + JSON.stringify(options.types)
+    );
     frame.style.display = 'none';
     frames[exp_id] = frame;
 

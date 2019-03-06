@@ -2,8 +2,8 @@
   'use strict';
 
   define(['vendor/knockout', 'vendor/loglevel', 'models/account',
-          'auth'],
-         function(ko, logger, Account, Authenticator) {
+          'auth', 'config', ],
+         function(ko, logger, Account, Authenticator, config) {
     // Construct an AccountManager, which abstracts the process of
     // connecting and disconnecting accounts.
     var AccountManager = function() {
@@ -56,6 +56,39 @@
           this.active({});
         }
       }
+    };
+
+    // Send a DELETE request to server to delete the account, then call
+    // removeAccount().
+    AccountManager.prototype.deleteAccount = function(account_id, on_success_callback) {
+      var account_data = {};
+      var accounts = this.accounts();
+      for (var i = 0; i < accounts.length; i++) {
+        if (accounts[i].account == account_id) {
+          account_data = accounts[i];
+          break;
+        }
+      }
+      if (Object.keys(account_data).length === 0) {
+        logger.warn('Account failed to remove');
+        alert('Error occurred. Please try again!');
+        return;
+      }
+      var request = $.ajax({
+        url: config.getAccountUrl(account_data.account),
+        type: 'DELETE',
+        headers: {
+          Authorization: account_data.key.scheme + ' ' + account_data.key.key
+        }
+      }).done(function(data) {
+        this.removeAccount(account_data.account);
+        on_success_callback(account_data);
+      }.bind(this)).fail(function(xhr, status, err) {
+        logger.warn('Account failed to remove');
+        alert('Error occurred. Please try again!');
+      }).always(function() {
+        request = null;
+      });
     };
 
     // Retrieve an account by Account ID. Returns null if account not found.

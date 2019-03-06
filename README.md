@@ -283,6 +283,12 @@ File Explorer JavaScript on the page.
       ...
     });
   ```
+  
+* `enable_logout` : boolean (default: true)
+
+  If `true`, allows users to log out of their accounts, which deletes the account
+  from Kloudless servers. API requests will no longer be possible to the account.
+
 
 #### Chooser options
 

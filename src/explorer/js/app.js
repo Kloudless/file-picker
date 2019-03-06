@@ -120,7 +120,9 @@
 
       // View model setup.
       this.view_model = {
+        // config
         flavor: config.flavor,
+        enable_logout: config.enable_logout,
 
         // The current view: alternates between 'files', 'accounts', 'computer', etc.
         current: ko.observable(startView),
@@ -601,9 +603,17 @@
             return config.static_path + '/webapp/sources/' +
               this.view_model.accounts.active() + ".png";
           }, self),
-          
-          logout: function() {
-            explorer.manager.accounts.removeAll();
+
+          logout: function () {
+            var accounts = explorer.manager.accounts();
+            for (var i =0; i < accounts.length; i++) {
+              explorer.manager.deleteAccount(accounts[i].account, function(account_data) {
+                // post message for account
+                explorer.view_model.postMessage('deleteAccount',
+                  account_data.account);
+              });
+            }
+
             storage.removeAllAccounts(config.app_id);
             router.setLocation('#/accounts');
             explorer.view_model.postMessage('logout');
@@ -1391,37 +1401,12 @@
       this.get('#/account/disconnect/:id', function() {
         logger.debug('Account disconnection invoked for id: ' + this.params.id + '.');
 
-        // Find account
-        var accounts = explorer.manager.accounts();
-        var account_data = {};
-        for (var i = 0; i < accounts.length; i++) {
-          if (accounts[i].account == this.params.id) {
-            account_data = accounts[i];
-            break;
-          }
-        }
-        if (Object.keys(account_data).length === 0) {
-          logger.warn('Account failed to remove');
-          alert('Error occurred. Please try again!');
-          return;
-        }
-        var request = $.ajax({
-          url: config.getAccountUrl(account_data.account),
-          type: 'DELETE',
-          headers: {
-            Authorization: account_data.key.scheme + ' ' + account_data.key.key
-          }
-        }).done(function(data) {
-          explorer.manager.removeAccount(account_data.account);
+        explorer.manager.deleteAccount(this.params.id, function (account_data) {
           // post message for account
-          explorer.view_model.postMessage('deleteAccount', account_data.account);
+          explorer.view_model.postMessage('deleteAccount',
+            account_data.account);
           // store accounts
           storage.storeAccounts(config.app_id, explorer.manager.accounts());
-        }).fail(function(xhr, status, err) {
-          logger.warn('Account failed to remove');
-          alert('Error occurred. Please try again!');
-        }).always(function() {
-          request = null;
         });
       });
 

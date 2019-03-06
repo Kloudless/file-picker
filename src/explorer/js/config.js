@@ -36,7 +36,7 @@
       link: JSON.parse(get_query_variable('link')),
       link_options: ko.observable({}),
       account_management: ko.observable(true),
-      retrieve_token: ko.observable(),
+      retrieve_token: ko.observable(false),
       computer: ko.observable(
         JSON.parse(get_query_variable('computer')) ||
           get_query_variable('flavor') === 'dropzone'),
@@ -64,6 +64,7 @@
       create_folder: JSON.parse(get_query_variable('create_folder')),
       chunk_size: 5*1024*1024,
       locale: ko.observable('en'),
+      enable_logout: ko.observable(true),
 
       // b/w compatibility
       account_key: JSON.parse(get_query_variable('account_key')),
