@@ -1,5 +1,12 @@
 # Kloudless File Explorer
 
+#### To use our File Explorer or any of our Unified API services, please go to http://kloudless.com and sign up for a free account
+
+#### Full documentation for Kloudless Unified APIs can be found [HERE](https://developers.kloudless.com/docs/latest/core)
+
+---
+
+
 The [Kloudless](https://kloudless.com) File Explorer is a JavaScript library
 that allows your users to browse and select files and folders from the following
 storage services:
