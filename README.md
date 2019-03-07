@@ -18,6 +18,10 @@ storage services:
   </tbody>
 </table>
 
+**Sign up for a free account at [https://kloudless.com](https://kloudless.com) to obtain
+a Kloudless App ID to initialize the File Explorer with.** The File Explorer is built on
+our unified Storage API abstraction layer ([full docs here](https://developers.kloudless.com/docs/latest/storage)).
+
 [Visit our JSBin example of the File Explorer!](https://output.jsbin.com/tuwodin/)
 
 <p align="center">
@@ -67,7 +71,7 @@ You can then create an element on the page to launch the explorer.
 <script type="text/javascript">
   var explorer = window.Kloudless.explorer({
     // Explorer Initialization options here.
-    app_id: "Your App ID",
+    app_id: "Your App ID", // Get your own at https://kloudless.com
   });
 </script>
 ```
@@ -117,20 +121,6 @@ File Explorer JavaScript on the page.
 
 #### Chooser and Saver
 
-* `custom_css` : string
-
-  Chooser: _Optional (default: null)_
-
-  Saver: _Optional (default: null)_
-
-  An optional stylesheet URL to load to override existing styles.
-  Supports `(http|https)://domain.com/path/to.css`, `//domain.com/path/to.css`, 
-  and `/path/to.css` formats.
-
-  The domain the File Explorer is launched from must be added to the application's list
-  of [Trusted Domains](https://developers.kloudless.com/applications/*/details) for the
-  `custom_css` property to be used.
-
 * `app_id` : string
 
   Chooser: _Required_
@@ -139,6 +129,34 @@ File Explorer JavaScript on the page.
 
   The application ID is specific to the developer's application and is located
   in the developer portal on the App Details page.
+  
+* `retrieve_token` : boolean
+
+  Chooser: _Optional (default: false)_
+
+  Saver: _Optional (default: false)_
+
+  This option will include [Bearer Tokens](https://developers.kloudless.com/docs/latest/authentication)
+  in addition to the other response data, to allow you to make further requests to the API
+  or save the OAuth Tokens for future use.
+
+  ```javascript
+    // Example response with an OAuth Token in the metadata.
+    [{
+        ...
+        bearer_token: {
+          key: "the_token",
+        },
+        ...
+     }]
+  ```
+
+  Only File Explorers launched from Trusted Domains can make use of this option.
+  You can add a Trusted Domain on the App Details page.
+
+  In addition, care should
+  be taken to ensure no malicious JavaScript or XSS vulnerabilities are present
+  on the page, as the Bearer Token provides complete access to that user's account.
 
 * `computer` : boolean
 
@@ -209,6 +227,20 @@ File Explorer JavaScript on the page.
   If `true`, displays a shadow backdrop behind the File Explorer, and prevents the
   page body from scrolling.
 
+* `custom_css` : string
+
+  Chooser: _Optional (default: null)_
+
+  Saver: _Optional (default: null)_
+
+  An optional stylesheet URL to load to override existing styles.
+  Supports `(http|https)://domain.com/path/to.css`, `//domain.com/path/to.css`, 
+  and `/path/to.css` formats.
+
+  The domain the File Explorer is launched from must be added to the application's list
+  of [Trusted Domains](https://developers.kloudless.com/applications/*/details) for the
+  `custom_css` property to be used.
+
 * `create_folder` : boolean
 
   Chooser: _Optional (default: true)_
@@ -224,34 +256,6 @@ File Explorer JavaScript on the page.
   now instead of Account Keys. Please use the `retrieve_token` option below instead.
   Existing Account Keys can be converted to OAuth Tokens using
   [this endpoint](https://developers.kloudless.com/docs/v0/storage#account-keys-account-key-oauth-token).
-
-* `retrieve_token` : boolean
-
-  Chooser: _Optional (default: false)_
-
-  Saver: _Optional (default: false)_
-
-  This option will include [Bearer Tokens](https://developers.kloudless.com/docs/latest/authentication)
-  in addition to the other response data, to allow you to make further requests to the API
-  or save the OAuth Tokens for future use.
-
-  ```javascript
-    // Example response with an OAuth Token in the metadata.
-    [{
-        ...
-        bearer_token: {
-          key: "the_token",
-        },
-        ...
-     }]
-  ```
-
-  Only File Explorers launched from Trusted Domains can make use of this option.
-  You can add a Trusted Domain on the App Details page.
-
-  In addition, care should
-  be taken to ensure no malicious JavaScript or XSS vulnerabilities are present
-  on the page, as the Bearer Token provides complete access to that user's account.
 
 * `keys` : array
 
