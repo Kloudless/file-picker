@@ -204,6 +204,7 @@ File Explorer JavaScript on the page.
   
   * `file_store`: All File Storage services.
   * `object_store`: All Object Storage services.
+  * `construction`: All Construction services.
   * `all`: All storage services.
 
 * `account_management` : boolean

@@ -246,15 +246,11 @@
           config.services = ['file_store'];
         }
         else if (config.services.indexOf('all') > -1) {
-          config.services = ['file_store', 'object_store'];
+          config.services = ['file_store', 'object_store', 'construction'];
         }
-        var objStoreServices = ['s3', 'azure', 's3_compatible'];
 
         ko.utils.arrayForEach(serviceData.objects, function(serviceDatum) {
-          var serviceCategory = 'file_store';
-          if (objStoreServices.indexOf(serviceDatum.name) > -1) {
-            serviceCategory = 'object_store';
-          }
+          var serviceCategory = getServiceCategory(serviceDatum.name);
           var localeName = localization.formatAndWrapMessage(
             'servicenames/' + serviceDatum.name);
           if (localeName.indexOf('/') > -1)
@@ -281,6 +277,18 @@
 
         config.visible_computer.subscribe(toggleComputer);
         toggleComputer(config.visible_computer());
+
+        function getServiceCategory(serviceName) {
+          var objStoreServices = ['s3', 'azure', 's3_compatible'];
+          var constructionServices = ['plangrid', 'bluebeam', 'autodesk', 'procore'];
+
+          if (objStoreServices.indexOf(serviceName) > -1) {
+            return 'object_store';
+          } else if (constructionServices.indexOf(serviceName) > -1) {
+            return 'construction';
+          }
+          return 'file_store';
+        }
       }
     );
 
