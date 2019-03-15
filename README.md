@@ -1,5 +1,9 @@
 # Kloudless File Explorer
 
+**Sign up for a free account at [https://kloudless.com](https://kloudless.com) to obtain
+a Kloudless App ID to initialize the File Explorer with.** The File Explorer is built on
+our unified Storage API abstraction layer ([full docs here](https://developers.kloudless.com/docs/latest/storage)).
+
 The [Kloudless](https://kloudless.com) File Explorer is a JavaScript library
 that allows your users to browse and select files and folders from the following
 storage services:
@@ -17,10 +21,6 @@ storage services:
     <tr><td>SugarSync</td><td>WebDAV</td><td></td><td></td></tr>
   </tbody>
 </table>
-
-**Sign up for a free account at [https://kloudless.com](https://kloudless.com) to obtain
-a Kloudless App ID to initialize the File Explorer with.** The File Explorer is built on
-our unified Storage API abstraction layer ([full docs here](https://developers.kloudless.com/docs/latest/storage)).
 
 [Visit our JSBin example of the File Explorer!](https://output.jsbin.com/tuwodin/)
 
