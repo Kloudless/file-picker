@@ -34,3 +34,6 @@ dist
 
 # test
 test/package-lock.json
+
+# vscode
+.vscode

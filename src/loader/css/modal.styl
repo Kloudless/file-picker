@@ -50,3 +50,37 @@ iframe.kloudless-modal-dropzone
   background-color black
   z-index 998
   opacity .6
+
+.kloudless_dropzone_container
+  display flex
+  align-items center
+  justify-content center
+  box-sizing border-box
+  position relative
+
+  cursor pointer
+  
+  background-color rgb(245, 246, 247)
+  color rgb(71, 71, 71)
+
+  border-style dashed
+  border-width 1px
+  width 600px
+  height 100px
+
+  border-radius 4px
+  box-shadow 0 14px 20px rgba(0,0,0,.08)
+
+  @media only screen and (max-width : 750px), only screen and (max-device-width : 750px)
+    width: 100% !important
+    height: 100% !important
+    position:fixed !important
+    margin: 0
+    top: 0
+    left: 0
+    html,body
+      overflow: hidden
+
+  > span
+    position absolute 
+    padding 0px 5px
