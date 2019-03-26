@@ -49,6 +49,7 @@ storage services:
     * [Configuration](#configuration-1)
     * [Methods](#methods-1)
     * [Example](#example)
+* [File Explorer with Vue](#file-explorer-with-vue)
 * [Browser Support](#browser-support)
 * [Migration Guide](#migration-guide)
   * [From v1.0.0 to v1.0.1](#from-v100-to-v101)
@@ -791,6 +792,10 @@ dropzone.on('success', function(files) {
 
 // See the File Explorer's Example section for other events.
 ```
+
+## File Explorer with Vue
+
+See [File Explorer with Vue](./README.vue.md).
 
 ## Browser Support
 
