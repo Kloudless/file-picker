@@ -5,7 +5,7 @@ module.exports = {
   presets: [
     '@babel/env',
     // '@babel/preset-react',
-    // 'babel-preset-vue',
+    // '@vue/app',
   ],
   plugins: [
     'babel-plugin-stylus-compiler',

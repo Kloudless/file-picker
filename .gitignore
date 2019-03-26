@@ -37,3 +37,5 @@ test/package-lock.json
 
 # vscode
 .vscode
+
+.demo
