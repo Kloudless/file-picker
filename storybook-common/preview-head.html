@@ -8,7 +8,7 @@
 window.onload = () => {
   document.body.onclick = (e) => {
     if(e.target && e.target.nodeName == 'A') {
-      // make the anchor links work
+      // make the anchor links inside stories work
       const { baseURI, hash, href } = e.target;
       if (hash && href === `${baseURI}${hash}`) {
         e.preventDefault();

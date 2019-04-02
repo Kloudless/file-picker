@@ -3,7 +3,8 @@ const explorerUrl = (process.env.explorerUrl || 'https://static-cdn.kloudless.co
 
 module.exports = {
   presets: [
-    '@babel/env',
+    '@babel/preset-env',
+    '@babel/preset-react',
   ],
   plugins: [
     'babel-plugin-stylus-compiler',
