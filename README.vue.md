@@ -13,7 +13,7 @@ Kloudless File Explorer for your Vue App. We provide:
   a Dropzone component that will launch the Chooser when clicked or
   launch the Saver when files are dropped.
 
-Support Vue v2.
+Supports Vue v2.
 
 <!-- STORY -->
 
@@ -235,7 +235,8 @@ export default {
 - `options` _(Required)_  
   An object used to configure Chooser, Saver, Dropzone or components created by
   HOC.
-  Please refer to [Options](https://github.com/Kloudless/file-explorer#options)
+  Please refer to [Chooser and Saver Configuration](https://github.com/Kloudless/file-explorer#chooser-and-saver)
+  or [Dropzone Configuration](https://github.com/Kloudless/file-explorer#dropzone-1)
   for detail.
 - `title` _(Optional)_   
   The text shown on the button for `Chooser` or `Saver`.
