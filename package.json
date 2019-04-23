@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "author": "Kloudless <hello@kloudless.com> (https://kloudless.com)",
   "description": "The Kloudless File Explorer is a JavaScript library that allows your users to browse and select files and folders from their storage services. It comes in two modes: a chooser and a saver.",
+  "main": "./dist/loader/js/interface.js",
   "keywords": [
     "kloudless",
     "file picker",
@@ -24,10 +25,12 @@
     "dev": "npm run build:explorer && explorerUrl=http://localhost:3000/file-explorer npm run build:loader",
     "build:explorer": "grunt dev -f",
     "build:loader": "webpack --config webpack.loader.config.js",
-    "transpile": "babel src/loader/js -d dist/loader/js",
+    "transpile": "babel src/loader/js -d dist/loader/js --ignore src/loader/js/webpack",
     "storybook:vue": "npm run storybook --prefix storybook-vue/",
     "build:storybook": "npm run build --prefix ./storybook-vue",
-    "deploy:storybook": "npm run build:storybook && storybook-to-ghpages --remote=github --existing-output-dir=.demo"
+    "deploy:storybook": "npm run build:storybook && storybook-to-ghpages --remote=github --existing-output-dir=.demo",
+    "prepack": "bash generate_npmignore.sh && npm install && npm run transpile && npm run build:loader",
+    "postpack": "rm -f .npmignore"
   },
   "dependencies": {},
   "devDependencies": {
@@ -51,6 +54,7 @@
     "@babel/cli": "7.2.3",
     "@babel/core": "7.4.0",
     "@babel/preset-env": "7.4.1",
+    "@babel/preset-react": "7.0.0",
     "@storybook/storybook-deployer": "2.8.1",
     "babel-loader": "^8.0.5",
     "babel-plugin-stylus-compiler": "1.4.0",

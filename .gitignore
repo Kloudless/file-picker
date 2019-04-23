@@ -35,7 +35,13 @@ dist
 # test
 test/package-lock.json
 
-# vscode
+# tools, IDE
+.nvmrc
 .vscode
+yarn-error.log
 
+# demo
 .demo
+
+.npmignore
+*.tgz
