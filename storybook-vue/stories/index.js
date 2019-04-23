@@ -77,14 +77,6 @@ const COMPONENTS = [
       disabled: false,
     },
   },
-  {
-    name: 'Dropzone',
-    component: Dropzone,
-    props: {
-      options: { ...OPTIONS },
-    },
-    attrs: {},
-  },
 ];
 
 const stories = storiesOf('Kloudless File Explorer with Vue', module);
@@ -109,7 +101,7 @@ stories.addParameters({
   },
 });
 
-stories.add('example', () => ({
+stories.add('Chooser/Saver/HOC', () => ({
   props: genProps(COMPONENTS),
   render(createElement) {
     return createElement(
@@ -117,6 +109,28 @@ stories.add('example', () => ({
       [
         createElement(HintComponent),
         ...COMPONENTS.map(createExampleElement.bind(this, createElement)),
+      ],
+    );
+  },
+}));
+
+const COMPONENTS2 = [{
+  name: 'Dropzone',
+  component: Dropzone,
+  props: {
+    options: { ...OPTIONS },
+  },
+  attrs: {},
+}];
+
+stories.add('Dropzone', () => ({
+  props: genProps(COMPONENTS2),
+  render(createElement) {
+    return createElement(
+      'div',
+      [
+        createElement(HintComponent),
+        ...COMPONENTS2.map(createExampleElement.bind(this, createElement)),
       ],
     );
   },

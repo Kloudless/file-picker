@@ -4,8 +4,8 @@ import { addReadme } from 'storybook-readme/vue';
 addParameters({
   options: {
     name: 'Kloudless File Explorer',
-    addonPanelInRight: true,
-    showStoriesPanel: false
+    addonPanelInRight: false,
+    showStoriesPanel: true
   }
 });
 
