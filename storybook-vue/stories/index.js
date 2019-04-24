@@ -26,7 +26,7 @@ const OPTIONS = {
 };
 
 const FILES = [{
-  url: 'https://cdn.kloudless.com/wp-content/uploads/2019/01/kloudless@2x.png',
+  url: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/logo_mark.png',
   name: 'kloudless-logo.png',
 }];
 
