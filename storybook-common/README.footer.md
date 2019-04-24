@@ -1,0 +1,3 @@
+- - -
+- Github: https://github.com/Kloudless/file-explorer
+- Support: support@kloudless.com

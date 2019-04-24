@@ -29,26 +29,36 @@ our unified Storage API abstraction layer ([full docs here](https://developers.k
 </p>
 
 ## Table of Contents
+
 * [Usage](#usage)
-    * [Chooser](#chooser)
-      * [Dropzone](#dropzone)
-    * [Saver](#saver)
-    * [Configuration](#configuration)
-      * [Script Tag](#script-tag)
-      * [Chooser and Saver](#chooser-and-saver)
-      * [Chooser options](#chooser-options)
-      * [Saver options](#saver-options)
-    * [Events](#events)
-    * [Methods](#methods)
+  * [Import from script tag](#import-from-script-tag)
+  * [Import from an ES6 module](#import-from-an-es6-module)
+  * [Chooser](#chooser)
+    * [Dropzone](#dropzone)
+  * [Saver](#saver)
+  * [Global Options](#global-options)
+  * [Configuration](#configuration)
+    * [Script Tag](#script-tag)
+    * [Chooser and Saver](#chooser-and-saver)
+    * [Chooser options](#chooser-options)
+    * [Saver options](#saver-options)
+  * [Events](#events)
+  * [Methods](#methods)
+  * [Example for script tag usage](#example-for-script-tag-usage)
+  * [Dropzone](#dropzone-1)
+    * [Configuration](#configuration-1)
+    * [Methods](#methods-1)
     * [Example](#example)
-    * [Dropzone](#dropzone-1)
-      * [Configuration](#configuration-1)
-      * [Methods](#methods-1)
-      * [Example](#example-1)
+* [File Explorer with Vue](#file-explorer-with-vue)
 * [Browser Support](#browser-support)
+* [Migration Guide](#migration-guide)
+  * [From v1.0.0 to v1.0.1](#from-v100-to-v101)
 * [Contributing](#contributing)
-    * [Building](#building)
-    * [Testing](#testing)
+  * [Building](#building)
+    * [Install](#install)
+    * [Build Explorer](#build-explorer)
+    * [Build Loader](#build-loader)
+  * [Testing](#testing)
 * [Self-hosting](#self-hosting)
 * [Misc. Development Notes](#misc-development-notes)
 * [Security Vulnerabilities](#security-vulnerabilities)
@@ -56,9 +66,11 @@ our unified Storage API abstraction layer ([full docs here](https://developers.k
 
 ## Usage
 
-Embedding the Kloudless javascript library will expose a global
-`Kloudless` object. The JS file is currently hosted on S3 and can be embedded
-in your page using this tag:
+### Import from script tag
+
+Embedding the Kloudless File Explorer javascript library will expose a global
+`Kloudless.fileExplorer` object. The JS file is currently hosted on S3 and can
+be embedded in your page using this tag:
 
 ```html
 <script type="text/javascript"
@@ -69,18 +81,35 @@ You can then create an element on the page to launch the explorer.
 
 ```html
 <script type="text/javascript">
-  var explorer = window.Kloudless.explorer({
+  var explorer = window.Kloudless.fileExplorer.explorer({
     // Explorer Initialization options here.
     app_id: "Your App ID", // Get your own at https://kloudless.com
   });
 </script>
 ```
 
+### Import from an ES6 module
+
+Install from NPM:
+```
+npm install @kloudless/file-explorer
+```
+
+```javascript
+import fileExplorer from '@kloudless/file-explorer';
+
+const explorer = fileExplorer.explorer({
+  app_id: "YOUR_APP_ID"
+});
+```
+
+
 Be sure to serve the page via a web server, as pages opened via the
 file URI scheme (`file://`) cannot receive messages sent via postMessage
 due to security concerns.
 
-The File Explorer can be configured to be either a file [chooser](#chooser) or a file [saver](#saver).
+The File Explorer can be configured to be either a file [chooser](#chooser) or
+a file [saver](#saver).
 An `iframe` will be created by the JS library to view the explorer.
 
 ### Chooser
@@ -101,6 +130,16 @@ The Saver allows your application to prompt a user to select a folder to save
 files to. Metadata on the newly uploaded files will be returned to the developer.
 URLs to the files to upload must be provided.
 
+### Global Options
+
+Global options are the options apply to all the explorer instances.
+
+Here is the option that you can set:
+
+- `explorerUrl`  
+  The URL that serves the File Explorer.
+  Defaults to `https://static-cdn.kloudless.com/p/platform/explorer/explorer.html`.
+
 ### Configuration
 
 The File Explorer has the following configuration options:
@@ -112,12 +151,13 @@ File Explorer JavaScript on the page.
 
 * `data-kloudless-object` : string
 
-  _Optional_. Default: `Kloudless`
+  _Optional_. By default, the `fileExplorer` object will be exposed to 
+  `window.Kloudless.fileExplorer`.
 
-  Specifies a different name for the `Kloudless` object bound to `window`.
-  e.g. `data-kloudless-object="Kloudless2"` would make the Kloudless object
-  accessible via `window.Kloudless2`. Do not use the `async` attribute on the
-  script tag if this is used.
+  Specifies a different name for the `fileExplorer` object bound to `window`.
+  e.g. `data-kloudless-object="fileExplorer2"` would make the fileExplorer
+  object accessible via `window.fileExplorer2`. Do not use the `async` attribute
+  on the script tag if this is used.
 
 #### Chooser and Saver
 
@@ -551,11 +591,23 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
   Fired when the user clicks the logout link in the File Explorer, which
   clears the local state of accounts connected to the File Explorer.
 
+* `drop()`
+
+  Fired when drops files into Dropzone.
+
 ### Methods
 
-* `Kloudless.explorer(options)`
+* `fileExplorer.explorer(options)`
 
   You can initialize a Kloudless Explorer using the options mentioned above.
+
+* `fileExplorer.getGlobalOptions()`
+
+  Get global options.
+
+* `fileExplorer.setGlobalOptions(globalOptions)`
+
+  Set global options.
 
 * `explorer.choose()`
 
@@ -597,7 +649,7 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
   * `upload_location_account`
   * `upload_location_folder`
 
-### Example
+### Example for script tag usage
 
 To start using the File Explorer, simply include the JavaScript file in your
 HTML file. You can then create an element on the page to launch the explorer.
@@ -618,7 +670,7 @@ a few types of files.  All of this is contained within the initialization.
 
 ```javascript
 // Explorer initialization JS
-var explorer = window.Kloudless.explorer({
+var explorer = window.Kloudless.fileExplorer.explorer({
   app_id: 'YOUR_APP_ID',
   multiselect: false,
   link: true,
@@ -695,7 +747,7 @@ Upload Location must be configured as described for the Chooser.
 
 #### Methods
 
-* `Kloudless.dropzone(options)`
+* `fileExplorer.dropzone(options)`
 
   Initialize a Dropzone using the options mentioned above.
 
@@ -720,7 +772,7 @@ HTML
 JavaScript
 
 ```javascript
-var dropzone = window.Kloudless.dropzone({
+var dropzone = window.Kloudless.fileExplorer.dropzone({
     app_id: "Your App ID",
     elementId: 'dropzone',
     multiselect: true, // To upload more than 1 file.
@@ -741,6 +793,10 @@ dropzone.on('success', function(files) {
 // See the File Explorer's Example section for other events.
 ```
 
+## File Explorer with Vue
+
+See [File Explorer with Vue](./README.vue.md).
+
 ## Browser Support
 
 * Chrome 17+
@@ -748,6 +804,15 @@ dropzone.on('success', function(files) {
 * IE 11+
 * Safari 6+
 * Opera 15+
+
+## Migration Guide
+
+### From v1.0.0 to v1.0.1
+
+For script tag usage, we change exposing target from `window.Kloudless` to
+`window.Kloudless.fileExplorer` to better scope our UI tools.
+All the exports under `window.Kloudless` are deprecated and moved to
+`window.Kloudless.fileExplorer`.
 
 ## Contributing
 
@@ -758,17 +823,24 @@ merged in so we can offer feedback on its implementation.
 
 ### Building
 
+#### Install
+
 Install Node.js (`sudo apt-get install nodejs` or equivalent)
 Make sure you have npm >= 1.4, otherwise `sudo npm install -g npm`.
 Run the following commands:
 
     npm install
     bower install
-    grunt dev
 
 If you don't have `bower` or `grunt` installed, run:
 
     sudo npm install -g bower grunt-cli
+
+#### Build Explorer
+
+```
+grunt dev
+```
 
 Here are a few of the more useful [Grunt](http://gruntjs.com/) tasks available:
 
@@ -784,23 +856,33 @@ Here are a few of the more useful [Grunt](http://gruntjs.com/) tasks available:
   For deployment purposes, use `grunt deploy` to build minified versions of
   the files needed.
 
-* `grunt deploy --url=https://mysite.com/file-explorer`
-  Useful for self-hosting the File Explorer. The Grunt tasks accept a `url`
-  option that will be set as the `src` attribute for the iframe that loads the
-  File Explorer.
+All output files are placed in the `dist/explorer` directory. 
+Included in that directory are JS, CSS and HTML files that compose the 
+File Explorer.
 
-All output files are placed in the `dist` directory. Included in that directory
-are:
+#### Build Loader
 
-* JS and CSS responsible for launching and styling the iframe.
-* JS, CSS and HTML files that compose the File Explorer.
+Run following command would output a non-minified bundle file and a minified
+bundle file into `dist/loader` directory.
+
+```
+npm run build:loader
+```
+
+By default, the loader loads File Explorer from
+`https://static-cdn.kloudless.com/p/platform/explorer/explorer.html`.  
+You can change it by setting `explorerUrl` environment variable:
+```
+explorerUrl=https://mysite.com/file-explorer npm run build:loader
+```
+This is useful for self-hosting the File Explorer.
 
 ### Testing
 
 Automated testing is not present. For now, you can manually confirm that the
 library works by running the test server.
 
-    $ grunt # or `grunt dev` if this is the first build
+    $ npm run dev
     $ cd test
     $ npm install # only needed the first time to install dependencies
     $ KLOUDLESS_APP_ID=app_id npm start
@@ -820,16 +902,16 @@ Then navigate to `localhost:3000` and click the buttons to test.
 
 * Modify the JS and CSS links at `example/explorer.html` to point to where you will
   be hosting the compiled JS and CSS files for the explorer.
-* See notes on how to build the File Explorer for deployment purposes with the
-  `--url` option. Perform the `grunt deploy --url=$URL` build, where $URL is
-  the URL that will serve the File Explorer.
+* Run `explorerUrl=$URL npm run build:loader` to build loader and
+  `npm run build:explorer` to build file explorer, where `$URL` is the URL that
+  will serve the File Explorer.
 * Place `dist/explorer/js/explorer.js` and `dist/explorer/css/explorer.css`
   at the locations you specified in `example/explorer.html`.
-* Make `dist/explorer/explorer.html` available at $URL.
+* Make `dist/explorer/explorer.html` available at `$URL`.
   Feel free to customize the way assets are loaded/delivered.
   The important part is that the JS, HTML and CSS must all be included on that
   page.
-* Ensure the domain of $URL is added to your Kloudless App's list of
+* Ensure the domain of `$URL` is added to your Kloudless App's list of
   Trusted Domains. This can be done on the App Details page in the [Developer
   Portal](https://kloudless.com). This is necessary because Account Keys will
   be sent via postMessage from the Kloudless API server's authentication popup

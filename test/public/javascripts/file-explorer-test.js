@@ -1,42 +1,24 @@
-(function() {
-  'use strict';
+/* eslint-disable func-names, no-console */
 
-  /*
-   * Helper methods
+(function () {
+  /**
+   * Constants
    */
+  const EVENTS = [
+    'success',
+    'cancel',
+    'error',
+    'open',
+    'close',
+    'selected',
+    'addAccount',
+    'deleteAccount',
+    'startFileUpload',
+    'finishFileUpload',
+    'logout',
+  ];
 
-  function addResult(resultText) {
-    console.log(resultText)
-    var result = document.createElement('p');
-    result.appendChild(document.createTextNode(resultText));
-    document.body.appendChild(result);
-  }
-
-  function addResultWithData(resultText, dataObject) {
-    console.log(resultText, ' ', dataObject)
-    var result = document.createElement('p');
-    result.appendChild(document.createTextNode(resultText));
-    var data = document.createElement('pre');
-    data.appendChild(document.createTextNode(
-        JSON.stringify(dataObject, null, 2)));
-    result.appendChild(data);
-    document.body.appendChild(result);
-  }
-
-  function startFileUpload(file) {
-    addResultWithData("File upload started:", file);
-  }
-
-  function finishFileUpload(file) {
-    addResultWithData("File upload finished:", file);
-  }
-
-  /*
-   * Event Handlers
-   */
-
-  // Test file explorer.
-  var explorer = window.Kloudless.explorer({
+  const FILE_CHOOSER_OPTIONS = {
     app_id: window.app_id,
     multiselect: true,
     link: false,
@@ -44,140 +26,155 @@
     computer: true,
     services: ['all'],
     types: ['all'],
-    display_backdrop: true
-  });
-  window.chooser1 = explorer;
+    display_backdrop: true,
+  };
 
-  // Uncomment the line below to test out event queueing
-  // till the File Explorer is ready.
-  // explorer.choose();
-
-  explorer.on('success', function(files) {
-    addResultWithData('Files chosen:', files);
-  });
-  explorer.on('selected', function(files) {
-    addResultWithData('Files selected:', files);
-  });
-
-  explorer.on('startFileUpload', startFileUpload);
-  explorer.on('finishFileUpload', finishFileUpload);
-
-  explorer.on('cancel', function() {
-    addResult('File selection cancelled.');
-  });
-  explorer.on('error', function(error) {
-    addResultWithData('An error occurred in file selection:', error);
-  });
-
-  explorer.on('addAccount', function(account) {
-    addResultWithData('Account added:', account);
-  });
-
-  explorer.on('deleteAccount', function(account) {
-    addResultWithData('Deleted account:', account);
-  });
-
-  explorer.choosify(document.getElementById('file-test'));
-
-  explorer.on('open', function() {
-    console.log("File Explorer opened.");
-  });
-
-  explorer.on('close', function() {
-    console.log("File Explorer closed.");
-  });
-
-  // Test second file explorer.
-  var second = window.Kloudless2.explorer({
+  const FOLDER_CHOOSER_OPTIONS = {
     app_id: window.app_id,
     multiselect: true,
     link: false,
     computer: true,
     services: ['file_store'],
     types: ['folders'],
-  });
-  window.chooser2 = second;
+  };
 
-  second.on('success', function(files) {
-    addResultWithData('Folder selected:', files);
-  });
-  second.on('cancel', function() {
-    addResult('Folder selection cancelled!');
-  });
-  second.on('error', function(error) {
-    addResult('An error occurred in file selection!');
-  });
-
-  second.choosify(document.getElementById('folder-test'));
-
-  // Test saver.
-  var saver = window.Kloudless.explorer({
+  const SAVER_OPTIONS = {
     app_id: window.app_id,
     flavor: 'saver',
-  });
-  window.saver = saver;
+    files: [
+      {
+        url: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/static/kloudless-logo-white.png',
+        name: 'kloudless-logo.png',
+      },
+    ],
+  };
 
-  saver.on('success', function(files) {
-    addResultWithData('Saved files:', files);
-  });
-  saver.on('cancel', function() {
-    addResult('Save cancelled.');
-  });
-  saver.on('error', function(error) {
-    addResultWithData('An error occurred in saving:', error);
-  });
-  saver.on('startFileUpload', startFileUpload);
-  saver.on('finishFileUpload', finishFileUpload);
-
-  saver.savify(document.getElementById('saver-test'), [
-    {'url': 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/webapp/sources/gdrive.png',
-     'name': 'drive-logo.png'}
-  ]);
-
-  // Test drop zone.
-  var dropzone = window.Kloudless2.dropzone({
+  const DROPZONE_OPTIONS = {
     app_id: window.app_id,
     elementId: 'dropzone',
     computer: true, // This applies to the clickExplorer.
     multiselect: true, // Must be true if you want to upload more than 1 file at a time.
+  };
+
+  /*
+   * Helper methods
+   */
+  function addResultWithData(target, event, args) {
+    const message = `${target} gets ${event} event`;
+    console.log(`${message}: `, args);
+    const result = document.createElement('p');
+    result.appendChild(document.createTextNode(message));
+    if (args) {
+      const data = document.createElement('pre');
+      data.appendChild(document.createTextNode(
+        JSON.stringify(args, null, 2),
+      ));
+      result.appendChild(data);
+    }
+    const logger = document.getElementById('logger');
+    if (logger.hasChildNodes()) {
+      logger.insertBefore(result, logger.firstChild);
+    } else {
+      logger.appendChild(result);
+    }
+  }
+
+  function create({
+    global = window.Kloudless.fileExplorer, name, type = 'chooser', options,
+    elementId,
+  }) {
+    const obj = (type === 'dropzone'
+      ? global.dropzone(options) : global.explorer(options));
+    EVENTS.forEach(event => obj.on(
+      event,
+      data => addResultWithData(name, event, data),
+    ));
+    if (type === 'dropzone') {
+      return obj;
+    }
+    const element = document.getElementById(elementId);
+    if (type === 'chooser') {
+      obj.choosify(element);
+    } else {
+      obj.savify(element);
+    }
+    return obj;
+  }
+
+  /**
+   * File Chooser
+   */
+  window.fileChooser = create({
+    name: 'File Chooser',
+    options: FILE_CHOOSER_OPTIONS,
+    elementId: 'file-chooser',
   });
-  window.dropzone = dropzone;
 
-  dropzone.on('open', function() {
-    console.log("File Explorer opened.");
+  document.getElementById('file-chooser-renew').addEventListener(
+    'click', () => {
+      window.fileChooser.destroy();
+      window.fileChooser = create({
+        name: 'File Chooser',
+        options: FILE_CHOOSER_OPTIONS,
+        elementId: 'file-chooser',
+      });
+    },
+  );
+
+  /**
+   * Folder Chooser
+   */
+  window.folderChooser = create({
+    global: window.Kloudless2,
+    name: 'Folder Chooser',
+    options: FOLDER_CHOOSER_OPTIONS,
+    elementId: 'folder-chooser',
   });
 
-  dropzone.on('close', function() {
-    console.log("File Explorer closed.");
+  /**
+   * Saver
+   */
+  window.saver = create({
+    name: 'Saver',
+    type: 'saver',
+    options: SAVER_OPTIONS,
+    elementId: 'saver',
   });
 
-  dropzone.on('success', function(files) {
-    addResultWithData('Files chosen:', files);
+  /**
+   * Dropzone
+   */
+  window.dropzone = create({
+    name: 'Dropzone',
+    type: 'dropzone',
+    options: DROPZONE_OPTIONS,
   });
 
-  dropzone.on('selected', function(files) {
-    addResultWithData('Files selected:', files);
-  });
-
-  dropzone.on('startFileUpload', startFileUpload);
-
-  dropzone.on('finishFileUpload', finishFileUpload);
-
-  dropzone.on('cancel', function() {
-    addResult('File selection cancelled.');
-  });
-
-  dropzone.on('error', function(error) {
-    addResultWithData('An error occurred in file selection:', error);
-  });
+  document.getElementById('dropzone-renew').addEventListener(
+    'click', () => {
+      window.dropzone.destroy();
+      window.dropzone = create({
+        name: 'Dropzone',
+        type: 'dropzone',
+        options: DROPZONE_OPTIONS,
+      });
+    },
+  );
 
   // Test close
-  var cl = document.getElementById('close-test');
-  cl.addEventListener('click', function() {
-    explorer.close();
-    second.close();
-    saver.close();
-    dropzone.close();
+  const closeButton = document.getElementById('close');
+  closeButton.addEventListener('click', () => {
+    window.fileChooser.close();
+    window.folderChooser.close();
+    window.saver.close();
+    window.dropzone.close();
   });
 
-})();
+  // Test setGlobalOptions
+  const updateExplorerURL = document.getElementById('update-explorer-url');
+  updateExplorerURL.addEventListener('click', () => {
+    window.Kloudless.fileExplorer.setGlobalOptions({
+      explorerUrl: 'https://static-cdn.kloudless.com/p/platform/explorer/explorer.html',
+    });
+  });
+}());

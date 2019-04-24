@@ -1,17 +1,17 @@
-var path = require('path');
+/* eslint-disable func-names */
+const path = require('path');
+const cssoStylus = require('csso-stylus');
 
-var DIR = __dirname
-  , EXPLORER_SRC = path.join(DIR, 'src', 'explorer')
-  , LOADER_SRC = path.join(DIR, 'src', 'loader')
-  , TMP_PATH = path.join(DIR, '.tmp')
-  , DEST_PATH = path.join(DIR, 'dist')
-  , EXPLORER_DEST = path.join(DEST_PATH, 'explorer')
-  , LOADER_DEST = path.join(DEST_PATH, 'loader');
+const DIR = __dirname;
+const EXPLORER_SRC = path.join(DIR, 'src', 'explorer');
+const TMP_PATH = path.join(DIR, '.tmp');
+const DEST_PATH = path.join(DIR, 'dist');
+const EXPLORER_DEST = path.join(DEST_PATH, 'explorer');
 
-module.exports = function(grunt) {
-  var inlines = {
+
+module.exports = function (grunt) {
+  const inlines = {
     EXPLORER_URL: '',
-    LOADER_CSS: ''
   };
 
   grunt.initConfig({
@@ -23,55 +23,50 @@ module.exports = function(grunt) {
       build: {
         files: [{
           src: path.join(EXPLORER_SRC, 'templates', 'explorer.jade'),
-          dest: path.join(EXPLORER_DEST, '_explorer.html')
-        }]
-      }
+          dest: path.join(EXPLORER_DEST, '_explorer.html'),
+        }],
+      },
     },
     includes: {
       files: {
         src: path.join(DIR, 'example', 'explorer.html'),
-        dest: path.join(EXPLORER_DEST, 'explorer.html')
-      }
+        dest: path.join(EXPLORER_DEST, 'explorer.html'),
+      },
     },
     // Compile Stylus files.
     stylus: {
-      loader: {
-        files: [{
-          src: path.join(LOADER_SRC, 'css', '*.styl'),
-          dest: path.join(TMP_PATH, 'css', 'loader.css')
-        }],
-      },
       // Compile file explorer Stylus templates into temporary directory.
       dev: {
         files: [{
           src: path.join(EXPLORER_SRC, 'css', 'file-explorer.styl'),
-          dest: path.join(TMP_PATH, 'css', 'explorer.css')
+          dest: path.join(TMP_PATH, 'css', 'explorer.css'),
         }],
         options: {
           compress: false,
           linenos: true,
           paths: [path.join(TMP_PATH, 'css')],
-          "include css": true,
+          'include css': true,
         },
       },
-      // Compile and minify file explorer Stylus templates into temporary directory.
+      // Compile and minify file explorer Stylus templates into temporary
+      // directory.
       deploy: {
         files: [{
           src: path.join(EXPLORER_SRC, 'css', 'file-explorer.styl'),
-          dest: path.join(TMP_PATH, 'css', 'explorer.css')
+          dest: path.join(TMP_PATH, 'css', 'explorer.css'),
         }],
         options: {
           compress: false,
           paths: [path.join(TMP_PATH, 'css')],
-          "include css": true,
-          use: [require('csso-stylus')],
+          'include css': true,
+          use: [cssoStylus],
         },
-      }
+      },
     },
     // Install dependencies.
     exec: {
       load: {
-        command: 'bower --config.analytics=false install || echo'
+        command: 'bower --config.analytics=false install || echo',
       },
     },
     // Copy files.
@@ -83,8 +78,8 @@ module.exports = function(grunt) {
           cwd: path.join(DIR, 'src', 'explorer', 'localization', 'messages'),
           dest: path.join(TMP_PATH, 'localization', 'messages'),
           expand: true,
-          filter: 'isFile'
-        }]
+          filter: 'isFile',
+        }],
       },
       // Copy vendor files from Bower into temporary directory.
       vendor: {
@@ -97,76 +92,76 @@ module.exports = function(grunt) {
           dest: path.join(TMP_PATH, 'css/'),
           flatten: true,
           expand: true,
-          filter: 'isFile'
+          filter: 'isFile',
         }, {
           src: path.join(DIR, 'node_modules', 'jquery', 'dist', 'cdn', 'jquery-2.1.1.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'fastclick', 'lib', 'fastclick.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'fastclick.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'fastclick.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'jquery-ui', 'ui', 'jquery-ui.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-ui.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-ui.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'jquery-placeholder', 'jquery.placeholder.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-placeholder.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-placeholder.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'jquery.cookie', 'jquery.cookie.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-cookie.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-cookie.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'jquery-dropdown', 'jquery.dropdown.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-dropdown.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-dropdown.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'jquery-scrollstop', 'jquery.scrollstop.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-scrollstop.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-scrollstop.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'modernizr', 'modernizr.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'modernizr.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'modernizr.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'knockout', 'dist', 'knockout.debug.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'knockout.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'knockout.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'requirejs', 'require.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'require.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'require.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'almond', 'almond.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'almond.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'almond.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'sammy', 'lib', 'sammy.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'sammy.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'sammy.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'loglevel', 'dist', 'loglevel.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'loglevel.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'loglevel.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'momentjs', 'moment.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'moment.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'moment.js'),
         }, {
           cwd: path.join(DIR, 'bower_components', 'requirejs-plugins'),
           src: '**/*',
           dest: path.join(TMP_PATH, 'js', 'vendor', 'requirejs-plugins'),
           expand: true,
-          filter: 'isFile'
+          filter: 'isFile',
         }, {
           src: [
             'cldr.js',
             path.join('cldr', 'event.js'),
-            path.join('cldr', 'supplemental.js')
+            path.join('cldr', 'supplemental.js'),
           ],
           dest: path.join(TMP_PATH, 'js', 'vendor'),
           cwd: path.join(DIR, 'bower_components', 'cldrjs', 'dist'),
           expand: true,
-          filter: 'isFile'
+          filter: 'isFile',
         }, {
           src: [
             'globalize.js',
             path.join('globalize', 'number.js'),
             path.join('globalize', 'date.js'),
-            path.join('globalize', 'message.js')
+            path.join('globalize', 'message.js'),
           ],
           dest: path.join(TMP_PATH, 'js', 'vendor'),
           cwd: path.join(DIR, 'bower_components', 'globalize', 'dist'),
           expand: true,
-          filter: 'isFile'
+          filter: 'isFile',
         }, {
           /*
            CLDR Data
@@ -185,13 +180,13 @@ module.exports = function(grunt) {
             path.join('main', '**', 'ca-gregorian.json'),
             path.join('main', '**', 'timeZoneNames.json'),
             path.join('supplemental', 'timeData.json'),
-            path.join('supplemental', 'weekData.json')
+            path.join('supplemental', 'weekData.json'),
           ],
           dest: path.join(TMP_PATH, 'localization', 'cldr-data/'),
           cwd: path.join(DIR, 'bower_components', 'cldr-data'),
           expand: true,
-          filter: 'isFile'
-        }]
+          filter: 'isFile',
+        }],
       },
       // Copy minified vendor files from Bower into temporary directory.
       vendor_min: {
@@ -204,68 +199,68 @@ module.exports = function(grunt) {
           dest: path.join(TMP_PATH, 'css/'),
           flatten: true,
           expand: true,
-          filter: 'isFile'
+          filter: 'isFile',
         }, {
           src: path.join(DIR, 'node_modules', 'jquery', 'dist', 'cdn', 'jquery-2.1.1.min.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'fastclick', 'lib', 'fastclick.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'fastclick.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'fastclick.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'jquery-ui', 'ui', 'minified', 'jquery-ui.min.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-ui.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-ui.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'jquery-placeholder', 'jquery.placeholder.min.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-placeholder.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-placeholder.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'jquery.cookie', 'jquery.cookie.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-cookie.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-cookie.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'jquery-dropdown', 'jquery.dropdown.min.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-dropdown.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-dropdown.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'jquery-scrollstop', 'jquery.scrollstop.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-scrollstop.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'jquery-scrollstop.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'modernizr', 'modernizr.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'modernizr.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'modernizr.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'knockout', 'dist', 'knockout.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'knockout.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'knockout.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'requirejs', 'require.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'require.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'require.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'sammy', 'lib', 'min', 'sammy-latest.min.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'sammy.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'sammy.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'loglevel', 'dist', 'loglevel.min.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'loglevel.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'loglevel.js'),
         }, {
           src: path.join(DIR, 'bower_components', 'momentjs', 'min', 'moment.min.js'),
-          dest: path.join(TMP_PATH, 'js', 'vendor', 'moment.js')
+          dest: path.join(TMP_PATH, 'js', 'vendor', 'moment.js'),
         }, {
           src: [
             'cldr.js',
             path.join('cldr', 'event.js'),
-            path.join('cldr', 'supplemental.js')
+            path.join('cldr', 'supplemental.js'),
           ],
           dest: path.join(TMP_PATH, 'js', 'vendor'),
           cwd: path.join(DIR, 'bower_components', 'cldrjs', 'dist'),
           expand: true,
-          filter: 'isFile'
+          filter: 'isFile',
         }, {
           src: [
             'globalize.js',
             path.join('globalize', 'number.js'),
             path.join('globalize', 'date.js'),
-            path.join('globalize', 'message.js')
+            path.join('globalize', 'message.js'),
           ],
           dest: path.join(TMP_PATH, 'js', 'vendor'),
           cwd: path.join(DIR, 'bower_components', 'globalize', 'dist'),
           expand: true,
-          filter: 'isFile'
-        }]
+          filter: 'isFile',
+        }],
       },
       // Copy library directory into temporary directory.
       lib: {
@@ -289,21 +284,21 @@ module.exports = function(grunt) {
           src: path.join('.', '**', '*.js'),
           dest: path.join(TMP_PATH, 'js/'),
           expand: true,
-          filter: 'isFile'
+          filter: 'isFile',
         }, {
           cwd: path.join(EXPLORER_SRC, 'js'),
           src: path.join('.', '**', '*.json'),
           dest: path.join(TMP_PATH, 'js/'),
           expand: true,
-          filter: 'isFile'
-        }]
+          filter: 'isFile',
+        }],
       },
       // Copy temporary directory into deployment directory.
       deploy: {
         cwd: path.join(TMP_PATH),
         src: '**',
         dest: EXPLORER_DEST,
-        expand: true
+        expand: true,
       },
       // Copy minified temporary files into deployment directory.
       deploy_min: {
@@ -323,14 +318,14 @@ module.exports = function(grunt) {
           cwd: path.join(TMP_PATH, 'localization'),
           src: '**',
           dest: path.join(EXPLORER_DEST, 'localization'),
-          expand: true
+          expand: true,
         }, {
           cwd: path.join(TMP_PATH, 'js', 'vendor', 'plupload', 'i18n'),
           src: '**',
           dest: path.join(EXPLORER_DEST, 'js', 'vendor', 'plupload', 'i18n'),
-          expand: true
-        }]
-      }
+          expand: true,
+        }],
+      },
     },
     // Compile RequireJS dependencies.
     requirejs: {
@@ -342,15 +337,15 @@ module.exports = function(grunt) {
           name: path.join('vendor', 'almond'),
           include: ['app'],
           out: path.join(TMP_PATH, 'explorer.js'),
-        }
-      }
+        },
+      },
     },
     // Compile and minify JS files.
     uglify: {
       options: {
         compress: {
-          global_defs: inlines
-        }
+          global_defs: inlines,
+        },
       },
       // Compile file explorer JS into deployment directory.
       dev: {
@@ -358,28 +353,17 @@ module.exports = function(grunt) {
           mangle: false,
           beautify: true,
           compress: {
-            sequences    : false,
-            conditionals : false,
-            comparisons  : false,
-            booleans     : false,
-            loops        : false,
-            if_return    : false,
-            join_vars    : false,
-            cascade      : false,
-            global_defs  : inlines
-          }
+            sequences: false,
+            conditionals: false,
+            comparisons: false,
+            booleans: false,
+            loops: false,
+            if_return: false,
+            join_vars: false,
+            cascade: false,
+            global_defs: inlines,
+          },
         },
-        files: [{
-          src: path.join(LOADER_SRC, 'js/*.js'),
-          dest: path.join(LOADER_DEST, 'js', 'loader.js'),
-        }],
-      },
-      // Compile and minify file explorer JS into deployment directory.
-      deploy: {
-        files: [{
-          src: path.join(LOADER_SRC, 'js/*.js'),
-          dest: path.join(LOADER_DEST, 'js', 'loader.js'),
-        }],
       },
     },
     // Clean temporary and deployment directories.
@@ -387,8 +371,8 @@ module.exports = function(grunt) {
       temp: [TMP_PATH],
       deploy: [DEST_PATH],
       options: {
-        force: true
-      }
+        force: true,
+      },
     },
     // Watch source files for changes.
     watch: {
@@ -399,7 +383,7 @@ module.exports = function(grunt) {
           spawn: false,
         },
       },
-    }
+    },
   });
 
   grunt.loadNpmTasks('grunt-contrib-jade');
@@ -419,11 +403,6 @@ module.exports = function(grunt) {
   // Options
   inlines.EXPLORER_URL = grunt.option('url') || 'http://localhost:3000/file-explorer';
 
-  // Read in loader.css
-  grunt.registerTask('loader_css', "Load loader.css into memory.", function() {
-    inlines.LOADER_CSS = grunt.file.read(path.join(TMP_PATH, 'css', 'loader.css'));
-  });
-
   // Build all dependencies.
   grunt.registerTask('build', [
     'exec:load',
@@ -434,13 +413,11 @@ module.exports = function(grunt) {
     'clean:deploy',
     'jade',
     'includes',
-    'stylus:loader',
     'stylus:dev',
-    'loader_css',
     'uglify:dev',
     'copy:app',
     'copy:localization',
-    'copy:deploy'
+    'copy:deploy',
   ]);
 
   // Rebuild everything to dev targets.
@@ -448,7 +425,7 @@ module.exports = function(grunt) {
     'build',
     'copy:vendor',
     'copy:lib',
-    'default'
+    'default',
   ]);
 
   // Build to deployment targets.
@@ -461,9 +438,7 @@ module.exports = function(grunt) {
     'copy:lib',
     'jade',
     'includes',
-    'stylus:loader',
     'stylus:deploy',
-    'loader_css',
     'uglify:deploy',
     'copy:app',
     'requirejs',
