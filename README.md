@@ -22,7 +22,7 @@ storage services:
   </tbody>
 </table>
 
-[Visit our JSBin example of the File Explorer!](https://output.jsbin.com/tuwodin/)
+### [Click here to visit our File Explorer demo!](https://output.jsbin.com/tuwodin/)
 
 <p align="center">
   <img src="img/demo.gif" width="650" />
