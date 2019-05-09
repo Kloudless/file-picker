@@ -439,7 +439,6 @@ module.exports = function (grunt) {
     'jade',
     'includes',
     'stylus:deploy',
-    'uglify:deploy',
     'copy:app',
     'requirejs',
     'copy:deploy_min',
