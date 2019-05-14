@@ -212,25 +212,6 @@
                     margin-left: 24px
                     margin-top: 9px
                     display: none;
-    div.iewrapper
-        height:300px
-        width:650px
-        overflow-x:hidden
-        overflow-y:auto
-        border-bottom:1px solid #ccc
-        box-shadow: 0px 2px 0px rgba(255, 255, 255, 0.8)
-        tbody
-            height:auto
-            &:last-of-type
-                min-height:297px
-            tr
-                height:37px
-                min-height:0px
-                &.newfolder
-                    padding-bottom:45px
-                td
-                    height:37px
-                    min-height:0px
     table
         display:block
         background:#fff
@@ -243,7 +224,6 @@
         left:0
         bottom:0
         right:0
-        overflow:auto
         thead
             position:relative
             display:block
@@ -296,6 +276,10 @@
             margin-top:0px
             display:block
             padding:0 20px
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            height: 297px;
         tbody tr
             display:block
             width:100%

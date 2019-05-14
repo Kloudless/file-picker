@@ -1,8 +1,8 @@
-.files
+.files(data-bind="css: { savername: files.all().length == 1 && flavor() == 'saver' }")
   .filesinner
     header
       include selector
-
+      // ko if: $root.isDesktop
       //- Actions
       .actions(data-bind='with: files')
         // ko if: allow_newdir
@@ -59,9 +59,20 @@
             a(data-bind='click: up.bind(null, 0)')
               div.foldertext(data-bind='text: breadcrumbs()[(breadcrumbs().length - 1)]')
         // /ko
-
+      // /ko
+    // ko ifnot: $root.isDesktop
+    .control-panel(data-bind='with: files')
+      .icon-buttons
+        .icon-button(data-bind='click: newdir')
+          .icon-new-folder
+        .icon-button(data-bind='click: refresh')
+          .icon-new-refresh
+      input(type="search", placeholder="Search", data-bind="textInput: searchQuery, translate: {placeholder: { message: \"files/search\" }}")
+      select.navigator(data-bind="options: breadcrumbs, value:  breadcrumbs().slice().reverse()[0], event:{ change: navUp}")
+    // /ko
     //- Current directory view
-    table(data-bind='with: files').clickable
+    table#fs-scroller(data-bind='with: files').clickable
+      // ko if: $root.isDesktop
       thead
         tr
           th(data-bind='click: sort("name"), translate: "files/name"') Name
@@ -73,68 +84,71 @@
           th(data-bind='click: sort("recent"), translate: "files/updated"') Updated
             .arrow-up#sort-recent-up
             .arrow-down#sort-recent-down
-    #fs-scroller.iewrapper
-      table(data-bind='with: files').clickable
+      // /ko
+
+      tbody#fs-view-body(data-bind='finderSelect: $data')
         // ko if: cwd().length == 0 && !$root.loading()
-        tbody
-          tr.info-row(align="center")
-            td.info-cell
-              div(data-bind='translate: "files/nofilesfound"') No Files Found
+        tr.info-row(align="center")
+          td.info-cell
+            div(data-bind='translate: "files/nofilesfound"') No Files Found
         // /ko
         // ko if: cwd().length > 0 && cwd()[0].type == "newfolder"
-        tbody
-          tr.newfolder()
-            td.newfolder()
-              span()
-                div.foldericon()
-              span()
-                input.new-folder-name(data-bind='attr: {value: "Untitled Folder"}, translate: {value: { message: "files/untitledfolder" }}')
-              span(data-bind='click: mkdir')
-                span.save-button.inline-button Save
-              span(data-bind='click: rmdir')
-                span.cancel-button.inline-button
-                  div.closeicon()
-            td.size
-            td.updated()
+        tr.newfolder()
+          td.newfolder()
+            span()
+              div.foldericon()
+            span()
+              input.new-folder-name(data-bind='attr: {value: "Untitled Folder"}, translate: {value: { message: "files/untitledfolder" }}')
+            span(data-bind='click: mkdir')
+              span.save-button.inline-button Save
+            span(data-bind='click: rmdir')
+              span.cancel-button.inline-button
+                div.closeicon()
+          // ko if: $root.isDesktop
+          td.size
+          td.updated()
+          // /ko
 
         // /ko
-        tbody#fs-view-body(data-bind='finderSelect: $data')
-          // ko foreach: cwd
-          // ko ifnot: type == "disabled" || type == "newfolder"
-          tr(data-bind="click: $parent.navigate, attr: {'data-type': type, 'title': path || ' '}")
-            td
-              span(data-bind='if: type == "folder"')
-                div.foldericon()
-              span(data-bind='if: type == "file"')
-                div.fileicon()
-              span(data-bind='text: name')
+        // ko foreach: cwd
+        // ko ifnot: type == "disabled" || type == "newfolder"
+        tr(data-bind="click: $parent.navigate, attr: {'data-type': type, 'title': path || ' '}")
+          td
+            span(data-bind='if: type == "folder"')
+              div.foldericon()
+            span(data-bind='if: type == "file"')
+              div.fileicon()
+            span(data-bind='text: name')
+          // ko if: $root.isDesktop
+          // ko if: (friendlySize == null || friendlySize == "")
+          td.size
+          // /ko
+          // ko ifnot: (friendlySize == null || friendlySize == "")
+          td.size(data-bind='translate: { html: friendlySize }')
+          // /ko
 
-            // ko if: (friendlySize == null || friendlySize == "")
-            td.size
-            // /ko
-            // ko ifnot: (friendlySize == null || friendlySize == "")
-            td.size(data-bind='translate: { html: friendlySize }')
-            // /ko
-
-            // ko if: (modified == null || modified == "") && created
-            td.updated(data-bind='formatDate: created')
-            // /ko
-            // ko if: (modified == null || modified == "") && (created == null || created == "")
-            td.updated
-            // /ko
-            // ko ifnot: modified == null || modified == ""
-            td.updated(data-bind='formatDate: modified')
-            // /ko
+          // ko if: (modified == null || modified == "") && created
+          td.updated(data-bind='formatDate: created')
           // /ko
-          // ko if: type == "disabled"
-          tr.disabled(data-bind='if: type == "disabled"')
-            td
-              span
-                div.fileicon()
-              span(data-bind='text: name')
-            td.updated(data-bind='formatDate: modified')
+          // ko if: (modified == null || modified == "") && (created == null || created == "")
+          td.updated
+          // /ko
+          // ko ifnot: modified == null || modified == ""
+          td.updated(data-bind='formatDate: modified')
           // /ko
           // /ko
+        // /ko
+        // ko if: type == "disabled"
+        tr.disabled(data-bind='if: type == "disabled"')
+          td
+            span
+              div.fileicon()
+            span(data-bind='text: name')
+          // ko if: $root.isDesktop
+          td.updated(data-bind='formatDate: modified')
+          // /ko
+        // /ko
+        // /ko
 
     //- Footer buttons
     footer
@@ -144,7 +158,7 @@
           div.error-text(data-bind='text: error, attr: {title: error}')
           a.close
         // ko if: files.all().length == 1 && flavor() == 'saver'
-        input.kloudless-saver-name(data-bind='value: files.all()[0].name')
+        input.kloudless-saver-name(type="text", data-bind='value: files.all()[0].name')
         // /ko
         .buttonscontainer
           a(data-bind='click: cancel, translate: "global/cancel"').button.reg Cancel

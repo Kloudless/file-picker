@@ -1,28 +1,82 @@
+@import 'variables'
+
+$plupload_footer_h = 60px
+$new_folder_non_input_w = 200px
+$block_h = 48px
+
+$header_h = $block_h * 1
+$control_panel_h = $block_h * 3
+$footer_h = $block_h * 2
+$saver_name_h = $block_h * 1
+
 .mobile-view
+    .files.savername
+        table tbody
+            height: 'calc(100vh - %s - %s - %s - %s)' % ($header_h $control_panel_h $footer_h $saver_name_h);
+        footer
+            height: 144px;
     .actions
         width 100%
     .buttonscontainer
-        position inherit
+        height: $block_h;
+        position: static;
         .button
-            width 100%
-            margin-top 5px
-            font-size 2em
-            padding 50px
+            margin: 0;
+            border-radius: 0;
+            box-shadow: none;
+            width: 50%;
+            line-height: $block_h;
     .computer
+        padding: 0;
         header
+            margin: 0;
+            height: $block_h;
             .accountselect
+                margin: 0;
+                float: none;
                 width 100%
-            button.accountsbutton div.name
-                width auto
-                height auto
+            button.accountsbutton
+                height: $block_h;
+                line-height: 42px;
+                div.name
+                    width auto
+                    height auto
         .buttonscontainer
-            right 0
+            float: none !important;
+        #uploader .plupload_wrapper .plupload_container
+            .ui-container, .relativer
+                height: 'calc(100vh - %s - %s - %s)' % ($header_h $plupload_footer_h $footer_h);
+            table.plupload_filelist:first-of-type thead
+                display: none;
+            .plupload_filelist_content td
+                &:nth-child(1)
+                    width: 78%;
+                &:nth-child(2)
+                    width: 20%;
+                    .progress_bar_container
+                        display: none;
+                    .plupload_file_percent
+                        width: 100%;
+                &:nth-child(3)
+                    display: none;
+            .plupload_filelist_footer
+                height: 60px;
+                td
+                    &:nth-child(2), &:nth-child(3)
+                        display: none;
+                    &.plupload_file_name, &.plupload_file_size
+                        width: 50%;
+
     .right
         float inherit
     .files
-        padding inherit
+        padding: 0;
         header
+            margin: 0;
+            height: $block_h;
             .accountselect
+                margin: 0;
+                float: none;
                 height auto
                 width 100%
                 div#account-dropdown.dropdown
@@ -30,7 +84,6 @@
                     width 100%
                     ul.dropdown-menu
                         li
-                            font-size 2em
                             padding 1em
                             height auto
                             line-height inherit
@@ -38,31 +91,24 @@
                                 width auto
                                 height auto
                                 vertical-align: bottom
-                            img.accounticon
-                                height 30px
-                                width auto
                     ul.dropdown-menu
                         width 100%
                         max-width 100%
                         max-height inherit
                 button.accountsbutton
-                    padding 1.5em
-                    font-size 2em
-                    height auto
+                    height: $block_h;
+                    line-height: 42px;
                     div.name
-                        width auto
-                        height auto
-                    img.accounticon
                         width auto
                         height auto
             .actions
                 float inherit
             .new-folder-button
-                background url(https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/icons_fileexplorer_large.png) 0px -345px no-repeat
+                background url($icons_explorer_lg) 0px -345px no-repeat
                 width 112px
                 height 112px
             .refresh-button
-                background url(https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/icons_fileexplorer_large.png) 0px -900px no-repeat
+                background url($icons_explorer_lg) 0px -900px no-repeat
                 width 75px
                 height 112px
                 margin-right 15px
@@ -71,12 +117,12 @@
                 float inherit
                 #search-enable-button.search-active
                     background-position: -1px -214px
-                #search-enable-button
-                    background url(https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/icons_fileexplorer_large.png) 0px -1015px no-repeat
+                #search-enable-butt
+                    background url($icons_explorer_lg) 0px -1015px no-repeat
                     width 112px
                     height 112px
                 #search-back-button
-                    background url(https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/icons_fileexplorer_large.png) 0px -770px no-repeat
+                    background url($icons_explorer_lg) 0px -770px no-repeat
                     width 87px
                     height 112px
                 #search-query
@@ -95,7 +141,7 @@
                         font-size 2em
                         line-height 2em
                         a div.foldericon
-                            background url("https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/file_explorer_spritesheet.png") 0px -110px no-repeat
+                            background url($explorer_spritesheet) 0px -110px no-repeat
                             width 60px
                             height 60px
             div.crumbutton
@@ -104,7 +150,7 @@
                 &:before
                     width 60px
                     height 60px
-                    background url("https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/file_explorer_spritesheet.png") -4px -124px no-repeat
+                    background url($explorer_spritesheet) -4px -124px no-repeat
                     margin-top 0
                     left 8px
                 ul.crumbmenu
@@ -117,88 +163,82 @@
             display inherit
             height auto
             width 100%
+            top: 0;
             thead
                 height auto
                 tr th
-                    font-size 2.5em
                     &:first-child
-                        adding-left 0
                         line-height inherit
                         float none
-                    &:nth-child(2)
-                        width 215px
-            tbody tr td
-                font-size 2.5em
-                &:nth-child(2), &:nth-child(3)
-                    width 215px
+            tbody
+                padding: 0;
+                width: 100%;
+                height: 'calc(100vh - %s - %s - %s)' % ($header_h $control_panel_h $footer_h);
+                tr td
+                    &:first-child
+                        float: none;
             &.clickable tbody tr
                 height auto
-                &.newfolder
-                    padding-bottom 15px
-                    td
-                        width 20em !important
-                        height 2em !important
-                        line-height inherit
-                        font-size 2em !important
+                td
+                    padding: 0;
                 td span
+                    &[data-bind^="text"]
+                        display: inline-block;
+                        width: 80vw;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        vertical-align: middle;
+                        font-size: 14px;
                     &.inline-button
-                        font-size inherit
+                        font-size: 14px;
+                        font-weight: 400;
                     input
-                        height auto
+                        font-size: 14px;
+                        width: 'calc(100vw - %s)' % $new_folder_non_input_w;
                     div
-                        width 60px
+                        width 45px
                         height 60px
                         vertical-align middle
                         margin-right inherit
                         margin-bottom inherit
                         display inline-block
+                        &.closeicon, &.fileicon, &.foldericon
+                            transform: scale(0.5)
                         &.closeicon
-                            background url(https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/file_explorer_spritesheet.png) 15px -367px no-repeat
+                            background url($explorer_spritesheet) 15px -367px no-repeat
                         &.fileicon
-                            background url(https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/file_explorer_spritesheet.png) 0 0 no-repeat
+                            background url($explorer_spritesheet) 0 0 no-repeat
                         &.foldericon
-                                background url(https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/file_explorer_spritesheet.png) 0px -60px no-repeat
-    #fs-scroller
-        height 60em
-        width 100%
-    div.iewrapper
-        height 60em
-        width 100%
-        tbody tr td
-            height 60px
-            min-height 0
-            line-height inherit
+                            background url($explorer_spritesheet) 0px -60px no-repeat
     
     .textcontainer
-        font-size 2em
         width 100%
         position inherit
-        margin-top 35px
+        height: $block_h;
         text-align center
         span
             font-size inherit
         img
             height auto
+            transform: scale(0.5)
     .kloading
-        background: url(https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/ext-assets/loading_21x21.gif) no-repeat center center;
-        width: 655px;
-        background-size: 60px;
-        height: 90px;
-        top: 741px;
-        left: 160px;
+        background: url($loading_icon) no-repeat center center;
+        width: 21px;
+        background-size: 21px;
+        height: 21px;
+        top: 'calc(%s - 50vh - 10.5px)' % $footer_h;
+        left: calc(50vw - 10.5px);
         position: absolute;
         z-index: 1;
         
     div.accounts
-        .intro-message, .logout-message
-            font-size 2em
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
         li.linked-service
             div.servicename
-                width 100%
-                font-size: 1.5em
+                display: none;
             div.accounts
                 width 100%
-                font-size: 1.5em
                 ul.accountnames
                     li.account
                         margin: 0;
@@ -208,29 +248,73 @@
                             width auto
                             height: auto
                             line-height 60px
+                            img.servicelogo, a
+                                vertical-align: middle;
+                            img.servicelogo
+                                display: inline-block;
                             a
-                                font-size 2em
+                                display: inline-block;
+                                text-overflow: ellipsis;
+                                overflow: hidden;
+                                max-width: 200px;
                     a.alert
-                        width 75px
-                        height 45px
-                        background url(https://s3-us-west-2.amazonaws.com/kloudless-static-assets/common/explorer/file_explorer_spritesheet.png) 0px -426px no-repeat
-                        margin-top 8px;
+                        width: 22px;
+                        height: 22px;
+                        background: url($explorer_spritesheet) 0px -910px no-repeat
+                        margin-top: 18px;
                 a.closeexplorer
                     top 25px
                     right 28px
                     width 25px
                     height 25px
-                    background unquote("url('https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/api/icons_fileexplorer.png')") 0px -312px no-repeat
+                    background url($icons_sheet) 0px -312px no-repeat
                     background-size 50px
         .connectmore div.service
             width 100%
-            font-size 1.5em
-            span.servicename
-                font-size: 1em
-        .back
-            font-size: 2em
     .medium-block-grid-4 > li
         width 50%
         text-align center
-        
-    
+
+    .control-panel
+        .icon-buttons
+            display: flex;
+        .icon-button
+            display: flex;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #ccc;
+            height: $block_h;
+        .icon-new-folder, .icon-new-refresh
+            transform: scale(0.3);
+            width: 112px;
+            height: 80px;
+        .icon-new-folder
+            background url($icons_explorer_lg) 0px -345px no-repeat
+        .icon-new-refresh
+            background url($icons_explorer_lg) 0px -900px no-repeat
+        input, select
+            height: $block_h;
+            margin: 0;
+        input
+            border: 1px solid #cccccc;
+            border-radius: 0;
+
+    footer
+        height: 96px;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        div.error
+            top: $block_h;
+            height: $block_h;
+        div.row
+            position: relative;
+            input.kloudless-saver-name
+                border-radius: 0;
+                font-size: 14px;
+                height: $block_h;
+                width: 100%;
+                float: none;
+                margin: 0;

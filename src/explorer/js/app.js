@@ -126,6 +126,7 @@
 
         // The current view: alternates between 'files', 'accounts', 'computer', etc.
         current: ko.observable(startView),
+        isDesktop: !util.isMobile,
 
         // Save all files in FileManager to the selected directory
         save: function() {
@@ -746,9 +747,10 @@
             var self = this(); // gimmick to register observer with KO
 
             if (Object.keys(self).length === 0) { // check to make sure an active account is set
-              return null;
+              return util.isMobile ? ['/'] : null;
             }
-            return self.filesystem().path();
+            var paths = self.filesystem().path();
+            return util.isMobile ? ['/'].concat(paths) : paths;
           }, self.manager.active),
           // Return active service
           service: ko.computed(function() {
@@ -801,6 +803,12 @@
             });
           },
           // Breadcrumb navigation.
+          navUp: function(obj, event) {
+            var index = this.breadcrumbs().indexOf($('.navigator').val());
+            var level = this.breadcrumbs().length - index - 1;
+            level = level < 0 ? 0 : level;
+            this.up(level);
+          },
           up: function(count) {
             logger.debug('Going up ' + count + ' directories.');
 
@@ -847,6 +855,7 @@
           },
           refresh: function() {
             logger.debug('Refreshing current directory');
+            $('input[type="search"]').val('');
             self.view_model.loading(true);
             self.manager.active().filesystem().refresh(true, function(err, result) {
               self.view_model.loading(false);
