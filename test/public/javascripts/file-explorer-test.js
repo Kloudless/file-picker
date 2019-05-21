@@ -16,6 +16,7 @@
     'startFileUpload',
     'finishFileUpload',
     'logout',
+    'drop',
   ];
 
   const FILE_CHOOSER_OPTIONS = {

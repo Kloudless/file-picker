@@ -101,7 +101,7 @@ stories.addParameters({
   },
 });
 
-stories.add('Chooser/Saver/HOC', () => ({
+stories.add('Chooser/Saver/createSaver/createChooser', () => ({
   props: genProps(COMPONENTS),
   render(createElement) {
     return createElement(

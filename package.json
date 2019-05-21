@@ -1,6 +1,6 @@
 {
   "name": "@kloudless/file-explorer",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "author": "Kloudless <hello@kloudless.com> (https://kloudless.com)",
   "description": "The Kloudless File Explorer is a JavaScript library that allows your users to browse and select files and folders from their storage services. It comes in two modes: a chooser and a saver.",
   "main": "./dist/loader/js/interface.js",
@@ -27,12 +27,16 @@
     "build:loader": "webpack --config webpack.loader.config.js",
     "transpile": "babel src/loader/js -d dist/loader/js --ignore src/loader/js/webpack",
     "storybook:vue": "npm run storybook --prefix storybook-vue/",
-    "build:storybook": "npm run build --prefix ./storybook-vue",
+    "storybook:react": "npm run storybook --prefix storybook-react",
+    "build:storybook": "npm run build --prefix ./storybook-vue && npm run build --prefix ./storybook-react",
     "deploy:storybook": "npm run build:storybook && storybook-to-ghpages --remote=github --existing-output-dir=.demo",
     "prepack": "bash generate_npmignore.sh && npm install && npm run transpile && npm run build:loader",
     "postpack": "rm -f .npmignore"
   },
-  "dependencies": {},
+  "dependencies": {
+    "hoist-non-react-statics": "3.3.0",
+    "prop-types": "^15.7.2"
+  },
   "devDependencies": {
     "async": "0.9.0",
     "bower": "1.3.4",
@@ -69,6 +73,8 @@
     "grunt-webpack": "^3.1.3",
     "knockout": "^3.5.0",
     "moment": "^2.24.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
     "webpack": "^4.29.6",
     "webpack-cli": "3.3.0",
     "stylus": "0.48.1"

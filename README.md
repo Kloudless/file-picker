@@ -50,6 +50,7 @@ storage services:
     * [Methods](#methods-1)
     * [Example](#example)
 * [File Explorer with Vue](#file-explorer-with-vue)
+* [File Explorer with React](#file-explorer-with-react)
 * [Browser Support](#browser-support)
 * [Migration Guide](#migration-guide)
   * [From v1.0.0 to v1.0.1](#from-v100-to-v101)
@@ -796,6 +797,10 @@ dropzone.on('success', function(files) {
 ## File Explorer with Vue
 
 See [File Explorer with Vue](./README.vue.md).
+
+## File Explorer with React
+
+See [File Explorer with React](./README.react.md).
 
 ## Browser Support
 
