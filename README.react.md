@@ -1,4 +1,4 @@
-> React components for the Kloudless File Explorer
+# React components for the Kloudless File Explorer
 
 This project is a thin React wrapper around the
 [Kloudless File Explorer](https://github.com/Kloudless/file-explorer). We
