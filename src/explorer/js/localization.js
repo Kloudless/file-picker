@@ -30,18 +30,174 @@
    *    }
    */
   var supportedLocales = {
-    'en': {
-      id: 'en',
-      messages: 'en.json',
-      plUpload_i18n: 'en.js',
+    'cs-CZ': {
+      id: 'cs-CZ',
+      messages: 'cs-CZ.json',
+      plUpload_i18n: 'cs-CZ.js',
       dateTimeFormat: 'MMMdhm' // special case default en to 12 hour clock
     },
-    'fr': {
-      id: 'fr',
-      messages: 'fr.json',
-      plUpload_i18n: 'fr.js',
-      dateTimeFormat: 'MMMdhm' // special case default en to 12 hour clock
+    'da-DK': {
+      id: 'da-DK',
+      messages: 'da-DK.json',
+      plUpload_i18n: 'da-DK.js',
+      dateTimeFormat: 'MMMdhm'
     },
+    'de-DE': {
+      id: 'de-DE',
+      messages: 'de-DE.json',
+      plUpload_i18n: 'de-DE.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'en-GB': {
+      id: 'en-GB',
+      messages: 'en-GB.json',
+      plUpload_i18n: 'en-GB.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'en-US': {
+      id: 'en-US',
+      messages: 'en-US.json',
+      plUpload_i18n: 'en-US.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'es-ES': {
+      id: 'es-ES',
+      messages: 'es-ES.json',
+      plUpload_i18n: 'es-ES.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'es-LA': {
+      id: 'es-LA',
+      messages: 'es-LA.json',
+      plUpload_i18n: 'es-LA.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'et-EE': {
+      id: 'et-EE',
+      messages: 'et-EE.json',
+      plUpload_i18n: 'et-EE.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'fi-FI': {
+      id: 'fi-FI',
+      messages: 'fi-FI.json',
+      plUpload_i18n: 'fi-FI.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'fr-CA': {
+      id: 'fr-CA',
+      messages: 'fr-CA.json',
+      plUpload_i18n: 'fr-CA.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'fr-FR': {
+      id: 'fr-FR',
+      messages: 'fr-FR.json',
+      plUpload_i18n: 'fr-FR.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'he': {
+      id: 'he',
+      messages: 'he.json',
+      plUpload_i18n: 'he.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'id-ID': {
+      id: 'id-ID',
+      messages: 'id-ID.json',
+      plUpload_i18n: 'id-ID.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'it-IT': {
+      id: 'it-IT',
+      messages: 'it-IT.json',
+      plUpload_i18n: 'it-IT.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'ja-JP': {
+      id: 'ja-JP',
+      messages: 'ja-JP.json',
+      plUpload_i18n: 'ja-JP.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'ko-KR': {
+      id: 'ko-KR',
+      messages: 'ko-KR.json',
+      plUpload_i18n: 'ko-KR.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'nl-NL': {
+      id: 'nl-NL',
+      messages: 'nl-NL.json',
+      plUpload_i18n: 'nl-NL.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'pl-PL': {
+      id: 'pl-PL',
+      messages: 'pl-PL.json',
+      plUpload_i18n: 'pl-PL.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'pt-BR': {
+      id: 'pt-BR',
+      messages: 'pt-BR.json',
+      plUpload_i18n: 'pt-BR.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'pt-PT': {
+      id: 'pt-PT',
+      messages: 'pt-PT.json',
+      plUpload_i18n: 'pt-PT.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'ro-RO': {
+      id: 'ro-RO',
+      messages: 'ro-RO.json',
+      plUpload_i18n: 'ro-RO.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'ru-RU': {
+      id: 'ru-RU',
+      messages: 'ru-RU.json',
+      plUpload_i18n: 'ru-RU.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'sv-SE': {
+      id: 'sv-SE',
+      messages: 'sv-SE.json',
+      plUpload_i18n: 'sv-SE.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'th-TH': {
+      id: 'th-TH',
+      messages: 'th-TH.json',
+      plUpload_i18n: 'th-TH.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'tr-TR': {
+      id: 'tr-TR',
+      messages: 'tr-TR.json',
+      plUpload_i18n: 'tr-TR.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'vi-VN': {
+      id: 'vi-VN',
+      messages: 'vi-VN.json',
+      plUpload_i18n: 'vi-VN.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'zh-CN': {
+      id: 'zh-CN',
+      messages: 'zh-CN.json',
+      plUpload_i18n: 'zh-CN.js',
+      dateTimeFormat: 'MMMdhm'
+    },
+	'zh-HANT': {
+      id: 'zh-HANT',
+      messages: 'zh-HANT.json',
+      plUpload_i18n: 'zh-HANT.js',
+      dateTimeFormat: 'MMMdhm'
+    }
   };
 
   define([
