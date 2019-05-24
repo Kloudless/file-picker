@@ -1,5 +1,5 @@
 {
-  "en": {
+  "fr": {
     "global": {
       "select": "SelectFR",
       "cancel": "CancelFR",
@@ -25,7 +25,7 @@
       "connectedaccounts": "Connected accounts",
       "logout": "logout",
       "manage": "Manage your cloud storage accounts here.",
-      "chooseaccount": "Welcome! Please choose a service to connect",
+      "chooseaccount": "Welcome! Please choose a service to connect FR",
       "connectmore": "Connect more!",
       "upload": "Upload",
       "uploadfromcomputer": "Upload from your computer"
