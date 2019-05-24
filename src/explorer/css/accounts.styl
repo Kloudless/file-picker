@@ -110,16 +110,16 @@ div.accounts
             line-height:60px
             padding:0 20px
             float:left
+            img.servicelogo
+                width: 28px;
+                height: 22px;
+                margin-top: -3px;
+                margin-right: 4px;
             &.servicename
                 width:30%
                 white-space:nowrap
                 overflow:hidden
                 text-overflow:ellipsis
-                img.servicelogo
-                    width:28px
-                    height: 22px
-                    margin-top:-3px
-                    margin-right:4px
                 @media only screen and (max-width: 420px)
                     span
                         display:none
@@ -156,6 +156,8 @@ div.accounts
                         height: 20px
                         line-height: 20px
                         cursor:pointer
+                        img.servicelogo
+                            display: none;
                         a
                             color:#000000
                             &:hover

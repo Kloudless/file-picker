@@ -52,6 +52,7 @@ storage services:
 * [File Explorer with Vue](#file-explorer-with-vue)
 * [File Explorer with React](#file-explorer-with-react)
 * [Browser Support](#browser-support)
+  * [Work with mobile devices](#work-with-mobile-devices)
 * [Migration Guide](#migration-guide)
   * [From v1.0.0 to v1.0.1](#from-v100-to-v101)
 * [Contributing](#contributing)
@@ -795,6 +796,29 @@ See [File Explorer with React](./README.react.md).
 * IE 11+
 * Safari 6+
 * Opera 15+
+
+### Work with mobile devices
+To use the Kloudless File Explorer on devices with narrow screens, please add a
+[Viewport meta tag](https://developer.mozilla.org/en-US/docs/Mozilla/Mobile/Viewport_meta_tag)
+to the web page launching the File Explorer. This ensures the File Explorer uses styling
+appropriate for mobile screen sizes.
+
+The meta tag assumes that your entire web page renders well in narrow screens 
+since it applies to your page as a whole and not just the File Explorer.
+Please test out your page's usability if you are adding the meta tag for the
+first time.
+
+Here is an example meta tag:
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+If your page benefits from preventing some devices such as iPhones from
+zooming in on input fields, you can also add in the `user-scalable=no` option 
+as shown below. Input fields such as `<input>` and `<select>` are used in the
+File Explorer as well.
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
 
 ## Migration Guide
 

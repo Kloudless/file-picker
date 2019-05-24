@@ -1,4 +1,10 @@
 // Static assets
-$static_path = "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com"
+$base_url = 'https://s3-us-west-2.amazonaws.com'
+
+$static_path = $base_url + '/static-assets.kloudless.com'
 $icons_sheet = $static_path + '/api/icons_fileexplorer.png'
 $loading_icon = $static_path + '/ext-assets/loading_21x21.gif'
+
+$explorer_path = $base_url + '/kloudless-static-assets/common/explorer'
+$icons_explorer_lg = $explorer_path + '/icons_fileexplorer_large.png'
+$explorer_spritesheet = $explorer_path + '/file_explorer_spritesheet.png'

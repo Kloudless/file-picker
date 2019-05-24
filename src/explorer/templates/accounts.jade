@@ -33,6 +33,7 @@
                 ul.accountnames
                   li.account
                     div
+                      img.servicelogo(data-bind='attr: {src: $root.services()[service].logo}')
                       a(data-bind='click: $root.setLocation.bind($data, "#/files/" + account), text: account_name')
                     //-.unlink
                     // ko if: $root.enable_logout
@@ -49,6 +50,7 @@
                 ul.accountnames
                   li.account
                     div
+                      img.servicelogo(data-bind='attr: {src: $root.static("/webapp/sources/computer.png")}')
                       a(data-bind='click: $root.setLocation.bind($data, "#/computer"), text: "Upload from your computer", translate: "accounts/uploadfromcomputer"')
             // /ko
 
