@@ -2,6 +2,7 @@
                   prefer-destructuring */
 /* global EXPLORER_URL */
 import '../css/modal.styl';
+import '../../explorer/js/polyfills';
 
 /**
  * Define the module and the interface with which developers interact.

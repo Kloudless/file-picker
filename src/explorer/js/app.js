@@ -804,6 +804,11 @@
           },
           // Breadcrumb navigation.
           navUp: function(obj, event) {
+            // prevent up() from being called recursively (by `change` binding)
+            if (obj.navTimer) return;
+            obj.navTimer = setTimeout(function() {
+              delete obj.navTimer;
+            }, 1000);
             var index = this.breadcrumbs().indexOf($('.navigator').val());
             var level = this.breadcrumbs().length - index - 1;
             level = level < 0 ? 0 : level;
