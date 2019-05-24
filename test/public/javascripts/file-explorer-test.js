@@ -28,6 +28,7 @@
     services: ['all'],
     types: ['all'],
     display_backdrop: true,
+    locale: 'fr'
   };
 
   const FOLDER_CHOOSER_OPTIONS = {
@@ -37,6 +38,7 @@
     computer: true,
     services: ['file_store'],
     types: ['folders'],
+    locale: 'fr'
   };
 
   const SAVER_OPTIONS = {

@@ -35,7 +35,13 @@
       messages: 'en.json',
       plUpload_i18n: 'en.js',
       dateTimeFormat: 'MMMdhm' // special case default en to 12 hour clock
-    }
+    },
+    'fr': {
+      id: 'fr',
+      messages: 'fr.json',
+      plUpload_i18n: 'fr.js',
+      dateTimeFormat: 'MMMdhm' // special case default en to 12 hour clock
+    },
   };
 
   define([
@@ -104,16 +110,16 @@
           // special case for the test locale.  Use 'en'
           locale = 'en';
         }
-        var effectiveLocale = this.getSupportedLocales()[locale];
+        var effectiveLocale = locUtil.getSupportedLocales()[locale];
         if (!effectiveLocale) {
           // no exact match, try the language code
           var language = locale.split('-')[0]
-          effectiveLocale = this.getSupportedLocales()[language];
+          effectiveLocale = locUtil.getSupportedLocales()[language];
         }
 
         // return the detected locale if found, or return the default locale
         // if no suitable locale is found
-        return effectiveLocale || this.getSupportedLocales()[DEFAULT_LOCALE];
+        return effectiveLocale || locUtil.getSupportedLocales()[DEFAULT_LOCALE];
       },
 
 
@@ -126,7 +132,7 @@
       setCurrentLocale: function (locale, callback) {
         callback = callback || function() {};
 
-        var effectiveLocale = this.getEffectiveLocale(locale);
+        var effectiveLocale = locUtil.getEffectiveLocale(locale);
         isTestLocale(locale === 'TEST');
 
         // Load the plupload i18n script now.  Don't need to wait on this;
@@ -188,10 +194,10 @@
 
                 globalize.loadMessages(messagesDataStatusXhr[0]);
 
-                this.updateCurrentLocaleOfKo(effectiveLocale);
+                locUtil.updateCurrentLocaleOfKo(effectiveLocale);
 
                 return callback();
-              }.bind(this)
+              }.bind(locUtil)
             );
         }
       },
@@ -220,9 +226,9 @@
           globalize.load(likelySubtags, timeData, weekData, caGregorian, numbers, timeZoneNames);
           globalize.loadMessages(messages);
 
-          var effectiveLocale = this.getEffectiveLocale('en');
+          var effectiveLocale = locUtil.getEffectiveLocale('en');
 
-          this.updateCurrentLocaleOfKo(effectiveLocale);
+          locUtil.updateCurrentLocaleOfKo(effectiveLocale);
       },
 
       /**
@@ -241,9 +247,9 @@
        * @returns {string} Translated text
        */
       formatMessage: function (message, variables) {
-        if (this.getCurrentLocale()) {
+        if (locUtil.getCurrentLocale()) {
           try {
-            return this.getCurrentLocale().globalize.formatMessage(
+            return locUtil.getCurrentLocale().globalize.formatMessage(
               message, variables);
           } catch (e) {
             if (isTestLocale()) {
@@ -266,11 +272,11 @@
       formatDateTime: function (date) {
         var format = DEFAULT_DATETIME_FORMAT;
 
-        if (this.getCurrentLocale() &&
+        if (locUtil.getCurrentLocale() &&
             locUtil.getCurrentLocale().locale.dateTimeFormat)
           format = locUtil.getCurrentLocale().locale.dateTimeFormat;
 
-        return this.getCurrentLocale().globalize.dateFormatter(
+        return locUtil.getCurrentLocale().globalize.dateFormatter(
           {skeleton: format})(date);
       },
 
@@ -281,7 +287,7 @@
        */
       formatNumber: function(n) {
         if ((typeof n) === 'number')
-          return this.getCurrentLocale().globalize.formatNumber(n);
+          return locUtil.getCurrentLocale().globalize.formatNumber(n);
         else
           return n
       },
@@ -330,7 +336,7 @@
         var formattedVariables = {};
 
         if (variables) {
-          var self = this;
+          var self = locUtil;
           Object.keys(variables).forEach(function (key) {
             var value = variables[key];
             if ((typeof value) === 'number') {
@@ -345,8 +351,8 @@
           });
         }
 
-        return this.wrapTestLocale(
-          this.formatMessage(message, formattedVariables), propertyName);
+        return locUtil.wrapTestLocale(
+          locUtil.formatMessage(message, formattedVariables), propertyName);
       },
 
 
@@ -358,7 +364,7 @@
        * @returns {*|string}
        */
       formatAndWrapDateTime: function(d, propertyName) {
-        return this.wrapTestLocale(this.formatDateTime(d), propertyName);
+        return locUtil.wrapTestLocale(locUtil.formatDateTime(d), propertyName);
       },
 
 
@@ -369,7 +375,7 @@
        * @param [propertyName] Optional. The HTML property being localized
        */
       formatAndWrapNumber: function(n, propertyName) {
-        return this.wrapTestLocale(this.formatNumber(n), propertyName);
+        return locUtil.wrapTestLocale(locUtil.formatNumber(n), propertyName);
       }
     };
 
