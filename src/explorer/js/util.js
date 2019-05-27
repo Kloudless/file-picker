@@ -91,6 +91,8 @@
       if (scriptUrl[scriptUrl.length - 1] === 'app.js')
         scriptDepth = 2;
 
+      scriptDepth = 2;
+
       return scriptUrl.slice(0, scriptUrl.length - scriptDepth).join('/');
     },
 

@@ -86,6 +86,11 @@
     global = window.Kloudless.fileExplorer, name, type = 'chooser', options,
     elementId,
   }) {
+
+    global.setGlobalOptions({
+      explorerUrl: 'http://localhost:3000/dist/explorer/explorer.html',
+    });
+
     const obj = (type === 'dropzone'
       ? global.dropzone(options) : global.explorer(options));
     EVENTS.forEach(event => obj.on(
