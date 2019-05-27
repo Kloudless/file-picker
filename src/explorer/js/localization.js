@@ -104,12 +104,12 @@
       plUpload_i18n: 'fr.js',
       dateTimeFormat: 'MMMdhm'
     },
-    'he',: {
+    'he': {
       id: 'he',
       messages: 'he.json',
       plUpload_i18n: 'he.js',
       dateTimeFormat: 'MMMdhm'
-    }
+    },
     'id-ID': {
       id: 'id-ID',
       messages: 'id-ID.json',
