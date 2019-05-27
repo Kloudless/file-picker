@@ -320,7 +320,7 @@
             $.getJSON(cldrBaseUrl + 'ca-gregorian.json'),
             $.getJSON(cldrBaseUrl + 'numbers.json'),
             $.getJSON(cldrBaseUrl + 'timeZoneNames.json'),
-            $.getJSON(LOCALIZATION_MESSAGES_URL + effectiveLocale.id + '.json')
+            $.getJSON(LOCALIZATION_MESSAGES_URL + effectiveLocale.messages)
           ];
 
           if (!isSupplementalCldrLoaded) {
