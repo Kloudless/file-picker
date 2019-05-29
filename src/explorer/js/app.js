@@ -412,19 +412,13 @@
             // if no files are selected, return folder currently in
             // TODO: for now don't allow root folders for all sources later check
             // the can_upload_files attribute
-            if (current.can_upload_files) {
-              logger.debug('Folder selected! ', current);
-              var clone = {};
-              for (var attr in current) {
-                if (current.hasOwnProperty(attr) && attr != 'parent_obs') {
-                  clone[attr] = current[attr];
-                }
+            var clone = {};
+            for (var attr in current) {
+              if (current.hasOwnProperty(attr) && attr != 'parent_obs') {
+                clone[attr] = current[attr];
               }
-              explorer.view_model.postMessage('success', [clone]);
-            } else {
-              explorer.view_model.error('This folder cannot be selected. Please choose again.');
-              explorer.view_model.loading(false);
             }
+            explorer.view_model.postMessage('success', [clone]);
           } else {
             explorer.view_model.error('No files selected. Please select a file.');
             explorer.view_model.loading(false);
