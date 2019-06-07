@@ -1,0 +1,74 @@
+{
+  "fr": {
+    "global": {
+      "select": "SelectUS",
+      "cancel": "CancelUS",
+      "save": "SaveUS",
+      "upload": "UploadUS"
+    },
+    "files": {
+      "name": "Name",
+      "size": "Size",
+      "updated": "Updated",
+      "nofilesfound": "No Files Found",
+      "untitledfolder": "Untitled Folder",
+      "search": "Search",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "If you remove this account, you will no longer be able to explore it. Are you sure?",
+      "connectedaccounts": "Connected accounts",
+      "logout": "logout",
+      "manage": "Manage your cloud storage accounts here.",
+      "chooseaccount": "Welcome! Please choose a service to connect US",
+      "connectmore": "Connect more!",
+      "upload": "Upload",
+      "uploadfromcomputer": "Upload from your computer"
+    },
+    "selector": {
+      "mycomputer": "My Computer",
+      "accounts": "Accounts"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online US",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "Drag and drop files here, or click to open the File Explorer"
+    },
+    "computer": {
+      "nosupport": "Your browser doesn't have Flash, Silverlight or HTML5 support."
+    },
+    "addconfirm": {
+      "confirm": "Confirm account connection.",
+      "clickbelow": "Click below to connect your {serviceName} account",
+      "connectaccount": "Connect {serviceName} Account"
+    }
+  }
+}
