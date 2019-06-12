@@ -1,0 +1,74 @@
+{
+  "pl": {
+    "global": {
+      "select": "Wybierz",
+      "cancel": "Anuluj",
+      "save": "Zapisać",
+      "upload": "Przekazać plik"
+    },
+    "files": {
+      "name": "Imię",
+      "size": "Rozmiar",
+      "updated": "Zaktualizowano",
+      "nofilesfound": "Nie znaleziono plików",
+      "untitledfolder": "Folder bez tytułu",
+      "search": "Szukaj",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Jeśli usuniesz to konto, nie będziesz już mógł go poznać. Jesteś pewny?",
+      "connectedaccounts": "Połączone konta",
+      "logout": "Wyloguj",
+      "manage": "Zarządzaj swoimi kontami przechowywania w chmurze tutaj.",
+      "chooseaccount": "Witamy! Wybierz usługę do połączenia",
+      "connectmore": "Połącz więcej!",
+      "upload": "Przekazać plik",
+      "uploadfromcomputer": "Prześlij z komputera"
+    },
+    "selector": {
+      "mycomputer": "Mój komputer",
+      "accounts": "Konta"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "Przeciągnij i upuść pliki tutaj lub kliknij, aby otworzyć Eksplorator plików"
+    },
+    "computer": {
+      "nosupport": "Twoja przeglądarka nie obsługuje Flash, Silverlight ani HTML5."
+    },
+    "addconfirm": {
+      "confirm": "Potwierdź połączenie z kontem.",
+      "clickbelow": "Kliknij poniżej, aby połączyć swoje konto {serviceName}",
+      "connectaccount": "Połącz konto {serviceName}"
+    }
+  }
+}
