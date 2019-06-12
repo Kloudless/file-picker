@@ -1,0 +1,74 @@
+{
+  "it": {
+    "global": {
+      "select": "Selezionare",
+      "cancel": "Annulla",
+      "save": "Salvare",
+      "upload": "Caricare"
+    },
+    "files": {
+      "name": "Nome",
+      "size": "Taglia",
+      "updated": "aggiornato",
+      "nofilesfound": "Nessun file trovato",
+      "untitledfolder": "Cartella senza titolo",
+      "search": "Ricerca",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Se rimuovi questo account, non sarai più in grado di esplorarlo. Sei sicuro?",
+      "connectedaccounts": "Account collegati",
+      "logout": "disconnettersi",
+      "manage": "Gestisci i tuoi account di archiviazione cloud qui.",
+      "chooseaccount": "Benvenuto! Si prega di scegliere un servizio per la connessione",
+      "connectmore": "Connetti di più!",
+      "upload": "Caricare",
+      "uploadfromcomputer": "Carica dal tuo computer"
+    },
+    "selector": {
+      "mycomputer": "Il mio computer",
+      "accounts": "conti"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "Trascina qui i file o fai clic per aprire Esplora file"
+    },
+    "computer": {
+      "nosupport": "Il tuo browser non ha supporto Flash, Silverlight o HTML5."
+    },
+    "addconfirm": {
+      "confirm": "Conferma la connessione dell'account.",
+      "clickbelow": "Fai clic di seguito per connettere il tuo account {serviceName}",
+      "connectaccount": "Connetti l'account {serviceName}"
+    }
+  }
+}
