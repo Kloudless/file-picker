@@ -1,0 +1,74 @@
+{
+  "nl": {
+    "global": {
+      "select": "kiezen",
+      "cancel": "annuleren",
+      "save": "Opslaan",
+      "upload": "Uploaden"
+    },
+    "files": {
+      "name": "Naam",
+      "size": "Grootte",
+      "updated": "bijgewerkt",
+      "nofilesfound": "Geen bestanden gevonden",
+      "untitledfolder": "Map zonder titel",
+      "search": "Zoeken",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Als u dit account verwijdert, kunt u het niet meer verkennen. Weet je het zeker?",
+      "connectedaccounts": "Verbonden accounts",
+      "logout": "uitloggen",
+      "manage": "Beheer hier uw cloudopslag-accounts.",
+      "chooseaccount": "Welkom! Kies een service om verbinding te maken",
+      "connectmore": "Verbind meer!",
+      "upload": "Uploaden",
+      "uploadfromcomputer": "Upload vanaf uw computer"
+    },
+    "selector": {
+      "mycomputer": "Mijn computer",
+      "accounts": "accounts"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "Versleep hier bestanden, of klik om de Verkenner te openen"
+    },
+    "computer": {
+      "nosupport": "Uw browser ondersteunt geen Flash-, Silverlight- of HTML5-ondersteuning."
+    },
+    "addconfirm": {
+      "confirm": "Bevestig de accountverbinding.",
+      "clickbelow": "Klik hieronder om verbinding te maken met uw {serviceName} account",
+      "connectaccount": "Verbind {serviceName} account"
+    }
+  }
+}
