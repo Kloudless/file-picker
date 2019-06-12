@@ -1,0 +1,74 @@
+{
+  "he": {
+    "global": {
+      "select": "בחר",
+      "cancel": "בטל",
+      "save": "להציל",
+      "upload": "העלה"
+    },
+    "files": {
+      "name": "שם",
+      "size": "גודל",
+      "updated": "עודכן",
+      "nofilesfound": "לא נמצאו קבצים",
+      "untitledfolder": "תיקיה ללא כותרת",
+      "search": "לחפש",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "אם תסיר את החשבון הזה, לא תוכל עוד לחקור אותו. האם אתה בטוח?",
+      "connectedaccounts": "חשבונות מחוברים",
+      "logout": "להתנתק",
+      "manage": "נהל את חשבונות האחסון שלך בענן כאן..",
+      "chooseaccount": "ברוך הבא! בחר שירות לחיבור",
+      "connectmore": "התחבר עוד!",
+      "upload": "העלה",
+      "uploadfromcomputer": "העלה מהמחשב שלך"
+    },
+    "selector": {
+      "mycomputer": "המחשב שלי",
+      "accounts": "חשבונות"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "גרור ושחרר קבצים כאן, או לחץ כדי לפתוח את סייר הקבצים"
+    },
+    "computer": {
+      "nosupport": "לדפדפן שלך אין תמיכה ב- Flash, Silverlight או ב- HTML5."
+    },
+    "addconfirm": {
+      "confirm": "אשר את החיבור לחשבון.",
+      "clickbelow": "לחץ למטה כדי לחבר את חשבון {serviceName} שלך",
+      "connectaccount": "התחבר לחשבון {serviceName}"
+    }
+  }
+}
