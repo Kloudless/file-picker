@@ -1,18 +1,18 @@
 {
   "fr": {
     "global": {
-      "select": "SelectFR",
-      "cancel": "CancelFR",
-      "save": "SaveFR",
-      "upload": "UploadFR"
+      "select": "Sélectionner",
+      "cancel": "Annuler",
+      "save": "sauvegarder",
+      "upload": "Télécharger"
     },
     "files": {
-      "name": "Name",
-      "size": "Size",
-      "updated": "Updated",
-      "nofilesfound": "No Files Found",
-      "untitledfolder": "Untitled Folder",
-      "search": "Search",
+      "name": "prénom",
+      "size": "Taille",
+      "updated": "Mis à jour",
+      "nofilesfound": "Aucun fichier trouvé",
+      "untitledfolder": "Dossier sans titre",
+      "search": "Chercher",
       "sizes": {
         "b": "{fileSize} B",
         "kb": "{fileSize} KB",
@@ -21,18 +21,18 @@
       }
     },
     "accounts": {
-      "confirmRemove": "If you remove this account, you will no longer be able to explore it. Are you sure?",
-      "connectedaccounts": "Connected accounts",
-      "logout": "logout",
-      "manage": "Manage your cloud storage accounts here.",
-      "chooseaccount": "Welcome! Please choose a service to connect FR",
-      "connectmore": "Connect more!",
-      "upload": "Upload",
-      "uploadfromcomputer": "Upload from your computer"
+      "confirmRemove": "Si vous supprimez ce compte, vous ne pourrez plus l'explorer. Êtes-vous sûr?",
+      "connectedaccounts": "Comptes connectés",
+      "logout": "Connectez - Out",
+      "manage": "Gérez vos comptes de stockage en nuage ici.",
+      "chooseaccount": "Bienvenue! Veuillez choisir un service pour vous connecter",
+      "connectmore": "Connectez plus!",
+      "upload": "Télécharger",
+      "uploadfromcomputer": "Télécharger depuis votre ordinateur"
     },
     "selector": {
-      "mycomputer": "My Computer",
-      "accounts": "Accounts"
+      "mycomputer": "Mon ordinateur",
+      "accounts": "Comptes"
     },
     "servicenames": {
       "cq5": "Adobe CQ5",
@@ -45,7 +45,7 @@
       "sharefile": "Citrix ShareFile",
       "egnyte": "Egnyte",
       "s3": "Amazon S3",
-      "sharepoint": "SharePoint Online FR",
+      "sharepoint": "SharePoint Online",
       "onedrivebiz": "OneDrive for Business",
       "smb": "SMB",
       "hubspot": "Hubspot Files",
@@ -60,15 +60,15 @@
       "computer": "My Computer"
     },
     "dropzone": {
-      "message": "Drag and drop files here, or click to open the File Explorer"
+      "message": "Glissez et déposez les fichiers ici, ou cliquez pour ouvrir l'explorateur de fichiers"
     },
     "computer": {
-      "nosupport": "Your browser doesn't have Flash, Silverlight or HTML5 support."
+      "nosupport": "Votre navigateur ne prend pas en charge Flash, Silverlight ou HTML5."
     },
     "addconfirm": {
-      "confirm": "Confirm account connection.",
-      "clickbelow": "Click below to connect your {serviceName} account",
-      "connectaccount": "Connect {serviceName} Account"
+      "confirm": "Confirmer la connexion au compte.",
+      "clickbelow": "Cliquez ci-dessous pour connecter votre compte {serviceName}",
+      "connectaccount": "Connecter {serviceName} compte"
     }
   }
 }
