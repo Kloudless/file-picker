@@ -1,0 +1,74 @@
+{
+  "fi": {
+    "global": {
+      "select": "valita",
+      "cancel": "Peruuttaa",
+      "save": "Tallentaa",
+      "upload": "upload"
+    },
+    "files": {
+      "name": "Nimi",
+      "size": "Koko",
+      "updated": "Päivitetty",
+      "nofilesfound": "Ei tiedostoja",
+      "untitledfolder": "Nimetön kansio",
+      "search": "Hae",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Jos poistat tämän tilin, et enää pysty tutkimaan sitä. Oletko varma?",
+      "connectedaccounts": "Yhdistetyt tilit",
+      "logout": "kirjautua ulos",
+      "manage": "Hallitse pilvivarastotilejäsi täällä.",
+      "chooseaccount": "Tervetuloa! Valitse palvelu, johon haluat muodostaa yhteyden",
+      "connectmore": "Liitä lisää!",
+      "upload": "upload",
+      "uploadfromcomputer": "Lataa tietokoneesta"
+    },
+    "selector": {
+      "mycomputer": "Tietokoneeni",
+      "accounts": "tilit"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "Vedä ja pudota tiedostot täällä tai avaa File Explorer"
+    },
+    "computer": {
+      "nosupport": "Selaimesi ei sisällä Flash-, Silverlight- tai HTML5-tukea."
+    },
+    "addconfirm": {
+      "confirm": "Vahvista tilin yhteys.",
+      "clickbelow": "Yhdistä {serviceName} -tili napsauttamalla alla",
+      "connectaccount": "Yhdistä {serviceName} -tili"
+    }
+  }
+}
