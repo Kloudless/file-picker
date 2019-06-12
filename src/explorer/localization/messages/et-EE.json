@@ -1,0 +1,74 @@
+{
+  "et": {
+    "global": {
+      "select": "Valige",
+      "cancel": "Tühista",
+      "save": "Salvesta",
+      "upload": "Laadi üles"
+    },
+    "files": {
+      "name": "Nimi",
+      "size": "Suurus",
+      "updated": "Uuendatud",
+      "nofilesfound": "Faile ei leitud",
+      "untitledfolder": "Pealkirjata kaust",
+      "search": "Otsing",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Kui eemaldate selle konto, ei saa te seda enam uurida. Oled sa kindel?",
+      "connectedaccounts": "Ühendatud kontod",
+      "logout": "Logi välja",
+      "manage": "Hallake oma pilvesalvestuskontot siin.",
+      "chooseaccount": "Tere tulemast! Palun valige ühendatav teenus",
+      "connectmore": "Ühendage rohkem!",
+      "upload": "Laadi üles",
+      "uploadfromcomputer": "Laadige oma arvutisse üles"
+    },
+    "selector": {
+      "mycomputer": "Minu arvuti",
+      "accounts": "Kontod"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "Lohistage failid siia ja klõpsake File Explorer avamiseks"
+    },
+    "computer": {
+      "nosupport": "Teie brauseril puudub Flash, Silverlight või HTML5 tugi."
+    },
+    "addconfirm": {
+      "confirm": "Kinnitage konto ühendus.",
+      "clickbelow": "Klõpsake allpool, et ühendada oma {serviceName} konto",
+      "connectaccount": "Ühenda {serviceName} konto"
+    }
+  }
+}
