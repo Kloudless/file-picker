@@ -1,0 +1,74 @@
+{
+  "ja": {
+    "global": {
+      "select": "選択する",
+      "cancel": "キャンセル",
+      "save": "保存する",
+      "upload": "アップロードする"
+    },
+    "files": {
+      "name": "名",
+      "size": "サイズ",
+      "updated": "更新しました",
+      "nofilesfound": "ファイルが見つかりません",
+      "untitledfolder": "無題のフォルダ",
+      "search": "サーチ",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "このアカウントを削除すると、それを探索することはできなくなります。 本気ですか？",
+      "connectedaccounts": "接続アカウント",
+      "logout": "ログアウト",
+      "manage": "ここでクラウドストレージアカウントを管理します。",
+      "chooseaccount": "ようこそ！ 接続するサービスを選択してください",
+      "connectmore": "もっとつなげよう！",
+      "upload": "アップロードする",
+      "uploadfromcomputer": "パソコンからアップロードする"
+    },
+    "selector": {
+      "mycomputer": "私のコンピューター",
+      "accounts": "アカウント"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "ここにファイルをドラッグアンドドロップするか、クリックしてファイルエクスプローラを開きます。"
+    },
+    "computer": {
+      "nosupport": "お使いのブラウザはFlash、Silverlight、またはHTML5をサポートしていません。"
+    },
+    "addconfirm": {
+      "confirm": "アカウントの接続を確認してください。",
+      "clickbelow": "下をクリックして{serviceName}アカウントに接続してください",
+      "connectaccount": "接続{serviceName}アカウント"
+    }
+  }
+}
