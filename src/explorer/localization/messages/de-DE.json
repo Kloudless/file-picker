@@ -1,0 +1,74 @@
+{
+  "fr": {
+    "global": {
+      "select": "Wählen",
+      "cancel": "Stornieren",
+      "save": "sparen",
+      "upload": "Hochladen"
+    },
+    "files": {
+      "name": "Name",
+      "size": "Größe",
+      "updated": "Aktualisierte",
+      "nofilesfound": "Keine Dateien gefunden",
+      "untitledfolder": "Unbenannter Ordner",
+      "search": "Suche",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Wenn Sie dieses Konto entfernen, können Sie es nicht mehr durchsuchen. Bist du sicher?",
+      "connectedaccounts": "Verbundene Konten",
+      "logout": "Ausloggen",
+      "manage": "Verwalten Sie hier Ihre Cloud-Speicherkonten.",
+      "chooseaccount": "Herzlich willkommen! Bitte wählen Sie einen Dienst aus, um eine Verbindung herzustellen",
+      "connectmore": "Verbinde mehr!",
+      "upload": "Hochladen",
+      "uploadfromcomputer": "Hochladen von Ihrem Computer"
+    },
+    "selector": {
+      "mycomputer": "Mein Computer",
+      "accounts": "Konten"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "Ziehen Sie Dateien hierher, und legen Sie sie dort ab, oder klicken Sie darauf, um den Datei-Explorer zu öffnen"
+    },
+    "computer": {
+      "nosupport": "Ihr Browser unterstützt Flash, Silverlight oder HTML5 nicht."
+    },
+    "addconfirm": {
+      "confirm": "Bestätigen Sie die Kontoverbindung.",
+      "clickbelow": "Klicken Sie unten, um eine Verbindung zu Ihrem {serviceName} Konto herzustellen",
+      "connectaccount": "{ServiceName} Konto verbinden"
+    }
+  }
+}
