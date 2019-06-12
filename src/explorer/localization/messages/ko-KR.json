@@ -1,0 +1,74 @@
+{
+  "ko": {
+    "global": {
+      "select": "고르다",
+      "cancel": "취소",
+      "save": "구하다",
+      "upload": "업로드"
+    },
+    "files": {
+      "name": "이름",
+      "size": "크기",
+      "updated": "업데이트 됨",
+      "nofilesfound": "파일을 찾을 수 없음",
+      "untitledfolder": "제목없는 폴더",
+      "search": "수색",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "이 계정을 삭제하면 해당 계정을 더 이상 탐색 할 수 없습니다. 확실해?",
+      "connectedaccounts": "연결된 계정",
+      "logout": "로그 아웃",
+      "manage": "여기에 클라우드 스토리지 계정을 관리하십시오.",
+      "chooseaccount": "환영! 연결할 서비스를 선택하십시오.",
+      "connectmore": "더 많은 것을 연결하십시오!",
+      "upload": "업로드",
+      "uploadfromcomputer": "컴퓨터에서 업로드"
+    },
+    "selector": {
+      "mycomputer": "내 컴퓨터",
+      "accounts": "계정"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "여기에 파일을 끌어다 놓거나 클릭하여 파일 탐색기를 엽니 다."
+    },
+    "computer": {
+      "nosupport": "브라우저에 Flash, Silverlight 또는 HTML5 지원 기능이 없습니다."
+    },
+    "addconfirm": {
+      "confirm": "계정 연결을 확인하십시오.",
+      "clickbelow": "{serviceName} 계정을 연결하려면 아래를 클릭하십시오.",
+      "connectaccount": "{serviceName} 계정 연결"
+    }
+  }
+}
