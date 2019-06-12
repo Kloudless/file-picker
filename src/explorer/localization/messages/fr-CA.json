@@ -1,0 +1,74 @@
+{
+  "fr": {
+    "global": {
+      "select": "Sélectionner",
+      "cancel": "Annuler",
+      "save": "sauvegarder",
+      "upload": "Télécharger"
+    },
+    "files": {
+      "name": "prénom",
+      "size": "Taille",
+      "updated": "Mis à jour",
+      "nofilesfound": "Aucun fichier trouvé",
+      "untitledfolder": "Dossier sans titre",
+      "search": "Chercher",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Si vous supprimez ce compte, vous ne pourrez plus l'explorer. Êtes-vous sûr?",
+      "connectedaccounts": "Comptes connectés",
+      "logout": "Connectez - Out",
+      "manage": "Gérez vos comptes de stockage en nuage ici.",
+      "chooseaccount": "Bienvenue! Veuillez choisir un service pour vous connecter",
+      "connectmore": "Connectez plus!",
+      "upload": "Télécharger",
+      "uploadfromcomputer": "Télécharger depuis votre ordinateur"
+    },
+    "selector": {
+      "mycomputer": "Mon ordinateur",
+      "accounts": "Comptes"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "Glissez et déposez les fichiers ici, ou cliquez pour ouvrir l'explorateur de fichiers"
+    },
+    "computer": {
+      "nosupport": "Votre navigateur ne prend pas en charge Flash, Silverlight ou HTML5."
+    },
+    "addconfirm": {
+      "confirm": "Confirmer la connexion au compte.",
+      "clickbelow": "Cliquez ci-dessous pour connecter votre compte {serviceName}",
+      "connectaccount": "Connecter {serviceName} compte"
+    }
+  }
+}
