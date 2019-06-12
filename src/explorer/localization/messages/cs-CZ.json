@@ -1,0 +1,74 @@
+{
+  "cs": {
+    "global": {
+      "select": "Vybrat",
+      "cancel": "zrušení",
+      "save": "Uložit",
+      "upload": "nahrát"
+    },
+    "files": {
+      "name": "název",
+      "size": "Velikost",
+      "updated": "Aktualizováno",
+      "nofilesfound": "Nebyly nalezeny žádné soubory",
+      "untitledfolder": "Složka bez názvu",
+      "search": "Vyhledávání",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Pokud tento účet odstraníte, nebudete jej již moci prozkoumat. Jsi si jistá?",
+      "connectedaccounts": "Připojené účty",
+      "logout": "odhlásit se",
+      "manage": "Zde můžete spravovat účty cloudového úložiště.",
+      "chooseaccount": "Vítejte! Vyberte službu, ke které se chcete připojit",
+      "connectmore": "Připojte více!",
+      "upload": "nahrát",
+      "uploadfromcomputer": "Nahrát z počítače"
+    },
+    "selector": {
+      "mycomputer": "Můj počítač",
+      "accounts": "Účty"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "Přetáhněte soubory sem nebo kliknutím otevřete Průzkumník souborů"
+    },
+    "computer": {
+      "nosupport": "Váš prohlížeč nemá podporu Flash, Silverlight nebo HTML5."
+    },
+    "addconfirm": {
+      "confirm": "Potvrďte připojení účtu.",
+      "clickbelow": "Klikněte níže a připojte svůj účet {serviceName}",
+      "connectaccount": "Připojit účet {serviceName}"
+    }
+  }
+}
