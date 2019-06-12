@@ -1,0 +1,74 @@
+{
+  "fr": {
+    "global": {
+      "select": "Vælg",
+      "cancel": "Afbestille",
+      "save": "Gemme",
+      "upload": "Upload"
+    },
+    "files": {
+      "name": "Navn",
+      "size": "Størrelse",
+      "updated": "Opdateret",
+      "nofilesfound": "Ingen filer fundet",
+      "untitledfolder": "Untitled Folder",
+      "search": "Søg",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Hvis du fjerner denne konto, vil du ikke længere kunne udforske den. Er du sikker?",
+      "connectedaccounts": "Tilknyttede konti",
+      "logout": "Log ud",
+      "manage": "Administrer dine Cloud Storage-konti her.",
+      "chooseaccount": "Velkommen! Vælg venligst en tjeneste for at oprette forbindelse",
+      "connectmore": "Tilslut mere!",
+      "upload": "Upload",
+      "uploadfromcomputer": "Upload fra din computer"
+    },
+    "selector": {
+      "mycomputer": "Min computer",
+      "accounts": "Konti"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "Træk og slip filer her, eller klik for at åbne Filoversigten"
+    },
+    "computer": {
+      "nosupport": "Din browser har ikke Flash, Silverlight eller HTML5 support."
+    },
+    "addconfirm": {
+      "confirm": "Bekræft kontoforbindelse.",
+      "clickbelow": "Klik nedenfor for at forbinde din {serviceName} konto",
+      "connectaccount": "Tilslut {serviceName} Konto"
+    }
+  }
+}
