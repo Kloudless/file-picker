@@ -1,0 +1,74 @@
+{
+  "ro": {
+    "global": {
+      "select": "Selectați",
+      "cancel": "Anulare",
+      "save": "Salvați",
+      "upload": "Încărcați"
+    },
+    "files": {
+      "name": "Nume",
+      "size": "mărimea",
+      "updated": "La curent",
+      "nofilesfound": "Niciun fișier găsit",
+      "untitledfolder": "Folder fără titlu",
+      "search": "Căutare",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Dacă eliminați acest cont, nu veți mai putea să îl explorați. Esti sigur?",
+      "connectedaccounts": "Conturi conectate",
+      "logout": "logout",
+      "manage": "Gestionați-vă aici conturile de stocare în cloud.",
+      "chooseaccount": "Bine ati venit! Alegeți un serviciu pentru conectare",
+      "connectmore": "Conectează-te mai mult!",
+      "upload": "Încărcați",
+      "uploadfromcomputer": "Încărcați de pe computer"
+    },
+    "selector": {
+      "mycomputer": "Calculatorul meu",
+      "accounts": "Conturi"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "Glisați și fixați fișierele aici sau faceți clic pentru a deschide fișierul Explorer"
+    },
+    "computer": {
+      "nosupport": "Browserul dvs. nu are suport Flash, Silverlight sau HTML5."
+    },
+    "addconfirm": {
+      "confirm": "Confirmați conexiunea la cont.",
+      "clickbelow": "Faceți clic mai jos pentru a vă conecta contul {serviceName}",
+      "connectaccount": "Conectați contul {serviceName}"
+    }
+  }
+}
