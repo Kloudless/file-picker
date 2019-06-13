@@ -1,0 +1,74 @@
+{
+  "tr": {
+    "global": {
+      "select": "seçmek",
+      "cancel": "İptal etmek",
+      "save": "Kayıt etmek",
+      "upload": "Yükleme"
+    },
+    "files": {
+      "name": "isim",
+      "size": "Boyut",
+      "updated": "Güncellenmiş",
+      "nofilesfound": "Dosya Bulunamadı",
+      "untitledfolder": "Adsız Klasör",
+      "search": "Arama",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Bu hesabı kaldırırsanız, artık incelemeyi başaramazsınız. Emin misiniz?",
+      "connectedaccounts": "Bağlı hesaplar",
+      "logout": "çıkış Yap",
+      "manage": "Bulut depolama hesaplarınızı burada yönetin.",
+      "chooseaccount": "Hoşgeldiniz! Lütfen bağlanmak için bir servis seçin",
+      "connectmore": "Daha fazlasını bağla!",
+      "upload": "Yükleme",
+      "uploadfromcomputer": "Bilgisayarınızdan yükleyin"
+    },
+    "selector": {
+      "mycomputer": "Benim bilgisayarım",
+      "accounts": "Hesaplar"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "Dosyaları buraya sürükleyip bırakın veya Dosya Gezgini'ni açmak için tıklayın."
+    },
+    "computer": {
+      "nosupport": "Tarayıcınızda Flash, Silverlight veya HTML5 desteği bulunmuyor."
+    },
+    "addconfirm": {
+      "confirm": "Hesap bağlantısını onayla.",
+      "clickbelow": "{ServiceName} hesabınızı bağlamak için aşağıyı tıklayın",
+      "connectaccount": "Connect {serviceName} Hesabı"
+    }
+  }
+}
