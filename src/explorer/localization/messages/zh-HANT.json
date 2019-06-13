@@ -1,0 +1,74 @@
+{
+  "zh-Hant": {
+    "global": {
+      "select": "選擇",
+      "cancel": "取消",
+      "save": "保存",
+      "upload": "上傳"
+    },
+    "files": {
+      "name": "名稱",
+      "size": "尺寸",
+      "updated": "更新",
+      "nofilesfound": "找不到文件",
+      "untitledfolder": "無標題文件夾",
+      "search": "搜索",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "如果您刪除此帳戶，則無法再瀏覽該帳戶。 你確定嗎？",
+      "connectedaccounts": "關聯帳戶",
+      "logout": "登出",
+      "manage": "在此管理您的雲存儲帳戶。",
+      "chooseaccount": "歡迎！ 請選擇要連接的服務",
+      "connectmore": "連接更多！",
+      "upload": "上傳",
+      "uploadfromcomputer": "從您的計算機上傳"
+    },
+    "selector": {
+      "mycomputer": "我的電腦",
+      "accounts": "帳號"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "在此處拖放文件，或單擊以打開文件資源管理器"
+    },
+    "computer": {
+      "nosupport": "您的瀏覽器沒有Flash，Silverlight或HTML5支持。"
+    },
+    "addconfirm": {
+      "confirm": "確認帳戶連接。",
+      "clickbelow": "點擊下方即可關聯您的{serviceName}帳戶",
+      "connectaccount": "連接{serviceName}帳戶"
+    }
+  }
+}
