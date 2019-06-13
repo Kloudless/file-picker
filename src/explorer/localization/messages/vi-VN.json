@@ -1,0 +1,74 @@
+{
+  "vi": {
+    "global": {
+      "select": "Lựa chọn",
+      "cancel": "Hủy bỏ",
+      "save": "Tiết kiệm",
+      "upload": "Tải lên"
+    },
+    "files": {
+      "name": "Tên",
+      "size": "Kích thước",
+      "updated": "Đã cập nhật",
+      "nofilesfound": "Không tìm thấy tập tin",
+      "untitledfolder": "Thư mục không tên",
+      "search": "Tìm kiếm",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Nếu bạn xóa tài khoản này, bạn sẽ không thể khám phá nó nữa. Bạn có chắc không?",
+      "connectedaccounts": "Tài khoản được kết nối",
+      "logout": "đăng xuất",
+      "manage": "Quản lý tài khoản lưu trữ đám mây của bạn tại đây.",
+      "chooseaccount": "Chào mừng bạn Vui lòng chọn một dịch vụ để kết nối",
+      "connectmore": "Kết nối nhiều hơn!",
+      "upload": "Tải lên",
+      "uploadfromcomputer": "Tải lên từ máy tính của bạn"
+    },
+    "selector": {
+      "mycomputer": "Máy tính của tôi",
+      "accounts": "Tài khoản"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "Kéo và thả tệp tại đây hoặc nhấp để mở File Explorer"
+    },
+    "computer": {
+      "nosupport": "Trình duyệt của bạn không có hỗ trợ Flash, Silverlight hoặc HTML5."
+    },
+    "addconfirm": {
+      "confirm": "Xác nhận kết nối tài khoản.",
+      "clickbelow": "Nhấp vào bên dưới để kết nối tài khoản {serviceName} của bạn",
+      "connectaccount": "Kết nối tài khoản {serviceName}"
+    }
+  }
+}
