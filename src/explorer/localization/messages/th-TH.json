@@ -1,0 +1,74 @@
+{
+  "th-TH": {
+    "global": {
+      "select": "เลือก",
+      "cancel": "ยกเลิก",
+      "save": "บันทึก",
+      "upload": "อัปโหลด"
+    },
+    "files": {
+      "name": "ชื่อ",
+      "size": "ขนาด",
+      "updated": "Updated",
+      "nofilesfound": "ไม่พบไฟล์",
+      "untitledfolder": "โฟลเดอร์ไม่มีชื่อ",
+      "search": "ค้นหา",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "หากคุณลบบัญชีนี้คุณจะไม่สามารถสำรวจได้อีกต่อไป คุณแน่ใจไหม?",
+      "connectedaccounts": "บัญชีที่เชื่อมต่อ",
+      "logout": "ออกจากระบบ",
+      "manage": "จัดการบัญชีที่เก็บข้อมูลบนคลาวด์ของคุณที่นี่",
+      "chooseaccount": "ยินดีต้อนรับ! โปรดเลือกบริการที่จะเชื่อมต่อ",
+      "connectmore": "เชื่อมต่อมากขึ้น!",
+      "upload": "อัปโหลด",
+      "uploadfromcomputer": "อัปโหลดจากคอมพิวเตอร์ของคุณ"
+    },
+    "selector": {
+      "mycomputer": "คอมพิวเตอร์ของฉัน",
+      "accounts": "บัญชี"
+    },
+    "servicenames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Computer"
+    },
+    "dropzone": {
+      "message": "ลากและวางไฟล์ที่นี่หรือคลิกเพื่อเปิด File Explorer"
+    },
+    "computer": {
+      "nosupport": "เบราว์เซอร์ของคุณไม่มีการสนับสนุน Flash, Silverlight หรือ HTML5"
+    },
+    "addconfirm": {
+      "confirm": "ยืนยันการเชื่อมต่อบัญชี",
+      "clickbelow": "คลิกด้านล่างเพื่อเชื่อมต่อบัญชี {serviceName} ของคุณ",
+      "connectaccount": "เชื่อมต่อบัญชี {serviceName}"
+    }
+  }
+}
