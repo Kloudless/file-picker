@@ -951,11 +951,20 @@ FileExplorer.prototype.switchViewTo = function (to) {
 
     //Search jquery actions
     $(".search").off('click');
-    $("#search-enable-button, #search-back-button").on('click', function () {
+    $("#search-enable-button, #search-back-button").on('click', function() {
       $(".refresh-button, #search-back-button").toggle();
+      // the following 2 vars are purely for styles.
+      var searchActiveClass = 'search-active';
+      var searchActiveData = 'data-' + searchActiveClass;
+      var $fileTable = $('.clickable')
+      if ($fileTable.attr(searchActiveData)) {
+        $fileTable.removeAttr(searchActiveData);
+      } else {
+        $fileTable.attr(searchActiveData, true);
+      }
       var duration = 150;
       if ($("#search-query").is(":visible")) {
-        $("#search-enable-button").removeClass('search-active');
+        $("#search-enable-button").removeClass(searchActiveClass);
         explorer.view_model.files.refresh();
         //Slide along with search query
         $("#search-enable-button").animate({
@@ -971,7 +980,7 @@ FileExplorer.prototype.switchViewTo = function (to) {
         });
         $("#search-query").val("");
       } else {
-        $("#search-enable-button").addClass('search-active');
+        $("#search-enable-button").addClass(searchActiveClass);
         $(".new-folder-button, .breadcrumbs").toggle();
         $("#search-enable-button").animate({
           left: "+=360"

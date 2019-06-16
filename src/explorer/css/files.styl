@@ -1,14 +1,31 @@
 @import 'variables'
 
+$search_bar_non_input_w = 330px;
+
+$header_margin_bottom = 15px;
+$header_to_table_h = 135px;
+
+$table_head_h = 60px;
+$table_non_content_h = 220px;
+$table_margin_top_offset = 60px;
+$table_content_w = 90vw;
+
 .files
-    padding:20px
+    padding: $files_modal_padding;
     header
-        margin-bottom:15px
+        @media only screen and (max-width: 699px)
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        margin-bottom: $header_margin_bottom;
         height:40px
 
         @import 'selector'
 
         .breadcrumbcontainer
+            @media only screen and (max-width: 699px)
+                width: 100%;
+                margin: $header_margin_bottom 0;
             div.crumbutton
                 width: 42px
                 height: 42px
@@ -72,6 +89,7 @@
                         div.foldertext
                             position: absolute
                             top: 2px
+                            max-width: 180px;
                         &:last-child
                             border: none
                 &:hover
@@ -89,11 +107,6 @@
                 height: 50px
                 width: 350px
                 display: inline-block
-                @media only screen and (max-width: 500px)
-                    margin-top: 10px
-                // patch for Freshdesk integration
-                @media only screen and (max-width: 600px)
-                    width: 250px
             .breadcrumbs > *
                 color:#2A8EFF
                 font-size:16px
@@ -131,9 +144,10 @@
                         text-overflow: ellipsis
                         max-width: 200px
                         vertical-align: top;
-                        // patch for Freshdesk integration
-                        @media only screen and (max-width: 600px)
-                            width: 95px
+                        @media only screen and (max-width: 699px)
+                            max-width: 60vw;
+                        @media only screen and (max-width : 500px)
+                            max-width: 50vw;
             .breadcrumbs > *:not(:last-child)
                 a
                     div.foldertext:hover
@@ -152,14 +166,6 @@
                 .crumb
                     overflow:hidden
                     white-space:nowrap
-            .breadcrumbs
-                @media only screen and (max-width: 500px)
-                    width: auto
-                    float: right
-                    height: 40px
-                    margin-top: 10px
-                    *:not(li)
-                        display: inline-block;
 
         .actions
             float: right;
@@ -194,16 +200,13 @@
                     &.search-active
                         background-position: -1px -249px
                 #search-query
-                    width: 380px
+                    width: 'calc(100vw - %s)' % $search_bar_non_input_w;
                     height: 24px
                     margin-right: -12px
                     margin-top: 8px
                     display: none;
                     text-align: right;
                     padding: 0 5px;
-                    // patch for Freshdesk integration
-                    @media only screen and (max-width: 600px)
-                        width: 280px
                 #search-back-button
                     background: url($icons_sheet) 0px -146px no-repeat
                     width: 16px
@@ -231,7 +234,7 @@
             top:0px
             left:0px
             right:0px
-            height:59px
+            height: $table_head_h;
             padding:0 20px
             background:#f5faff
             border-bottom:1px solid #e5e5e5
@@ -307,37 +310,44 @@
                 &:first-child:not(.info-cell)
                     float:left
                     width: 350px
+                    @media only screen and (max-width : 670px)
+                        width: 65%;
+                    @media only screen and (max-width : 500px)
+                        width: 100%;
                 &:nth-child(2)
                     width: 100px
                 &:nth-child(3)
                     width: 155px
-        @media only screen and (max-width: 500px)
-            left: 0
-            right: 0
-            top: 123px
-            border-left: none
-            border-right: none
-            thead
-                left: 0 !important
-                right: 0 !important
-                padding: 0 !important
-                tr th:first-child
-                    width: 120px !important
-            tbody
-                tr td
-                    line-height: 35px
-                    &:first-child
-                        font-size: 12px !important
-                        width: 120px !important
-        @media only screen and (max-height: 500px), screen and (max-width: 500px)
-            table
-                thead tr th
-                    padding: 10px 10px 5px !important
-                tbody
-                    padding: 0
-                    margin-top: 35px
 
         &.clickable
+            &[data-search-active="true"]
+                margin-top: 0;
+                tbody
+                    height: 'calc(100vh - %s)' % $table_non_content_h;
+            @media only screen and (max-width : 699px)
+                margin-top: 'calc(%s + %s)' % (
+                    $header_margin_bottom $table_margin_top_offset);
+                width: $table_content_w;
+            @media only screen and (max-width : 670px)
+                td, th
+                    &:nth-child(1)
+                        width: 65%;
+                    &:nth-child(2)
+                        display: none;
+                    &:nth-child(3)
+                        width: 35%;
+            @media only screen and (max-width : 500px)
+                td, th
+                    &:nth-child(1)
+                        width: 100%;
+                    &:nth-child(2)
+                        display: none;
+                    &:nth-child(3)
+                        display: none;
+            tbody
+                @media only screen and (max-width : 699px)
+                    height: 'calc(100vh - %s - %s)' % (
+                        $table_non_content_h $table_margin_top_offset);
             tbody tr
                 cursor: pointer
                 &.info-row
@@ -421,17 +431,23 @@
                     color: #fff !important
 
     footer
-        height:50px
         .row
-            height:60px
+            @media only screen and (max-width : 699px)
+                .error
+                    width: 'calc(100vw - (%s * 2))' % $files_modal_padding;
+                .error-text
+                    width: 'calc(%s - (%s * 2))' % (
+                        $table_content_w $files_modal_padding);
             input.kloudless-saver-name
                 float:right
                 margin-right:235px
-                margin-top:17px
+                margin-top: 25px;
                 height:40px
                 font-size:12px
                 width:225px
                 padding:10px
+                @media only screen and (max-width : 670px)
+                    display: none;
 
     .buttonscontainer
         position:absolute
@@ -458,6 +474,12 @@
         left:20px
         position: absolute;
         z-index: 1
+        @media only screen and (max-width : 699px)
+            width: $table_content_w;
+            height: 'calc(100vh - %s - %s)' % (
+                $table_non_content_h $table_head_h);
+            top: 'calc(%s + %s)' % ($header_to_table_h $table_head_h);
+            left: $files_modal_padding;
     .error
         background-color: #FFECEA
         border: 1px solid #DE2B0E
@@ -465,7 +487,7 @@
         padding: 1em
         position: absolute
         bottom: 20px
-        height: 40px
+        height: 42px;
         width: 420px
         font-weight: bold
         font-size: 13px

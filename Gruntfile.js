@@ -16,7 +16,23 @@ module.exports = function (grunt) {
     EXPLORER_URL: '',
   };
 
+  const explorerUrl = (grunt.option('url') ||
+    'http://localhost:3000/file-explorer');
+  const url = new URL(explorerUrl);
+
   grunt.initConfig({
+    browserSync: {
+      dev: {
+        bsFiles: {
+          src: 'dist/explorer/css/explorer.css'
+        },
+        options: {
+          proxy: url.host,
+          watchTask: true,
+        },
+        injectChanges: false,
+      }
+    },
     // Read package.json.
     pkg: grunt.file.readJSON('package.json'),
     // webpack config
@@ -333,6 +349,13 @@ module.exports = function (grunt) {
           expand: true,
         }],
       },
+      dev: {
+        cwd: path.join(TMP_PATH),
+        src: path.join('css', 'explorer.css'),
+        dest: path.join(EXPLORER_DEST, 'css'),
+        expand: true,
+        flatten: true,
+      }
     },
     // Compile and minify JS files.
     uglify: {
@@ -377,6 +400,10 @@ module.exports = function (grunt) {
           spawn: false,
         },
       },
+      dev: {
+        files: ['src/explorer/css/*.styl'],
+        tasks: ['stylus:dev', 'copy:dev']
+      }
     },
   });
 
@@ -395,8 +422,10 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-exec');
   grunt.loadNpmTasks('grunt-webpack');
 
+  grunt.loadNpmTasks('grunt-browser-sync');
+
   // Options
-  inlines.EXPLORER_URL = grunt.option('url') || 'http://localhost:3000/file-explorer';
+  inlines.EXPLORER_URL = explorerUrl;
 
   // Build all dependencies.
   grunt.registerTask('build', [
@@ -440,4 +469,6 @@ module.exports = function (grunt) {
     'copy:deploy_min',
     'clean:temp',
   ]);
+
+  grunt.registerTask('explorerCss', ['browserSync:dev', 'watch:dev']);
 };

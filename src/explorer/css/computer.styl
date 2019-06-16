@@ -1,7 +1,9 @@
 @import 'variables'
 
+$pl_table_non_content_h = 320px;
+
 .computer
-    padding:20px
+    padding: $files_modal_padding;
     header
         margin-bottom:15px
         height:40px
@@ -17,6 +19,17 @@
             left:0
             position:relative
             table
+                @media only screen and (max-width : 670px)
+                    &.plupload_filelist thead.plupload_filelist_header,
+                    &.plupload_filelist tbody.plupload_filelist_content
+                        td:nth-child(1)
+                            width: 60%;
+                        td:nth-child(2)
+                            width: 30%;
+                        td:nth-child(3)
+                            display: none;
+                        td:nth-child(4)
+                            width: 10%;
                 border: none
                 position:relative
                 display:block
@@ -210,17 +223,21 @@
         padding: 1em
         position: absolute
         bottom: 20px
-        height: 40px
+        height: 42px;
         width: 420px
         font-weight: bold
         font-size: 13px
         z-index: 1
+        @media only screen and (max-width : 699px)
+            width: 'calc(100vw - (%s * 2))' % $files_modal_padding;
         .error-text
             display:inline-block
             overflow: hidden;
             width: 380px;
             text-overflow:ellipsis
             white-space:nowrap
+            @media only screen and (max-width : 699px)
+                width: 'calc(90vw - (%s * 2))' % $files_modal_padding;
         .close
             float:right
             margin-top: -5px
@@ -310,6 +327,8 @@ div.ui-container
     height:225px
     overflow:auto
     position:relative
+    @media only screen and (max-width : 699px)
+        height: 'calc(100vh - %s)' % $pl_table_non_content_h;
 div.ui-inner
     position:relative
     height:auto
