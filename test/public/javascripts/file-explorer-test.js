@@ -29,6 +29,8 @@ import 'regenerator-runtime/runtime';
     computer: true,
     services: ['all'],
     types: ['all'],
+    locale: 'en',
+    translations: `${window.location.origin}/translations-suite-sample.json`,
     display_backdrop: true,
   };
 

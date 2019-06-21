@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import ko from 'knockout';
 import globalize from 'globalize';
+import 'cldr/unresolved';
 import util from './util';
 import likelySubtags from 'cldr-data/supplemental/likelySubtags.json';
 import timeData from 'cldr-data/supplemental/timeData.json';
@@ -16,40 +17,53 @@ import messages from '../localization/messages/en.json';
  */
 'use strict';
 
-/**
- * Dictionary of supported locales. This object specifies which locales are
- * supported before attempting to load the files. Items in this dictionary
- * should have the following format:
- *   locale: {
- *     id: the id of the locale (i.e. 'en-US')
- *     messages: name of message file (in /localization/messages )
- *     plUpload_i18n: path to plUpload i18n file (in lib/plupload/i18n)
- *     dateTimeFormat: Optional. Override default date format when displaying
- *       date + time. Uses globalize time format (i.e. 'MMMdhm' for 12 hour
- *       clock, 'MMMdHm' for 24 hour).  Defaults to MMMdHm
- *   }
- *
- * The specific locales (i.e. 'en-US') and the parent language (i.e 'en')
- * should have separate entries in this dictionary. The parent language will
- * be used as the default if the specific locale is not supported (i.e. 'en-??'
- * will default to 'en')
- *
- * Example:
- * 'es': {
- *      id: 'es',
- *      messages: 'es.json',
- *      plUpload_i18n: 'es.js'
- *    }
- */
-var supportedLocales = {
-  'en': {
-    id: 'en',
-    messages: 'en.json',
-    plUpload_i18n: 'en.js',
-    dateTimeFormat: 'MMMdhm' // special case default en to 12 hour clock
-  }
+// ref: lib/plupload/i18n & cldr-data/main
+const supportedLocales = {
+  ar: { cldr: 'ar', plupload: 'ar' },
+  az: { cldr: 'az', plupload: 'az' },
+  bs: { cldr: 'bs', plupload: 'bs' },
+  cs: { cldr: 'cs', plupload: 'cs' },
+  cy: { cldr: 'cy', plupload: 'cy' },
+  da: { cldr: 'da', plupload: 'da' },
+  de: { cldr: 'de', plupload: 'de' },
+  el: { cldr: 'el', plupload: 'el' },
+  en: { cldr: 'en', plupload: 'en' },
+  es: { cldr: 'es', plupload: 'es' },
+  et: { cldr: 'et', plupload: 'et' },
+  fa: { cldr: 'fa', plupload: 'fa' },
+  fi: { cldr: 'fi', plupload: 'fi' },
+  fr: { cldr: 'fr', plupload: 'fr' },
+  he: { cldr: 'he', plupload: 'he' },
+  hr: { cldr: 'hr', plupload: 'hr' },
+  hu: { cldr: 'hu', plupload: 'hu' },
+  hy: { cldr: 'hy', plupload: 'hy' },
+  id: { cldr: 'id', plupload: 'id' },
+  it: { cldr: 'it', plupload: 'it' },
+  ja: { cldr: 'ja', plupload: 'ja' },
+  ka: { cldr: 'ka', plupload: 'ka' },
+  kk: { cldr: 'kk', plupload: 'kk' },
+  km: { cldr: 'km', plupload: 'km' },
+  ko: { cldr: 'ko', plupload: 'ko' },
+  lt: { cldr: 'lt', plupload: 'lt' },
+  lv: { cldr: 'lv', plupload: 'lv' },
+  mn: { cldr: 'mn', plupload: 'mn' },
+  ms: { cldr: 'ms', plupload: 'ms' },
+  nl: { cldr: 'nl', plupload: 'nl' },
+  pl: { cldr: 'pl', plupload: 'pl' },
+  pt: { cldr: 'pt', plupload: 'pt_BR' },
+  ro: { cldr: 'ro', plupload: 'ro' },
+  ru: { cldr: 'ru', plupload: 'ru' },
+  sk: { cldr: 'sk', plupload: 'sk' },
+  sq: { cldr: 'sq', plupload: 'sq' },
+  sr: { cldr: 'sr', plupload: 'sr_RS' },
+  sv: { cldr: 'sv', plupload: 'sv' },
+  th: { cldr: 'th', plupload: 'th_TH' },
+  tr: { cldr: 'tr', plupload: 'tr' },
+  uk: { cldr: 'uk', plupload: 'uk_UA' },
+  zh: { cldr: 'zh', plupload: 'zh_CN' },
 };
 
+let dateTimeFmt = '';
 
 // Used to wrap text when in the TEST locale
 // e.g. "#This is a localized string#"
@@ -74,14 +88,13 @@ var isTestLocale = ko.observable(false);
 var loadedLocales = {};
 var isSupplementalCldrLoaded = false;
 
-var locUtil = {
+const isLocaleSupported = locale => !!supportedLocales[locale];
+const resolvePluploadFileName = (locale) => {
+  return (isLocaleSupported(locale) ?
+    `${supportedLocales[locale].plupload}.js` : 'en.js')
+};
 
-  /**
-   * Returns the currently supported locales
-   */
-  getSupportedLocales: function () {
-    return supportedLocales;
-  },
+var locUtil = {
 
   /**
    * Gets the supported locale that most closely matches the requested
@@ -93,18 +106,16 @@ var locUtil = {
     locale = (locale || DEFAULT_LOCALE).toLowerCase();
     if (locale === 'test') {
       // special case for the test locale.  Use 'en'
-      locale = 'en';
+      return DEFAULT_LOCALE;
     }
-    var effectiveLocale = this.getSupportedLocales()[locale];
-    if (!effectiveLocale) {
+    
+    if (!isLocaleSupported(locale)) {
       // no exact match, try the language code
-      var language = locale.split('-')[0]
-      effectiveLocale = this.getSupportedLocales()[language];
+      locale = locale.split('-')[0];
+      return isLocaleSupported(locale) ? locale : DEFAULT_LOCALE;
     }
 
-    // return the detected locale if found, or return the default locale
-    // if no suitable locale is found
-    return effectiveLocale || this.getSupportedLocales()[DEFAULT_LOCALE];
+    return locale;
   },
 
 
@@ -112,11 +123,20 @@ var locUtil = {
    * Changes the current locale.  Loads the supplemental data and locale
    * specific data if necessary
    * @param locale New locale ('en-US', 'es-ES', etc...)
+   * @param translations The URL/JSON string of the translations
+   * @param dateTimeFormat The date/time format for the locale
    * @param [callback] Called when the locale is loaded
    */
-  setCurrentLocale: function (locale, callback) {
-    callback = callback || function () {
-    };
+  setCurrentLocale: function (
+    locale, translations, dateTimeFormat, callback) {
+    callback = callback || function () {};
+    dateTimeFmt = dateTimeFormat;
+
+    const warningLocaleNotFound = 'There is no corresponding translation' +
+     ` for locale [${locale}]! Falling back to the default translation.`;
+
+    const warningFileNotFound = 'Can not fetch the translation file from' +
+     ` ${translations}! Falling back to the default translation.`;
 
     var effectiveLocale = this.getEffectiveLocale(locale);
     isTestLocale(locale === 'TEST');
@@ -126,22 +146,29 @@ var locUtil = {
     // Append the timestamp on the end to force re-exectuion of the script.
     $.getScript(
       util.getBaseUrl() + '/js/vendor/plupload/i18n/' +
-      effectiveLocale.plUpload_i18n + '?timestamp=' + Date.now()
+      resolvePluploadFileName(effectiveLocale) + '?timestamp=' + Date.now()
     );
 
-    if (loadedLocales[effectiveLocale.id]) {
+    if (loadedLocales[effectiveLocale]) {
       // this locale has already been loaded
-      currentLocale(loadedLocales[effectiveLocale.id]);
+      currentLocale(loadedLocales[effectiveLocale]);
       return callback();
     } else {
+      let deferred = null;
+      if (typeof translations !== 'string') {
+        deferred = $.Deferred();
+        deferred.resolve([translations]);
+      }
+
       // load the necessary language files
-      var cldrBaseUrl = CLDR_DATA_URL + 'main/' + effectiveLocale.id + '/';
+      var cldrBaseUrl = CLDR_DATA_URL + 'main/' + effectiveLocale + '/';
 
       var deferreds = [
         $.getJSON(cldrBaseUrl + 'ca-gregorian.json'),
         $.getJSON(cldrBaseUrl + 'numbers.json'),
         $.getJSON(cldrBaseUrl + 'timeZoneNames.json'),
-        $.getJSON(LOCALIZATION_MESSAGES_URL + effectiveLocale.id + '.json')
+        deferred || $.getJSON(translations ||
+          LOCALIZATION_MESSAGES_URL + effectiveLocale + '.json')
       ];
 
       if (!isSupplementalCldrLoaded) {
@@ -177,13 +204,23 @@ var locUtil = {
               gregorianDataStatusXhr[0], numbersDataStatusXhr[0],
               timeZoneNamesDataStatusXhr[0]);
 
-            globalize.loadMessages(messagesDataStatusXhr[0]);
+            const translations = messagesDataStatusXhr[0];
 
-            this.updateCurrentLocaleOfKo(effectiveLocale);
+            if (!(locale in translations)) {
+              console.warn(warningLocaleNotFound);
+              globalize.loadMessages(messages);
+            } else {
+              globalize.loadMessages({
+                // https://github.com/globalizejs/globalize/blob/master/doc/api/message/load-messages.md#messages-inheritance
+                root: messages['en'],
+                ...translations,
+              });
+              this.updateCurrentLocaleOfKo(effectiveLocale);
+            }
 
             return callback();
           }.bind(this)
-        );
+        ).fail(() => console.warn(warningFileNotFound));
     }
   },
 
@@ -193,13 +230,13 @@ var locUtil = {
    * @param {Object} effectiveLocale
    */
   updateCurrentLocaleOfKo: function (effectiveLocale) {
-    var globalizeLocaleObject = globalize(effectiveLocale.id);
+    var globalizeLocaleObject = globalize(effectiveLocale);
 
-    loadedLocales[effectiveLocale.id] = {
+    loadedLocales[effectiveLocale] = {
       globalize: globalizeLocaleObject,
       locale: effectiveLocale
     };
-    currentLocale(loadedLocales[effectiveLocale.id]);
+    currentLocale(loadedLocales[effectiveLocale]);
   },
 
   /**
@@ -212,9 +249,7 @@ var locUtil = {
       timeZoneNames, plurals);
     globalize.loadMessages(messages);
 
-    var effectiveLocale = this.getEffectiveLocale('en');
-
-    this.updateCurrentLocaleOfKo(effectiveLocale);
+    this.updateCurrentLocaleOfKo(DEFAULT_LOCALE);
   },
 
   /**
@@ -256,11 +291,8 @@ var locUtil = {
    * @param date Date to format
    */
   formatDateTime: function (date) {
-    var format = DEFAULT_DATETIME_FORMAT;
-
-    if (this.getCurrentLocale() &&
-      locUtil.getCurrentLocale().locale.dateTimeFormat)
-      format = locUtil.getCurrentLocale().locale.dateTimeFormat;
+    const format = dateTimeFmt || DEFAULT_DATETIME_FORMAT;
+    // https://github.com/globalizejs/globalize#dateformatter-options-
 
     return this.getCurrentLocale().globalize.dateFormatter(
       {skeleton: format})(date);

@@ -284,6 +284,51 @@ File Explorer JavaScript on the page.
   of [Trusted Domains](https://developers.kloudless.com/applications/*/details) for the
   `custom_css` property to be used.
 
+* `locale` : string
+
+  Chooser: _Optional (default: "en")_
+
+  Saver: _Optional (default: "en")_
+
+  The Kloudless File Explorer supports i18n/l10n. You can specify any of the
+  following [ISO-639-1 codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes):
+
+  `ar`, `az`, `bs`, `cs`, `cy`, `da`, `de`, `el`, `en`, `es`, `et`, `fa`,
+  `fi`, `fr`, `he`, `hr`, `hu`, `hy`, `id`, `it`, `ja`, `ka`, `kk`, `km`,
+  `ko`, `lt`, `lv`, `mn`, `ms`, `nl`, `pl`, `pt`, `ro`, `ru`, `sk`, `sq`,
+  `sr`, `sr`, `sv`, `th`, `tr`, `uk`, `zh`
+  
+  The locale is used to identify the translation data to retrieve from either
+  the data provided in the `translations` option below or from the out-of-the-box
+  translation data in the [messages directory](src/explorer/localization/messages).
+  If no translation data is found, the File Explorer uses the `en` locale.
+
+* `translations` : string or object
+
+  Chooser: _Optional (default: "")_
+
+  Saver: _Optional (default: "")_
+  
+  This option specifies either an object with translation data or a URL
+  that returns the translation data as a JSON string. The `locale` option
+  indicates which locale's translation data to use. Any translation data
+  provided here overrides Kloudless' default translation data included in the
+  [messages directory](src/explorer/localization/messages).
+  See [translations-suite-sample.json](test/public/translations-suite-sample.json)
+  for an example of the translation file format.
+  Any strings not translated will default to the `en` locale's representation.
+
+* `dateTimeFormat` : string
+
+  Chooser: _Optional (default: "MMMdHm")_
+
+  Saver: _Optional (default: "MMMdHm")_
+
+  This option specifies a date-time format for the `locale` above.
+  Please refer to the `skeleton` values in the
+  [globalize JS module](https://github.com/globalizejs/globalize/blob/master/doc/api/date/date-formatter.md#using-open-ended-skeletons)
+  for the formats supported.
+
 * `create_folder` : boolean
 
   Chooser: _Optional (default: true)_
