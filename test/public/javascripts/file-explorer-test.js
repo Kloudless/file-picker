@@ -1,4 +1,6 @@
 /* eslint-disable func-names, no-console */
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 
 (function () {
   /**

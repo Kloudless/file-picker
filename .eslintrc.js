@@ -31,6 +31,6 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     // allow param reassign or the param's properties
     'no-param-reassign': ["error", { "props": false }],
-    'max-len': ["error", { "code": 80 }]
+    'max-len': ["error", { "code": 80 }],
   }
 }

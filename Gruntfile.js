@@ -1,8 +1,8 @@
 /* eslint-disable func-names */
 const path = require('path');
 const cssoStylus = require('csso-stylus');
-var webpackDevConfig = require('./build/webpack.dev.conf.js');
-var webpackProdConfig = require('./build/webpack.prod.conf.js');
+const webpackDevConfig = require('./config/explorer/webpack.dev.conf.js');
+const webpackProdConfig = require('./config/explorer/webpack.prod.conf.js');
 
 const DIR = __dirname;
 const EXPLORER_SRC = path.join(DIR, 'src', 'explorer');
@@ -363,7 +363,7 @@ module.exports = function (grunt) {
     // Clean temporary and deployment directories.
     clean: {
       temp: [TMP_PATH],
-      deploy: [DEST_PATH],
+      deploy: [EXPLORER_DEST],
       options: {
         force: true,
       },

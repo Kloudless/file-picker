@@ -1,7 +1,7 @@
+/* global BASE_URL */
 import $ from 'jquery';
 import ko from 'knockout';
 import localization from './localization';
-import './polyfills';
 import config from './config.json';
 
 
@@ -64,6 +64,9 @@ Object.assign(config, {
   chunk_size: 5 * 1024 * 1024,
   locale: ko.observable('en'),
   enable_logout: ko.observable(true),
+
+  // TODO: drop base_url in favor of BASE_URL env variable
+  base_url: BASE_URL || config.base_url,
 
   // b/w compatibility
   account_key: JSON.parse(get_query_variable('account_key')),

@@ -1,3 +1,6 @@
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
+
 import $ from 'jquery';
 import 'jquery-ui/ui/jquery-ui';
 import 'jquery-dropdown/jquery.dropdown';
@@ -7,7 +10,6 @@ import 'plupload/moxie';
 import 'plupload/plupload.dev';
 import 'plupload/jquery.ui.plupload/jquery.ui.plupload';
 import 'cldrjs';
-import 'requirejs-plugins/src/json';
 import ko from 'knockout';
 import sammy from 'sammy';
 import logger from 'loglevel';
@@ -20,7 +22,6 @@ import Search from './models/search';
 import util from './util';
 import localization from './localization';
 import Account from './models/account';
-import './polyfills';
 import './iexd-transport';
 
 'use strict';
@@ -737,11 +738,7 @@ var FileExplorer = function () {
           target = parent;
         }
         // remove properties that are only for internal use
-        // IE 11 does not support Object.assign
-        var target2 = {};
-        Object.keys(target).forEach(function (key) {
-          target2[key] = target[key];
-        });
+        var target2 = Object.assign({}, target);
         delete target2.friendlySize;
 
         self.view_model.loading(true);

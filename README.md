@@ -791,11 +791,12 @@ See [File Explorer with React](./README.react.md).
 
 ## Browser Support
 
-* Chrome 17+
-* Firefox 21+
+* Chrome 56+
+* Firefox 56+
 * IE 11+
-* Safari 6+
-* Opera 15+
+* Edge 12+
+* Safari 8+
+* Opera 49+
 
 ### Work with mobile devices
 To use the Kloudless File Explorer on devices with narrow screens, please add a
@@ -841,7 +842,7 @@ merged in so we can offer feedback on its implementation.
 #### Install
 
 Install Node.js (`sudo apt-get install nodejs` or equivalent)
-Make sure you have npm >= 1.4, otherwise `sudo npm install -g npm`.
+Make sure you have nodejs >= 11 and npm >= 6.7.0.
 Run the following commands:
 
     npm install

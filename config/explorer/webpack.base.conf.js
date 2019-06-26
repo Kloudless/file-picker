@@ -1,16 +1,16 @@
-'use strict'
-var path = require('path');
-var webpack = require('webpack');
+const path = require('path');
+const webpack = require('webpack');
 
-function resolve (dir) {
-  return path.join(__dirname, '..', dir)
+
+function resolve(dir) {
+  return path.join(__dirname, '../../', dir);
 }
 
 module.exports = {
   context: resolve('./'),
   mode: 'development',
   entry: {
-    app: './src/explorer/js/app.js'
+    app: './src/explorer/js/app.js',
   },
   output: {
     path: resolve('dist/explorer/js/'),
@@ -20,12 +20,12 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.json'],
     modules: [
-      'src', 'lib', 'node_modules', 'bower_components'
+      'src', 'lib', 'node_modules', 'bower_components',
     ],
     alias: {
       // set these cldr alias to avoid webpack build error
-      'cldr$': 'cldrjs',
-      'cldr': 'cldrjs/dist/cldr',
+      cldr$: 'cldrjs',
+      cldr: 'cldrjs/dist/cldr',
     },
   },
   module: {
@@ -35,7 +35,7 @@ module.exports = {
         loader: 'babel-loader',
         include: [resolve('src')],
       },
-    ]
+    ],
   },
   plugins: [
     new webpack.ProvidePlugin({
@@ -48,4 +48,3 @@ module.exports = {
     }),
   ],
 };
-
