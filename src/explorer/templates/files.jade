@@ -75,13 +75,13 @@
       // ko if: $root.isDesktop
       thead
         tr
-          th(data-bind='click: sort("name"), translate: "files/name"') Name
+          th(data-bind='click: function(){sort("name")}, translate: "files/name"') Name
             .arrow-up#sort-name-up
             .arrow-down#sort-name-down
-          th(data-bind='click: sort("largest"), translate: "files/size"') Size
+          th(data-bind='click: function(){sort("largest")}, translate: "files/size"') Size
             .arrow-up#sort-largest-up
             .arrow-down#sort-largest-down
-          th(data-bind='click: sort("recent"), translate: "files/updated"') Updated
+          th(data-bind='click: function(){sort("recent")}, translate: "files/updated"') Updated
             .arrow-up#sort-recent-up
             .arrow-down#sort-recent-down
       // /ko

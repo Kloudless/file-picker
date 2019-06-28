@@ -846,31 +846,27 @@ Make sure you have nodejs >= 11 and npm >= 6.7.0.
 Run the following commands:
 
     npm install
-    bower install
-
-If you don't have `bower` or `grunt` installed, run:
-
-    sudo npm install -g bower grunt-cli
+    npm run install-deps
 
 #### Build Explorer
 
 ```
-grunt dev
+npm run build:explorer
 ```
 
 Here are a few of the more useful [Grunt](http://gruntjs.com/) tasks available:
 
-* `grunt`
-  This can be used instead of `grunt dev` if only non-library files have
-  been changed. Especially useful during development.
+* `npm run build:explorer-only`
+  This can be used instead of `npm run build:explorer` if only non-library
+  files have been changed. Especially useful during development.
 
-* `grunt dev`
+* `npm run build:explorer`
   During development, this will build all non-minified versions of files for
   easier debugging purposes.
 
-* `grunt deploy`
-  For deployment purposes, use `grunt deploy` to build minified versions of
-  the files needed.
+* `npm run build:explorer-deploy`
+  For deployment purposes, use `npm run build:explorer-deploy` to build
+  minified versions of the files needed.
 
 All output files are placed in the `dist/explorer` directory. 
 Included in that directory are JS, CSS and HTML files that compose the 
