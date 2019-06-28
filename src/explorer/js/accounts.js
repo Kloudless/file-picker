@@ -60,7 +60,8 @@ AccountManager.prototype.removeAccount = function (account_id) {
 
 // Send a DELETE request to server to delete the account, then call
 // removeAccount().
-AccountManager.prototype.deleteAccount = function (account_id, on_success_callback) {
+AccountManager.prototype.deleteAccount = function (account_id, delete_on_server,
+  on_success_callback) {
   var account_data = {};
   var accounts = this.accounts();
   for (var i = 0; i < accounts.length; i++) {
@@ -74,21 +75,26 @@ AccountManager.prototype.deleteAccount = function (account_id, on_success_callba
     alert('Error occurred. Please try again!');
     return;
   }
-  var request = $.ajax({
-    url: config.getAccountUrl(account_data.account),
-    type: 'DELETE',
-    headers: {
-      Authorization: account_data.key.scheme + ' ' + account_data.key.key
-    }
-  }).done(function (data) {
+  if (delete_on_server) {
+    var request = $.ajax({
+      url: config.getAccountUrl(account_data.account),
+      type: 'DELETE',
+      headers: {
+        Authorization: account_data.key.scheme + ' ' + account_data.key.key
+      }
+    }).done(function (data) {
+      this.removeAccount(account_data.account);
+      on_success_callback(account_data);
+    }.bind(this)).fail(function (xhr, status, err) {
+      logger.warn('Account failed to remove');
+      alert('Error occurred. Please try again!');
+    }).always(function () {
+      request = null;
+    });
+  } else {
     this.removeAccount(account_data.account);
     on_success_callback(account_data);
-  }.bind(this)).fail(function (xhr, status, err) {
-    logger.warn('Account failed to remove');
-    alert('Error occurred. Please try again!');
-  }).always(function () {
-    request = null;
-  });
+  }
 };
 
 // Retrieve an account by Account ID. Returns null if account not found.

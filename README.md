@@ -378,6 +378,11 @@ File Explorer JavaScript on the page.
   If `true`, allows users to log out of their accounts, which deletes the account
   from Kloudless servers. API requests will no longer be possible to the account.
 
+* `delete_accounts_on_logout` : boolean (default: false)
+    
+  If `false`, the File Explorer only removes tokens from the storage configured
+  in `persist` option when users log out. If `true`, it also deletes the accounts 
+  from the Kloudless server and invalidates the OAuth tokens. 
 
 #### Chooser options
 
@@ -705,6 +710,16 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
   * `link_options`
   * `upload_location_account`
   * `upload_location_folder`
+  
+* `explorer.logout(deleteAccount=false)`
+
+  Removes all authentication tokens for the accounts connected to the File 
+  Explorer as configured via the `persist` option. If `deleteAccount` is set 
+  to `true`, it also deletes the accounts from the Kloudless server and 
+  invalidates the OAuth tokens, rendering them unusable and the accounts
+  inaccessible.
+     
+  This method isn't impacted by the `delete_accounts_on_logout` option. 
 
 ### Example for script tag usage
 

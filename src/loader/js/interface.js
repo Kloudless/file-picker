@@ -569,6 +569,21 @@ fileExplorer._explorer.prototype.destroy = function () {
   delete queuedAction[this.exp_id];
 };
 
+fileExplorer._explorer.prototype.logout = function (deleteAccount) {
+  /**
+   *  Removes all account tokens from file explorer localStorage or
+   *  sessionStorage.
+   *
+   *  @param {Boolean} deleteAccount - If true, deletes all accounts which
+   *  connected to Kloudless server.
+   */
+  if (deleteAccount) {
+    this.message('LOGOUT:DELETE_ACCOUNT');
+  } else {
+    this.message('LOGOUT');
+  }
+};
+
 /**
  * Dropzone
  */

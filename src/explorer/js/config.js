@@ -66,6 +66,7 @@ Object.assign(config, {
   translations: ko.observable(''),
   dateTimeFormat: ko.observable('MMMdHm'),
   enable_logout: ko.observable(true),
+  delete_accounts_on_logout: ko.observable(false),
 
   // TODO: drop base_url in favor of BASE_URL env variable
   base_url: BASE_URL || config.base_url,

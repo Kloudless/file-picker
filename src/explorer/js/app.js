@@ -88,6 +88,7 @@ var FileExplorer = function () {
     // config
     flavor: config.flavor,
     enable_logout: config.enable_logout,
+    delete_accounts_on_logout: config.delete_accounts_on_logout,
 
     // The current view: alternates between 'files', 'accounts', 'computer', etc.
     current: ko.observable(startView),
@@ -564,10 +565,11 @@ var FileExplorer = function () {
           this.view_model.accounts.active() + ".png";
       }, self),
 
-      logout: function () {
+      logout: function (deleteAccount) {
         var accounts = explorer.manager.accounts();
         for (var i = 0; i < accounts.length; i++) {
-          explorer.manager.deleteAccount(accounts[i].account, function (account_data) {
+          explorer.manager.deleteAccount(accounts[i].account, deleteAccount,
+            function (account_data) {
             // post message for account
             explorer.view_model.postMessage('deleteAccount',
               account_data.account);
@@ -1376,7 +1378,7 @@ var router = sammy(function () {
   this.get('#/account/disconnect/:id', function () {
     logger.debug('Account disconnection invoked for id: ' + this.params.id + '.');
 
-    explorer.manager.deleteAccount(this.params.id, function (account_data) {
+    explorer.manager.deleteAccount(this.params.id, true, function (account_data) {
       // post message for account
       explorer.view_model.postMessage('deleteAccount',
         account_data.account);
@@ -1468,6 +1470,10 @@ window.addEventListener('message', function (message) {
     dataMessageHandler(contents.data);
   } else if (contents.action == 'CLOSING') {
     explorer.cleanUp();
+  } else if (contents.action == 'LOGOUT') {
+    explorer.view_model.accounts.logout(false);
+  } else if (contents.action == 'LOGOUT:DELETE_ACCOUNT') {
+    explorer.view_model.accounts.logout(true);
   }
 });
 
