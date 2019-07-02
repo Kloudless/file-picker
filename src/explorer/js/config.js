@@ -147,6 +147,7 @@ var retrieveConfig = function () {
   if (config.upload_location_uri()) {
     query_params['upload_location_uri'] = config.upload_location_uri();
   }
+  query_params['explorer_params'] = encodeURIComponent(location.search);
   $.get(
     config.base_url + "/file-explorer/config/",
     query_params,
