@@ -2,6 +2,7 @@ import ko from 'knockout';
 import logger from 'loglevel';
 import Account from './models/account';
 import Authenticator from './auth';
+import config from './config';
 
 'use strict';
 
