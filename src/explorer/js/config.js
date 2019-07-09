@@ -4,7 +4,8 @@
 import $ from 'jquery';
 import ko from 'knockout';
 import localization from './localization';
-import config from './config.json';
+// check babel.config.js for actual import path
+import config from 'explorer-config';
 
 
 function get_query_variable(name) {
@@ -48,7 +49,7 @@ Object.assign(config, {
     rateLimit: 500,
   }),
   // TODO: drop base_url in favor of BASE_URL env variable
-  base_url: BASE_URL || config.base_url,
+  base_url: BASE_URL,
   chunk_size: 5 * 1024 * 1024,
   computer: ko.observable(get_query_variable('flavor') === 'dropzone'),
   copy_to_upload_location: ko.observable(),

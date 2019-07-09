@@ -16,8 +16,7 @@ module.exports = {
     node: true
   },
   extends: [
-    // https://github.com/airbnb/javascript
-    'airbnb-base'
+    'airbnb-base',
   ],
   // add your custom rules here
   rules: {

@@ -14,16 +14,13 @@ const https = require('https');
 const fs = require('fs');
 const webpack = require('webpack');
 
-const webpackTestConfig = require('../config/webpack.test-server.conf');
+const webpackConfig = require('../config/webpack.dev.conf');
 
 const app = express();
 
 app.set('port', process.env.PORT || 3000);
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
 app.use(morgan('dev'));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, '..')));
+app.use('/static', express.static(path.join(__dirname, './static')));
 
 app.use((req, res, next) => {
   res.set({
@@ -34,18 +31,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/', (req, res) => {
-  res.render('index', { app_id: process.env.KLOUDLESS_APP_ID });
-});
-app.get('/file-explorer', (req, res) => {
-  res.render('file-explorer', { app_id: process.env.KLOUDLESS_APP_ID });
-});
-
-const compiler = webpack(webpackTestConfig);
+const compiler = webpack(webpackConfig);
 const middleware = webpackDevMiddleware(compiler, {
   logTime: true,
   stats: 'minimal',
-  publicPath: webpackTestConfig.output.publicPath,
+  publicPath: webpackConfig.output.publicPath,
 });
 app.use(middleware);
 

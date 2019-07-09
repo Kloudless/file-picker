@@ -1,5 +1,5 @@
 {
-    "debug": true,
-    "logLevel": 1,
+    "debug": false,
+    "logLevel": 3,
     "static_path": "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com"
 }
