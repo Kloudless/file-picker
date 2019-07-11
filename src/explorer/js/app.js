@@ -253,10 +253,10 @@ var FileExplorer = function () {
           }
 
           // All requests are done
-          // TODO handle case if requestCountError != 0
           if (requestCountSuccess + requestCountError == selections.length) {
             window.clearInterval(requestLauncherInterval);
-            explorer.view_model.postMessage('success', selections);
+            explorer.view_model.postMessage(
+              requestCountError ? 'error' : 'success', selections);
             processingConfirm = false;
           }
         };
@@ -279,6 +279,7 @@ var FileExplorer = function () {
             selectionComplete(true);
           }).fail(function (xhr, status, err) {
             logger.warn('Error creating link: ', status, err, xhr);
+            selections[selection_index]['error'] = xhr.responseJSON;
             selectionComplete(false);
           });
           requestCountStarted += 1;
@@ -299,7 +300,7 @@ var FileExplorer = function () {
                 callbacks.onComplete && callbacks.onComplete(data);
               }
             }).fail(function (xhr, status, err) {
-              callbacks.onError && callbacks.onError(err);
+              callbacks.onError && callbacks.onError(xhr, status, err);
             });
           }, POLLING_INTERVAL);
         };
@@ -341,8 +342,9 @@ var FileExplorer = function () {
                   selections[selection_index] = metadata;
                   selectionComplete(true);
                 },
-                onError: function (err) {
+                onError: function (xhr, status, err) {
                   logger.error(taskInfo + 'failed: ' + JSON.stringify(err));
+                  selections[selection_index]['error'] = xhr.responseJSON;
                   selectionComplete(false);
                 },
               });
@@ -350,7 +352,8 @@ var FileExplorer = function () {
               selections[selection_index] = res;
               selectionComplete(true);
             }
-          }).fail(function () {
+          }).fail(function (xhr, status, err) {
+            selections[selection_index]['error'] = xhr.responseJSON;
             selectionComplete(false);
           });
           requestCountStarted += 1;

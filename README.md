@@ -397,6 +397,9 @@ File Explorer JavaScript on the page.
   Use with the `copy_to_upload_location` to generate a link to the newly
   copied file that is returned in the callback.
 
+  The Kloudless File Explorer will fire the `error` event when the link
+  generation is not fully successful.
+
   ```javascript
     // Response
     // [{
@@ -450,6 +453,9 @@ File Explorer JavaScript on the page.
   even though the copy has not yet completed. Please migrate to using
   `'sync'` instead for similar behavior with a guarantee that the copy is
   successful.
+
+  The Kloudless File Explorer will fire the `error` event when the copy
+  operation is not fully successful.
 
 * `upload_location_account` : string
 
@@ -552,9 +558,26 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
   Fired if the user decides to cancel an operation. The File Explorer will
   be closed on cancellation.
 
-* `error(error)`
+* `error(files)`
 
-  Fired in the event of an unrecoverable error.
+  Fired in the event of an unrecoverable error with any of the items selected.
+  The `success` event will not be fired even if the selection partially succeeds.
+  Unlike the result provided for the `success` event, `files` includes an extra
+  `error` key within the metadata of failed selections that contains the error
+  response from the Kloudless API. Here is an example of the `error` sub-object
+  that may be present:
+
+  ```javascript
+  {
+    "status_code": 404,
+    "message": "File not found: 1D-QuGwx7acbeGQ3STSCphysJsQs8YHJR",
+    "error_code": "not_found",
+    "id": "9b62d9d8-7bc7-495b-b97a-33b43720274d"
+  }
+  ```
+
+  This information helps your application identify selections that failed to be
+  copied over to upload locations, or have links generated.
 
 * `open()`
 
