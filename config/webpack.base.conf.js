@@ -10,7 +10,6 @@ const root = path.resolve(__dirname, '../');
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 const cssMinifier = isDevelopment ? [] : [CssNano()];
-
 const styleLoaders = [
   {
     loader: MiniCssExtractPlugin.loader,
@@ -65,9 +64,11 @@ module.exports = {
       },
       {
         test: /\.png$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+          },
         },
       },
     ],

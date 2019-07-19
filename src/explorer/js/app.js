@@ -904,7 +904,7 @@ var FileExplorer = function () {
   });
   this.view_model.files.searchQuery.subscribe(this.view_model.files.search, this);
 
-  ko.applyBindings(this.view_model);
+  ko.applyBindings(this.view_model, $('#kloudless-file-explorer')[0]);
 };
 
 // Switch views between 'accounts', 'files', and 'computer'.

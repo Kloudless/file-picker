@@ -29,7 +29,7 @@ module.exports = ({ types: t }) => ({
         );
         const inputStylus = fs.readFileSync(stylusFile, 'utf8');
         let css = stylus(inputStylus).use(autoprefixer()).render();
-        css = css.replace(/[\s\n]/g, '');
+        css = css.replace(/[\n]/g, '');
 
         // common identifiers and string literals
         const documentIdentifier = t.identifier('document');

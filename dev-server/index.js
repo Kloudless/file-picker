@@ -29,11 +29,13 @@ import 'regenerator-runtime/runtime';
     explorerOptions: {
       multiselect: true,
       link: false,
-      custom_css: window.customCss,
       computer: true,
       services: ['all'],
       types: ['all'],
       display_backdrop: true,
+      // enable below options to test localization
+      // locale: 'zh',
+      // translations: window.translations,
     },
   };
 

@@ -41,8 +41,8 @@ module.exports = {
         root: common.resolvePaths,
         alias: {
           'explorer-config': path.resolve(__dirname, './src/explorer/js/',
-            process.env.NODE_ENV === 'production'
-              ? './config_prod.json' : './config.json'),
+            (process.env.NODE_ENV === 'production'
+             && !process.env.DEBUG) ? './config_prod.json' : './config.json'),
         },
       },
     ],

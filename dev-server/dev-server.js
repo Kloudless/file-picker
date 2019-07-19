@@ -6,17 +6,21 @@ if (!process.env.KLOUDLESS_APP_ID) {
 }
 
 const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
 const http = require('http');
 const https = require('https');
-const fs = require('fs');
 const webpack = require('webpack');
+const sslCert = require('./ssl-cert');
 
 const webpackConfig = require('../config/webpack.dev.conf');
 
 const app = express();
+
+process.env.EXPLORER_URL = `${sslCert.certificate ? 'https' : 'http'}://`
+ + 'localhost:3000/explorer/explorer.html';
 
 app.set('port', process.env.PORT || 3000);
 app.use(morgan('dev'));
@@ -38,17 +42,22 @@ const middleware = webpackDevMiddleware(compiler, {
   publicPath: webpackConfig.output.publicPath,
 });
 app.use(middleware);
+app.use(webpackHotMiddleware(compiler, {
+  log: false, path: '/__webpack_hmr', heartbeat: 10 * 1000,
+}));
 
 let server;
 
-if (process.env.SSL_CERT) {
-  const privateKey = fs.readFileSync(process.env.SSL_KEY, 'utf8');
-  const certificate = fs.readFileSync(process.env.SSL_CERT, 'utf8');
-  server = https.createServer({ key: privateKey, cert: certificate }, app);
+if (sslCert.certificate) {
+  server = https.createServer(
+    { key: sslCert.privateKey, cert: sslCert.certificate },
+    app,
+  );
 } else {
   server = http.createServer(app);
 }
 
 server.listen(app.get('port'), () => {
-  console.log('Express server listening on port', app.get('port'));
+  console.log('Dev server running on http://localhost:3000');
+  console.log('Webpack bundles are compiling...');
 });

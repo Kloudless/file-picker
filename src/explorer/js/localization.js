@@ -145,7 +145,7 @@ var locUtil = {
     // plupload will handle it.
     // Append the timestamp on the end to force re-exectuion of the script.
     $.getScript(
-      util.getBaseUrl() + '/js/vendor/plupload/i18n/' +
+      util.getBaseUrl() + '/localization/plupload/i18n/' +
       resolvePluploadFileName(effectiveLocale) + '?timestamp=' + Date.now()
     );
 

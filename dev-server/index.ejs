@@ -43,7 +43,8 @@
         explorerUrl: "<%= explorerUrlPlaceHolder %>",
       });
       window.appId = "<%= appIdPlaceHolder %>";
-      window.customCss = '/dev-server/static/custom.css';
+      window.translations = window.location.origin
+        + "/dev-server/static/translations-suite-sample.json";
     </script>
     <script src="./index.js"></script>
   <% } else { %>
@@ -51,7 +52,8 @@
     <script src="loader/loader.js" data-kloudless-object='Kloudless2'>
     </script>
     <script>
-      window.customCss = '/static/custom.css';
+      window.translations = window.location.origin
+        + "/static/translations-suite-sample.json";
     </script>
   <% } %>
 </body>

@@ -48,8 +48,7 @@ Object.assign(config, {
     // logic only.
     rateLimit: 500,
   }),
-  // TODO: drop base_url in favor of BASE_URL env variable
-  base_url: BASE_URL,
+  base_url: String(BASE_URL).replace(/\/$/, ''),
   chunk_size: 5 * 1024 * 1024,
   computer: ko.observable(get_query_variable('flavor') === 'dropzone'),
   copy_to_upload_location: ko.observable(),

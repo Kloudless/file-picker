@@ -62,6 +62,8 @@ storage services:
     * [Build Options](#build-options)
   * [Testing](#testing)
 * [Self-hosting](#self-hosting)
+  * [Hosting the explorer page](#hosting-the-explorer-page)
+  * [Customizing the explorer page](#customizing-the-explorer-page)
 * [Misc. Development Notes](#misc-development-notes)
 * [Security Vulnerabilities](#security-vulnerabilities)
 * [Support](#support)
@@ -733,7 +735,12 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
 
 * `fileExplorer.setGlobalOptions(globalOptions)`
 
-  Set global options.
+  Set global options. The widget is configured to work with default values, so
+these options should only be set when needed. Available options:
+
+  * _explorerUrl_: URL string that hosts the explorer page, you only need
+this if you want to customize and host file-explorer widget by yourself, see
+[Self-Hosting](#self-hosting) for more information.
 
 * `explorer.choose()`
 
@@ -1002,15 +1009,15 @@ Then run the following commands:
 
 ### Development
 
-After you make changes to the source, you can test them out using a
-development server included in the repository that renders a File Explorer.
 
-You can specify the ID of a Kloudless app to include in that File Explorer's
-configuration while launching the development server as shown below.
+Use the following command to set your Kloudless App ID and run local
+development server:
 
 ```bash
 KLOUDLESS_APP_ID=<your_app_id> npm run dev
 ```
+
+This App ID will be used to launch File Explorer on the test page.
 
 By default, the development server points to `https://api.kloudless.com`.
 However, you can point it to an alternate Kloudless API server using the
@@ -1021,6 +1028,10 @@ However, you can point it to an alternate Kloudless API server using the
 export BASE_URL=<your_kloudless_api_server_url>
 ```
 
+The development server supports auto rebuilding source files whenever changes
+are saved. However, hot reloading scripts is not supported yet, you will need
+to reload the page to see your changes.
+
 ### Build
 
 The command below generates a minified production build at `/dist`.
@@ -1029,12 +1040,19 @@ The command below generates a minified production build at `/dist`.
 npm run build
 ```
 
-??? Explain the structure of files at `/dist` here. ???
+The folder structure in `dist` is explained below:
+
+Folder | Purpose
+---|---
+loader | Contains the script that is required for any page you would like to load File Explorer.
+explorer | Contains the page that renders File Explorer widget, you only need to use this folder if you want to [self-host](#self-hosting) File Explorer.
+template | Contains the page to build customized File Explorer page, check [Customizing the explorer page](#customizing-the-explorer-page) for more information.
+
 
 #### Build options
 
 You can use environment variables to configure the build. For example,
-you can include the `BASE_URL` environment variable describeda bove.
+you can include the `BASE_URL` environment variable described below.
 
 ```
 BASE_URL=<your_kloudless_api_server_url> npm run build
@@ -1055,27 +1073,60 @@ KLOUDLESS_APP_ID=<your_app_id> npm run dist-test
 
 ## Self-hosting
 
-* Modify the JS and CSS links at `example/explorer.html` to point to where you will
-  be hosting the compiled JS and CSS files for the explorer.
-* Run `EXPLORER_URL=$URL npm run build:loader` to build loader and
-  `npm run build:explorer` to build file explorer, where `$URL` is the URL that
-  will serve the File Explorer.
-* Place `dist/explorer/js/explorer.js` and `dist/explorer/css/explorer.css`
-  at the locations you specified in `example/explorer.html`.
-* Make `dist/explorer/explorer.html` available at `$URL`.
-  Feel free to customize the way assets are loaded/delivered.
-  The important part is that the JS, HTML and CSS must all be included on that
-  page.
-* Ensure the domain of `$URL` is added to your Kloudless App's list of
-  Trusted Domains. This can be done on the App Details page in the [Developer
-  Portal](https://kloudless.com). This is necessary because Account Keys will
-  be sent via postMessage from the Kloudless API server's authentication popup
-  to the File Explorer hosted on your domain and the API server should first
-  confirm that it can trust your domain for your app.
-* Include the loader JS file from `dist/loader/js/loader.js`
-  in any page you would like the File Explorer functionality to be made
-  available at, and follow the Usage notes above.
-* Navigate to the page you included the loader at and use the File Explorer!
+The [build](#build) process above results in a JS file at
+`dist/loader/loader.min.js`, this file must be included in any page you would
+like to use the File Explorer on.
+
+### Hosting the explorer page
+
+The build also contains an `explorer` folder which renders the actual
+HTML and functionalities of the widget; by default, this is hosted by Kloudless.
+
+If you would like to host this page yourself, follow the steps below:
+1. Rebuild the assets by setting `EXPLORER_URL` to specify the file explorer
+page URL. For example, if you'd like to host it in
+`https://your.website.com/explorer`:
+
+    ```bash
+    EXPLORER_URL=https://your.website.com/explorer npm run build
+    ```
+
+    Optionally, you can also set `Kloudless.fileExplorer.setGlobalOptions` in
+    runtime instead of rebuilding the assets:
+
+    ```js
+    Kloudless.fileExplorer.setGlobalOptions({
+      explorerUrl: 'https://your.website.com/explorer',
+    });
+    ```
+2. Add your website domain to your Kloudless app's list of
+`Trusted Domains` on the
+[App Details Page](https://developers.kloudless.com/applications/*/details/).
+This allows the hosted explorer to receive access tokens to the Kloudless API.
+3. Copy the entire `dist/explorer` folder into `https://your.website.com`
+4. Include `dist/loader/loader.min.js` in your pages that will launch
+File Explorer.
+
+
+### Customizing the explorer page
+
+You can also customize the explorer page by modifying `template/explorer.ejs`
+and rebuild the template. You need to [build](#build) the File Explorer before
+doing customization.
+
+The `template/explorer.ejs` template contains necessary styles, scripts, and
+snippets for the explorer page.
+
+Feel free to add extra styles / scripts / HTML elements for your need,
+and run `npm run build:template` to build your customized explorer page.
+
+The built page will be available at `dist/custom-explorer.html`, replace
+`dist/explorer/explorer.html` with this file, and follow
+[Hosting the explorer page](hosting-the-explorer-page) section above to host
+this page.
+
+To see an example for the built page, You can run `npm run build:template`
+without any modification, and check the result at `dist/custom-explorer.html`. 
 
 ## Misc. Development Notes
 

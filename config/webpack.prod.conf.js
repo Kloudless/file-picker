@@ -1,16 +1,18 @@
 /* Webpack config for dev-server */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const baseWebpackConfig = require('./webpack.base.conf');
-const getExplorerPagesPlugins = require('./explorer.pages.conf');
+const explorePageScriptPlugin = require('./explorer-page-script-plugin');
+const getCopyFilesPlugin = require('./copy-files-plugin');
 const merge = require('./merge-strategy');
 
 const distPath = path.resolve(__dirname, '../dist/');
+const srcPath = path.resolve(__dirname, '../src');
+
 const scripts = {
-  loader: [path.resolve(__dirname, '../src/loader/js/webpack/index.js')],
-  explorer: [path.resolve(__dirname, '../src/explorer/js/app.js')],
+  loader: [path.resolve(srcPath, 'loader/js/webpack/index.js')],
+  explorer: [path.resolve(srcPath, 'explorer/js/app.js')],
 };
 
 const prodConfig = merge(baseWebpackConfig, {
@@ -62,10 +64,23 @@ module.exports = [
       filename: '[name].js',
       publicPath: './',
     },
-    plugins: getExplorerPagesPlugins(
-      'explorer',
-      distPath,
-    ),
+    plugins: [
+      // explorer page
+      new HtmlWebpackPlugin({
+        filename: path.resolve(distPath, 'explorer/explorer.html'),
+        template: path.resolve(srcPath, 'explorer/templates/index.pug'),
+        chunks: ['explorer'],
+      }),
+      // explorer template page
+      new HtmlWebpackPlugin({
+        filename: path.resolve(distPath, 'template/explorer.html'),
+        template: path.resolve(srcPath, 'explorer/templates/explorer.pug'),
+        chunks: [],
+      }),
+      explorePageScriptPlugin,
+      // copy localization and cldr data
+      getCopyFilesPlugin(distPath),
+    ],
   }),
   // dev-server index page for dist-test
   merge(prodConfig, {
