@@ -1,3 +1,4 @@
+/* eslint-disable */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
@@ -25,6 +26,8 @@ import Account from './models/account';
 import './iexd-transport';
 
 'use strict';
+
+const EVENT_CALLBACKS = {};
 
 // Initialise and configure.
 logger.setLevel(config.logLevel);
@@ -398,50 +401,64 @@ var FileExplorer = function () {
       // postMessage to indicate failure.
       explorer.view_model.postMessage('cancel');
     },
-
-    postMessage: function (action, data) {
-      var post_data = {
+    /**
+     * Compose action, data and some additional info to an object then send to
+     * loader via window.parent.postMessage().
+     * You can provide a callback function to get the response from loader.
+     * Check 'GET_OAUTH_PARAMS' for example.
+     */
+    postMessage: function (action, data, callback) {
+      const message = {
         exp_id: self.exp_id,
         type: 'explorer',
-        action: action,
+        action,
       };
 
+      if (callback) {
+        let callbackId = util.randomID();
+        while (callbackId in EVENT_CALLBACKS) {
+          callbackId = util.randomID();
+        }
+        message.callbackId = callbackId;
+        EVENT_CALLBACKS[callbackId] = callback;
+      }
+
       if (data !== undefined) {
-        if (['selected', 'success', 'addAccount'].indexOf(action) > -1 &&
-          (config.account_key || config.retrieve_token())
-          && config.user_data().trusted) {
+        if (['selected', 'success', 'addAccount'].includes(action)
+            && (config.account_key || config.retrieve_token())
+            && config.user_data().trusted) {
           // Add in OAuth Token on success for files.
 
-          var accountMap = {}
-          ko.utils.arrayForEach(self.manager.accounts(), function (account) {
+          const accountMap = {};
+          ko.utils.arrayForEach(self.manager.accounts(), (account) => {
             accountMap[account.account] = account;
           });
 
           // Separate variable for cases where it isn't an array,
           // to reuse code.
-          var addKeyToData = data;
-          var accountIdField = 'account';
-          if (action == 'addAccount') {
+          let addKeyToData = data;
+          let accountIdField = 'account';
+          if (action === 'addAccount') {
             addKeyToData = [data];
             accountIdField = 'id';
           }
 
           // Add OAuth Token
-          ko.utils.arrayForEach(addKeyToData, function (d) {
-            var account = accountMap[d[accountIdField]];
+          ko.utils.arrayForEach(addKeyToData, (d) => {
+            const account = accountMap[d[accountIdField]];
             if (account !== undefined) {
-              var keyIdent = 'account_key'
-              if (config.retrieve_token())
-                d.bearer_token = {key: account.bearer_token}
-              if (config.account_key)
-                d.account_key = {key: account.account_key}
+              if (config.retrieve_token()) {
+                d.bearer_token = { key: account.bearer_token };
+              }
+              if (config.account_key) {
+                d.account_key = { key: account.account_key };
+              }
             }
           });
         }
-        post_data.data = data;
+        message.data = data;
       }
-
-      window.parent.postMessage(JSON.stringify(post_data), config.origin);
+      window.parent.postMessage(JSON.stringify(message), config.origin);
     },
 
     sync: function (accounts, loadStorage) {
@@ -614,81 +631,90 @@ var FileExplorer = function () {
         logger.debug('Account connection invoked for service: ' + service + '.');
         var serviceData = services()[service];
 
-        explorer.manager.addAccount(service, {
-          on_confirm_with_iexd: function () {
-            explorer.view_model.addconfirm.serviceName = serviceData.name;
-            explorer.view_model.addconfirm.serviceLogo = serviceData.logo;
+        // post message to get OAuth parameters
+        const getOAuthParams = new Promise((resolve, reject) => {
+          explorer.view_model.postMessage(
+            'GET_OAUTH_PARAMS', { service }, resolve
+          );
+        });
 
-            router.setLocation('#/addconfirm');
-
-            // position the iframe on the modal;
-            //
-            // note that we can't move the iframe in the DOM (e.g. to be a
-            // child of some element in our template) because that will
-            // force a reload, and we'll lose all existing state
-            // --> http://stackoverflow.com/q/7434230/612279
-
-            setTimeout(function () {
-              var button = $('#confirm-add-button');
-              var pos = button.offset();
-
-              $(auth.iframe).css({
-                top: pos.top + 'px',
-                left: pos.left + 'px',
-                width: button.outerWidth(),
-                height: button.outerHeight()
-              }).show();
-            }, 0);
-          },
-          on_account_ready: function (account) {
-            logger.debug('Redirecting to files view? ', first_account);
-
-            // Don't allow duplicate accounts
-            for (var i = 0; i < explorer.manager.accounts().length; i++) {
-              var acc = explorer.manager.accounts()[i];
-              if (acc.account == account.account) {
-                //Delete existing account to be overridden by new account
-                explorer.manager.removeAccount(acc.account);
+        getOAuthParams.then(({ oauthParams }) => {
+          explorer.manager.addAccount(service, oauthParams, {
+            on_confirm_with_iexd: function () {
+              explorer.view_model.addconfirm.serviceName = serviceData.name;
+              explorer.view_model.addconfirm.serviceLogo = serviceData.logo;
+  
+              router.setLocation('#/addconfirm');
+  
+              // position the iframe on the modal;
+              //
+              // note that we can't move the iframe in the DOM (e.g. to be a
+              // child of some element in our template) because that will
+              // force a reload, and we'll lose all existing state
+              // --> http://stackoverflow.com/q/7434230/612279
+  
+              setTimeout(function () {
+                var button = $('#confirm-add-button');
+                var pos = button.offset();
+  
+                $(auth.iframe).css({
+                  top: pos.top + 'px',
+                  left: pos.left + 'px',
+                  width: button.outerWidth(),
+                  height: button.outerHeight()
+                }).show();
+              }, 0);
+            },
+            on_account_ready: function (account) {
+              logger.debug('Redirecting to files view? ', first_account);
+  
+              // Don't allow duplicate accounts
+              for (var i = 0; i < explorer.manager.accounts().length; i++) {
+                var acc = explorer.manager.accounts()[i];
+                if (acc.account == account.account) {
+                  // Delete existing account to be overridden by new account
+                  explorer.manager.removeAccount(acc.account);
+                }
               }
+  
+              explorer.manager.accounts.push(account);
+  
+              if (Object.keys(ko.toJS(explorer.manager.active)).length === 0) {
+                explorer.manager.active(explorer.manager.getByAccount(account.account));
+              }
+  
+              // post message for account
+              explorer.view_model.postMessage('addAccount', {
+                id: account.account,
+                name: account.account_name,
+                service: account.service
+              });
+  
+              if (first_account) {
+                explorer.view_model.loading(true);
+                router.setLocation('#/files');
+              } else {
+                router.setLocation('#/accounts');
+              }
+            },
+            on_fs_ready: function (err, result) {
+              if (err && error_message) {
+                explorer.view_model.error(error_message);
+              } else if (err) {
+                explorer.view_model.error(err.message);
+              } else {
+                explorer.view_model.error('');
+              }
+  
+              if (first_account) {
+                explorer.view_model.loading(false);
+                first_account = false;
+              }
+  
+              // store accounts
+              storage.storeAccounts(config.app_id, explorer.manager.accounts());
             }
-
-            explorer.manager.accounts.push(account);
-
-            if (Object.keys(ko.toJS(explorer.manager.active)).length === 0) {
-              explorer.manager.active(explorer.manager.getByAccount(account.account));
-            }
-
-            // post message for account
-            explorer.view_model.postMessage('addAccount', {
-              id: account.account,
-              name: account.account_name,
-              service: account.service
-            });
-
-            if (first_account) {
-              explorer.view_model.loading(true);
-              router.setLocation('#/files');
-            } else {
-              router.setLocation('#/accounts');
-            }
-          },
-          on_fs_ready: function (err, result) {
-            if (err && error_message) {
-              explorer.view_model.error(error_message);
-            } else if (err) {
-              explorer.view_model.error(err.message);
-            } else {
-              explorer.view_model.error('');
-            }
-
-            if (first_account) {
-              explorer.view_model.loading(false);
-              first_account = false;
-            }
-
-            // store accounts
-            storage.storeAccounts(config.app_id, explorer.manager.accounts());
-          }
+          });
         });
       },
       computer: config.visible_computer,
@@ -1450,30 +1476,34 @@ if (config.debug) {
  * TODO: Move to separate module?
  */
 
-// Initialise to '#/' route.
+// Initialize to '#/' route.
 window.addEventListener('message', function (message) {
   logger.debug('Explorer hears message: ', message.data);
   if (message.origin !== config.origin) {
     return;
   }
 
-  var contents = JSON.parse(message.data);
+  const { action, data, callbackId } = JSON.parse(message.data);
   // TODO: future config options
-  if (contents.action == 'INIT') {
-    dataMessageHandler(contents.data)
+  if (action === 'INIT') {
+    dataMessageHandler(data)
     if (startView && startView !== 'accounts') {
       router.run('#/' + startView);
     } else {
       router.run('#/');
     }
-  } else if (contents.action == 'DATA') {
-    dataMessageHandler(contents.data);
-  } else if (contents.action == 'CLOSING') {
+  } else if (action === 'DATA') {
+    dataMessageHandler(data);
+  } else if (action === 'CLOSING') {
     explorer.cleanUp();
   } else if (contents.action == 'LOGOUT') {
     explorer.view_model.accounts.logout(false);
   } else if (contents.action == 'LOGOUT:DELETE_ACCOUNT') {
     explorer.view_model.accounts.logout(true);
+  } else if (action === 'CALLBACK' && callbackId
+    && EVENT_CALLBACKS[callbackId]) {
+    EVENT_CALLBACKS[callbackId](data);
+    delete EVENT_CALLBACKS[callbackId];
   }
 });
 

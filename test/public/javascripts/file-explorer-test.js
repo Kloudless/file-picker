@@ -187,7 +187,7 @@ import 'regenerator-runtime/runtime';
 window.onload = () => {
   const collections = document.getElementsByClassName('kloudless-modal');
   if (window.___browserSync___ && window.___browserSync___.socket) {
-    const socket = window.___browserSync___.socket;
+    const { socket } = window.___browserSync___;
     socket.on('file:reload', () => {
       const iframes = Array.from(collections);
       // need to reload the iframe to see the update for the explorer

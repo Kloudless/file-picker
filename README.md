@@ -183,14 +183,13 @@ File Explorer JavaScript on the page.
   or save the OAuth Tokens for future use.
 
   ```javascript
-    // Example response with an OAuth Token in the metadata.
-    [{
-        ...
-        bearer_token: {
-          key: "the_token",
-        },
-        ...
-     }]
+  // Example response with an OAuth Token in the metadata.
+  [{
+    bearer_token: {
+      key: "the_token",
+    },
+    ...
+  }]
   ```
 
   Only File Explorers launched from Trusted Domains can make use of this option.
@@ -365,12 +364,10 @@ File Explorer JavaScript on the page.
   in the list of accounts the user has connected.
 
   ```javascript
-    // Example initialization with OAuth Tokens to import.
-    explorer({
-      ...
-      tokens: ["abcdefghijklmn", "opqrstuvwxyz"]
-      ...
-    });
+  {
+    tokens: ["abcdefghijklmn", "opqrstuvwxyz"],
+    ... // other options
+  }
   ```
   
 * `enable_logout` : boolean (default: true)
@@ -382,7 +379,72 @@ File Explorer JavaScript on the page.
     
   If `false`, the File Explorer only removes tokens from the storage configured
   in `persist` option when users log out. If `true`, it also deletes the accounts 
-  from the Kloudless server and invalidates the OAuth tokens. 
+  from the Kloudless server and invalidates the OAuth tokens.
+
+* `oauth` : function (default: _see below_)
+
+  Use this parameter to customize the query parameters used in the first leg of
+  the Kloudless OAuth flow when authenticating users.
+  A full list of parameters supported is available on the
+  [OAuth docs](https://developers.kloudless.com/docs/latest/authentication#oauth-2.0-first-leg).
+
+  By default, the `scope` the File Explorer uses is
+  `"<service_id>:normal.storage <service_id>:normal.basic"`. Note that the
+  following options cannot be overridden for consistency or security reasons:
+
+  * `client_id`,
+  * `response_type`
+  * `redirect_uri`
+  * `origin`
+  * `state`
+
+  Set the value of the `oauth` option to a function that accepts a string.
+  The function will be called when a user attempts to connect an account, with
+  the string argument being the
+  [identifier](https://developers.kloudless.com/docs/latest/core#introduction-supported-services)
+  of the service the user is attempting to connect. For example, `gdrive`.
+
+  The function should return an object representing the attributes to
+  include as query parameters in the OAuth flow. Don't URL-encode the values;
+  the File Explorer handles that. Here is an example that customizes the
+  OAuth permissions requested if a user attempts to connect a Google Drive
+  account, and also pre-fills the server URL if a user chooses to connect an FTP
+  account:
+
+  ```javascript
+  {
+    oauth: (service) => {
+      const authOptions = {};
+
+      switch (service) {
+        case 'gdrive':
+          // Ask for read-only access to Google Drive data instead.
+          authOptions.scope = 'gdrive.storage."https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/drive.readonly":raw';
+          break;
+        case 'ftp':
+          // Set a default domain when connecting an FTP account.
+          authOptions.extra_data = {
+            domain: 'ftps://ftp.example.com:21',
+          };
+          break;
+      }
+
+      return authOptions;
+    },
+    ... // other options
+  }
+  ```  
+
+  If you're familiar with the configuration options accepted by the
+  [Kloudless Authenticator](https://github.com/Kloudless/authenticator#options),
+  the File Explorer requires options returned in the same format that the
+  Authenticator accepts. For convenience, the following parameters can be
+  specified as objects instead of URL-encoded JSON strings as shown in the
+  example above:
+
+  * `extra_data`
+  * `custom_properties`
+
 
 #### Chooser options
 
@@ -407,12 +469,11 @@ File Explorer JavaScript on the page.
   generation is not fully successful.
 
   ```javascript
-    // Response
-    // [{
-    //    ...
-    //    "link":
-    //    ...
-    // }]
+  // Example response of selecting a file
+  [{
+    "link": "https://<the file link>",
+    ...
+  }]
   ```
 
 * `link_options` : Object
@@ -429,12 +490,13 @@ File Explorer JavaScript on the page.
   For example:
 
   ```javascript
-      ...,
-      link_options: {
-        direct: true,
-        expiration: "2020-10-12T00:00:00"
-      },
-      ...
+  {
+    link_options: {
+      direct: true,
+      expiration: "2020-10-12T00:00:00"
+    },
+    ... // other options
+  }
   ```
 
 * `copy_to_upload_location` : string
@@ -537,18 +599,16 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
   using the `url` attribute.
 
   ```javascript
-    // Example initialization with files to save.
-    explorer({
-      ...
-      files: [{
-        "url": "http://<your image url>",
-        "name": "filename.extension"
-      }, {
-        "url": "http://<your image url>",
-        "name": "filename.extension"
-      }]
-      ...
-    });
+  {
+    files: [{
+      url: "http://<your image url>",
+      name: "filename.extension"
+    }, {
+      url: "http://<your image url>",
+      name: "filename.extension"
+    }],
+    ... // other options
+  }
   ```
 
 ### Events
@@ -774,22 +834,22 @@ explorer.choose();
 // Launching the explorer to save when a user clicks the Explore! button
 // Note: you can pass in an array of files instead of using the configuration option
 var files = [{
-  "url": "http://<your image url>",
-  "name": "filename.extension"
+  url: 'http://<your image url>',
+  name: 'filename.extension'
 }, {
-  "url": "http://<your image url>",
-  "name": "filename.extension"
+  url: 'http://<your image url>',
+  name: 'filename.extension'
 }];
 
 explorer.savify(document.getElementById('file-explorer-saver'), files);
 
 // In addition, you can launch the explorer programmatically with save()
 var files = [{
-  "url": "http://<your image url>",
-  "name": "filename.extension"
+  url: 'http://<your image url>',
+  name: 'filename.extension'
 }, {
-  "url": "http://<your image url>",
-  "name": "filename.extension"
+  url: 'http://<your image url>',
+  name: 'filename.extension'
 }];
 
 explorer.save(files);
@@ -845,21 +905,21 @@ JavaScript
 
 ```javascript
 var dropzone = window.Kloudless.fileExplorer.dropzone({
-    app_id: "Your App ID",
-    elementId: 'dropzone',
-    multiselect: true, // To upload more than 1 file.
+  app_id: 'Your App ID',
+  elementId: 'dropzone',
+  multiselect: true, // To upload more than 1 file.
 
-    // Chooser options below:
-    computer: true,
-    link: true,
-    services: ['all'],
-    types: ['all'],
+  // Chooser options below:
+  computer: true,
+  link: true,
+  services: ['all'],
+  types: ['all'],
 });
 
 // All of the Chooser's events are supported.
 // For example:
 dropzone.on('success', function(files) {
-    console.log('Successfully selected files: ', files);
+  console.log('Successfully selected files: ', files);
 });
 
 // See the File Explorer's Example section for other events.

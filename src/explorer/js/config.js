@@ -270,7 +270,7 @@ $.get(
 
     ko.utils.arrayForEach(serviceData.objects, (serviceDatum) => {
       // eslint-disable-next-line no-use-before-define
-      const serviceCategory = getServiceCategory(serviceDatum.name);
+      const serviceCategory = getServiceCategory(serviceDatum);
       let localeName = localization.formatAndWrapMessage(
         `servicenames/${serviceDatum.name}`,
       );
@@ -302,16 +302,13 @@ $.get(
     // eslint-disable-next-line no-use-before-define
     toggleComputer(config.visible_computer());
 
-    function getServiceCategory(serviceName) {
+    function getServiceCategory(service) {
       const objStoreServices = ['s3', 'azure', 's3_compatible'];
-      const constructionServices = [
-        'plangrid', 'bluebeam', 'autodesk', 'procore',
-      ];
 
-      if (objStoreServices.indexOf(serviceName) > -1) {
+      if (objStoreServices.includes(service.name)) {
         return 'object_store';
       }
-      if (constructionServices.indexOf(serviceName) > -1) {
+      if (service.category === 'construction') {
         return 'construction';
       }
       return 'file_store';

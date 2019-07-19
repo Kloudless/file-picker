@@ -10,6 +10,50 @@ const queuedRequests = [];
 let popup;
 let iframe;
 
+/**
+ * @param {string} requestId
+ * @param {string} service service Id
+ * @param {object} oauthParams OAuth parameters provided by devs.
+ */
+function getEffectiveOauthParams(requestId, service, oauthParams) {
+  const queryParams = {
+    client_id: config.app_id,
+    response_type: 'token',
+    redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
+    scope: `${service}:normal.storage ${service}:normal.basic`,
+    state: requestId,
+    request_id: requestId,
+    origin: `${window.location.protocol}//${window.location.host}`,
+    referrer: 'explorer',
+  };
+
+  const forbiddenKeys = [
+    'client_id', 'response_type', 'redirect_uri', 'origin', 'state',
+    'request_id', 'origin', 'referrer',
+  ];
+
+  Object.keys(oauthParams).forEach((key) => {
+    if (forbiddenKeys.includes(key)) {
+      return;
+    }
+    const value = oauthParams[key];
+    if (value === undefined || value === null) {
+      return;
+    }
+    // TODO: handle raw object
+    if (typeof value === 'object') {
+      queryParams[key] = JSON.stringify(value);
+    } else {
+      queryParams[key] = value;
+    }
+  });
+
+  if (config.account_key) {
+    queryParams.account_key = 1;
+  }
+  return queryParams;
+}
+
 /*
  * Find or create the iframe messages are posted to and received via.
  *
@@ -92,23 +136,10 @@ window.addEventListener('message', (message) => {
 });
 
 // Display popup window
-function authenticate(service, callback) {
+function authenticate(service, oauthParams, callback) {
   let url = `${config.base_url}/${config.api_version}/oauth/`;
-  const randomID = util.randomID();
-  const query_params = {
-    client_id: config.app_id,
-    response_type: 'token',
-    redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
-    scope: `${service}:normal.storage ${service}:normal.basic`,
-    state: randomID,
-    request_id: randomID,
-    origin: `${window.location.protocol}//${window.location.host}`,
-    referrer: 'explorer',
-  };
-  if (config.account_key) {
-    query_params.account_key = 1;
-  }
-
+  const requestId = util.randomID();
+  const queryParams = getEffectiveOauthParams(requestId, service, oauthParams);
   const h = 500;
   const w = 700;
   const options = {
@@ -150,7 +181,7 @@ function authenticate(service, callback) {
     `left=${options.left}`,
     `top=${options.top}`,
   ];
-  url += `?${$.param(query_params)}`;
+  url += `?${$.param(queryParams)}`;
 
   /**
    * On reasonable browsers, we can open the OAuth popup here, and it will
@@ -165,10 +196,10 @@ function authenticate(service, callback) {
   let close;
   function popupCallback(response) {
     close();
-    if (response.data && response.data.state === randomID) {
+    if (response.data && response.data.state === queryParams.state) {
       callback(response.data);
     } else {
-      logger.error("Received state doesn't match sent state.");
+      logger.error("OAuth failed: Received state doesn't match sent state.");
     }
   }
 
@@ -183,7 +214,7 @@ function authenticate(service, callback) {
     popup = window.open(url, 'kloudlessIEXD', params);
     popup.focus();
 
-    requests[query_params.request_id] = {
+    requests[queryParams.request_id] = {
       callback: popupCallback,
     };
 
@@ -200,7 +231,7 @@ function authenticate(service, callback) {
     type: 'prepareToOpen',
     url,
     params: params.join(','),
-  }, query_params.request_id, popupCallback);
+  }, queryParams.request_id, popupCallback);
 
   return { authUsingIEXDFrame: true };
 }

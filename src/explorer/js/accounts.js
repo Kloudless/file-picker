@@ -1,5 +1,5 @@
 /* global $ */
-/* eslint-disable camelcase */
+/* eslint-disable camelcase, func-names */
 import ko from 'knockout';
 import logger from 'loglevel';
 import Account from './models/account';
@@ -12,27 +12,28 @@ function AccountManager() {
 }
 
 // Connect an account of a particular service, then fire callbacks on init.
-// eslint-disable-next-line func-names
-AccountManager.prototype.addAccount = function (service, callbacks) {
-  logger.debug('Starting authentication.');
-  const response = Authenticator.authenticate(service, (data) => {
-    logger.debug('Authenticated for: ', data.service || data.scope);
-    const created = new Account( // eslint-disable-line no-unused-vars
-      { scheme: 'Bearer', key: data.access_token },
-      callbacks.on_account_ready, callbacks.on_fs_ready,
+AccountManager.prototype.addAccount
+  = function (service, oauthParams, callbacks) {
+    logger.debug('Starting authentication.');
+    const response = Authenticator.authenticate(
+      service, oauthParams, (data) => {
+        logger.debug('Authenticated for: ', data.service || data.scope);
+        const created = new Account( // eslint-disable-line no-unused-vars
+          { scheme: 'Bearer', key: data.access_token },
+          callbacks.on_account_ready, callbacks.on_fs_ready,
+        );
+      },
     );
-  });
 
-  if (response.authUsingIEXDFrame) {
-    callbacks.on_confirm_with_iexd();
-  }
-};
+    if (response.authUsingIEXDFrame) {
+      callbacks.on_confirm_with_iexd();
+    }
+  };
 
 /**
  * Add authed account
  * @param {object} authedAccount - account object
  */
-// eslint-disable-next-line func-names
 AccountManager.prototype.addAuthedAccount = function (authedAccount) {
   logger.debug('Add authed account');
 
@@ -43,7 +44,6 @@ AccountManager.prototype.addAuthedAccount = function (authedAccount) {
 };
 
 // Remove an account by Account ID.
-// eslint-disable-next-line func-names
 AccountManager.prototype.removeAccount = function (account_id) {
   // eslint-disable-next-line eqeqeq
   this.accounts.remove(account => account.account == account_id);
@@ -101,7 +101,6 @@ AccountManager.prototype.deleteAccount = function deleteAccount(
 };
 
 // Retrieve an account by Account ID. Returns null if account not found.
-// eslint-disable-next-line func-names
 AccountManager.prototype.getByAccount = function (account_id) {
   // eslint-disable-next-line eqeqeq
   return ko.utils.arrayFirst(this.accounts(), a => a.account == account_id);

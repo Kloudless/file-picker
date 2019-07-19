@@ -150,23 +150,29 @@ fileExplorer.setGlobalOptions({ explorerUrl });
    * Listen for incoming postMessages relating to widget events.
    */
 
-  window.addEventListener('message', (message) => {
-    if (message.origin !== globalOptions.explorerOrigin) {
+  window.addEventListener('message', (event) => {
+    if (event.origin !== globalOptions.explorerOrigin) {
       return;
     }
-    const contents = parseJsonString(message.data);
-    if (contents === null) {
+    const message = parseJsonString(event.data);
+    if (message === null) {
       return;
     }
 
     // Grab the explorer id
-    const { exp_id } = contents;
+    const {
+      exp_id, action, data, callbackId,
+    } = message;
 
     // Listen for file explorer events.
     // postMessage based on explorer id
     const explorer = fileExplorer._explorers[exp_id];
     if (explorer) {
-      explorer._fire(contents.action, contents.data);
+      if (action === 'GET_OAUTH_PARAMS') {
+        explorer._getOAuthParams(callbackId, data);
+      } else {
+        explorer._fire(action, data);
+      }
     }
   });
 }());
@@ -302,6 +308,22 @@ fileExplorer._fileWidget.prototype.on = function (event, handler) {
   return this;
 };
 
+fileExplorer._fileWidget.prototype._getOAuthParams
+  = function (callbackId, data) {
+    try {
+      const { oauth } = this.options;
+      const oauthParams = oauth ? oauth(data.service) : {};
+      this.message('CALLBACK', { oauthParams }, callbackId);
+    } catch (err) {
+      console.error(err); // eslint-disable-line no-console
+      window.alert( // eslint-disable-line no-alert
+        'An error occurred. ' +
+        'Please contact Support for further assistance connecting your ' +
+        `${data.service} account.`,
+      );
+    }
+  };
+
 // Fire an event handler. Called by the message listeners.
 fileExplorer._fileWidget.prototype._fire = function (event, data) {
   if (['success', 'cancel', 'error'].indexOf(event) !== -1) {
@@ -327,7 +349,9 @@ fileExplorer._fileWidget.prototype._fire = function (event, data) {
 
   if ('raw' in this.handlers) {
     // `raw` event is used by the react/vue binding
-    window.setTimeout(() => this.handlers.raw[0]({ action: event, data }), 0);
+    window.setTimeout(() => (
+      this.handlers.raw[0]({ action: event, data })
+    ), 0);
   }
 
   return this;
@@ -402,10 +426,11 @@ Object.defineProperty(fileExplorer._explorer.prototype, 'constructor', {
 });
 
 // Send a message to the explorer frame
-fileExplorer._explorer.prototype.message = function (action, data) {
+fileExplorer._explorer.prototype.message = function (action, data, callbackId) {
   const frame = frames[this.exp_id];
   if (frame) {
     frame.contentWindow.postMessage(JSON.stringify({
+      callbackId,
       action,
       data,
     }), globalOptions.explorerUrl);
