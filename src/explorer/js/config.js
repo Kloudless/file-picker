@@ -63,6 +63,8 @@ Object.assign(config, {
   create_folder: JSON.parse(get_query_variable('create_folder')),
   chunk_size: 5 * 1024 * 1024,
   locale: ko.observable('en'),
+  translations: ko.observable(''),
+  dateTimeFormat: ko.observable('MMMdHm'),
   enable_logout: ko.observable(true),
 
   // TODO: drop base_url in favor of BASE_URL env variable
@@ -71,6 +73,14 @@ Object.assign(config, {
   // b/w compatibility
   account_key: JSON.parse(get_query_variable('account_key')),
 });
+
+config.localeOptions = ko.computed(function() {
+  return JSON.stringify({
+    locale: config.locale(),
+    translations: config.translations(),
+    dateTimeFormat: config.dateTimeFormat(),
+  });
+}).extend({ rateLimit: 100 });
 
 if (config.debug) {
   window.config = config;
@@ -88,8 +98,7 @@ config.update = function (data) {
   var configKeys = Object.keys(config);
 
   $.each(data, function (k, v) {
-    if (configKeys.indexOf(k) === -1)
-      return;
+    if (configKeys.indexOf(k) === -1) return;
 
     // Ignore setting non-observables as that behavior is not expected
     // and the rest of the app cannot respond to it.
@@ -603,7 +612,11 @@ if (config.types.length === 0) {
 }
 
 // update the locale when the config changes
-config.locale.subscribe(localization.setCurrentLocale);
+config.localeOptions.subscribe((options, callback) => {
+  options = JSON.parse(options);
+  localization.setCurrentLocale(
+    options.locale, options.translations, options.dateTimeFormat, callback);
+});
 
 // load the default locale
 localization.loadDefaultLocaleData();
