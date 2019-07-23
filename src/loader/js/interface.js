@@ -304,7 +304,7 @@ fileExplorer._fileWidget.prototype.on = function (event, handler) {
 
 // Fire an event handler. Called by the message listeners.
 fileExplorer._fileWidget.prototype._fire = function (event, data) {
-  if (['success', 'cancel'].indexOf(event) !== -1) {
+  if (['success', 'cancel', 'error'].indexOf(event) !== -1) {
     this.close();
   }
 
