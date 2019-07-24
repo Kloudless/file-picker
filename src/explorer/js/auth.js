@@ -1,14 +1,14 @@
+/* eslint-disable camelcase */
 import $ from 'jquery';
-import config from './config';
 import logger from 'loglevel';
+import config from './config';
 import util from './util';
 
-'use strict';
-
-var requests = {},
-  iframeLoaded = false,
-  queuedRequests = [],
-  popup, iframe;
+const requests = {};
+let iframeLoaded = false;
+const queuedRequests = [];
+let popup;
+let iframe;
 
 /*
  * Find or create the iframe messages are posted to and received via.
@@ -28,32 +28,31 @@ var requests = {},
  * popup on IE < 11.
  */
 if (!util.supportsCORS() || !util.supportsPopupPostMessage()) {
-  iframe = (function () {
-    var el = $('<iframe />');
+  iframe = (function () { // eslint-disable-line func-names
+    const el = $('<iframe />');
     el.attr({
       seamless: 'seamless',
-      src: config.base_url + '/static/iexd.html?cache=' + util.randomID(),
-
+      src: `${config.base_url}/static/iexd.html?cache=${util.randomID()}`,
       // not technically HTML5, but needed for old IE
       frameBorder: 0,
       scrolling: 'no',
     })
       .addClass('iexd')
       .appendTo('body')
-
       // simulate hovering over the button the frame covers
-      .hover(function () {
+      .hover(() => {
         $('#confirm-add-button').addClass('hover');
-      }, function () {
+      }, () => {
         $('#confirm-add-button').removeClass('hover');
       });
     return el[0];
-  })();
+  }());
 
-  iframe.onload = function () {
+  iframe.onload = function () { // eslint-disable-line func-names
     // when the iframe loads, post any pending messages.
     iframeLoaded = true;
     while (queuedRequests.length) {
+      // eslint-disable-next-line no-use-before-define
       postMessage.apply(this, queuedRequests.pop());
     }
   };
@@ -62,92 +61,96 @@ if (!util.supportsCORS() || !util.supportsPopupPostMessage()) {
 /*
  * Listen for events that are responses to requests we made.
  */
-window.addEventListener('message', function (message) {
-  var ns = "kloudless:";
+window.addEventListener('message', (message) => {
+  const ns = 'kloudless:';
   if (message.origin !== config.base_url) {
     return;
-  } else if (message.data.indexOf(ns) !== 0) {
+  }
+  if (message.data.indexOf(ns) !== 0) {
     return;
   }
 
-  var contents = JSON.parse(message.data.substring(ns.length));
+  const contents = JSON.parse(message.data.substring(ns.length));
 
   // Enable popups
-  if (contents.type == 'error') {
+  if (contents.type === 'error') {
+    // eslint-disable-next-line no-alert, max-len
     alert('Please enable popups on your in Browser Settings > Advanced > Disable/Block Pop-ups');
     return;
   }
 
   if (requests[contents.id] !== undefined) {
-    (function (callback) {
-      window.setTimeout(function () {
+    (function (callback) { // eslint-disable-line func-names
+      window.setTimeout(() => {
         callback(contents);
       }, 0);
-    })(requests[contents.id].callback);
+    }(requests[contents.id].callback));
     delete requests[contents.id];
   } else {
-    logger.error("Unknown message type for message: ", message.data);
+    logger.error('Unknown message type for message: ', message.data);
   }
 });
 
 // Display popup window
-var authenticate = function (service, callback) {
-  var url = config.base_url + '/' + config.api_version + '/oauth/'
-  var randomID = util.randomID();
-  var query_params = {
+function authenticate(service, callback) {
+  let url = `${config.base_url}/${config.api_version}/oauth/`;
+  const randomID = util.randomID();
+  const query_params = {
     client_id: config.app_id,
     response_type: 'token',
     redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
-    scope: service + ':normal.storage ' + service + ':normal.basic',
+    scope: `${service}:normal.storage ${service}:normal.basic`,
     state: randomID,
     request_id: randomID,
-    origin: window.location.protocol + '//' + window.location.host,
+    origin: `${window.location.protocol}//${window.location.host}`,
     referrer: 'explorer',
   };
-  if (config.account_key)
-    query_params['account_key'] = 1
+  if (config.account_key) {
+    query_params.account_key = 1;
+  }
 
-  var opt
-    , h = 500
-    , w = 700
-    , options = {
+  const h = 500;
+  const w = 700;
+  const options = {
     height: 500,
     width: 700,
     toolbar: false, // display toolbar.
     scrollbars: true, // display scrollbars (webkit always does).
     status: true, // display status bar at the bottom of the window.
     resizable: true, // resizable
-    left: (screen.width - w) / 2, // Not relevant if center is true.
-    top: ((screen.height - h) / 2) - 50, // Not relevant if center is true.
+    // left, top: Not relevant if center is true.
+    left: (window.screen.width - w) / 2,
+    top: ((window.screen.height - h) / 2) - 50,
     center: true, // auto-center
     createNew: false, // open a new window, or re-use existing popup
     name: null, // specify custom name for window (overrides createNew option)
     location: true, // display address field
     menubar: false, // display menu bar.
-    onUnload: null // callback when window closes
+    onUnload: null, // callback when window closes
   };
 
   // center the window
   if (options.center) {
-    // 50px is a rough estimate for the height of the chrome above the document area
-    options.top = ((screen.height - options.height) / 2) - 50;
-    options.left = (screen.width - options.width) / 2;
+    // 50px is a rough estimate for the height of the chrome above the document
+    // area.
+    options.top = ((window.screen.height - options.height) / 2) - 50;
+    options.left = (window.screen.width - options.width) / 2;
   }
 
   // params
-  var params = [
-    'location=' + (options.location ? 'yes' : 'no'),
-    'menubar=' + (options.menubar ? 'yes' : 'no'),
-    'toolbar=' + (options.toolbar ? 'yes' : 'no'),
-    'scrollbars=' + (options.scrollbars ? 'yes' : 'no'),
-    'status=' + (options.status ? 'yes' : 'no'),
-    'resizable=' + (options.resizable ? 'yes' : 'no'),
-    'height=' + options.height,
-    'width=' + options.width,
-    'left=' + options.left,
-    'top=' + options.top,
+  const params = [
+    `location=${options.location ? 'yes' : 'no'}`,
+    `menubar=${options.menubar ? 'yes' : 'no'}`,
+    `toolbar=${options.toolbar ? 'yes' : 'no'}`,
+    `scrollbars=${options.scrollbars ? 'yes' : 'no'}`,
+    `status=${options.status ? 'yes' : 'no'}`,
+    `resizable=${options.resizable ? 'yes' : 'no'}`,
+    `height=${options.height}`,
+    `width=${options.width}`,
+    `left=${options.left}`,
+    `top=${options.top}`,
   ];
-  url += "?" + $.param(query_params)
+  url += `?${$.param(query_params)}`;
 
   /**
    * On reasonable browsers, we can open the OAuth popup here, and it will
@@ -159,18 +162,18 @@ var authenticate = function (service, callback) {
    * It basically proxies data back-and-forth between us and the OAuth
    * popup.
    */
-  var close,
-    popupCallback = function (response) {
-      close();
-      if (response.data && response.data.state === randomID) {
-        callback(response.data);
-      } else {
-        logger.error("Received state doesn't match sent state.")
-      }
-    };
+  let close;
+  function popupCallback(response) {
+    close();
+    if (response.data && response.data.state === randomID) {
+      callback(response.data);
+    } else {
+      logger.error("Received state doesn't match sent state.");
+    }
+  }
 
   if (util.supportsPopupPostMessage()) { // open popup directly
-    close = function () {
+    close = () => {
       if (popup) {
         popup.close();
         popup = null;
@@ -181,46 +184,45 @@ var authenticate = function (service, callback) {
     popup.focus();
 
     requests[query_params.request_id] = {
-      callback: popupCallback
+      callback: popupCallback,
     };
 
-    return {authUsingIEXDFrame: false};
-  } else { // use iexd iframe
-    close = function () {
-      postMessage({type: 'close'});
-    };
-
-    // we ask the iexd to show a "Confirm" button, which we then overlay
-    // and make the user click (as a work-around for popup blockers)
-    postMessage({
-      type: 'prepareToOpen',
-      url: url,
-      params: params.join(',')
-    }, query_params.request_id, popupCallback);
-
-    return {authUsingIEXDFrame: true};
+    return { authUsingIEXDFrame: false };
   }
-};
+  // use iexd iframe
+  close = () => {
+    postMessage({ type: 'close' }); // eslint-disable-line no-use-before-define
+  };
 
-var postMessage = function (data, identifier, callback) {
+  // we ask the iexd to show a "Confirm" button, which we then overlay
+  // and make the user click (as a work-around for popup blockers)
+  postMessage({ // eslint-disable-line no-use-before-define
+    type: 'prepareToOpen',
+    url,
+    params: params.join(','),
+  }, query_params.request_id, popupCallback);
+
+  return { authUsingIEXDFrame: true };
+}
+
+function postMessage(data, identifier, callback) {
   if (!iframeLoaded) {
-    queuedRequests.push(arguments);
+    queuedRequests.push(arguments); // eslint-disable-line prefer-rest-params
     return;
   }
 
   if (identifier && callback) {
-    requests[identifier] = {
-      callback: callback
-    };
+    requests[identifier] = { callback };
   }
 
-  iframe.contentWindow.postMessage('kloudless:' + JSON.stringify(data),
-    iframe.src);
-};
+  iframe.contentWindow.postMessage(
+    `kloudless:${JSON.stringify(data)}`,
+    iframe.src,
+  );
+}
 
 export default {
-  authenticate: authenticate,
-  postMessage: postMessage,
-  iframe: iframe
+  authenticate,
+  postMessage,
+  iframe,
 };
-

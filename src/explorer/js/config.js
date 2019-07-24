@@ -1,22 +1,24 @@
 /* global BASE_URL */
+/* eslint-disable camelcase, no-underscore-dangle */
+
 import $ from 'jquery';
 import ko from 'knockout';
 import localization from './localization';
 import config from './config.json';
 
 
-'use strict';
+function get_query_variable(name) {
+  // eslint-disable-next-line no-param-reassign, no-useless-escape
+  name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+  const regex = new RegExp(`[\\?&]${name}=([^&#]*)`);
+  const results = regex.exec(window.location.search);
+  return results === null ? ''
+    : decodeURIComponent(results[1].replace(/\+/g, ' '));
+}
 
-var get_query_variable = function (name) {
-  name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-  var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-    results = regex.exec(location.search);
-  return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-};
 
-var copy_to_upload_location = get_query_variable('copy_to_upload_location');
-if (copy_to_upload_location !== 'sync' &&
-  copy_to_upload_location !== 'async') {
+let copy_to_upload_location = get_query_variable('copy_to_upload_location');
+if (copy_to_upload_location !== 'sync' && copy_to_upload_location !== 'async') {
   if (copy_to_upload_location === 'true') {
     copy_to_upload_location = true;
   } else {
@@ -37,24 +39,23 @@ Object.assign(config, {
   account_management: ko.observable(true),
   retrieve_token: ko.observable(false),
   computer: ko.observable(
-    JSON.parse(get_query_variable('computer')) ||
-    get_query_variable('flavor') === 'dropzone'),
+    JSON.parse(get_query_variable('computer'))
+    || get_query_variable('flavor') === 'dropzone',
+  ),
   services: JSON.parse(get_query_variable('services')),
   all_services: ko.observableArray().extend({
     // We want the initial load to trigger one run of initialization
     // logic only.
-    rateLimit: 500
+    rateLimit: 500,
   }),
   persist: JSON.parse(get_query_variable('persist')),
-  types: JSON.parse(get_query_variable('types')).map(function (str) {
-    /**
-     * Make sure all types are lowercase since we do a case-insensitive
-     * search by lowercasing the search key and using types#indexOf.
-     */
-    return str.toLowerCase();
-  }),
+  types: JSON.parse(get_query_variable('types')).map(str => (
+    // Make sure all types are lowercase since we do a case-insensitive
+    // search by lower-casing the search key and using types#indexOf.
+    str.toLowerCase()
+  )),
   user_data: ko.observable(), // Get asynchronously.
-  copy_to_upload_location: copy_to_upload_location,
+  copy_to_upload_location,
   api_version: get_query_variable('api_version'),
   upload_location_account: ko.observable(),
   upload_location_folder: ko.observable(),
@@ -75,13 +76,11 @@ Object.assign(config, {
   account_key: JSON.parse(get_query_variable('account_key')),
 });
 
-config.localeOptions = ko.computed(function() {
-  return JSON.stringify({
-    locale: config.locale(),
-    translations: config.translations(),
-    dateTimeFormat: config.dateTimeFormat(),
-  });
-}).extend({ rateLimit: 100 });
+config.localeOptions = ko.computed(() => JSON.stringify({
+  locale: config.locale(),
+  translations: config.translations(),
+  dateTimeFormat: config.dateTimeFormat(),
+})).extend({ rateLimit: 100 });
 
 if (config.debug) {
   window.config = config;
@@ -95,11 +94,13 @@ if (!config.api_version) {
   }
 }
 
-config.update = function (data) {
-  var configKeys = Object.keys(config);
+config.update = function update(data) {
+  const configKeys = Object.keys(config);
 
-  $.each(data, function (k, v) {
-    if (configKeys.indexOf(k) === -1) return;
+  $.each(data, (k, v) => {
+    if (configKeys.indexOf(k) === -1) {
+      return;
+    }
 
     // Ignore setting non-observables as that behavior is not expected
     // and the rest of the app cannot respond to it.
@@ -109,25 +110,26 @@ config.update = function (data) {
     }
   });
 };
-/*
-   *Check custom cc and include
-   */
-var custom_css_include = function () {
-  if (String(config.custom_css) !== "false" && config.user_data().trusted) {
-    if ("//" === config.custom_css.substring(0, 2)) {
-      config.custom_css = config.origin.split("/")[0] + config.custom_css;
+
+/**
+ * Check custom css and include
+ */
+function custom_css_include() {
+  if (String(config.custom_css) !== 'false' && config.user_data().trusted) {
+    if (config.custom_css.substring(0, 2) === '//') {
+      config.custom_css = config.origin.split('/')[0] + config.custom_css;
     } else if (!config.custom_css.match(/^https?:/)) {
-      config.custom_css = config.origin.replace(/\/+$/, "") + "/"
-        + config.custom_css.replace(/^\/+/, "");
+      config.custom_css = `${config.origin.replace(/\/+$/, '')}/${
+        config.custom_css.replace(/^\/+/, '')}`;
     }
 
-    var expression = /^https?:\/\/\w[\.\w\-]*(:[0-9]+)?[^\s<>'"]*$/;
-    var regex = new RegExp(expression);
+    // eslint-disable-next-line no-useless-escape
+    const regex = /^https?:\/\/\w[\.\w\-]*(:[0-9]+)?[^\s<>'"]*$/;
     if (config.custom_css.match(regex)) {
-      var cssId = 'custom_style';
+      const cssId = 'custom_style';
       if (!document.getElementById(cssId)) {
-        var head = document.getElementsByTagName('head')[0];
-        var link = document.createElement('link');
+        const head = document.getElementsByTagName('head')[0];
+        const link = document.createElement('link');
         link.id = cssId;
         link.rel = 'stylesheet';
         link.type = 'text/css';
@@ -138,32 +140,33 @@ var custom_css_include = function () {
         document.getElementById(cssId).href = config.custom_css;
       }
     } else {
-      window.console.log("Custom Style link incorrect format: "
-        + config.custom_css);
+      window.console.log(
+        `Custom Style link incorrect format: ${config.custom_css}`,
+      );
     }
   }
-};
+}
 
 /*
  * Get user_data
  */
-var retrieveConfig = function () {
-  var query_params = {app_id: config.app_id}
+function retrieveConfig() {
+  const query_params = { app_id: config.app_id };
   if (config.account_key || config.retrieve_token()
-    || String(config.custom_css) !== "false") {
+      || String(config.custom_css) !== 'false') {
     // Only do origin check if we need to.
-    query_params['origin'] = config.origin;
+    query_params.origin = config.origin;
   }
   if (config.upload_location_uri()) {
-    query_params['upload_location_uri'] = config.upload_location_uri();
+    query_params.upload_location_uri = config.upload_location_uri();
   }
   $.get(
-    config.base_url + "/file-explorer/config/",
+    `${config.base_url}/file-explorer/config/`,
     query_params,
-    function (config_data) {
+    (config_data) => {
       config.user_data((config_data && config_data.user_data) || {});
       custom_css_include();
-    }
+    },
   );
 }
 config.retrieve_token.subscribe(retrieveConfig);
@@ -177,12 +180,12 @@ config._retrievedServices = false;
 /*
  * compare function for sorting service order
  */
-var serviceOrderCompare = function () {
+function getServiceOrderCompare() {
   // this anonymous function will execute instantly and return compare function
-  var servicesOrder = {};
+  const servicesOrder = {};
   if (config.services) {
     // exchange the key and value of config.services
-    for (var i = 0; i < config.services.length; i++) {
+    for (let i = 0; i < config.services.length; i += 1) {
       if (servicesOrder[config.services[i]] === undefined) {
         servicesOrder[config.services[i]] = i;
         if (config.services === 'all') {
@@ -204,11 +207,11 @@ var serviceOrderCompare = function () {
    * @returns {number}
    */
   function getServiceOrderIndex(service) {
-    var allIndex = servicesOrder.all;
-    var categoryIndex = servicesOrder[service.category];
-    var idIndex = servicesOrder[service.id];
+    const allIndex = servicesOrder.all;
+    const categoryIndex = servicesOrder[service.category];
+    const idIndex = servicesOrder[service.id];
 
-    var minIndex = Number.MAX_SAFE_INTEGER;
+    let minIndex = Number.MAX_SAFE_INTEGER;
 
     if (allIndex !== undefined) {
       minIndex = allIndex;
@@ -235,50 +238,58 @@ var serviceOrderCompare = function () {
    *    logo:
    * }
    */
-  return function (left, right) {
-    var leftIndex = getServiceOrderIndex(left);
-    var rightIndex = getServiceOrderIndex(right);
+  return (left, right) => {
+    const leftIndex = getServiceOrderIndex(left);
+    const rightIndex = getServiceOrderIndex(right);
     if (leftIndex === rightIndex) {
       // if the indices are equal, use alphabetical order
-      return left.name === right.name ? 0 :
-        (left.name < right.name ? -1 : 1);
-    } else {
-      return leftIndex < rightIndex ? -1 : 1;
+      if (left.name === right.name) {
+        return 0;
+      }
+      if (left.name < right.name) {
+        return -1;
+      }
+      return 1;
     }
+    return leftIndex < rightIndex ? -1 : 1;
   };
-}();
+}
+const serviceOrderCompare = getServiceOrderCompare();
 
 $.get(
-  config.base_url + '/' + config.api_version + '/public/services',
-  {apis: 'storage'},
-  function (serviceData) {
+  `${config.base_url}/${config.api_version}/public/services`,
+  { apis: 'storage' },
+  (serviceData) => {
     config._retrievedServices = true;
 
-    if (config.services == undefined) {
+    if (!config.services) {
       config.services = ['file_store'];
     } else if (config.services.indexOf('all') > -1) {
       config.services = ['file_store', 'object_store', 'construction'];
     }
 
-    ko.utils.arrayForEach(serviceData.objects, function (serviceDatum) {
-      var serviceCategory = getServiceCategory(serviceDatum.name);
-      var localeName = localization.formatAndWrapMessage(
-        'servicenames/' + serviceDatum.name);
-      if (localeName.indexOf('/') > -1)
+    ko.utils.arrayForEach(serviceData.objects, (serviceDatum) => {
+      // eslint-disable-next-line no-use-before-define
+      const serviceCategory = getServiceCategory(serviceDatum.name);
+      let localeName = localization.formatAndWrapMessage(
+        `servicenames/${serviceDatum.name}`,
+      );
+      if (localeName.indexOf('/') > -1) {
         localeName = serviceDatum.friendly_name;
+      }
 
-      var service = {
+      const service = {
         id: serviceDatum.name,
         name: localeName,
         logo: serviceDatum.logo_url || (
-          config.static_path + '/webapp/sources/' +
-          serviceDatum.name + '.png'),
+          `${config.static_path}/webapp/sources/${serviceDatum.name}.png`
+        ),
         category: serviceCategory,
-        visible: false
+        visible: false,
       };
 
-      if (config.services.indexOf(serviceDatum.name) > -1 ||
-        config.services.indexOf(serviceCategory) > -1) {
+      if (config.services.indexOf(serviceDatum.name) > -1
+          || config.services.indexOf(serviceCategory) > -1) {
         service.visible = true;
       }
       config.all_services.push(service);
@@ -286,36 +297,39 @@ $.get(
 
     config.all_services.sort(serviceOrderCompare);
 
+    // eslint-disable-next-line no-use-before-define
     config.visible_computer.subscribe(toggleComputer);
+    // eslint-disable-next-line no-use-before-define
     toggleComputer(config.visible_computer());
 
     function getServiceCategory(serviceName) {
-      var objStoreServices = ['s3', 'azure', 's3_compatible'];
-      var constructionServices = ['plangrid', 'bluebeam', 'autodesk', 'procore'];
+      const objStoreServices = ['s3', 'azure', 's3_compatible'];
+      const constructionServices = [
+        'plangrid', 'bluebeam', 'autodesk', 'procore',
+      ];
 
       if (objStoreServices.indexOf(serviceName) > -1) {
         return 'object_store';
-      } else if (constructionServices.indexOf(serviceName) > -1) {
+      }
+      if (constructionServices.indexOf(serviceName) > -1) {
         return 'construction';
       }
       return 'file_store';
     }
-  }
+  },
 );
 
 // Handle the Computer service being enabled/disabled.
+config.visible_computer = ko.pureComputed(() => (
+  config.computer() && config.flavor() !== 'saver'
+  // Types other than 'folders' are present.
+  && (
+    config.types.length === 0
+    || config.types.filter(f => f !== 'folders').length > 0
+  )));
 
-config.visible_computer = ko.pureComputed(function () {
-  return config.computer() && config.flavor() != 'saver' &&
-    // Types other than 'folders' are present.
-    (
-      config.types.length === 0 || config.types.filter(function (f) {
-        return f != 'folders'
-      }).length > 0
-    );
-});
 
-var toggleComputer = function (computerEnabled) {
+function toggleComputer(computerEnabled) {
   // Called after services are retrieved.
   if (computerEnabled && !(config.all_services()[0] || {}).computer) {
     config.all_services.unshift({
@@ -323,40 +337,42 @@ var toggleComputer = function (computerEnabled) {
       id: 'computer',
       name: 'My Computer',
       visible: true,
-      logo: config.static_path + '/webapp/sources/computer.png'
+      logo: `${config.static_path}/webapp/sources/computer.png`,
     });
-  } else if (!computerEnabled &&
-    (config.all_services()[0] || {}).computer) {
+  } else if (!computerEnabled
+      && (config.all_services()[0] || {}).computer) {
     config.all_services.shift();
   }
-};
+}
 
 /*
  * Create API server URLs
  */
-config.getAccountUrl = function (accountId, api, path) {
-  var url = config.base_url + '/' + config.api_version + '/accounts/';
-  if (!accountId) return url;
+config.getAccountUrl = function getAccountUrl(accountId, api, path) {
+  let url = `${config.base_url}/${config.api_version}/accounts/`;
+  if (!accountId) {
+    return url;
+  }
 
-  url += accountId + '/';
+  url += `${accountId}/`;
 
-  if (config.api_version === 'v0')
-    api = ''
-  else if (!api)
-    api = 'storage';
+  if (config.api_version === 'v0') {
+    api = ''; // eslint-disable-line no-param-reassign
+  } else if (!api) {
+    api = 'storage'; // eslint-disable-line no-param-reassign
+  }
 
-  if (path)
-    url += (api ? api + '/' : '') + path.replace(/^\/+/g, '')
-
+  if (path) {
+    url += (api ? `${api}/` : '') + path.replace(/^\/+/g, '');
+  }
   return url;
-}
+};
 
 
 // Type aliases
-
-var aliases = {
+const aliases = {
   all: [
-    'all'
+    'all',
   ],
   text: [
     'applescript',
@@ -590,11 +606,11 @@ var aliases = {
     'tr2',
     'tr3',
     'xeb',
-    'xps']
-}
-  , additions = [];
+    'xps'],
+};
+let additions = [];
 
-config.types = config.types.filter(function (type) {
+config.types = config.types.filter((type) => {
   if (type in aliases) {
     additions = additions.concat(aliases[type]);
     return false;
@@ -603,9 +619,9 @@ config.types = config.types.filter(function (type) {
 }).concat(additions);
 
 // remove any duplicates
-config.types = config.types.filter(function (elem, pos) {
-  return config.types.indexOf(elem) == pos;
-});
+config.types = config.types.filter(
+  (elem, pos) => config.types.indexOf(elem) === pos,
+);
 
 // default to 'all'
 if (config.types.length === 0) {
@@ -614,9 +630,10 @@ if (config.types.length === 0) {
 
 // update the locale when the config changes
 config.localeOptions.subscribe((options, callback) => {
-  options = JSON.parse(options);
+  const { locale, translations, dateTimeFormat } = JSON.parse(options);
   localization.setCurrentLocale(
-    options.locale, options.translations, options.dateTimeFormat, callback);
+    locale, translations, dateTimeFormat, callback,
+  );
 });
 
 // load the default locale

@@ -1,12 +1,11 @@
+/* global $ */
+/* eslint-disable camelcase */
 import ko from 'knockout';
 import logger from 'loglevel';
 import config from '../config';
 import Filesystem from './filesystem';
 
-
-'use strict';
-
-var Account = function (data, account_callback, filesystem_callback) {
+function Account(data, account_callback, filesystem_callback) {
   /*
    *  Data should normally be of the format
    *    {
@@ -23,12 +22,12 @@ var Account = function (data, account_callback, filesystem_callback) {
    *    using data_from_key()
    */
 
-  var self = this;
+  const self = this;
   this.request = null;
 
-  var initialize_account = function (data) {
+  function initialize_account(data) { // eslint-disable-line no-shadow
     if (!data) {
-      filesystem_callback(new Error("Account data empty"), null);
+      filesystem_callback(new Error('Account data empty'), null);
       return;
     }
 
@@ -51,17 +50,18 @@ var Account = function (data, account_callback, filesystem_callback) {
     self.key = {};
     if (self.bearer_token) {
       self.key.key = self.bearer_token;
-      self.key.scheme = "Bearer";
+      self.key.scheme = 'Bearer';
     } else {
       self.key.key = self.account_key;
-      self.key.scheme = "AccountKey";
+      self.key.scheme = 'AccountKey';
     }
     self.filesystem = ko.observable(
-      new Filesystem(self.account, self.key, filesystem_callback));
+      new Filesystem(self.account, self.key, filesystem_callback),
+    );
 
-    var callback = function () {
-      account_callback(self)
-    }
+    const callback = () => {
+      account_callback(self);
+    };
     if (config.account_key && !self.account_key) {
       self.includeAccountKey(callback);
     } else if (config.retrieve_token() && !self.bearer_token) {
@@ -69,7 +69,7 @@ var Account = function (data, account_callback, filesystem_callback) {
     } else {
       callback();
     }
-  };
+  }
 
   // If data is an object with 'account', then we already have account data
   // to initialize with. Otherwise, fetch the data from the Key.
@@ -78,108 +78,105 @@ var Account = function (data, account_callback, filesystem_callback) {
   } else {
     self.data_from_key(data, initialize_account);
   }
-};
+}
 
 // Reconnect this account.
 // WARNING: THIS METHOD IS A MOCK.
-Account.prototype.reconnect = function () {
+Account.prototype.reconnect = function () { // eslint-disable-line func-names
   this.connected(true);
   return this.connected;
 };
 // Disconnect this account.
 // WARNING: THIS METHOD IS A MOCK.
-Account.prototype.disconnect = function () {
+Account.prototype.disconnect = function () { // eslint-disable-line func-names
   this.connected(false);
   return this.connected;
 };
 
-Account.prototype.data_from_key = function (key, callback) {
-  var self = this;
-
-  if (callback === undefined) {
-    callback = function () {
-    };
-  }
+// eslint-disable-next-line func-names
+Account.prototype.data_from_key = function (key, callback = () => {}) {
+  const self = this;
 
   if (self.request !== null) {
     self.request.abort();
   }
 
   self.request = $.ajax({
-    url: config.getAccountUrl() + '?active=True',
+    url: `${config.getAccountUrl()}?active=True`,
     type: 'GET',
     headers: {
-      Authorization: key.scheme + ' ' + key.key
+      Authorization: `${key.scheme} ${key.key}`,
     },
-  }).done(function (data) {
+  }).done((data) => {
     logger.debug('Retrieving account succeeded.');
 
-    var accts = data.objects;
-    if (accts.length == 0) {
+    const accts = data.objects;
+    if (accts.length === 0) {
       callback(null);
     } else {
-      var acct = accts[0];
+      const acct = accts[0];
       acct.account_name = acct.account;
       acct.account = acct.id;
 
       if (key.scheme === 'AccountKey') {
-        acct.account_key = key.key
+        acct.account_key = key.key;
       } else {
-        acct.bearer_token = key.key
+        acct.bearer_token = key.key;
       }
 
-      callback(acct)
+      callback(acct);
     }
-  }).fail(function (xhr, status, err) {
+  }).fail(() => {
     logger.debug('Retrieving account failed.');
     callback(null);
-  }).always(function () {
+  }).always(() => {
     self.request = null;
   });
-}
+};
 
+// eslint-disable-next-line func-names
 Account.prototype.includeAccountKey = function (callback) {
   /*
    Only called when OAuth tokens are in use.
    */
-  var self = this;
+  const self = this;
   $.ajax({
-    url: config.base_url + '/v0/accounts/' + self.account + '/keys',
+    url: `${config.base_url}/v0/accounts/${self.account}/keys`,
     type: 'GET',
     headers: {
-      Authorization: self.key.scheme + ' ' + self.key.key
+      Authorization: `${self.key.scheme} ${self.key.key}`,
     },
-  }).done(function (data) {
+  }).done((data) => {
     if (data.objects.length > 0) {
-      self.account_key = data.objects[0].key
+      self.account_key = data.objects[0].key;
     }
-  }).fail(function (xhr, status, err) {
+  }).fail(() => {
     logger.debug('Retrieving the account key via OAuth token failed.');
-  }).always(function () {
-    callback()
+  }).always(() => {
+    callback();
   });
-}
+};
 
+// eslint-disable-next-line func-names
 Account.prototype.includeBearerToken = function (callback) {
-  /*
-   Only called when Account Keys are in use and bearer tokens need to be
-   returned.
-   Does not delete the existing account key.
+  /**
+   * Only called when Account Keys are in use and bearer tokens need to be
+   * returned. Does not delete the existing account key.
    */
-  var self = this;
+  const self = this;
   $.ajax({
-    url: config.base_url + '/v0/accounts/' + self.account + '/token_from_key',
+    url: `${config.base_url}/v0/accounts/${self.account}/token_from_key`,
     type: 'POST',
     headers: {
-      Authorization: self.key.scheme + ' ' + self.key.key
+      Authorization: `${self.key.scheme} ${self.key.key}`,
     },
-  }).done(function (data) {
-    self.bearer_token = data.access_token
-  }).fail(function (xhr, status, err) {
+  }).done((data) => {
+    self.bearer_token = data.access_token;
+  }).fail(() => {
     logger.debug('Retrieving the OAuth token via the account key failed.');
-  }).always(function () {
-    callback()
+  }).always(() => {
+    callback();
   });
-}
+};
 
 export default Account;

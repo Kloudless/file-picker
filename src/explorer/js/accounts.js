@@ -1,24 +1,26 @@
+/* global $ */
+/* eslint-disable camelcase */
 import ko from 'knockout';
 import logger from 'loglevel';
 import Account from './models/account';
 import Authenticator from './auth';
 import config from './config';
 
-'use strict';
-
-var AccountManager = function () {
+function AccountManager() {
   this.accounts = ko.observableArray([]);
   this.active = ko.observable({});
-};
+}
 
 // Connect an account of a particular service, then fire callbacks on init.
+// eslint-disable-next-line func-names
 AccountManager.prototype.addAccount = function (service, callbacks) {
   logger.debug('Starting authentication.');
-  var response = Authenticator.authenticate(service, function (data) {
+  const response = Authenticator.authenticate(service, (data) => {
     logger.debug('Authenticated for: ', data.service || data.scope);
-    var created = new Account(
-      {scheme: 'Bearer', key: data.access_token},
-      callbacks.on_account_ready, callbacks.on_fs_ready);
+    const created = new Account( // eslint-disable-line no-unused-vars
+      { scheme: 'Bearer', key: data.access_token },
+      callbacks.on_account_ready, callbacks.on_fs_ready,
+    );
   });
 
   if (response.authUsingIEXDFrame) {
@@ -30,29 +32,28 @@ AccountManager.prototype.addAccount = function (service, callbacks) {
  * Add authed account
  * @param {object} authedAccount - account object
  */
+// eslint-disable-next-line func-names
 AccountManager.prototype.addAuthedAccount = function (authedAccount) {
-  logger.debug("Add authed account");
+  logger.debug('Add authed account');
 
   // Don't allow duplicate accounts
-  this.accounts.remove(function (account) {
-    return account.account === authedAccount.account;
-  });
+  this.accounts.remove(account => account.account === authedAccount.account);
 
   this.accounts.push(authedAccount);
 };
 
 // Remove an account by Account ID.
+// eslint-disable-next-line func-names
 AccountManager.prototype.removeAccount = function (account_id) {
-  this.accounts.remove(function (account) {
-    return account.account == account_id;
-  });
+  // eslint-disable-next-line eqeqeq
+  this.accounts.remove(account => account.account == account_id);
   // Remove the account from this.active
   if (this.active().account === account_id) {
     if (this.accounts()[0] !== undefined) {
-      logger.debug("Change the active account to ", this.accounts()[0]);
+      logger.debug('Change the active account to ', this.accounts()[0]);
       this.active(this.accounts()[0]);
     } else {
-      logger.debug("Change the active account to an empty object");
+      logger.debug('Change the active account to an empty object');
       this.active({});
     }
   }
@@ -60,35 +61,37 @@ AccountManager.prototype.removeAccount = function (account_id) {
 
 // Send a DELETE request to server to delete the account, then call
 // removeAccount().
-AccountManager.prototype.deleteAccount = function (account_id, delete_on_server,
-  on_success_callback) {
-  var account_data = {};
-  var accounts = this.accounts();
-  for (var i = 0; i < accounts.length; i++) {
-    if (accounts[i].account == account_id) {
+AccountManager.prototype.deleteAccount = function deleteAccount(
+  account_id, delete_on_server, on_success_callback,
+) {
+  let account_data = {};
+  const accounts = this.accounts();
+  for (let i = 0; i < accounts.length; i += 1) {
+    if (accounts[i].account == account_id) { // eslint-disable-line eqeqeq
       account_data = accounts[i];
       break;
     }
   }
   if (Object.keys(account_data).length === 0) {
     logger.warn('Account failed to remove');
-    alert('Error occurred. Please try again!');
+    alert('Error occurred. Please try again!'); // eslint-disable-line no-alert
     return;
   }
   if (delete_on_server) {
-    var request = $.ajax({
+    let request = $.ajax({ // eslint-disable-line no-unused-vars
       url: config.getAccountUrl(account_data.account),
       type: 'DELETE',
       headers: {
-        Authorization: account_data.key.scheme + ' ' + account_data.key.key
-      }
-    }).done(function (data) {
+        Authorization: `${account_data.key.scheme} ${account_data.key.key}`,
+      },
+    }).done(() => {
       this.removeAccount(account_data.account);
       on_success_callback(account_data);
-    }.bind(this)).fail(function (xhr, status, err) {
+    }).fail(() => {
       logger.warn('Account failed to remove');
+      // eslint-disable-next-line no-alert
       alert('Error occurred. Please try again!');
-    }).always(function () {
+    }).always(() => {
       request = null;
     });
   } else {
@@ -98,10 +101,10 @@ AccountManager.prototype.deleteAccount = function (account_id, delete_on_server,
 };
 
 // Retrieve an account by Account ID. Returns null if account not found.
+// eslint-disable-next-line func-names
 AccountManager.prototype.getByAccount = function (account_id) {
-  return ko.utils.arrayFirst(this.accounts(), function (a) {
-    return a.account == account_id;
-  });
+  // eslint-disable-next-line eqeqeq
+  return ko.utils.arrayFirst(this.accounts(), a => a.account == account_id);
 };
 
 export default AccountManager;
