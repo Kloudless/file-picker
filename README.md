@@ -212,8 +212,9 @@ File Explorer JavaScript on the page.
 
   The Chooser will upload files to the developer's Upload Location.
   The Upload Location can be set in the [developer portal](https://developers.kloudless.com)
-  under 'App Details', by selecting a folder in a storage service such as Amazon S3.
-  All local files from a user will be uploaded there.
+  under 'UI Tools', select 'File Explorer'. Follow the instructions for 
+  selecting a folder in a storage service such as Amazon S3. All local files from
+  a user will be uploaded there.
 
   __Note on the Saver__
 
