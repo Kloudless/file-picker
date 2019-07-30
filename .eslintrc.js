@@ -32,5 +32,6 @@ module.exports = {
     // allow param reassign or the param's properties
     'no-param-reassign': ["error", { "props": false }],
     'max-len': ["error", { "code": 80 }],
+    'operator-linebreak': 'off',
   }
 }
