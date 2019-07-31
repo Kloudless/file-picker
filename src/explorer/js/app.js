@@ -310,11 +310,11 @@ var FileExplorer = function () {
         };
 
         var moveToDrop = function (selection_index) {
-          var copyMode = config.copy_to_upload_location;
+          var copyMode = config.copy_to_upload_location();
           var isTask = (copyMode === 'sync' || copyMode === 'async');
           var url = config.getAccountUrl(
             accountId, 'storage', '/files/' +
-            selections[selection_index].id + '/copy/?link=' + config.link +
+            selections[selection_index].id + '/copy/?link=' + config.link() +
             '&link_options=' + encodeURIComponent(JSON.stringify(config.link_options()))
           );
           var data = {
@@ -363,12 +363,12 @@ var FileExplorer = function () {
           requestCountStarted += 1;
         }
 
-        if (config.copy_to_upload_location) {
+        if (config.copy_to_upload_location()) {
           // Move to upload location.
           for (var i = 0; i < selections.length; i++) {
             requestsToLaunch.push({fn: moveToDrop, i: i});
           }
-        } else if (config.link) {
+        } else if (config.link()) {
           for (var i = 0; i < selections.length; i++) {
             processingConfirm = true;
             requestsToLaunch.push({fn: createLink, i: i});
@@ -1091,7 +1091,7 @@ function initializePlUpload() {
 
         // Don't set to 0, because it forces 0 files to be selected.
         // Happens even though the default is supposed to be 0.
-        if (!config.multiselect)
+        if (!config.multiselect())
           filters['max_file_count'] = 1;
 
         return filters;
@@ -1254,7 +1254,7 @@ function initializePlUpload() {
           up.settings.multipart_params = up.settings.multipart_params || {};
           up.settings.multipart_params['file_id'] = file.id;
           up.settings.multipart_params['file_size'] = file.size;
-          if (config.link) {
+          if (config.link()) {
             up.settings.multipart_params['link'] = true;
             up.settings.multipart_params['link_options'] = JSON.stringify(config.link_options());
           }
@@ -1354,10 +1354,10 @@ ko.bindingHandlers.finderSelect = {
   init: function (element, valueAccessor) {
     var selector = $(element).finderSelect({
       children: 'tr[data-type="file"]',
-      enableClickDrag: config.multiselect,
-      enableShiftClick: config.multiselect,
-      enableCtrlClick: config.multiselect,
-      enableSelectAll: config.multiselect,
+      enableClickDrag: config.multiselect(),
+      enableShiftClick: config.multiselect(),
+      enableCtrlClick: config.multiselect(),
+      enableSelectAll: config.multiselect(),
     });
     var files = ko.unwrap(valueAccessor());
     files.table = selector;

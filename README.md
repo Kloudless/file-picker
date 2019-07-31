@@ -765,11 +765,15 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
   Updates the configuration options the explorer was initialized with. The
   explorer will immediately begin using the new configuration.
   `options` is an Object with the new configuration. Not all options can be
-  updated in this manner. The following are supported:
+  updated in this manner. The following are not supported:
 
-  * `link_options`
-  * `upload_location_account`
-  * `upload_location_folder`
+  * `app_id`
+  * `custom_css`
+  * `types`
+  * `services`
+  * `persist`
+  * `create_folder`
+  * `account_key`
   
 * `explorer.logout(deleteAccount=false)`
 
