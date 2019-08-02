@@ -19,7 +19,7 @@
       div.header(data-bind='if: all().length > 0')
         .intro-message(data-bind='translate: "accounts/connectedaccounts"') Connected accounts
         // ko if: $root.enable_logout
-        .logout-message(data-bind='click: function (){logout(config.delete_accounts_on_logout())}, translate: "accounts/logout"') logout
+        .logout-message(data-bind='click: function (){logout($root.delete_accounts_on_logout())}, translate: "accounts/logout"') logout
         // /ko
         //- Linked accounts
         //- Each service group
