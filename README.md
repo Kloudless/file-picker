@@ -420,6 +420,10 @@ File Explorer JavaScript on the page.
         case 'gdrive':
           // Ask for read-only access to Google Drive data instead.
           authOptions.scope = 'gdrive.storage."https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/drive.readonly":raw';
+          // Pass additional query parameters to Google Drive.
+          authOptions.raw = {
+            'query_name': 'query_value'
+          };
           break;
         case 'ftp':
           // Set a default domain when connecting an FTP account.
@@ -438,13 +442,13 @@ File Explorer JavaScript on the page.
   If you're familiar with the configuration options accepted by the
   [Kloudless Authenticator](https://github.com/Kloudless/authenticator#options),
   the File Explorer requires options returned in the same format that the
-  Authenticator accepts. For convenience, the following parameters can be
-  specified as objects instead of URL-encoded JSON strings as shown in the
-  example above:
+  Authenticator accepts. For convenience, the following 
+  [supported parameters](https://developers.kloudless.com/docs/latest/authentication#oauth-2.0-first-leg)
+  can be specified as objects as shown in the example above:
 
-  * `extra_data`
-  * `custom_properties`
-
+  * `extra_data` (converted to a URL-encoded JSON string)
+  * `custom_properties` (converted to a URL-encoded JSON string)
+  * `raw` (converted to the `raw[key]=value` format described in the docs)
 
 #### Chooser options
 

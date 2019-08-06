@@ -40,8 +40,12 @@ function getEffectiveOauthParams(requestId, service, oauthParams) {
     if (value === undefined || value === null) {
       return;
     }
-    // TODO: handle raw object
-    if (typeof value === 'object') {
+
+    if (key === 'raw') {
+      Object.keys(value).forEach((rawKey) => {
+        queryParams[`raw[${rawKey}]`] = value[rawKey];
+      });
+    } else if (typeof value === 'object') {
       queryParams[key] = JSON.stringify(value);
     } else {
       queryParams[key] = value;
@@ -256,4 +260,5 @@ export default {
   authenticate,
   postMessage,
   iframe,
+  getEffectiveOauthParams,
 };
