@@ -34,6 +34,9 @@ const create = fileExplorerType => (customComponent) => {
       initExplorer() {
         // deep clone options
         const options = JSON.parse(JSON.stringify(this.options));
+        if (this.options.oauth) {
+          options.oauth = this.options.oauth;
+        }
         this.explorer = fileExplorer.explorer(options);
         this.explorer.on('raw', ({ action, data }) => {
           this.$emit(action, data);

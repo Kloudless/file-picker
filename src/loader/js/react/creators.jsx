@@ -83,6 +83,9 @@ const create = fileExplorerType => (WrappedComponent = DefaultButton) => {
 
     initExplorer(options) {
       const deepClonedOptions = JSON.parse(JSON.stringify(options));
+      if (options.oauth) {
+        deepClonedOptions.oauth = options.oauth;
+      }
       const explorer = fileExplorer.explorer(deepClonedOptions);
       explorer.on('raw', this.onRaw);
       this.explorer = explorer;
