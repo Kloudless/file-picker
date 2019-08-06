@@ -1,6 +1,6 @@
 {
   "name": "@kloudless/file-explorer",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "author": "Kloudless <hello@kloudless.com> (https://kloudless.com)",
   "description": "The Kloudless File Explorer is a JavaScript library that allows your users to browse and select files and folders from their storage services. It comes in two modes: a chooser and a saver.",
   "main": "./dist/loader/js/interface.js",
