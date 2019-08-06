@@ -1496,9 +1496,9 @@ window.addEventListener('message', function (message) {
     dataMessageHandler(data);
   } else if (action === 'CLOSING') {
     explorer.cleanUp();
-  } else if (contents.action == 'LOGOUT') {
+  } else if (action == 'LOGOUT') {
     explorer.view_model.accounts.logout(false);
-  } else if (contents.action == 'LOGOUT:DELETE_ACCOUNT') {
+  } else if (action == 'LOGOUT:DELETE_ACCOUNT') {
     explorer.view_model.accounts.logout(true);
   } else if (action === 'CALLBACK' && callbackId
     && EVENT_CALLBACKS[callbackId]) {
