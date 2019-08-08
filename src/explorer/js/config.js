@@ -17,63 +17,56 @@ function get_query_variable(name) {
 }
 
 
-let copy_to_upload_location = get_query_variable('copy_to_upload_location');
-if (copy_to_upload_location !== 'sync' && copy_to_upload_location !== 'async') {
-  if (copy_to_upload_location === 'true') {
-    copy_to_upload_location = true;
-  } else {
-    copy_to_upload_location = null;
-  }
-}
-
+// the following options are undocumented (internal use only)
+// - exp_id
+// - origin
+// - api_version
+// - flavor
+// - upload_location_uri (used by the Dev Portal)
+// - base_url
 Object.assign(config, {
-  exp_id: get_query_variable('exp_id'),
+  /* options that can't be updated after initialization */
+  // account_key is kept for b/w compatibility
+  account_key: JSON.parse(get_query_variable('account_key')),
+  api_version: get_query_variable('api_version'),
   app_id: get_query_variable('app_id'),
-  origin: get_query_variable('origin'),
+  create_folder: JSON.parse(get_query_variable('create_folder')),
   custom_css: get_query_variable('custom_css'),
-  // data options move to post messaging
-  flavor: ko.observable(get_query_variable('flavor')),
-  multiselect: JSON.parse(get_query_variable('multiselect')),
-  link: JSON.parse(get_query_variable('link')),
-  link_options: ko.observable({}),
-  account_management: ko.observable(true),
-  retrieve_token: ko.observable(false),
-  computer: ko.observable(
-    JSON.parse(get_query_variable('computer'))
-    || get_query_variable('flavor') === 'dropzone',
-  ),
+  exp_id: get_query_variable('exp_id'),
+  origin: get_query_variable('origin'),
+  persist: JSON.parse(get_query_variable('persist')),
   services: JSON.parse(get_query_variable('services')),
+  // Make sure all types are lowercase since we do a case-insensitive
+  // search by lowercasing the search key and using types#indexOf.
+  types: JSON.parse(get_query_variable('types')).map(str => str.toLowerCase()),
+
+  /* options that can be updated by config.update() */
+  account_management: ko.observable(true),
   all_services: ko.observableArray().extend({
     // We want the initial load to trigger one run of initialization
     // logic only.
     rateLimit: 500,
   }),
-  persist: JSON.parse(get_query_variable('persist')),
-  types: JSON.parse(get_query_variable('types')).map(str => (
-    // Make sure all types are lowercase since we do a case-insensitive
-    // search by lower-casing the search key and using types#indexOf.
-    str.toLowerCase()
-  )),
-  user_data: ko.observable(), // Get asynchronously.
-  copy_to_upload_location,
-  api_version: get_query_variable('api_version'),
-  upload_location_account: ko.observable(),
-  upload_location_folder: ko.observable(),
-  uploads_pause_on_error: ko.observable(true),
-  upload_location_uri: ko.observable(get_query_variable('upload_location_uri')),
-  create_folder: JSON.parse(get_query_variable('create_folder')),
-  chunk_size: 5 * 1024 * 1024,
-  locale: ko.observable('en'),
-  translations: ko.observable(''),
-  dateTimeFormat: ko.observable('MMMdHm'),
-  enable_logout: ko.observable(true),
-  delete_accounts_on_logout: ko.observable(false),
-
   // TODO: drop base_url in favor of BASE_URL env variable
   base_url: BASE_URL || config.base_url,
-
-  // b/w compatibility
-  account_key: JSON.parse(get_query_variable('account_key')),
+  chunk_size: 5 * 1024 * 1024,
+  computer: ko.observable(get_query_variable('flavor') === 'dropzone'),
+  copy_to_upload_location: ko.observable(),
+  dateTimeFormat: ko.observable('MMMdHm'),
+  enable_logout: ko.observable(true),
+  flavor: ko.observable(get_query_variable('flavor')),
+  link: ko.observable(true),
+  link_options: ko.observable({}),
+  locale: ko.observable('en'),
+  multiselect: ko.observable(false),
+  retrieve_token: ko.observable(false),
+  translations: ko.observable(''),
+  upload_location_account: ko.observable(),
+  upload_location_folder: ko.observable(),
+  upload_location_uri: ko.observable(''),
+  uploads_pause_on_error: ko.observable(true),
+  user_data: ko.observable(), // Get asynchronously.
+  delete_accounts_on_logout: ko.observable(false),
 });
 
 config.localeOptions = ko.computed(() => JSON.stringify({

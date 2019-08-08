@@ -104,6 +104,7 @@ const explorers = fileExplorer._explorers;
 const queuedAction = fileExplorer._queuedAction;
 let backdropDiv = null;
 let bodyOverflow = null;
+const { protocol, host } = window.location;
 
 /**
  * setGlobalOptions()
@@ -129,8 +130,7 @@ fileExplorer.getGlobalOptions = () => ({ ...globalOptions });
 
 let explorerUrl = EXPLORER_URL;
 if (explorerUrl.indexOf('://') === -1) {
-  const location = window.location;
-  explorerUrl = `${location.protocol}//${location.host}${explorerUrl}`;
+  explorerUrl = `${protocol}//${host}${explorerUrl}`;
 }
 fileExplorer.setGlobalOptions({ explorerUrl });
 
@@ -191,13 +191,8 @@ const initialize_frame = function (options, elementId) {
     `app_id=${options.app_id}`,
     `exp_id=${exp_id}`,
     `flavor=${options.flavor}`,
-    `origin=${encodeURIComponent(`${window.location.protocol}//${window.location.host}`)}`,
+    `origin=${encodeURIComponent(`${protocol}//${host}`)}`,
     `custom_css=${encodeURIComponent(options.custom_css)}`,
-    `multiselect=${options.multiselect}`,
-    `link=${options.link}`,
-    `computer=${options.computer}`,
-    `copy_to_upload_location=${options.copy_to_upload_location}`,
-    `upload_location_uri=${options.upload_location_uri}`,
     `services=${JSON.stringify(options.services)}`,
     `persist=${JSON.stringify(options.persist)}`,
     `account_key=${options.account_key}`,
@@ -377,16 +372,13 @@ fileExplorer.explorer = function (options) {
     }
   });
 
+  // only need to pass the options that can't be updated after initialization
+  // the rest will be passed in when calling `_open()`
   const id = initialize_frame({
     app_id: exp.app_id,
     exp_id: exp.exp_id,
     flavor: exp.flavor,
     custom_css: exp.custom_css,
-    multiselect: exp.multiselect,
-    link: exp.link,
-    computer: exp.computer,
-    copy_to_upload_location: exp.copy_to_upload_location,
-    upload_location_uri: exp.upload_location_uri,
     account_key: exp.account_key,
     services: exp.services,
     persist: exp.persist,
