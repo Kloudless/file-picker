@@ -12,15 +12,15 @@
 </head>
 <body>
   <p>
-    Click below to test the explorer/saver.
+    Click below to test the File Explorer's Chooser and Saver modes.
   </p>
-  <button id="file-chooser">File Chooser</button>
-  <button id="file-chooser-renew">Renew File Chooser</button>
-  <button id="folder-chooser">Folder Chooser</button>
-  <button id="dropzone-create-button">Create Dropzone</button>
-  <button id="saver">Saver</button>
-  <button id="close">Close</button>
-  <button id="update-explorer-url">Update Explorer URL</button>
+  <button id="file-chooser">Launch the File Chooser</button>
+  <button id="file-chooser-renew">Reload the File Chooser configuration</button>
+  <button id="folder-chooser">Launch a Chooser that only selects Folders</button>
+  <button id="dropzone-create-button">Create a Dropzone</button>
+  <button id="saver">Launch the File Saver</button>
+  <button id="close">Close all File Explorers</button>
+  <button id="update-explorer-url">Update the File Explorer URL to load from production</button>
   <br>
   <br>
   <p>Drop Zone</p>
@@ -28,7 +28,7 @@
     id="dropzone"
     style="border-style:dashed; border-width:1px; width:600px;height:100px">
   </div>
-  <button id="dropzone-renew">Renew Drop Zone</button>
+  <button id="dropzone-renew">Reload the Drop Zone configuration</button>
   <div id="logger"></div>
 
   <% if (distTest) { %>
