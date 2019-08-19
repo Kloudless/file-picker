@@ -129,7 +129,7 @@ const FileExplorer = function () {
 
           // All requests are done
           if (requestCountSuccess + requestCountError
-              === fileManager.files().length) {
+            === fileManager.files().length) {
             view_model.postMessage('success', saves);
             logger.debug('Successfully uploaded files: ', saves);
           }
@@ -201,212 +201,243 @@ const FileExplorer = function () {
       // Set loading to true
       this.view_model.loading(true);
 
-      // Clone the selections, removing the parent reference.
       const current = this.manager.active().filesystem().current();
-      let selections = [];
-      const clones = [];
+      const selections = [];
+      let selectedType = 'file';
 
       const { table } = this.view_model.files;
       if (table) {
         const selectedElements = table.finderSelect('selected');
         for (let i = 0; i < selectedElements.length; i += 1) {
-          selections.push(ko.dataFor(selectedElements[i]));
+          // removing the parent reference.
+          const { parent_obs, ...rest } = ko.dataFor(selectedElements[i]);
+          selections.push(rest);
         }
       }
 
-      for (let i = 0; i < selections.length; i += 1) {
-        const selection = selections[i];
-        const { parent_obs, ...clone } = selection;
-        clones.push(clone);
+      if (selections.length === 0 && (
+        config.types.includes('all') || config.types.includes('folders'))) {
+        selectedType = 'folder';
+        // removing the parent reference.
+        const { parent_obs, ...rest } = current;
+        selections.push(rest);
       }
-      selections = clones;
+
+      const accountId = this.manager.active().filesystem().id;
+      const authKey = this.manager.active().filesystem().key;
+      const { lastCancelTime } = this;
+
+      let requestCountSuccess = 0;
+      let requestCountError = 0;
+      let requestCountStarted = 0;
+      const maxRequestsInProgress = 4;
+      const requestsToLaunch = [];
+
+      const requestLauncherInterval = window.setInterval(() => {
+        const requestsComplete = requestCountSuccess + requestCountError;
+        let requestsInProgress = requestCountStarted - requestsComplete;
+        while (requestsToLaunch.length > 0 &&
+          requestsInProgress < maxRequestsInProgress) {
+          const { fn, args } = requestsToLaunch.shift();
+          fn.apply(this, args);
+          requestsInProgress = requestCountStarted - requestsComplete;
+        }
+      }, 200);
+
+      // Selection Complete Callback
+      const selectionComplete = (success) => {
+        if (success) {
+          requestCountSuccess += 1;
+        } else {
+          requestCountError += 1;
+          logger.warn('Error with ajax requests for selection');
+        }
+
+        if (this.lastCancelTime > lastCancelTime) {
+          logger.info('A cancellation occurred prior to the operation ' +
+            'being completed. Ignoring response.');
+          processingConfirm = false;
+          window.clearInterval(requestLauncherInterval);
+          return;
+        }
+
+        // All requests are done
+        if (requestCountSuccess + requestCountError === selections.length) {
+          window.clearInterval(requestLauncherInterval);
+          this.view_model.postMessage(
+            requestCountError ? 'error' : 'success', selections,
+          );
+          processingConfirm = false;
+        }
+      };
+
+      // Add the link at the last possible moment for error/async handling
+      const createLink = (selection_index) => {
+        const linkData = $.extend({}, config.link_options());
+        linkData.file_id = selections[selection_index].id;
+
+        $.ajax({
+          url: config.getAccountUrl(accountId, 'storage', '/links/'),
+          type: 'POST',
+          headers: {
+            Authorization: `${authKey.scheme} ${authKey.key}`,
+          },
+          contentType: 'application/json',
+          data: JSON.stringify(linkData),
+        }).done((data) => {
+          selections[selection_index].link = data.url;
+          selectionComplete(true);
+        }).fail((xhr, status, err) => {
+          logger.warn('Error creating link: ', status, err, xhr);
+          selections[selection_index].error = xhr.responseJSON;
+          selectionComplete(false);
+        });
+        requestCountStarted += 1;
+      };
+
+      const pollTask = (task_id, callbacks) => {
+        const POLLING_INTERVAL = 3000; // in millisecond
+        // eslint-disable-next-line no-param-reassign
+        callbacks = callbacks || {};
+        setTimeout(() => {
+          $.ajax({
+            url: config.getAccountUrl(accountId, 'tasks', `/${task_id}`),
+            type: 'GET',
+            headers: { Authorization: `${authKey.scheme} ${authKey.key}` },
+          }).done((data) => {
+            if (data.state && data.state.toUpperCase() === 'PENDING') {
+              pollTask(task_id, callbacks);
+            } else {
+              // eslint-disable-next-line no-unused-expressions
+              callbacks.onComplete && callbacks.onComplete(data);
+            }
+          }).fail((xhr, status, err) => {
+            // eslint-disable-next-line no-unused-expressions
+            callbacks.onError && callbacks.onError(xhr, status, err);
+          });
+        }, POLLING_INTERVAL);
+      };
+
+      const moveToDrop = function (type, selection_index) {
+        const copyMode = config.copy_to_upload_location();
+        const isTask = copyMode === 'sync' || copyMode === 'async';
+
+        const queryParams = {};
+        if (isTask) {
+          queryParams.return_type = 'task';
+        }
+        if (type === 'file') {
+          queryParams.link = config.link();
+          queryParams.link_options = encodeURIComponent(
+            JSON.stringify(config.link_options()),
+          );
+        }
+
+        const queryStrings = Object.keys(queryParams)
+          .map(key => `${key}=${queryParams[key]}`).join('&');
+        const url = config.getAccountUrl(
+          accountId, 'storage',
+          `/${type === 'file' ? 'files' : 'folders'}` +
+          `/${selections[selection_index].id}/copy?${queryStrings}`,
+        );
+
+        const data = {
+          account: 'upload_location',
+        };
+        if (config.upload_location_account()) {
+          data.drop_account = config.upload_location_account();
+          data.parent_id = config.upload_location_folder();
+        } else if (config.upload_location_uri()) {
+          // used by Dev Portal
+          data.drop_uri = config.upload_location_uri();
+        }
+
+        const headers = {
+          Authorization: `${authKey.scheme} ${authKey.key}`,
+        };
+        if (type === 'folder') {
+          headers['X-Kloudless-Async'] = true;
+        }
+
+        $.ajax({
+          url,
+          type: 'POST',
+          contentType: 'application/json',
+          headers,
+          data: JSON.stringify(data),
+        }).done((res) => {
+          if (copyMode === 'sync') {
+            // polling for the result (file metadata)
+            pollTask(res.id, {
+              onComplete(metadata) {
+                selections[selection_index] = metadata;
+                selectionComplete(true);
+              },
+              onError(xhr, status, err) {
+                logger.error(
+                  `Task[${res.id}] failed: ${JSON.stringify(err)}`,
+                );
+                selections[selection_index].error = xhr.responseJSON;
+                selectionComplete(false);
+              },
+            });
+          } else {
+            selections[selection_index] = res;
+            selectionComplete(true);
+          }
+        }).fail((xhr) => {
+          selections[selection_index].error = xhr.responseJSON;
+          selectionComplete(false);
+        });
+        requestCountStarted += 1;
+      };
 
       // postMessage to indicate success.
-      if (selections.length > 0) {
+      const copyToUploadLocation = config.copy_to_upload_location();
+      if (selectedType === 'file' && selections.length > 0) {
         logger.debug('Files selected! ', selections);
         this.view_model.postMessage('selected', selections);
 
-        const accountId = this.manager.active().filesystem().id;
-        const authKey = this.manager.active().filesystem().key;
-        const { lastCancelTime } = this;
-
-        let requestCountSuccess = 0;
-        let requestCountError = 0;
-        let requestCountStarted = 0;
-        const maxRequestsInProgress = 4;
-        const requestsToLaunch = [];
-
-        const requestLauncherInterval = window.setInterval(() => {
-          const requestsComplete = requestCountSuccess + requestCountError;
-          let requestsInProgress = requestCountStarted - requestsComplete;
-          while (requestsToLaunch.length > 0 &&
-            requestsInProgress < maxRequestsInProgress) {
-            const callData = requestsToLaunch.shift();
-            callData.fn(callData.i);
-            requestsInProgress = requestCountStarted - requestsComplete;
-          }
-        }, 200);
-
-        // Selection Complete Callback
-        const selectionComplete = (success) => {
-          if (success) {
-            requestCountSuccess += 1;
-          } else {
-            requestCountError += 1;
-            logger.warn('Error with ajax requests for selection');
-          }
-
-          if (this.lastCancelTime > lastCancelTime) {
-            logger.info('A cancellation occurred prior to the operation ' +
-              'being completed. Ignoring response.');
-            processingConfirm = false;
-            window.clearInterval(requestLauncherInterval);
-            return;
-          }
-
-          // All requests are done
-          if (requestCountSuccess + requestCountError === selections.length) {
-            window.clearInterval(requestLauncherInterval);
-            this.view_model.postMessage(
-              requestCountError ? 'error' : 'success', selections,
-            );
-            processingConfirm = false;
-          }
-        };
-
-        // Add the link at the last possible moment for error/async handling
-        const createLink = (selection_index) => {
-          const linkData = $.extend({}, config.link_options());
-          linkData.file_id = selections[selection_index].id;
-
-          $.ajax({
-            url: config.getAccountUrl(accountId, 'storage', '/links/'),
-            type: 'POST',
-            headers: {
-              Authorization: `${authKey.scheme} ${authKey.key}`,
-            },
-            contentType: 'application/json',
-            data: JSON.stringify(linkData),
-          }).done((data) => {
-            selections[selection_index].link = data.url;
-            selectionComplete(true);
-          }).fail((xhr, status, err) => {
-            logger.warn('Error creating link: ', status, err, xhr);
-            selections[selection_index].error = xhr.responseJSON;
-            selectionComplete(false);
-          });
-          requestCountStarted += 1;
-        };
-
-        const pollTask = (task_id, callbacks) => {
-          const POLLING_INTERVAL = 3000; // in millisecond
-          // eslint-disable-next-line no-param-reassign
-          callbacks = callbacks || {};
-          setTimeout(() => {
-            $.ajax({
-              url: config.getAccountUrl(accountId, 'tasks', `/${task_id}`),
-              type: 'GET',
-              headers: { Authorization: `${authKey.scheme} ${authKey.key}` },
-            }).done((data) => {
-              if (data.state && data.state.toUpperCase() === 'PENDING') {
-                pollTask(task_id, callbacks);
-              } else {
-                // eslint-disable-next-line no-unused-expressions
-                callbacks.onComplete && callbacks.onComplete(data);
-              }
-            }).fail((xhr, status, err) => {
-              // eslint-disable-next-line no-unused-expressions
-              callbacks.onError && callbacks.onError(xhr, status, err);
-            });
-          }, POLLING_INTERVAL);
-        };
-
-        const moveToDrop = function (selection_index) {
-          const copyMode = config.copy_to_upload_location();
-          const isTask = (copyMode === 'sync' || copyMode === 'async');
-          let queryParams = {
-            link: config.link(),
-            link_options: encodeURIComponent(
-              JSON.stringify(config.link_options()),
-            ),
-          };
-          if (isTask) {
-            queryParams.return_type = 'task';
-          }
-          queryParams = Object.keys(queryParams)
-            .map(key => `${key}=${queryParams[key]}`).join('&');
-          const url = config.getAccountUrl(
-            accountId, 'storage',
-            `/files/${selections[selection_index].id}/copy/?${queryParams}`,
-          );
-
-          const data = {
-            account: 'upload_location',
-          };
-          if (config.upload_location_account()) {
-            data.drop_account = config.upload_location_account();
-            data.parent_id = config.upload_location_folder();
-          } else if (config.upload_location_uri()) {
-            data.drop_uri = config.upload_location_uri();
-          }
-
-          $.ajax({
-            url,
-            type: 'POST',
-            contentType: 'application/json',
-            headers: { Authorization: `${authKey.scheme} ${authKey.key}` },
-            data: JSON.stringify(data),
-          }).done((res) => {
-            if (copyMode === 'sync') {
-              // polling for the result (file metadata)
-              pollTask(res.id, {
-                onComplete(metadata) {
-                  selections[selection_index] = metadata;
-                  selectionComplete(true);
-                },
-                onError(xhr, status, err) {
-                  logger.error(
-                    `Task[${res.id}] failed: ${JSON.stringify(err)}`,
-                  );
-                  selections[selection_index].error = xhr.responseJSON;
-                  selectionComplete(false);
-                },
-              });
-            } else {
-              selections[selection_index] = res;
-              selectionComplete(true);
-            }
-          }).fail((xhr) => {
-            selections[selection_index].error = xhr.responseJSON;
-            selectionComplete(false);
-          });
-          requestCountStarted += 1;
-        };
-
-        if (config.copy_to_upload_location()) {
+        if (copyToUploadLocation) {
           // Move to upload location.
           for (let i = 0; i < selections.length; i += 1) {
-            requestsToLaunch.push({ fn: moveToDrop, i });
+            requestsToLaunch.push({
+              fn: moveToDrop, args: [selectedType, i],
+            });
           }
         } else if (config.link()) {
           for (let i = 0; i < selections.length; i += 1) {
             processingConfirm = true;
-            requestsToLaunch.push({ fn: createLink, i });
+            requestsToLaunch.push({ fn: createLink, args: [i] });
           }
         } else {
           this.view_model.postMessage('success', selections);
         }
-        // assuming 'folders' or 'all' is part of what can be selected
-      } else if (config.types.some(t => ['all', 'folders'].includes(t))) {
-        // if no files are selected, return folder currently in
-        // TODO: for now don't allow root folders for all sources later check
-        // the can_upload_files attribute
-        const { parent_obs, ...clone } = current;
-        this.view_model.postMessage('success', [clone]);
-      } else {
-        this.view_model.error('No files selected. Please select a file.');
-        this.view_model.loading(false);
+        return;
       }
+      if (selectedType === 'folder') {
+        if (['sync', 'async'].includes(copyToUploadLocation)) {
+          if (selections[0].id !== 'root') {
+            const msg = 'Are you sure to copy the folder ' +
+              ` '${selections[0].name}'?`;
+            if (window.confirm(msg)) {
+              // Move to upload location.
+              requestsToLaunch.push({
+                fn: moveToDrop, args: [selectedType, 0],
+              });
+              return;
+            }
+          } else {
+            window.alert('Copying all data at once is not allowed.');
+          }
+        } else {
+          this.view_model.postMessage('success', selections);
+        }
+        this.view_model.loading(false);
+        return;
+      }
+      this.view_model.error('No files selected. Please select a file.');
+      this.view_model.loading(false);
     },
 
     // Quit the file explorer.
@@ -498,7 +529,6 @@ const FileExplorer = function () {
               this.manager.addAuthedAccount(acc);
 
               if (!active) {
-                // TODO: ???????????
                 active = true;
                 this.manager.active(this.manager.getByAccount(acc.account));
               }
@@ -1103,7 +1133,7 @@ function initializePlUpload() {
     const filtered_types = [];
     // if not default 'all' or 'files', add the mimetypes
     if ((!config.types.includes('all') && !config.types.includes('files'))
-        || config.types.length !== 1) {
+      || config.types.length !== 1) {
       filtered_types.push({
         title: 'Uploadable files',
         extensions: config.types.join(','),
@@ -1650,7 +1680,7 @@ function dataMessageHandler(data) {
     // Default to computer view if account management is disabled and no
     // tokens are provided.
     if (config.visible_computer() && !config.account_management() &&
-        !(options && options.tokens && options.tokens.length > 0)) {
+      !(options && options.tokens && options.tokens.length > 0)) {
       router.setLocation('#/computer');
     }
   } else if (flavor === 'dropzone') {
@@ -1698,7 +1728,7 @@ function dataMessageHandler(data) {
   }
 
   if (config.visible_computer() && !loadedDropConfig
-      && !config.upload_location_uri()) {
+    && !config.upload_location_uri()) {
     // Looking up chunk size. Since the drop location doesn't really
     // change we look it up based on that. The /drop end point for the
     // API returns the chunk size for that drop location.
