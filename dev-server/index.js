@@ -33,7 +33,7 @@ import 'regenerator-runtime/runtime';
       services: ['all'],
       types: ['all'],
       display_backdrop: true,
-      // enable below options to test localization
+      // enable options below to test localization
       // locale: 'zh',
       // translations: window.translations,
     },
