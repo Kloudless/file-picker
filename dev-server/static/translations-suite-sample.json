@@ -40,7 +40,7 @@
       "connectaccount": "Connect {service} Compte"
     }
   },
-  "zh": {
+  "zh-CN": {
     "global": {
       "select": "选择",
       "cancel": "取消",

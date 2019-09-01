@@ -1,5 +1,5 @@
 {
-  "zh-Hant": {
+  "zh-TW": {
     "global": {
       "select": "選擇",
       "cancel": "取消",
@@ -33,31 +33,6 @@
     "selector": {
       "mycomputer": "我的電腦",
       "accounts": "帳號"
-    },
-    "servicenames": {
-      "cq5": "Adobe CQ5",
-      "dropbox": "Dropbox",
-      "gdrive": "Google Drive",
-      "box": "Box",
-      "evernote": "Evernote",
-      "skydrive": "OneDrive",
-      "sugarsync": "SugarSync",
-      "sharefile": "Citrix ShareFile",
-      "egnyte": "Egnyte",
-      "s3": "Amazon S3",
-      "sharepoint": "SharePoint Online",
-      "onedrivebiz": "OneDrive for Business",
-      "smb": "SMB",
-      "hubspot": "Hubspot Files",
-      "salesforce": "Salesforce Files",
-      "azure": "Azure Storage",
-      "cmis": "CMIS",
-      "alfresco": "Alfresco",
-      "alfresco_cloud": "Alfresco Cloud",
-      "jive": "Jive",
-      "webdav": "WebDAV",
-      "ftp": "FTP",
-      "computer": "My Computer"
     },
     "dropzone": {
       "message": "在此處拖放文件，或單擊以打開文件資源管理器"

@@ -34,31 +34,6 @@
       "mycomputer": "내 컴퓨터",
       "accounts": "계정"
     },
-    "servicenames": {
-      "cq5": "Adobe CQ5",
-      "dropbox": "Dropbox",
-      "gdrive": "Google Drive",
-      "box": "Box",
-      "evernote": "Evernote",
-      "skydrive": "OneDrive",
-      "sugarsync": "SugarSync",
-      "sharefile": "Citrix ShareFile",
-      "egnyte": "Egnyte",
-      "s3": "Amazon S3",
-      "sharepoint": "SharePoint Online",
-      "onedrivebiz": "OneDrive for Business",
-      "smb": "SMB",
-      "hubspot": "Hubspot Files",
-      "salesforce": "Salesforce Files",
-      "azure": "Azure Storage",
-      "cmis": "CMIS",
-      "alfresco": "Alfresco",
-      "alfresco_cloud": "Alfresco Cloud",
-      "jive": "Jive",
-      "webdav": "WebDAV",
-      "ftp": "FTP",
-      "computer": "My Computer"
-    },
     "dropzone": {
       "message": "여기에 파일을 끌어다 놓거나 클릭하여 파일 탐색기를 엽니 다."
     },

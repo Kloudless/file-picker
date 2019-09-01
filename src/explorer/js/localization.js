@@ -3,6 +3,7 @@ import ko from 'knockout';
 import globalize from 'globalize';
 import 'cldr/unresolved';
 import likelySubtags from 'cldr-data/supplemental/likelySubtags.json';
+import numberingSystems from 'cldr-data/supplemental/numberingSystems.json';
 import timeData from 'cldr-data/supplemental/timeData.json';
 import weekData from 'cldr-data/supplemental/weekData.json';
 import plurals from 'cldr-data/supplemental/plurals.json';
@@ -53,12 +54,14 @@ const supportedLocales = {
   ru: { cldr: 'ru', plupload: 'ru' },
   sk: { cldr: 'sk', plupload: 'sk' },
   sq: { cldr: 'sq', plupload: 'sq' },
-  sr: { cldr: 'sr', plupload: 'sr_RS' },
+  sr: { cldr: 'sr', plupload: 'sr' },
   sv: { cldr: 'sv', plupload: 'sv' },
   th: { cldr: 'th', plupload: 'th_TH' },
   tr: { cldr: 'tr', plupload: 'tr' },
   uk: { cldr: 'uk', plupload: 'uk_UA' },
   zh: { cldr: 'zh', plupload: 'zh_CN' },
+  'zh-cn': { cldr: 'zh-Hans', plupload: 'zh_CN' },
+  'zh-tw': { cldr: 'zh-Hant', plupload: 'zh_TW' },
 };
 
 let dateTimeFmt = '';
@@ -77,17 +80,40 @@ const CLDR_DATA_URL = `${util.getBaseUrl()}/localization/cldr-data/`;
 // folder containing translated strings
 const LOCALIZATION_MESSAGES_URL = `${util.getBaseUrl()}/localization/messages/`;
 
+const PLUPLOAD_I18N_URL = `${util.getBaseUrl()}/localization/plupload/i18n/`;
+
 const DEFAULT_LOCALE = 'en';
 const DEFAULT_DATETIME_FORMAT = 'MMMdHm';
 
 const currentLocale = ko.observable();
 const isTestLocale = ko.observable(false);
 const loadedLocales = {};
-let isSupplementalCldrLoaded = false;
 
 const isLocaleSupported = locale => !!supportedLocales[locale];
 const resolvePluploadFileName = locale => (isLocaleSupported(locale) ?
   `${supportedLocales[locale].plupload}.js` : 'en.js');
+const resolveCldrFolderName = locale => (isLocaleSupported(locale) ?
+  `${supportedLocales[locale].cldr}` : 'en');
+
+const deepSpread = (target, ...sources) => {
+  // it's not for general purposes but for spreading translation files
+  const spread = (innerTarget, source, key) => {
+    if (util.isObject(source)) {
+      Object.keys(source).forEach((prop) => {
+        if (util.isObject(innerTarget[prop])) {
+          spread(innerTarget[prop], source[prop], prop);
+        } else if (source[prop] !== undefined) {
+          innerTarget[prop] = source[prop];
+        }
+      });
+    } else if (key && source !== undefined
+      && !util.isObject(innerTarget[key])) {
+      innerTarget[key] = source;
+    }
+  };
+  sources.forEach(source => spread(target, source));
+  return target;
+};
 
 const locUtil = {
 
@@ -121,101 +147,99 @@ const locUtil = {
    * @param locale New locale ('en-US', 'es-ES', etc...)
    * @param translations The URL/JSON string of the translations
    * @param dateTimeFormat The date/time format for the locale
-   * @param [callback] Called when the locale is loaded
    */
-  setCurrentLocale(locale, translations, dateTimeFormat, callback = () => {}) {
+  setCurrentLocale(locale, translations, dateTimeFormat) {
     dateTimeFmt = dateTimeFormat;
 
     const warningLocaleNotFound = 'There is no corresponding translation' +
-     ` for locale [${locale}]! Falling back to the default translation.`;
+     ` for locale "${locale}"!` +
+     ` Falling back to the default locale "${DEFAULT_LOCALE}".`;
 
-    const warningFileNotFound = 'Can not fetch the translation file from' +
-     ` ${translations}! Falling back to the default translation.`;
+    const warningCLDRNotFound = 'Failed to load CLDR data for locale' +
+     ` "${locale}"! Falling back to the default translation.`;
 
     const effectiveLocale = this.getEffectiveLocale(locale);
     isTestLocale(locale === 'TEST');
 
     // Load the plupload i18n script now.  Don't need to wait on this;
     // plupload will handle it.
-    // Append the timestamp on the end to force re-exectuion of the script.
+    // Append the timestamp on the end to force re-execution of the script.
     const baseUrl = util.getBaseUrl();
     const name = resolvePluploadFileName(effectiveLocale);
     const now = Date.now();
-    $.getScript(`${baseUrl}/js/vendor/plupload/i18n/${name}?timestamp=${now}`);
+    $.getScript(`${PLUPLOAD_I18N_URL}${name}?timestamp=${now}`);
 
     if (loadedLocales[effectiveLocale]) {
       // this locale has already been loaded
       currentLocale(loadedLocales[effectiveLocale]);
-      callback();
     } else {
-      let deferred = null;
-      if (typeof translations !== 'string') {
-        deferred = $.Deferred();
+      let deferred = $.Deferred();
+      if (translations && util.isObject(translations)) {
         deferred.resolve([translations]);
+      } else if (translations && typeof translations === 'string') {
+        deferred = $.getJSON(translations).then(
+          data => $.Deferred().resolve([data]),
+          () => $.Deferred().resolve([null]),
+        );
+      } else {
+        deferred.resolve([undefined]);
       }
 
       // load the necessary language files
-      const cldrBaseUrl = `${CLDR_DATA_URL}main/${effectiveLocale}/`;
+      const folderName = resolveCldrFolderName(effectiveLocale);
+      const cldrBaseUrl = `${CLDR_DATA_URL}main/${folderName}/`;
 
       const deferreds = [
+        deferred,
+        $.getJSON(`${LOCALIZATION_MESSAGES_URL}${effectiveLocale}.json`).then(
+          data => $.Deferred().resolve([data]),
+          () => $.Deferred().resolve([null]),
+        ),
         $.getJSON(`${cldrBaseUrl}ca-gregorian.json`),
         $.getJSON(`${cldrBaseUrl}numbers.json`),
         $.getJSON(`${cldrBaseUrl}timeZoneNames.json`),
-        deferred || $.getJSON(translations ||
-          `${LOCALIZATION_MESSAGES_URL}${effectiveLocale}.json`),
       ];
 
-      if (!isSupplementalCldrLoaded) {
-        // if the supplemental data is not loaded yet, then load it now
-        deferreds.push(
-          $.getJSON(`${CLDR_DATA_URL}supplemental/likelySubtags.json`),
-          $.getJSON(`${CLDR_DATA_URL}supplemental/timeData.json`),
-          $.getJSON(`${CLDR_DATA_URL}supplemental/weekData.json`),
-        );
-
-        // ok to mark the supplemental data as loaded even though it
-        // hasn't finished yet
-        isSupplementalCldrLoaded = true;
-      }
-
       $.when(...deferreds)
-        .done((gregorianDataStatusXhr, numbersDataStatusXhr,
-          timeZoneNamesDataStatusXhr, messagesDataStatusXhr,
-          likelySubtagsDataStatusXhr, timeDataDataStatusXhr,
-          weekDataDataStatusXhr) => {
-          if (likelySubtagsDataStatusXhr) {
-            globalize.load(likelySubtagsDataStatusXhr[0]);
-          }
-          if (timeDataDataStatusXhr) {
-            globalize.load(timeDataDataStatusXhr[0]);
-          }
-          if (weekDataDataStatusXhr) {
-            globalize.load(weekDataDataStatusXhr[0]);
-          }
+        .done((translationSuiteXhr, builtinTranslationXhr, ...cldrXhrs) => {
+          globalize.load(...cldrXhrs.map(cldrXhr => cldrXhr[0]));
+          const translationSuite = translationSuiteXhr[0] || {};
+          const builtinTranslation = builtinTranslationXhr[0] || {};
 
-          globalize.load(
-            gregorianDataStatusXhr[0], numbersDataStatusXhr[0],
-            timeZoneNamesDataStatusXhr[0],
+          const translation = deepSpread(
+            {}, builtinTranslation, translationSuite,
           );
 
-          const fetchedTranslations = messagesDataStatusXhr[0];
-
-          if (!(locale in fetchedTranslations)) {
+          if (!(locale in translation)) {
             // eslint-disable-next-line no-console
             console.warn(warningLocaleNotFound);
-            globalize.loadMessages(messages);
-          } else {
-            globalize.loadMessages({
-              // https://github.com/globalizejs/globalize/blob/master/doc/api/message/load-messages.md#messages-inheritance
-              root: messages.en,
-              ...fetchedTranslations,
-            });
-            this.updateCurrentLocaleOfKo(effectiveLocale);
+            return;
           }
 
-          return callback();
+          /*
+            if the original translationSuite is
+            { "zh-TW": { ...translations-for-zh-TW } }
+            after the process below, it'll become
+            { "zh-Hant": { ...translations-for-zh-TW } }
+          */
+          Object.keys(translation).forEach((key) => {
+            // if the user set `locale=fr-CA`, it'll fallback to use `locale=fr`
+            const el = this.getEffectiveLocale(key);
+            const keyCldr = supportedLocales[el].cldr;
+            translation[keyCldr] = translation[key];
+            // we need to delete the unused key, otherwise, it will cause
+            // some issues when calling globalize.loadMessages()
+            if (keyCldr !== key) delete translation[key];
+          });
+
+          globalize.loadMessages({
+            // https://github.com/globalizejs/globalize/blob/master/doc/api/message/load-messages.md#messages-inheritance
+            root: messages.en,
+            ...translation,
+          });
+          this.updateCurrentLocaleOfKo(effectiveLocale);
         // eslint-disable-next-line no-console
-        }).fail(() => console.warn(warningFileNotFound));
+        }).fail(() => console.warn(warningCLDRNotFound));
     }
   },
 
@@ -224,14 +248,17 @@ const locUtil = {
    *
    * @param {Object} effectiveLocale
    */
-  updateCurrentLocaleOfKo(effectiveLocale) {
-    const globalizeLocaleObject = globalize(effectiveLocale);
-
-    loadedLocales[effectiveLocale] = {
+  updateCurrentLocaleOfKo(effectiveLocale, isDefalutLocale = false) {
+    const cldrLocale = supportedLocales[effectiveLocale].cldr;
+    const globalizeLocaleObject = globalize(cldrLocale);
+    const localeSettings = {
       globalize: globalizeLocaleObject,
       locale: effectiveLocale,
     };
-    currentLocale(loadedLocales[effectiveLocale]);
+    if (!isDefalutLocale) {
+      loadedLocales[effectiveLocale] = localeSettings;
+    }
+    currentLocale(localeSettings);
   },
 
   /**
@@ -240,11 +267,11 @@ const locUtil = {
    * Modify the loading path in `define` function on the beginning of this file.
    */
   loadDefaultLocaleData() {
-    globalize.load(likelySubtags, timeData, weekData, caGregorian, numbers,
-      timeZoneNames, plurals);
+    globalize.load(likelySubtags, numberingSystems, timeData, weekData,
+      caGregorian, numbers, timeZoneNames, plurals);
     globalize.loadMessages(messages);
 
-    this.updateCurrentLocaleOfKo(DEFAULT_LOCALE);
+    this.updateCurrentLocaleOfKo(DEFAULT_LOCALE, true);
   },
 
   /**

@@ -622,11 +622,9 @@ if (config.types.length === 0) {
 }
 
 // update the locale when the config changes
-config.localeOptions.subscribe((options, callback) => {
+config.localeOptions.subscribe((options) => {
   const { locale, translations, dateTimeFormat } = JSON.parse(options);
-  localization.setCurrentLocale(
-    locale, translations, dateTimeFormat, callback,
-  );
+  localization.setCurrentLocale(locale, translations, dateTimeFormat);
 });
 
 // load the default locale
