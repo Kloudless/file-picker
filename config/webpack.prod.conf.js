@@ -71,12 +71,6 @@ module.exports = [
         template: path.resolve(srcPath, 'explorer/templates/index.pug'),
         chunks: ['explorer'],
       }),
-      // explorer template page
-      new HtmlWebpackPlugin({
-        filename: path.resolve(distPath, 'template/explorer.html'),
-        template: path.resolve(srcPath, 'explorer/templates/explorer.pug'),
-        chunks: [],
-      }),
       explorePageScriptPlugin,
       // copy localization and cldr data
       getCopyFilesPlugin(distPath),

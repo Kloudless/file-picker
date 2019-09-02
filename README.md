@@ -766,17 +766,17 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
 
   You can initialize a Kloudless Explorer using the options mentioned above.
 
-* `fileExplorer.getBuildOptions()`
+* `fileExplorer.getGlobalOptions()`
 
   Get [build options](#build-options). These are options configured when
   the File Explorer JavaScript library was initially built. See the
   [Self-Hosting](#self-hosting) section for more information.
 
-* `fileExplorer.setBuildOptions(buildOptions)`
+* `fileExplorer.setGlobalOptions(buildOptions)`
 
-  Set [build options](#build-options). The widget is configured to work
-  with default values, so these options should only be set during run-time
-  if needed.
+  Change [build options](#build-options) during run-time. The widget is
+  configured to work with default values, so these options should only be set
+  when needed.
 
 * `explorer.choose()`
 
@@ -1083,7 +1083,6 @@ Folder | Purpose
 ---|---
 `loader` | Contains the script that an application includes to load the File Explorer.
 `explorer` | Contains the File Explorer assets that the `loader` loads in an iframe. Only customize this when [self-host](#self-hosting) the File Explorer.
-`template` | Contains a template to customize the styles and other scripts loaded on the File Explorer page. Check our notes regarding [customizing the explorer page](#customizing-the-explorer-page) for more information.
 
 
 #### Build options
@@ -1146,11 +1145,11 @@ source code or styles, follow the steps below:
     EXPLORER_URL=https://example.com/kloudless/explorer.html npm run build
     ```
 
-    Optionally, you can also set `Kloudless.fileExplorer.setBuildOptions` at
+    Optionally, you can also set `Kloudless.fileExplorer.setGlobalOptions` at
     run-time instead of re-building the loader:
 
     ```js
-    Kloudless.fileExplorer.setBuildOptions({
+    Kloudless.fileExplorer.setGlobalOptions({
       explorerUrl: 'https://example.com/kloudless/explorer.html',
     });
     ```
