@@ -251,7 +251,10 @@ const serviceOrderCompare = getServiceOrderCompare();
 
 $.get(
   `${config.base_url}/${config.api_version}/public/services`,
-  { apis: 'storage' },
+  {
+    apis: 'storage',
+    app_id: config.app_id,
+  },
   (serviceData) => {
     config._retrievedServices = true;
 
