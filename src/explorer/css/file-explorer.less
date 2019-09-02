@@ -1,0 +1,113 @@
+@import './variables.less';
+
+body,
+html,
+a,
+p,
+span,
+div,
+input,
+textarea,
+button,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    background: @primary;
+
+    .container {
+        /* position:relative
+        height:100% */
+        height: 100%;
+        
+        width: 100%;
+    }
+
+    .button {
+        font-size: 16px;
+        border-radius: 3px;
+        font-weight: bold;
+        display: inline-block;
+        line-height: 40px;
+        padding: 0 25px;
+        margin: 0;
+        color: #aaa;
+        background: #f2f2f2;
+        border: 1px solid #ccc;
+        box-shadow: none;
+        text-shadow: none;
+
+        &:hover,
+        &.hover {
+            color: #aaa;
+            background: #f2f2f2;
+            border: 1px solid #ccc;
+            box-shadow: none;
+            text-shadow: none;
+        }
+
+        &:active {
+            box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 0px, rgba(0, 0, 0, 0.2) 0px 1px 0px inset;
+        }
+
+        &.reg {
+            box-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
+        }
+
+        &.blue {
+            color: #fff;
+            text-shadow: 0 1px 0 #2f79cc;
+            background: #3b97ff;
+            border: 1px solid #3b97ff;
+            box-shadow: inset 0 1px 0 0 #53c1ff, 0 0 1px rgba(0, 0, 0, 0.2);
+
+            &:hover,
+            &:focus,
+            &.hover {
+                border: 1px solid #398ae5;
+                background-image: -webkit-linear-gradient(top, #3b97ff, #368aeb);
+                background-image: -moz-linear-gradient(top, #3b97ff, #368aeb);
+                background-image: -ms-linear-gradient(top, #3b97ff, #368aeb);
+                background-image: -o-linear-gradient(top, #3b97ff, #368aeb);
+            }
+        }
+
+        &.green {
+            background: #3fd183;
+            color: #fff !important;
+            border: 1px solid #3fd183;
+            box-shadow: rgba(255, 255, 255, 0.4) 0 1px 0 inset, 0 0 1px rgba(0, 0, 0, 0.2);
+
+            &:hover,
+            &:focus,
+            &.hover {
+                background-color: #40d686;
+                border: 1px solid #40d686;
+                color: #fff;
+            }
+
+            &:active {
+                background: #3fd183;
+                border: 1px solid #3fd183;
+            }
+        }
+    }
+
+    .iexd {
+        position: absolute;
+        display: none;
+        overflow: hidden;
+    }
+}
+
+@import './accounts.less';
+@import './files.less';
+@import './computer.less';
+@import './addconfirm.less';
+@import './mobile.less';
