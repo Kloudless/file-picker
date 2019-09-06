@@ -4,12 +4,12 @@ Kloudless File Explorer for your Vue App. We provide:
 - `Chooser`:
   A button component that will launch the Chooser when clicked.
 - `createChooser`:
-  A method that accepts your custom component and wraps it in a new one that
+  A method that accepts your custom component and wraps it in a new one that
   launches the Chooser.
 - `Saver`:
   A button component that will launch the Saver when clicked.
 - `createSaver`:
-  A method that accepts your custom component and wraps it in a new one that
+  A method that accepts your custom component and wraps it in a new one that
   launches the Saver.
 - `Dropzone`:
   A Dropzone component that will launch the Chooser when clicked or
@@ -88,7 +88,7 @@ export default {
 
 ### createChooser
 
-A method that accepts your custom component and wraps it in a new one that
+A method that accepts your custom component and wraps it in a new one that
 launches the Chooser.
 It will add a transparent component layer that will catch the click event from
 the wrapped component and then launch the Chooser.
@@ -163,7 +163,7 @@ export default {
 
 ### createSaver
 
-A method that accepts your custom component and wraps it in a new one that
+A method that accepts your custom component and wraps it in a new one that
 launches the Saver.
 It will add a transparent component layer that will catch the click event from
 the wrapped component and then launch the Saver.

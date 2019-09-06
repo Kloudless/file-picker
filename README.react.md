@@ -6,12 +6,12 @@ provide the following components to add the File Explorer to any React app:
 - `Chooser`:
   A button component that will launch the Chooser when clicked.
 - `createChooser`:
-  A higher-order component that accepts your custom component and wraps it in a
+  A higher-order component that accepts your custom component and wraps it in a
   new one that launches the Chooser.
 - `Saver`:
   A button component that will launch the Saver when clicked.
 - `createSaver`:
-  A higher-order component that accepts your custom component and wraps it in a
+  A higher-order component that accepts your custom component and wraps it in a
   new one that launches the Saver.
 - `Dropzone`:
   A Dropzone component that will launch the Chooser when clicked or launch the
@@ -82,7 +82,7 @@ ReactDOM.render(
 
 A higher-order component
 ([HOC](https://facebook.github.io/react/docs/higher-order-components.html))
-that transforms your custom component into a new one that launches the Chooser.
+that transforms your custom component into a new one that launches the Chooser.
 It will add a transparent component layer that will hack the `onClick` event
 handler. The hacked one will be passed to the wrapped component and launch the
 Chooser when being called.
@@ -140,7 +140,7 @@ ReactDOM.render(
 
 ### createSaver
 
-A higher-order component (HOC) that accepts your custom component and wraps it
+A higher-order component (HOC) that accepts your custom component and wraps it
 in a new one that launches the Saver.
 It will add a transparent component layer that will hack the `onClick` event
 handler. The hacked one will be passed to the wrapped component and launch the

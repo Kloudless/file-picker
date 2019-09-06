@@ -315,7 +315,7 @@ File Explorer JavaScript on the page.
   provided here overrides Kloudless' default translation data included in the
   [messages directory](src/explorer/localization/messages).
   See [translations-suite-sample.json](test/public/translations-suite-sample.json)
-  for an example of the translation file format.
+  for an example of the translation file format.
   Any strings not translated will default to the `en` locale's representation.
 
 * `dateTimeFormat` : string
