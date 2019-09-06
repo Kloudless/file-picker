@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <% if (distTest) { %>
+    <link rel="stylesheet" href="/dev-server/static/style.css">
+  <% } else { %>
+    <link rel="stylesheet" href="/static/style.css">
+  <% } %>
+  <title>Kloudless File Explorer Test Page</title>
+</head>
+<body>
+  <p>
+    Click below to test the File Explorer's Chooser and Saver modes.
+  </p>
+  <button id="file-chooser">Launch the File Chooser</button>
+  <button id="file-chooser-renew">Reload the File Chooser configuration</button>
+  <button id="folder-chooser">Launch a Chooser that only selects Folders</button>
+  <button id="dropzone-create-button">Create a Dropzone</button>
+  <button id="saver">Launch the File Saver</button>
+  <button id="close">Close all File Explorers</button>
+  <button id="update-explorer-url">Update the File Explorer URL to load from production</button>
+  <br>
+  <br>
+  <p>Drop Zone</p>
+  <div
+    id="dropzone"
+    style="border-style:dashed; border-width:1px; width:600px;height:100px">
+  </div>
+  <button id="dropzone-renew">Reload the Drop Zone configuration</button>
+  <div id="logger"></div>
+
+  <% if (distTest) { %>
+    <script src="../../dist/loader/loader.min.js"></script>
+    <script src="../../dist/loader/loader.min.js" data-kloudless-object='Kloudless2'>
+    </script>
+    <script>
+      window.Kloudless.fileExplorer.setGlobalOptions({
+        explorerUrl: "<%= explorerUrlPlaceHolder %>",
+      });
+      window.Kloudless2.setGlobalOptions({
+        explorerUrl: "<%= explorerUrlPlaceHolder %>",
+      });
+      window.appId = "<%= appIdPlaceHolder %>";
+      window.translations = window.location.origin
+        + "/dev-server/static/translations-suite-sample.json";
+    </script>
+    <script src="./index.js"></script>
+  <% } else { %>
+    <script src="loader/loader.js"></script>
+    <script src="loader/loader.js" data-kloudless-object='Kloudless2'>
+    </script>
+    <script>
+      window.translations = window.location.origin
+        + "/static/translations-suite-sample.json";
+    </script>
+  <% } %>
+</body>
+</html>

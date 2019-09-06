@@ -1,3 +1,7 @@
 .tmp
 dist
 lib
+# Disable linting for legacy scripts
+src/explorer
+src/loader/js/interface.js
+dev-server/localization

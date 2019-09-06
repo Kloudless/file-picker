@@ -2,7 +2,8 @@
 
 **Sign up for a free account at [https://kloudless.com](https://kloudless.com) to obtain
 a Kloudless App ID to initialize the File Explorer with.** The File Explorer is built on
-our unified Storage API abstraction layer ([full docs here](https://developers.kloudless.com/docs/latest/storage)).
+our unified Storage API abstraction layer
+([Cloud Storage REST API docs here](https://developers.kloudless.com/docs/latest/storage)).
 
 The [Kloudless](https://kloudless.com) File Explorer is a JavaScript library
 that allows your users to browse and select files and folders from the following
@@ -31,20 +32,22 @@ storage services:
 ## Table of Contents
 
 * [Usage](#usage)
-  * [Import from script tag](#import-from-script-tag)
-  * [Import from an ES6 module](#import-from-an-es6-module)
-  * [Chooser](#chooser)
-    * [Dropzone](#dropzone)
-  * [Saver](#saver)
-  * [Global Options](#global-options)
+  * [Initializing a File Explorer](#initializing-a-file-explorer)
+    * [Import from a script tag](#import-from-a-script-tag)
+    * [Import from an ES6 module](#import-from-an-es6-module)
+    * [Launching the Explorer](#launching-the-explorer)
+  * [File Explorer Modes](#file-explorer-modes)
+    * [Chooser](#chooser)
+      * [Dropzone](#dropzone)
+    * [Saver](#saver)
   * [Configuration](#configuration)
-    * [Script Tag](#script-tag)
+    * [Script tag](#script-tag)
     * [Chooser and Saver](#chooser-and-saver)
-    * [Chooser options](#chooser-options)
-    * [Saver options](#saver-options)
+    * [Chooser Options](#chooser-options)
+    * [Saver Options](#saver-options)
   * [Events](#events)
   * [Methods](#methods)
-  * [Example for script tag usage](#example-for-script-tag-usage)
+  * [Script tag example](#script-tag-example)
   * [Dropzone](#dropzone-1)
     * [Configuration](#configuration-1)
     * [Methods](#methods-1)
@@ -56,30 +59,38 @@ storage services:
 * [Migration Guide](#migration-guide)
   * [From v1.0.0 to v1.0.1](#from-v100-to-v101)
 * [Contributing](#contributing)
-  * [Building](#building)
-    * [Install](#install)
-    * [Build Explorer](#build-explorer)
-    * [Build Loader](#build-loader)
+  * [Requirements](#requirements)
+  * [Development](#development)
+  * [Build](#build)
+    * [Build Options](#build-options)
   * [Testing](#testing)
 * [Self-hosting](#self-hosting)
+  * [Hosting the explorer page](#hosting-the-explorer-page)
+  * [Extending the explorer template](#extending-the-explorer-template)
 * [Misc. Development Notes](#misc-development-notes)
 * [Security Vulnerabilities](#security-vulnerabilities)
 * [Support](#support)
 
 ## Usage
 
-### Import from script tag
+### Initializing a File Explorer
 
-Embedding the Kloudless File Explorer javascript library will expose a global
-`Kloudless.fileExplorer` object. The JS file is currently hosted on S3 and can
-be embedded in your page using this tag:
+The File Explorer JavaScript library can be imported into web applications
+and launched when a user clicks an element.
+
+#### Import from a script tag
+
+Include the Kloudless File Explorer JavaScript library on your HTML page using
+a script tag that points to our CDN:
 
 ```html
 <script type="text/javascript"
  src="https://static-cdn.kloudless.com/p/platform/sdk/kloudless.explorer.js"></script>
 ```
 
-You can then create an element on the page to launch the explorer.
+This exposes a global `Kloudless.fileExplorer` object you can use to initialize
+a File Explorer. Check out the Configuration Options section further below for
+a full list of configuration options.
 
 ```html
 <script type="text/javascript">
@@ -90,9 +101,10 @@ You can then create an element on the page to launch the explorer.
 </script>
 ```
 
-### Import from an ES6 module
+#### Import from an ES6 module
 
-Install from NPM:
+You can also install the File Explorer package from NPM:
+
 ```
 npm install @kloudless/file-explorer
 ```
@@ -105,48 +117,75 @@ const explorer = fileExplorer.explorer({
 });
 ```
 
+#### Launching the Explorer
+
+Here is a basic example of a button that launches the File Explorer
+given the JavaScript above that creates an `explorer` object.
+
+```html
+<body>
+  <button id="choose-files">Choose Files</button>
+
+  <script src="https://static-cdn.kloudless.com/p/platform/sdk/kloudless.explorer.js"></script>
+  <script>
+    var explorer = window.Kloudless.fileExplorer.explorer({ app_id: "APP_ID" });
+    explorer.choosify(document.getElementById('choose-files'));
+  </script>
+</body>
+```
+
+The HTML above adds a specific `id` to an element so that we
+can reference it later in our JavaScript that launches the File Explorer
+when the element is clicked. A more complete example is present
+[below](#script-tag-example) after the full list of configuration options
+as well as on our [demo page](https://output.jsbin.com/tuwodin/).
 
 Be sure to serve the page via a web server, as pages opened via the
-file URI scheme (`file://`) cannot receive messages sent via postMessage
-due to security concerns.
+file URI scheme (`file://`) cannot receive postMessage messages
+from the `iframe` created to display the File Explorer due to security
+concerns.
 
-The File Explorer can be configured to be either a file [chooser](#chooser) or
-a file [saver](#saver).
-An `iframe` will be created by the JS library to view the explorer.
+### File Explorer Modes
 
-### Chooser
+The File Explorer can be configured to either be a file [chooser](#chooser) to
+select files and folders from cloud storage or the local computer, or a file
+[saver](#saver) to export a specific file  to cloud storage.
+
+#### Chooser
 
 The Chooser allows your application to prompt a user to select files or a folder,
 and retrieves metadata about the files or folder selected.
 It supports choosing files from the local machine as well as cloud storage.
+Your application can also upload files to users' cloud storage using the
+[Upload API endpoint](https://developers.kloudless.com/docs/v1/storage#files-upload-a-file)
+after prompting users to select a folder to upload data to.
 
-##### Dropzone
+The Chooser is therefore a popular option for both importing files to your
+application as well as exporting them to specific destinations in cloud storage.
+
+###### Dropzone
 
 The Dropzone is a variety of the Chooser that opens when files are dragged and
 dropped into it rather than only when clicked. See the [Dropzone](#dropzone-1)
 section for more information.
 
-### Saver
+#### Saver
 
 The Saver allows your application to prompt a user to select a folder to save
-files to. Metadata on the newly uploaded files will be returned to the developer.
-URLs to the files to upload must be provided.
+a specific file to. This lets your application save some work over the Chooser
+by automatically handling the upload to cloud storage given a link to the file.
+However, only a single file is supported at a time.
 
-### Global Options
-
-Global options are the options apply to all the explorer instances.
-
-Here is the option that you can set:
-
-- `explorerUrl`  
-  The URL that serves the File Explorer.
-  Defaults to `https://static-cdn.kloudless.com/p/platform/explorer/explorer.html`.
+The Saver returns metadata on the newly uploaded file to the application.
 
 ### Configuration
 
-The File Explorer has the following configuration options:
+The File Explorer has several configuration options. Below, we've included
+options that can be set on the library inclusion tag itself, options that apply
+to both the Chooser and Saver modes, and options that are specific to a
+particular mode.
 
-#### Script Tag
+#### Script tag
 
 The following attributes can be set on the `<script>` tag used to include the
 File Explorer JavaScript on the page.
@@ -450,7 +489,7 @@ File Explorer JavaScript on the page.
   * `custom_properties` (converted to a URL-encoded JSON string)
   * `raw` (converted to the `raw[key]=value` format described in the docs)
 
-#### Chooser options
+#### Chooser Options
 
 * `multiselect` : boolean
 
@@ -590,7 +629,7 @@ File Explorer JavaScript on the page.
 To filter by file extension, include the extension in the array without the period (`.`) prefix.
 For example, `['pdf', 'jpg', 'jpeg', 'png']`.
 
-#### Saver options
+#### Saver Options
 
 * `files` : array
 
@@ -729,11 +768,15 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
 
 * `fileExplorer.getGlobalOptions()`
 
-  Get global options.
+  Get [build options](#build-options). These are options configured when
+  the File Explorer JavaScript library was initially built. See the
+  [Self-Hosting](#self-hosting) section for more information.
 
-* `fileExplorer.setGlobalOptions(globalOptions)`
+* `fileExplorer.setGlobalOptions(buildOptions)`
 
-  Set global options.
+  Change [build options](#build-options) during run-time. The widget is
+  configured to work with default values, so these options should only be set
+  when needed.
 
 * `explorer.choose()`
 
@@ -789,7 +832,7 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
      
   This method isn't impacted by the `delete_accounts_on_logout` option. 
 
-### Example for script tag usage
+### Script tag example
 
 To start using the File Explorer, simply include the JavaScript file in your
 HTML file. You can then create an element on the page to launch the explorer.
@@ -820,6 +863,8 @@ var explorer = window.Kloudless.fileExplorer.explorer({
 
 The final step is to launch the explorer and handle the events returned from the
 explorer based on a user's actions.
+
+**[Visit our demo of the File Explorer!](https://output.jsbin.com/tuwodin/)**
 
 ```javascript
 // When a user successfully selects or saves a file
@@ -862,8 +907,6 @@ var files = [{
 
 explorer.save(files);
 ```
-
-[Visit our JSBin example of the File Explorer!](https://output.jsbin.com/tuwodin/)
 
 ### Dropzone
 
@@ -985,110 +1028,165 @@ All the exports under `window.Kloudless` are deprecated and moved to
 ## Contributing
 
 Contributions are welcome and appreciated. We'd love to discuss any ideas you
-have to improve or extend the File Explorer. It is strongly recommended to
-discuss ideas with Kloudless first for major modifications that you would like
-merged in so we can offer feedback on its implementation.
+have to improve or extend the File Explorer. We recommend
+contacting us at [support@kloudless.com](mailto:support@kloudless.com)
+first for major modifications that you would like merged in so we can
+offer feedback on its implementation.
 
-### Building
+### Requirements
 
-#### Install
-
-Install Node.js (`sudo apt-get install nodejs` or equivalent)
-Make sure you have nodejs >= 11 and npm >= 6.7.0.
-Run the following commands:
+Install [Node.js](https://nodejs.org/en/download/)
+(`sudo apt-get install nodejs` or equivalent)  
+Make sure you have nodejs >= 10.16.0 and npm >= 6.9.0.
+Then run the following commands:
 
     npm install
     npm run install-deps
 
-#### Build Explorer
+### Development
 
-```
-npm run build:explorer
-```
+Use the following command to set a Kloudless App ID and run the local
+development server:
 
-Here are a few of the more useful [Grunt](http://gruntjs.com/) tasks available:
-
-* `npm run build:explorer-only`
-  This can be used instead of `npm run build:explorer` if only non-library
-  files have been changed. Especially useful during development.
-
-* `npm run build:explorer`
-  During development, this will build all non-minified versions of files for
-  easier debugging purposes.
-
-* `npm run build:explorer-deploy`
-  For deployment purposes, use `npm run build:explorer-deploy` to build
-  minified versions of the files needed.
-
-All output files are placed in the `dist/explorer` directory. 
-Included in that directory are JS, CSS and HTML files that compose the 
-File Explorer.
-
-#### Build Loader
-
-Run following command would output a non-minified bundle file and a minified
-bundle file into `dist/loader` directory.
-
-```
-npm run build:loader
+```bash
+KLOUDLESS_APP_ID=<your_app_id> npm run dev
 ```
 
-By default, the loader loads File Explorer from
-`https://static-cdn.kloudless.com/p/platform/explorer/explorer.html`.  
-You can change it by setting `explorerUrl` environment variable:
+The File Explorer that launches on the test page uses the App ID to
+connect accounts. It must therefore be the ID of a valid Kloudless
+Application on the Kloudless API server the File Explorer accesses.
+
+By default, the development server points to `https://api.kloudless.com`.
+However, you can point it to an alternate Kloudless API server using the
+`BASE_URL` environment variable [build option](#build-options) as shown below.
+
+```bash
+# Export this environment variable before the `npm run dev` command above.
+export BASE_URL=<your_kloudless_api_server_url>
 ```
-explorerUrl=https://mysite.com/file-explorer npm run build:loader
+
+The development server supports automatically rebuilding the source files
+whenever changes are saved. However, hot reloading scripts is not supported
+yet; you will need to reload the page to view your changes.
+
+### Build
+
+The command below generates a minified production build at `/dist`.
+
+```bash
+npm run build
 ```
-This is useful for self-hosting the File Explorer.
+
+Here is an explanation of the `dist` folder's structure:
+
+Folder | Purpose
+---|---
+`loader` | Contains the script that an application includes to load the File Explorer.
+`explorer` | Contains the File Explorer assets that the `loader` loads in an iframe. Only customize this when [self-host](#self-hosting) the File Explorer.
+
+
+#### Build options
+
+The options below can be set during the build process as environment variables
+to customize the build, or sometimes at run-time as well.
+
+Build-time Env Var | Run-time option | Description | Default
+---|---|---|---
+`BASE_URL` | N.A. | URL to the Kloudless API Server | https://api.kloudless.com
+`EXPLORER_URL` | `explorerUrl` | The URL that the loader loads the explorer iframe from. | https://static-cdn.kloudless.com/p/platform/explorer/explorer.html
+
+Check out the [Self-hosting](#self-hosting) section below for an example
+that changes the `EXPLORER_URL` in order to self-host a customized fork
+of the File Explorer.
+
+In addition, here is an example that directs API requests from the File
+Explorer to an alternate Kloudless server:
+
+```
+BASE_URL=<your_kloudless_api_server_url> npm run build
+```
 
 ### Testing
 
-Automated testing is not present. For now, you can manually confirm that the
-library works by running the test server.
+To test the build generated by `npm run build`, run the following command:
 
-    $ npm run dev
-    $ cd test
-    $ npm install # only needed the first time to install dependencies
-    $ KLOUDLESS_APP_ID=app_id npm start
-
-where 'app_id' above is a Kloudless App ID specifying which app to connect the
-accounts to. You can create an application in the Developer Portal for testing
-purposes.
-
-Since the webserver is running at `localhost:3000`, add `localhost:3000` to your
-App's list of Trusted Domains to allow it to receive Account Keys to make API
-requests with. Be careful to only do this with an app you are using for
-development purposes so that there is no security risk.
-
-Then navigate to `localhost:3000` and click the buttons to test.
+```bash
+KLOUDLESS_APP_ID=<your_app_id> npm run dist-test
+```
 
 ## Self-hosting
 
-* Modify the JS and CSS links at `example/explorer.html` to point to where you will
-  be hosting the compiled JS and CSS files for the explorer.
-* Run `explorerUrl=$URL npm run build:loader` to build loader and
-  `npm run build:explorer` to build file explorer, where `$URL` is the URL that
-  will serve the File Explorer.
-* Place `dist/explorer/js/explorer.js` and `dist/explorer/css/explorer.css`
-  at the locations you specified in `example/explorer.html`.
-* Make `dist/explorer/explorer.html` available at `$URL`.
-  Feel free to customize the way assets are loaded/delivered.
-  The important part is that the JS, HTML and CSS must all be included on that
-  page.
-* Ensure the domain of `$URL` is added to your Kloudless App's list of
-  Trusted Domains. This can be done on the App Details page in the [Developer
-  Portal](https://kloudless.com). This is necessary because Account Keys will
-  be sent via postMessage from the Kloudless API server's authentication popup
-  to the File Explorer hosted on your domain and the API server should first
-  confirm that it can trust your domain for your app.
-* Include the loader JS file from `dist/loader/js/loader.js`
-  in any page you would like the File Explorer functionality to be made
-  available at, and follow the Usage notes above.
-* Navigate to the page you included the loader at and use the File Explorer!
+Self-hosting the File Explorer is one way to customize all aspects of the
+File Explorer's layout, styling, and functionality beyond what the
+configuration and theming options provide.
+
+You can fork the File Explorer to make the changes you need before
+[building](#build) the File Explorer, which results in a JS file at
+`dist/loader/loader.min.js`. This file must be included in any page you would
+like to use the File Explorer on. It serves as a light-weight wrapper to load
+the actual File Explorer page via an iframe.
+
+Both the loader file and the rest of the File Explorer's structure are discussed
+in more detail in the [Build](#build) section above.
+
+### Hosting the explorer page
+
+The build contains an `explorer` folder which includes the actual
+HTML and functionality of the widget. By default, this is hosted by Kloudless.
+
+If you would like to host this page yourself to customize the core File Explorer
+source code or styles, follow the steps below:
+
+1. Rebuild the assets while setting `EXPLORER_URL` to specify the file explorer
+   page URL. For example, if you'd like to host the File Explorer assets at
+   `https://example.com/kloudless/explorer.html`, run the following command:
+
+    ```bash
+    EXPLORER_URL=https://example.com/kloudless/explorer.html npm run build
+    ```
+
+    Optionally, you can also set `Kloudless.fileExplorer.setGlobalOptions` at
+    run-time instead of re-building the loader:
+
+    ```js
+    Kloudless.fileExplorer.setGlobalOptions({
+      explorerUrl: 'https://example.com/kloudless/explorer.html',
+    });
+    ```
+2. Copy the entire `dist/explorer` folder into your web application's assets so
+   the `dist/explorer/explorer.html` page can be found at the URL specified in
+   the step above. In the example above, copy `dist/explorer` to `/kloudless`
+   for `https://example.com/kloudless/explorer.html` to exist.
+
+3. Add your web app's domain to your Kloudless App's list of
+   `Trusted Domains` on the
+   [App Details Page](https://developers.kloudless.com/applications/*/details/).
+   This allows the hosted explorer to receive access tokens to the Kloudless API.
+  
+4. Include `dist/loader/loader.min.js` in your pages that will launch
+   File Explorer as shown in the
+   [script tag example](#import-from-a-script-tag) above.
+
+### Extending the explorer template
+
+*This section contains advanced concepts that are not usually required in a
+fork of the File Explorer.*
+
+The `template/explorer.ejs` template contains necessary styles and scripts
+for the File Explorer as well as the compiled HTML snippets.
+
+Feel free to add additional styles, scripts, or HTML elements you need.
+You can then run `npm run build:template` to build your customized
+explorer template. The built page will be available at
+`dist/custom-explorer.html`. Replace
+`dist/explorer/explorer.html` with this file, and follow the steps in the
+[section above](hosting-the-explorer-page) to host this page instead.
+
+For an example, run `npm run build:template` without any changes and
+check the result at `dist/custom-explorer.html`.
 
 ## Misc. Development Notes
 
-* Need to implement automated testing!!!
 * In order to switch folders, we change the current() pointer and then
   refresh(). refresh() will abort any currently active requests to prevent race
   conditions
@@ -1105,5 +1203,4 @@ emailing security@kloudless.com.
 ## Support
 
 Feel free to contact us at support@kloudless.com with any feedback or
-questions. Other methods to contact us are listed
-[here](https://developers.kloudless.com/docs/v1/core#getting-help).
+questions.

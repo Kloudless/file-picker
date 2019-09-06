@@ -730,4 +730,6 @@ fileExplorer._dropzone.prototype.destroy = function () {
   this.clickExplorer = null;
 };
 
+fileExplorer.version = VERSION;
+
 export default fileExplorer;
