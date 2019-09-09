@@ -15,7 +15,7 @@ const https = require('https');
 const webpack = require('webpack');
 const sslCert = require('./ssl-cert');
 
-const webpackConfig = require('../config/webpack.dev.conf');
+const webpackConfigs = require('../config/webpack.dev.conf');
 
 const app = express();
 
@@ -35,11 +35,11 @@ app.use((req, res, next) => {
   next();
 });
 
-const compiler = webpack(webpackConfig);
+const compiler = webpack(webpackConfigs);
 const middleware = webpackDevMiddleware(compiler, {
   logTime: true,
   stats: 'minimal',
-  publicPath: webpackConfig.output.publicPath,
+  publicPath: webpackConfigs[0].output.publicPath,
 });
 app.use(middleware);
 app.use(webpackHotMiddleware(compiler, {

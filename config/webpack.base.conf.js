@@ -77,14 +77,6 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: '[name].css',
     }),
-    new webpack.ProvidePlugin({
-      // expose jquery to global for jquery-ui
-      $: 'jquery',
-      jQuery: 'jquery',
-      'window.jQuery': 'jquery',
-      // expose mOxie to global for plupload
-      mOxie: ['plupload/moxie', 'mOxie'],
-    }),
   ],
   performance: {
     maxEntrypointSize: 10 * 1024 * 1024,

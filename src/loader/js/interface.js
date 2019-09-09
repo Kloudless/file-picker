@@ -549,9 +549,12 @@ fileExplorer._explorer.prototype._bindElement = function (
   let elements = [];
   if (element instanceof Array) {
     elements = element;
-  // TODO: instanceof window.jQuery is broken due to webpack.ProviderPlugin
-  // Need another approach to properly check if element is jQuery object
-  } else if (typeof element.toArray === 'function') {
+  } else if (typeof element.toArray === 'function'
+              && typeof element.toggleClass === 'function') {
+    /** Guess element is a jQuery object.
+     * Don't use instanceof $ here because $ could be a different library
+     * imported by devs.
+     */
     elements = element.toArray();
   } else {
     elements = [element];

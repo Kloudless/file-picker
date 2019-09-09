@@ -3,8 +3,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const baseWebpackConfig = require('./webpack.base.conf');
-const explorePageScriptPlugin = require('./explorer-page-script-plugin');
-const getCopyFilesPlugin = require('./copy-files-plugin');
+const getExplorerPlugins = require('./explorer-plugins');
 const merge = require('./merge-strategy');
 
 const distPath = path.resolve(__dirname, '../dist/');
@@ -53,6 +52,11 @@ module.exports = [
       filename: '[name].min.js',
       publicPath: './',
     },
+    // safe guard to make sure the bundle doesn't include npm packages
+    performance: {
+      hints: 'error',
+      maxAssetSize: 150 * 1024,
+    },
   }),
   // explorer, minified
   merge(prodMinifiedConfig, {
@@ -71,10 +75,7 @@ module.exports = [
         template: path.resolve(srcPath, 'explorer/templates/index.pug'),
         chunks: ['explorer'],
       }),
-      explorePageScriptPlugin,
-      // copy localization and cldr data
-      getCopyFilesPlugin(distPath),
-    ],
+    ].concat(getExplorerPlugins(distPath)),
   }),
   // dev-server index page for dist-test
   merge(prodConfig, {

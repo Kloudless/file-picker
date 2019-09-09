@@ -1,7 +1,12 @@
-/* global KLOUDLESS_APP_ID */
+/* global $, KLOUDLESS_APP_ID */
 /* eslint-disable func-names, no-console */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
+/**
+ * DO NOT import the npm installed jQuery here, to simulate the case
+ * where the jquery script is imported by devs integrating
+ * the file-explorer, instead of from the file-explorer itself.
+ */
 
 (function () {
   /**
@@ -135,7 +140,7 @@ import 'regenerator-runtime/runtime';
       ));
       window.explorers[objId] = obj;
       if (type === 'chooser') {
-        obj.choosify(element);
+        obj.choosify($(`#${elementId}`));
       } else {
         obj.savify(element);
       }
