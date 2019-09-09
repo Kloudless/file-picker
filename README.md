@@ -297,11 +297,13 @@ File Explorer JavaScript on the page.
 
   An optional stylesheet URL to load to override existing styles.
   Supports `(http|https)://domain.com/path/to.css`, `//domain.com/path/to.css`, 
-  and `/path/to.css` formats.
+  and `/path/to.css` formats. Note that Kloudless doesn't guarantee backwards
+  compatibility for all styling used. See the `custom_style_vars` option below
+  for a more narrow list of LESS variables we guarantee compatibility for.
 
-  The domain the File Explorer is launched from must be added to the application's list
-  of [Trusted Domains](https://developers.kloudless.com/applications/*/details) for the
-  `custom_css` property to be used.
+  To use the `custom_css` option, the domain the File Explorer is launched from
+  must be added to the application's list of
+  [Trusted Domains](https://developers.kloudless.com/applications/*/details).
 
 * `locale` : string
 
@@ -469,6 +471,29 @@ File Explorer JavaScript on the page.
   * `form_data` (converted to a URL-encoded JSON string)
   * `custom_properties` (converted to a URL-encoded JSON string)
   * `raw` (converted to the `raw[key]=value` format described in the docs)
+
+* `custom_style_vars` : object
+
+  This project uses LESS as a CSS pre-processor. Since LESS can be run in the
+  browser, we support overriding CSS global variables dynamically to customize
+  styling. For example, change the primary color by setting `@primary`:
+
+  ```javascript
+  {
+    custom_style_vars: {
+      '@primary': 'black'
+    }
+  }
+  ```
+
+  Please refer to [variables.less](./src/explorer/css/variables.less) for the
+  full list of available variables. Most are related to aspects such as colors,
+  fonts, or dimensions.
+
+  For further customization, we recommend forking this project and hosting
+  the resources on your own, since we don't guarantee backward-compatibility 
+  when overriding undocumented variables. However, you can also add in entirely
+  custom CSS using the `custom_css` options documented above.
 
 #### Chooser Options
 
@@ -820,6 +845,7 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
   * `persist`
   * `create_folder`
   * `account_key`
+  * `custom_style`
   
 * `explorer.logout(deleteAccount=false)`
 

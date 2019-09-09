@@ -3,7 +3,9 @@
 
 import $ from 'jquery';
 import ko from 'knockout';
+import logger from 'loglevel';
 import localization from './localization';
+import util from './util';
 // check babel.config.js for actual import path
 import config from 'explorer-config';
 
@@ -67,6 +69,69 @@ Object.assign(config, {
   uploads_pause_on_error: ko.observable(true),
   user_data: ko.observable(), // Get asynchronously.
   delete_accounts_on_logout: ko.observable(false),
+  custom_style_vars: ko.observable({}),
+});
+
+/**
+ * @param {ko.Observable<*>} observableObj - The observable object you want to
+ *  monitor.
+ * @param {Function} cb - The callback function that will be called when the
+ *  observable object's value changes.
+ */
+function subscribeChange(observableObj, cb) {
+  let oldValue = observableObj();
+  observableObj.subscribe((value) => {
+    oldValue = value;
+  }, null, "beforeChange");
+  observableObj.subscribe((newValue) => {
+    if (typeof newValue !== typeof oldValue) {
+      cb(newValue, oldValue);
+    } else if (typeof newValue === 'object') {
+      if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
+        cb(newValue, oldValue);
+      }
+    } else if (newValue !== oldValue) {
+      cb(newValue, oldValue);
+    }
+  });
+}
+
+let customStyleTask = null;
+subscribeChange(config.custom_style_vars, (newCustomStyleVars) => {
+  if (customStyleTask === null) {
+    // only need to load less.js once
+    customStyleTask = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.onload = resolve;
+      script.onreadystatechange = resolve; // for IE
+      script.onerror = reject;
+      script.setAttribute('type', 'text/javascript');
+      script.setAttribute('src', `${util.getBaseUrl()}/less.js`);
+      document.head.append(script);
+    }).catch(() => {
+      logger.error('Failed to load less.js');
+    });
+  }
+
+  customStyleTask = customStyleTask.then(() => {
+    if (!window.less) {
+      return Promise.reject(new Error('window.less is not defined.'));
+    }
+    // create style tag
+    const id = `custom-style-vars-${Math.floor(Math.random() * (10 ** 12))}`;
+    const styleElement = document.createElement('style');
+    styleElement.setAttribute('id', id);
+    styleElement.setAttribute('type', 'text/less');
+    styleElement.textContent =
+      `@import '${util.getBaseUrl()}/less/file-explorer.less';`;
+    document.head.append(styleElement);
+    return window.less.modifyVars(newCustomStyleVars);
+  }).catch((err) => {
+    logger.error(`Failed to update custom_style_vars: ${
+      JSON.stringify(newCustomStyleVars)}.`);
+    logger.error(err);
+  });
+  return;
 });
 
 config.localeOptions = ko.computed(() => JSON.stringify({
@@ -146,7 +211,7 @@ function custom_css_include() {
 function retrieveConfig() {
   const query_params = { app_id: config.app_id };
   if (config.account_key || config.retrieve_token()
-      || String(config.custom_css) !== 'false') {
+    || String(config.custom_css) !== 'false') {
     // Only do origin check if we need to.
     query_params.origin = config.origin;
   }
@@ -285,7 +350,7 @@ $.get(
       };
 
       if (config.services.indexOf(serviceDatum.name) > -1
-          || config.services.indexOf(serviceCategory) > -1) {
+        || config.services.indexOf(serviceCategory) > -1) {
         service.visible = true;
       }
       config.all_services.push(service);
@@ -333,7 +398,7 @@ function toggleComputer(computerEnabled) {
       logo: `${config.static_path}/webapp/sources/computer.png`,
     });
   } else if (!computerEnabled
-      && (config.all_services()[0] || {}).computer) {
+    && (config.all_services()[0] || {}).computer) {
     config.all_services.shift();
   }
 }
