@@ -1,7 +1,7 @@
 /* eslint-disable camelcase, no-underscore-dangle, func-names,
                   prefer-destructuring */
 /* global EXPLORER_URL, VERSION */
-import '../css/modal.styl';
+import '../css/modal.less';
 
 /**
  * Define the module and the interface with which developers interact.

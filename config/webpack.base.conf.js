@@ -8,24 +8,33 @@ const common = require('./common');
 const root = path.resolve(__dirname, '../');
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-const cssMinifier = isDevelopment ? [] : [CssNano()];
-const styleLoaders = [
-  {
+/**
+ * @param {string} fileType less or css
+ * @param {string} viewType explorer or loader
+ */
+function getStyleLoaders(fileType, viewType) {
+  const result = [];
+  const miniCssExtractLoader = {
     loader: MiniCssExtractPlugin.loader,
-    options: {
-      hmr: isDevelopment,
-    },
-  },
-  'css-loader',
-  {
+    options: { hmr: isDevelopment },
+  };
+  const postCssLoader = {
     loader: 'postcss-loader',
     options: {
-      plugins: () => [
-        AutoPrefixer(),
-      ].concat(cssMinifier),
+      plugins: isDevelopment ? [AutoPrefixer()] : [AutoPrefixer(), CssNano()],
     },
-  },
-];
+  };
+  if (viewType === 'explorer') {
+    result.push(miniCssExtractLoader);
+  } else if (viewType === 'loader') {
+    result.push('style-loader');
+  }
+  result.push('css-loader', postCssLoader);
+  if (fileType === 'less') {
+    result.push('less-loader');
+  }
+  return result;
+}
 
 module.exports = {
   context: root,
@@ -42,11 +51,15 @@ module.exports = {
     rules: [
       {
         test: /\.css$/,
-        use: styleLoaders,
+        use: getStyleLoaders('css', 'explorer'),
       },
       {
-        test: /\.styl$/,
-        use: styleLoaders.concat(['stylus-loader']),
+        test: /loader\/css\/.*\.less$/,
+        use: getStyleLoaders('less', 'loader'),
+      },
+      {
+        test: /explorer\/css\/.*\.less$/,
+        use: getStyleLoaders('less', 'explorer'),
       },
       {
         test: /\.js$/,

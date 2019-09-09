@@ -28,9 +28,7 @@ import './iexd-transport';
 import 'foundation/css/normalize.css';
 import 'foundation/css/foundation.css';
 import 'jquery-dropdown/jquery.dropdown.css';
-import '../css/file-explorer.styl';
-
-'use strict';
+import '../css/file-explorer.less';
 
 const EVENT_CALLBACKS = {};
 

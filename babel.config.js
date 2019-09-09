@@ -51,9 +51,6 @@ module.exports = {
     [
       'transform-define', transformDefines,
     ],
-    [
-      path.resolve(__dirname, './config/babel-modal-style-script'),
-    ],
   ],
   env: {
     transpile: {
