@@ -1,24 +1,94 @@
-// Static assets
-@base_url: 'https://s3-us-west-2.amazonaws.com';
-@static_path: "@{base_url}/static-assets.kloudless.com";
-@icons_sheet: "@{static_path}/api/icons_fileexplorer.png";
-@loading_icon: "@{static_path}/ext-assets/loading_21x21.gif";
-@explorer_path: "@{base_url}/kloudless-static-assets/common/explorer";
-@icons_explorer_lg: "@{explorer_path}/icons_fileexplorer_large.png";
-@explorer_spritesheet: "@{explorer_path}/file_explorer_spritesheet.png";
-@files_modal_padding: 20px;
+/*
+ * Font
+ */
+@font_family: Lato, sans-serif;
 
-@primary: #f5f6f7;
+@font_face_path: 'https://kloudless-cors.s3.amazonaws.com/font/lato-v16-latin-regular.woff';
+@font_face_name: 'Lato';
+@font_face_format: 'woff';
 
-@background: #eaf5ff;
-@main_accent: #5a81e6;
-@main_text: #000000;
-@secondary_text: #7f7f7f;
+@font_size_lg: 14px;
+@font_size_md: 12px;
+@font_size_sm: 10px;
 
-@icon_placeholder_branding: #b2b2b2;
-@divider: #eeeeee;
-@button_inactive: #c2ceef;
+/*
+ * Basic Layout Color
+ */
+@main_color: #5a81e6;
+@primary_text_color: #000000;
+@secondary_text_color: #7f7f7f;
+@disabled_text_color: #b2b2b2;
 
-@shadow: rgba(209, 209, 209, 0.5);
-@error_outline: #ff342e;
-@error_outline: #ffc8c7;
+/*
+ * Breaking Point
+ */
+@breaking_point: 480px;
+@modal_width: 640px;
+
+/*
+ * Section and Container
+ */
+@container_color: #f6f7fa;
+
+@section_primary_bg_color: #ffffff;
+@section_primary_hover_bg_color: #e8e8e8;
+@section_secondary_bg_color: #f6f7fa;
+@section_line_color: #eeeeee;
+
+/*
+ * Button, Icon Button and Link Button
+ */
+@icon_btn_hover_color: #e8e8e8;
+
+@link_btn_text_color: @main_color;
+@link_btn_text_hover_color: darken(@main_color, 10%);
+
+@primary_btn_text_color: #ffffff;
+@primary_btn_color: @main_color;
+@primary_btn_hover_color: darken(@main_color, 10%);
+@primary_btn_disable_color: #c2ceef;
+@primary_btn_disable_text_color: #ffffff;
+@primary_btn_shadow_color: #d9d9d9;
+
+@secondary_btn_text_color: @main_color;
+@secondary_btn_color: #ffffff;
+@secondary_btn_hover_color: #e8e8e8;
+@secondary_btn_disable_color: #ffffff;
+@secondary_btn_disable_text_color: #c2ceef;
+@secondary_btn_shadow_color: rgba(209, 209, 209, 0.25);
+
+/*
+ * Icon
+ */
+@icon_base: 'https://kloudless-static-assets.s3.amazonaws.com/common/explorer/icon';
+@icon_loading: "@{icon_base}/loading.svg";
+@icon_back: "@{icon_base}/back.svg";
+@icon_back_hovered: "@{icon_base}/back-hovered.svg";
+@icon_next: "@{icon_base}/next.svg";
+@icon_logout: "@{icon_base}/close.svg";
+@icon_logout_hovered: "@{icon_base}/close-hovered.svg";
+@icon_close: "@{icon_base}/close.svg";
+@icon_close_hovered: "@{icon_base}/close-hovered.svg";
+@icon_my_device: "@{icon_base}/my-device/my-device@2x.png";
+@icon_my_device_lg: "@{icon_base}/my-device/my-device@3x.png";
+@icon_manage_accounts: "@{icon_base}/account-manage/account-manage@2x.png";
+@icon_checked: "@{icon_base}/checked.svg";
+@icon_root_dir: "@{icon_base}/root-dir/root-dir@2x.png";
+@icon_folder: "@{icon_base}/folder/folder@2x.png";
+@icon_file: "@{icon_base}/file/file@2x.png";
+@icon_search: "@{icon_base}/search.svg";
+@icon_search_hovered: "@{icon_base}/search-hovered.svg";
+@icon_refresh: "@{icon_base}/refresh/refresh@2x.png";
+@icon_new_folder: "@{icon_base}/new-folder/new-folder@2x.png";
+@icon_brand: "@{icon_base}/brand.svg";
+@icon_sort: "@{icon_base}/sort.svg";
+@icon_sort_asc: "@{icon_base}/sort_asc.svg";
+@icon_sort_desc: "@{icon_base}/sort_desc.svg";
+
+/*
+ * Others
+ */
+@shadow_color: rgba(209, 209, 209, 0.5);
+@border_radius: 3px;
+@input_color: #ffffff;
+@input_border_color: #eeeeee;

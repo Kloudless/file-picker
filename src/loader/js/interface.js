@@ -218,7 +218,7 @@ const initialize_frame = function (options, elementId) {
   if (!backdropDiv) {
     const div = document.createElement('div');
     backdropDiv = body.appendChild(div);
-    addClass(backdropDiv, 'backdrop_div');
+    addClass(backdropDiv, 'backdrop-div');
   }
   return exp_id;
 };
@@ -515,6 +515,9 @@ fileExplorer._explorer.prototype._open = function (data) {
     backdropDiv.style.display = 'block';
     bodyOverflow = body.style.overflow;
     body.style.overflow = 'hidden';
+    addClass(frames[this.exp_id], 'kloudless-modal--backdrop');
+  } else {
+    removeClass(frames[this.exp_id], 'kloudless-modal--backdrop');
   }
 
   this._fire('open');
@@ -660,7 +663,7 @@ fileExplorer._dropzone.prototype._configureFrame = function () {
   // Chrome.
   const transparentOpacity = '0.000000001';
 
-  element.classList.add('kloudless_dropzone_container');
+  element.classList.add('kloudless-dropzone-container');
   if (element.getElementsByTagName('span').length === 0) {
     // Add span only if not exists
     const content = document.createElement('span');

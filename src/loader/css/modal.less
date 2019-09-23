@@ -1,28 +1,43 @@
+@import '../../explorer/css/variables.less';
+
 .kloudless-modal-mixin() {
-  display: block;
-  box-sizing: border-box;
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 700px;
-  height: 515px;
+  display: block;
+  box-sizing: border-box;
   margin-top: -250px;
-  margin-left: -350px;
+  margin-left: -320px;
+  width: 640px;
+  height: 515px;
   border: 0;
-  border-radius: 4px;
-  box-shadow: 0 14px 20px rgba(0, 0, 0, 0.08);
-  transition: all 0;
-  -webkit-transition: all 0;
+  border-radius: @border_radius;
   z-index: 999;
+  box-shadow: 0 1px 8px 1px @primary_btn_shadow_color;
+  -webkit-transition: all 0;
+  transition: all 0;
 
-  @media only screen and (max-width: 699px),
-  only screen and (max-device-width: 699px) {
+  @media only screen and (max-width: @modal_width),
+    only screen and (max-device-width: @modal_width) {
+    position: fixed;
+    left: 0;
+    margin-left: 0;
     width: 100%;
-    height: 100%;
-    position: fixed !important;
-    margin: 0;
+
+    html,
+    body {
+      overflow: hidden;
+    }
+  }
+
+  @media only screen and (max-width: @breaking_point),
+    only screen and (max-device-width: @breaking_point) {
+    position: fixed;
     top: 0;
     left: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
 
     html,
     body {
@@ -35,8 +50,13 @@ iframe.kloudless-modal {
   .kloudless-modal-mixin();
 }
 
+iframe.kloudless-modal--backdrop {
+  box-shadow: 0 1px 8px 1px #4b4b4b;
+}
+
 iframe.kloudless-modal-dropzone {
   .kloudless-modal-mixin();
+
   position: relative;
   top: 0;
   left: 0;
@@ -44,38 +64,38 @@ iframe.kloudless-modal-dropzone {
   margin-left: 0;
 }
 
-.backdrop_div {
+.backdrop-div {
   position: fixed;
-  margin: 0;
   top: 0;
   left: 0;
+  display: none;
+  margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  display: none;
   background-color: black;
-  z-index: 998;
   opacity: 0.6;
+  z-index: 998;
 }
 
-.kloudless_dropzone_container {
+.kloudless-dropzone-container {
+  cursor: pointer;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  position: relative;
-  cursor: pointer;
-  background-color: rgb(245, 246, 247);
-  color: rgb(71, 71, 71);
-  border-style: dashed;
-  border-width: 1px;
   width: 600px;
   height: 100px;
-  border-radius: 4px;
-  box-shadow: 0 14px 20px rgba(0, 0, 0, 0.08);
+  color: rgb(71, 71, 71);
+  background-color: rgb(245, 246, 247);
+  border-style: dashed;
+  border-width: 1px;
+  border-radius: @border_radius;
+  box-shadow: 0 1px 8px 1px @primary_btn_shadow_color;
 
-  >span {
+  > span {
     position: absolute;
-    padding: 0px 5px;
+    padding: 0 5px;
   }
 }
