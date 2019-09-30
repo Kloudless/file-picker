@@ -289,21 +289,6 @@ File Explorer JavaScript on the page.
   If `true`, displays a shadow backdrop behind the File Explorer, and prevents the
   page body from scrolling.
 
-* `custom_css` : string
-
-  Chooser: _Optional (default: null)_
-
-  Saver: _Optional (default: null)_
-
-  An optional stylesheet URL to load to override existing styles.
-  Supports `(http|https)://domain.com/path/to.css`, `//domain.com/path/to.css`, 
-  and `/path/to.css` formats. Note that Kloudless doesn't guarantee backwards
-  compatibility for all styling used. See the `custom_style_vars` option below
-  for a more narrow list of LESS variables we guarantee compatibility for.
-
-  To use the `custom_css` option, the domain the File Explorer is launched from
-  must be added to the application's list of
-  [Trusted Domains](https://developers.kloudless.com/applications/*/details).
 
 * `locale` : string
 
@@ -492,8 +477,7 @@ File Explorer JavaScript on the page.
 
   For further customization, we recommend forking this project and hosting
   the resources on your own, since we don't guarantee backward-compatibility 
-  when overriding undocumented variables. However, you can also add in entirely
-  custom CSS using the `custom_css` options documented above.
+  when overriding undocumented variables.
 
 #### Chooser Options
 
@@ -839,13 +823,13 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
   updated in this manner. The following are not supported:
 
   * `app_id`
-  * `custom_css`
   * `types`
   * `services`
   * `persist`
   * `create_folder`
   * `account_key`
   * `custom_style`
+  * `custom_css` (deprecated)
   
 * `explorer.logout(deleteAccount=false)`
 
@@ -1043,12 +1027,54 @@ File Explorer as well.
 
 ## Migration Guide
 
+### From v1 to v2
+
+v2 represents a new layout and set of options for the File Explorer, including:
+* A completely new theme for the UI with improved responsiveness, clearer HTML
+  and CSS structure and consistent naming conventions, and several bug-fixes. 
+* A documented format for customizing UI styling such as colors and fonts
+  without forking the entire project.
+
+Provided your application isn't already customizing styling by using the
+`custom_css` option as detailed below, it will automatically begin using the
+new version.
+
+##### Incompatible configuration options
+
+Below are some options that will no longer be effective or force the
+previous version to continue to be loaded instead to maintain compatibility.
+
+* `custom_css` : string
+
+  Chooser: _Optional (default: null)_
+
+  Saver: _Optional (default: null)_
+
+  This option is deprecated and no longer supported in the latest versions
+  of the File Explorer. Using this option will result in the File Explorer
+  reverting to a previous layout that supported this option.
+
+  Refer to the `custom_style_vars` option to customize styling instead.
+  Alternatively, you may clone this project and self-host it to customize the
+  UI more extensively.
+  
+  **Previous Notes**
+
+  `custom_css` is an optional attribute that accepts a URL to a stylesheet for
+  the File Explorer to load to override or customize styling.
+  Supports `(http|https)://domain.com/path/to.css`, `//domain.com/path/to.css`, 
+  and `/path/to.css` formats.
+
+  To use the `custom_css` option, the domain the File Explorer is launched from
+  must be added to the application's list of
+  [Trusted Domains](https://developers.kloudless.com/applications/*/details).
+
 ### From v1.0.0 to v1.0.1
 
-For script tag usage, we change exposing target from `window.Kloudless` to
-`window.Kloudless.fileExplorer` to better scope our UI tools.
-All the exports under `window.Kloudless` are deprecated and moved to
-`window.Kloudless.fileExplorer`.
+When using the script tag, the target exposed has been updated from
+`window.Kloudless` to `window.Kloudless.fileExplorer` to better scope our UI
+tools. All the exports under `window.Kloudless` are deprecated and have been
+moved to `window.Kloudless.fileExplorer`.
 
 ## Contributing
 
@@ -1123,7 +1149,7 @@ to customize the build, or sometimes at run-time as well.
 Build-time Env Var | Run-time option | Description | Default
 ---|---|---|---
 `BASE_URL` | N.A. | URL to the Kloudless API Server | https://api.kloudless.com
-`EXPLORER_URL` | `explorerUrl` | The URL that the loader loads the explorer iframe from. | https://static-cdn.kloudless.com/p/platform/explorer/explorer.html
+`EXPLORER_URL` | `explorerUrl` | The URL that the loader loads the explorer iframe from. | https://static-cdn.kloudless.com/p/platform/file-picker/v2/index.html
 
 Check out the [Self-hosting](#self-hosting) section below for an example
 that changes the `EXPLORER_URL` in order to self-host a customized fork
@@ -1174,10 +1200,10 @@ source code or styles, follow the steps below:
 
 1. Rebuild the assets while setting `EXPLORER_URL` to specify the file explorer
    page URL. For example, if you'd like to host the File Explorer assets at
-   `https://example.com/kloudless/explorer.html`, run the following command:
+   `https://example.com/kloudless/index.html`, run the following command:
 
     ```bash
-    EXPLORER_URL=https://example.com/kloudless/explorer.html npm run build
+    EXPLORER_URL=https://example.com/kloudless/index.html npm run build
     ```
 
     Optionally, you can also set `Kloudless.fileExplorer.setGlobalOptions` at
@@ -1185,13 +1211,13 @@ source code or styles, follow the steps below:
 
     ```js
     Kloudless.fileExplorer.setGlobalOptions({
-      explorerUrl: 'https://example.com/kloudless/explorer.html',
+      explorerUrl: 'https://example.com/kloudless/index.html',
     });
     ```
 2. Copy the entire `dist/explorer` folder into your web application's assets so
-   the `dist/explorer/explorer.html` page can be found at the URL specified in
+   the `dist/explorer/index.html` page can be found at the URL specified in
    the step above. In the example above, copy `dist/explorer` to `/kloudless`
-   for `https://example.com/kloudless/explorer.html` to exist.
+   for `https://example.com/kloudless/index.html` to exist.
 
 3. Add your web app's domain to your Kloudless App's list of
    `Trusted Domains` on the
@@ -1213,12 +1239,12 @@ for the File Explorer as well as the compiled HTML snippets.
 Feel free to add additional styles, scripts, or HTML elements you need.
 You can then run `npm run build:template` to build your customized
 explorer template. The built page will be available at
-`dist/custom-explorer.html`. Replace
-`dist/explorer/explorer.html` with this file, and follow the steps in the
+`dist/custom-index.html`. Replace
+`dist/explorer/index.html` with this file, and follow the steps in the
 [section above](hosting-the-explorer-page) to host this page instead.
 
 For an example, run `npm run build:template` without any changes and
-check the result at `dist/custom-explorer.html`.
+check the result at `dist/custom-index.html`.
 
 ## Misc. Development Notes
 

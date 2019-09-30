@@ -20,7 +20,7 @@ const webpackConfigs = require('../config/webpack.dev.conf');
 const app = express();
 
 process.env.EXPLORER_URL = `${sslCert.certificate ? 'https' : 'http'}://`
- + 'localhost:3000/explorer/explorer.html';
+ + 'localhost:3000/explorer/index.html';
 
 app.set('port', process.env.PORT || 3000);
 app.use(morgan('dev'));

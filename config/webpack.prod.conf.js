@@ -71,7 +71,7 @@ module.exports = [
     plugins: [
       // explorer page
       new HtmlWebpackPlugin({
-        filename: path.resolve(distPath, 'explorer/explorer.html'),
+        filename: path.resolve(distPath, 'explorer/index.html'),
         template: path.resolve(srcPath, 'explorer/templates/index.pug'),
         chunks: ['explorer'],
       }),

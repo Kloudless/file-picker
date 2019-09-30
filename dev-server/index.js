@@ -211,7 +211,7 @@ import 'regenerator-runtime/runtime';
   updateExplorerURL.addEventListener('click', () => {
     window.Kloudless.fileExplorer.setGlobalOptions({
       explorerUrl:
-        'https://static-cdn.kloudless.com/p/platform/explorer/explorer.html',
+        'https://static-cdn.kloudless.com/p/platform/file-picker/v2/index.html',
     });
   });
 }());

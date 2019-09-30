@@ -9,8 +9,11 @@ const packages = require('./package.json');
  * check README for variable names and purpose
  */
 const buildEnvVarDefaults = {
-  EXPLORER_URL: (
-    'https://static-cdn.kloudless.com/p/platform/explorer/explorer.html'),
+  EXPLORER_URL:
+    'https://static-cdn.kloudless.com/p/platform/file-picker/v2/index.html',
+  // old version that supports custom_css
+  EXPLORER_URL_V1:
+    'https://static-cdn.kloudless.com/p/platform/explorer/explorer.html',
   BASE_URL: 'https://api.kloudless.com',
   // for development only
   KLOUDLESS_APP_ID: null,

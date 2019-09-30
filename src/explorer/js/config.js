@@ -34,7 +34,6 @@ Object.assign(config, {
   api_version: get_query_variable('api_version'),
   app_id: get_query_variable('app_id'),
   create_folder: JSON.parse(get_query_variable('create_folder')),
-  custom_css: get_query_variable('custom_css'),
   exp_id: get_query_variable('exp_id'),
   origin: get_query_variable('origin'),
   persist: JSON.parse(get_query_variable('persist')),
@@ -169,49 +168,12 @@ config.update = function update(data) {
   });
 };
 
-/**
- * Check custom css and include
- */
-function custom_css_include() {
-  if (String(config.custom_css) !== 'false' && config.user_data().trusted) {
-    if (config.custom_css.substring(0, 2) === '//') {
-      config.custom_css = config.origin.split('/')[0] + config.custom_css;
-    } else if (!config.custom_css.match(/^https?:/)) {
-      config.custom_css = `${config.origin.replace(/\/+$/, '')}/${
-        config.custom_css.replace(/^\/+/, '')}`;
-    }
-
-    // eslint-disable-next-line no-useless-escape
-    const regex = /^https?:\/\/\w[\.\w\-]*(:[0-9]+)?[^\s<>'"]*$/;
-    if (config.custom_css.match(regex)) {
-      const cssId = 'custom_style';
-      if (!document.getElementById(cssId)) {
-        const head = document.getElementsByTagName('head')[0];
-        const link = document.createElement('link');
-        link.id = cssId;
-        link.rel = 'stylesheet';
-        link.type = 'text/css';
-        link.href = config.custom_css;
-        link.media = 'all';
-        head.appendChild(link);
-      } else {
-        document.getElementById(cssId).href = config.custom_css;
-      }
-    } else {
-      window.console.log(
-        `Custom Style link incorrect format: ${config.custom_css}`,
-      );
-    }
-  }
-}
-
 /*
  * Get user_data
  */
 function retrieveConfig() {
   const query_params = { app_id: config.app_id };
-  if (config.account_key || config.retrieve_token()
-    || String(config.custom_css) !== 'false') {
+  if (config.account_key || config.retrieve_token()) {
     // Only do origin check if we need to.
     query_params.origin = config.origin;
   }
@@ -223,7 +185,6 @@ function retrieveConfig() {
     query_params,
     (config_data) => {
       config.user_data((config_data && config_data.user_data) || {});
-      custom_css_include();
     },
   );
 }

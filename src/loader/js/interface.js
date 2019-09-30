@@ -199,6 +199,7 @@ const initialize_frame = function (options, elementId) {
     `create_folder=${options.create_folder}`,
     `types=${JSON.stringify(options.types)}`,
   ];
+
   frame.setAttribute(
     'src', `${globalOptions.explorerUrl}?${queryStrings.join('&')}`,
   );
@@ -357,6 +358,12 @@ fileExplorer._fileWidget.prototype._fire = function (event, data) {
    */
 
 fileExplorer.explorer = function (options) {
+  if (options.custom_css) {
+    console.warn(
+      'custom_css option is deprecated.',
+      'Please use custom_style_vars instead.');
+    fileExplorer.setGlobalOptions({ explorerUrl: EXPLORER_URL_V1 });
+  }
   // first step is to return a new object
   const exp = new fileExplorer._explorer(options);
 
