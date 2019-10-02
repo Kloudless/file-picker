@@ -5,7 +5,6 @@ import 'regenerator-runtime/runtime';
 
 import $ from 'jquery';
 import 'jquery-ui/ui/jquery-ui';
-import 'jquery-dropdown/jquery.dropdown';
 import 'jquery-scrollstop/jquery.scrollstop';
 import 'jquery.finderSelect';
 import 'plupload/moxie';
@@ -24,10 +23,9 @@ import Search from './models/search';
 import util from './util';
 import localization from './localization';
 import Account from './models/account';
+import setupDropdown from './dropdown';
 import './iexd-transport';
-import 'foundation/css/normalize.css';
-import 'foundation/css/foundation.css';
-import 'jquery-dropdown/jquery.dropdown.css';
+import 'normalize.css';
 import '../css/file-explorer.less';
 
 const EVENT_CALLBACKS = {};
@@ -1039,13 +1037,9 @@ FileExplorer.prototype.switchViewTo = function (to) {
     $('#search-back-button').trigger('click');
   }
 
-  if ($('.accountsbutton')) {
-    $('.accountsbutton').dropdown('hide');
-  }
-
-  // Initialise jQuery dropdown plugin.
-  if (to === 'files' || to === 'computer') {
-    $('.accountsbutton').dropdown('attach', ['#account-dropdown']);
+  // Initialise the dropdowns
+  if (to == 'files' || to == 'computer') {
+    setupDropdown();
 
     // Since we're not using foundation, add click handler to 'x'
     $('.close').off('click');

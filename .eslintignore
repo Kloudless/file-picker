@@ -2,5 +2,7 @@
 dist
 lib
 # Disable linting for legacy scripts
-src/explorer
+src/explorer/js/*
+!src/explorer/js/dropdown.js
+src/loader/js/interface.js
 dev-server/localization
