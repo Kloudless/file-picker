@@ -1160,6 +1160,15 @@ FileExplorer.prototype.switchViewTo = function (to) {
 
 function initializePlUpload() {
   $(() => {
+    // Can't use ko.applyBindings(explorer.view_model, $('.computer')[0]);
+    // to bind the dynamic content because it'll occur the error blow:
+    // "You cannot apply bindings multiple times to the same element"
+    // So we have to translate the text manually
+    const textUpload = localization.formatAndWrapMessage('global/upload');
+    const textPause = localization.formatAndWrapMessage('global/pause');
+    const textResume = localization.formatAndWrapMessage('global/resume');
+    const textProcessing = localization.formatAndWrapMessage('global/processing');
+
     let selections = [];
     const filtered_types = [];
     // if not default 'all' or 'files', add the mimetypes
@@ -1190,13 +1199,7 @@ function initializePlUpload() {
       };
     }
 
-    // Default cancel button action.
-    $('#cancel-button').click(() => {
-      // eslint-disable-next-line no-use-before-define
-      explorer.view_model.cancel();
-    });
-
-    $('#uploader').plupload({
+    $('#computer_uploader').plupload({
       // Required
       url: upload_url,
       // browse_button: "uploader",
@@ -1241,15 +1244,15 @@ function initializePlUpload() {
       unique_names: false,
 
       // Sort files
-      sortable: true,
+      // sortable: true,
 
       // Enable ability to drag'n'drop files onto the widget
       // (currently only HTML5 supports that)
       dragdrop: true,
 
-      browse_button: 'custom-add',
+      browse_button: 'plupload_btn_add',
 
-      container: 'custom-add-container',
+      container: 'plupload_btn_container',
 
       // Views to activate
       views: {
@@ -1260,6 +1263,9 @@ function initializePlUpload() {
 
       init: {
         PostInit() {
+          const $btnCancel = $('#plupload_btn_cancel');
+          const $btnUpload = $('#plupload_btn_upload');
+          $btnUpload.text(textUpload);
           const uploader = this;
 
           // Add drag & dropped files
@@ -1268,25 +1274,17 @@ function initializePlUpload() {
           }
           filesQueue = [];
 
-          // enable the browse button
-          $('#uploader_browse').removeAttr('disabled');
           // Add pause/resume upload handler
-          $('#upload-button').click(function () {
-            if ($(this).text() === 'Upload') {
-              $(this).text('Pause');
+          $btnUpload.click(function () {
+            if ($(this).text() === textUpload) {
+              $(this).text(textPause);
               uploader.start();
-              // eslint-disable-next-line no-use-before-define
-              explorer.view_model.loading(true);
-            } else if ($(this).text() === 'Pause') {
-              $(this).text('Resume');
+            } else if ($(this).text() === textPause) {
+              $(this).text(textResume);
               uploader.stop();
-              // eslint-disable-next-line no-use-before-define
-              explorer.view_model.loading(false);
-            } else if ($(this).text() === 'Resume') {
-              $(this).text('Pause');
+            } else if ($(this).text() === textResume) {
+              $(this).text(textPause);
               uploader.start();
-              // eslint-disable-next-line no-use-before-define
-              explorer.view_model.loading(true);
             }
           });
           // Add confirmation when closing tabs during uploading process
@@ -1305,15 +1303,14 @@ function initializePlUpload() {
           });
 
           // Add abort upload handler
-          $('#cancel-button').off();
-          $('#cancel-button').on('click', () => {
-            const msg = (
-              'Are you sure you want to cancel? You have an' +
+          $btnCancel.off();
+          $btnCancel.on('click', function () {
+            var msg = ('Are you sure you want to cancel? You have an' +
               ' upload in progress.');
             if (uploader.total.queued > 0) {
               uploader.stop();
-              if (window.confirm(msg)) {
-                $('#upload-button').text('Upload');
+              if (confirm(msg)) {
+                $btnUpload.text(textUpload);
 
                 const file_ids_to_abort = uploader.files
                   .filter(f => (
@@ -1350,10 +1347,13 @@ function initializePlUpload() {
                   });
                 }, 0);
               } else {
-                uploader.start();
+                if ($btnUpload.text() === $textPause) {
+                  // means it was uploading, so we should resume the process
+                  uploader.start();
+                }
               }
             } else {
-              // eslint-disable-next-line no-use-before-define
+              $btnUpload.text(textUpload);
               explorer.view_model.cancel();
             }
           });
@@ -1363,8 +1363,7 @@ function initializePlUpload() {
             if (uploader.state == plupload.STARTED) {
               uploader.stop();
               uploader._offline_pause = true;
-              $('#upload-button').text('Resume');
-              // eslint-disable-next-line no-use-before-define
+              $btnUpload.text(textResume);
               explorer.view_model.error(
                 'Uploading has been paused due to disconnection.',
               );
@@ -1375,8 +1374,7 @@ function initializePlUpload() {
             if (uploader._offline_pause) {
               uploader._offline_pause = false;
               uploader.start();
-              $('#upload-button').text('Pause');
-              // eslint-disable-next-line no-use-before-define
+              $btnUpload.text(textPause);
               explorer.view_model.error('');
             }
           });
@@ -1432,6 +1430,13 @@ function initializePlUpload() {
             explorer.view_model.postMessage('finishFileUpload', data);
           }
         },
+        UploadProgress(up) {
+          if (up.total.percent === 100) {
+            $('#plupload_btn_upload').attr('disabled', true);
+            $('#plupload_btn_upload').text(textProcessing);
+            $('#computer_uploader_browse').attr('disabled', true);
+          }
+        },
         Error(up, args) {
           // file extension error
           // eslint-disable-next-line eqeqeq
@@ -1466,7 +1471,7 @@ function initializePlUpload() {
                 up.trigger('UploadFile', args.file);
               }, 50);
 
-              $('#upload-button').click(); // Pause the upload.
+              $('#plupload_btn_upload').click(); // Pause the upload.
             } else {
               up.removeFile(args.file);
               up.stop();
@@ -1475,8 +1480,9 @@ function initializePlUpload() {
           }
         },
         UploadComplete() {
-          $('#upload-button').text('Upload');
-          // eslint-disable-next-line no-use-before-define
+          $('#plupload_btn_upload').text(textUpload);
+          $('#plupload_btn_upload').removeAttr('disabled');
+          $('#computer_uploader_browse').removeAttr('disabled');
           explorer.view_model.postMessage('success', selections);
           selections = [];
           this.splice();

@@ -4,7 +4,10 @@
       "select": "Select",
       "cancel": "Cancel",
       "save": "Save",
-      "upload": "Upload"
+      "upload": "Upload",
+      "pause": "Pause",
+      "resume": "Resume",
+      "processing": "Processing..."
     },
     "files": {
       "name": "Name",

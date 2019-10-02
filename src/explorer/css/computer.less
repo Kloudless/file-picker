@@ -1,96 +1,152 @@
-@import './variables.less';
+/*
+  Please note that the selectors without `__` in their names are
+  plupload-builtin ones, so try not to change their names otherwise
+  it may break the js logic since there are a lot of string
+  concatenations in `jquery.ui.plupload.js` (e.g. _initUploader()),
+  and you may miss things when you try to update one.
+*/
 
-@pl_table_non_content_h: 320px;
+.plupload {
+  width: 100%;
+  height: 100%;
+  color: @primary_text_color;
+  background-color: @section_primary_bg_color;
+  border-radius: @border_radius;
+}
 
-.computer {
-    padding: @files_modal_padding;
+.plupload__table {
+  flex: 0 0 auto;
+  display: none;
+  padding: 0 16px;
+}
 
-    header {
-        margin-bottom: 15px;
-        height: 40px;
+.plupload__table--border {
+  border: solid 1px @section_line_color;
+  border-bottom: 0;
+  border-radius: @border_radius;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
 
-        @import (multiple) 'selector';
-    }
+.plupload__thead {
+  font-size: @font_size_md;
+}
 
-    .buttonscontainer {
-        position: absolute;
-        bottom: 20px;
+.plupload__cell-size,
+.plupload__cell-status {
+  width: 80px;
+  font-size: @font_size_md;
+}
 
-        *:not(:last-child) {
-            margin-right: 20px;
-        }
+.plupload__cell-scroll {
+  display: none;
+  padding-right: 0;
+  padding-left: 0;
+  width: 0;
+}
 
-        &.left {
-            left: 20px;
-        }
+.plupload__dropzone {
+  flex: 1 1 auto;
+  position: relative;
+  overflow-y: auto;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  min-height: 0;
+  border: solid 1px @section_line_color;
+  border-radius: @border_radius;
+}
 
-        &.right {
-            right: 20px;
-        }
-    }
+.plupload__dropzone--has-file {
+  border-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
 
-    .textcontainer {
-        position: absolute;
-        bottom: 30px;
+.plupload__container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
 
-        span {
-            font-size: 14px;
-            margin-right: 5px;
-            color: #999999;
-        }
+.plupload__dropzone-wrapper {
+  position: relative;
+  min-height: 100%;
+}
 
-        img {
-            height: 20px;
-            margin-bottom: 1px;
-        }
-    }
+.plupload__dropzone-area {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  padding: 16px;
+  height: 100%;
+  z-index: 1;
+}
 
-    .kloading {
-        background: url("@{loading_icon}") no-repeat center center;
-        width: 0px;
-        height: 0px;
-        top: 0;
-        left: 0;
-        position: relative;
-        z-index: 1;
-    }
+.plupload__dropzone-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  width: 100%;
+  height: 100%;
+  font-size: @font_size_lg;
+  color: @secondary_text_color;
+  border: 2px dashed @section_line_color;
+  border-radius: @border_radius;
+}
 
-    .error {
-        background-color: #FFECEA;
-        border: 1px solid #DE2B0E;
-        color: #DE2B0E;
-        padding: 1em;
-        position: absolute;
-        bottom: 20px;
-        height: 42px;
-        width: 420px;
-        font-weight: bold;
-        font-size: 13px;
-        z-index: 1;
+.plupload__dropzone-text {
+  margin-top: 10px;
+}
 
-        @media only screen and (max-width: 699px) {
-            width: calc(~"100vw - (@{files_modal_padding} * 2)");
-        }
+.plupload__file-name-wrapper {
+  .word-break();
+}
 
-        .error-text {
-            display: inline-block;
-            overflow: hidden;
-            width: 380px;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+.plupload__file-percent,
+.plupload__total-percent {
+  color: @main_color;
+}
 
-            @media only screen and (max-width: 699px) {
-                width: calc(~"90vw - (@{files_modal_padding} * 2)");
-            }
-        }
+.plupload__file-percent {
+  width: 100%;
+}
 
-        .close {
-            float: right;
-            margin-top: -5px;
-            margin-right: -10px;
-            width: 16px;
-            height: 16px;
-            background: url("@{icons_sheet}") 0px -146px no-repeat;
-        }
-    }
+.plupload__footer {
+  flex: 0 0 auto;
+  display: none;
+  flex-direction: column;
+  padding: 12px 16px;
+  width: 100%;
+  background-color: @section_secondary_bg_color;
+}
+
+.plupload__progress,
+.plupload__buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.plupload__progress {
+  font-size: @font_size_md;
+}
+
+.plupload__progress-bar-wrapper {
+  margin: 16px 0;
+  background-color: @section_primary_bg_color;
+  border: 1px solid @section_line_color;
+  border-radius: @border_radius;
+}
+
+.plupload__progress-bar {
+  width: 0%;
+  height: 6px;
+  background-color: @main_color;
+  border-radius: @border_radius;
 }
