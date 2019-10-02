@@ -130,6 +130,17 @@
   height: 24px;
 }
 
+.icon--disabled {
+  .icon__search {
+    .icon__base(@icon_search);
+
+    &:hover {
+      cursor: unset;
+      .icon__base(@icon_search);
+    }
+  }
+}
+
 .icon--xlarge {
   width: 60px;
   height: 60px;

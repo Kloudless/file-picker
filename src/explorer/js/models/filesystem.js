@@ -16,7 +16,6 @@ var Filesystem = function (id, key, callback) {
   this.request = null; // The currently active request.
   this.page = 1;
   this.page_size = 1000;
-  this.sortOrder = 1;
   this.sortOption = null;
 
   // default - 'root'
@@ -177,7 +176,7 @@ Filesystem.prototype.filterChildren = function (data) {
       return true;
     } else if (config.types.indexOf('folders') != -1 || config.flavor() == 'saver') {
       // add grayed out files
-      child.type = 'disabled';
+      child.disabled = true;
       return true;
     }
     logger.debug('Child failed type test.');
@@ -196,6 +195,7 @@ Filesystem.prototype.filterChildren = function (data) {
 
 // Navigate to a file relative to the current working directory and fire a callback on completion.
 Filesystem.prototype.navigate = function (next, callback) {
+  this.clearSort();
   // Default arguments.
   if (callback === undefined) {
     callback = function () {
@@ -233,6 +233,7 @@ Filesystem.prototype.navigate = function (next, callback) {
 
 // Go up a certain number of directories.
 Filesystem.prototype.up = function (count, callback) {
+  this.clearSort();
   while (count > 0) {
     if (this.current().id === 'root') {
       return callback(new Error('Attempting to navigate above root.'), null);
@@ -248,6 +249,7 @@ Filesystem.prototype.up = function (count, callback) {
 Filesystem.prototype.newdir = function () {
   // This function shows an input field for the new folder
   var self = this;
+  self.clearSort();
   var list = self.current().children();
   var first = list[0];
   var el = {};
@@ -269,13 +271,14 @@ Filesystem.prototype.newdir = function () {
 
 Filesystem.prototype.rmdir = function () {
   // This function removes the input field for the new folder
-  var self = this;
-  var list = self.current().children();
-  var first = list[0];
-
-  if (first.type == 'newfolder') {
-    list.shift();
-    self.current().children(list);
+  const self = this;
+  const list = self.current().children();
+  if (list.length > 0) {
+    const first = list[0];
+    if (first.type === 'newfolder') {
+      list.shift();
+      self.current().children(list);
+    }
   }
 };
 
@@ -298,6 +301,7 @@ Filesystem.prototype.updatedir = function (data) {
 
 Filesystem.prototype.mkdir = function (folder_name, callback) {
   var self = this;
+  self.clearSort();
 
   if (callback === undefined) {
     callback = function () {
@@ -337,25 +341,29 @@ Filesystem.prototype.mkdir = function (folder_name, callback) {
   });
 };
 
+Filesystem.prototype.clearSort = function () {
+  this.sortOption = null;
+  $('.icon__sort').removeClass('icon__sort--asc icon__sort--desc');
+}
+
 // Sort by preference
 Filesystem.prototype.sort = function (option) {
-  var self = this;
-
-  $(".arrow-down").hide();
-  $(".arrow-up").hide();
-
-  if (option === undefined) {
-    option = "name";
-    self.sortOrder++;
-    if (self.sortOption != null) {
-      option = self.sortOption;
-    }
+  const self = this;
+  const _option = option || self.sortOption || 'name';
+  const reverse = !!option;
+  self.sortOption = _option;
+  
+  const element = $(`#sort-${_option}`);
+  let direction = 'asc';
+  if (reverse && element.hasClass('icon__sort--asc')) {
+    direction = 'desc';
+  } else if (!reverse && element.hasClass('icon__sort--desc')) {
+    direction = 'desc';
   }
-  self.sortOption = option;
+  $('.icon__sort').removeClass('icon__sort--asc icon__sort--desc');
+  element.addClass(`icon__sort--${direction}`);
 
-  var reverse = Math.pow(-1, self.sortOrder);
-  $("#sort-" + option + "-" + (reverse > 0 ? "up" : "down")).show();
-
+  const factor = direction === 'asc' ? 1 : -1;
   self.current().children.sort(function (left, right) {
     if (left.type == 'folder' && right.type != 'folder') {
       return -1;
@@ -364,19 +372,19 @@ Filesystem.prototype.sort = function (option) {
     } else {
       var lname = left.name.toLowerCase();
       var rname = right.name.toLowerCase();
-      if (option === "name") {
-        return lname == rname ? 0 : (lname < rname ? -1 * reverse : 1 * reverse);
-      } else if (option === "recent" && left.modified != right.modified) {
+      if (_option === "name") {
+        return lname == rname ? 0 : (lname < rname ? -1 * factor : 1 * factor);
+      } else if (_option === "recent" && left.modified != right.modified) {
         if (left.modified > right.modified) {
-          return 1 * reverse;
+          return 1 * factor;
         } else if (left.modified < right.modified) {
-          return -1 * reverse;
+          return -1 * factor;
         }
-      } else if (option === "largest" && left.size != right.size) {
+      } else if (_option === "largest" && left.size != right.size) {
         if (left.size > right.size) {
-          return 1 * reverse;
+          return 1 * factor;
         } else if (left.size < right.size) {
-          return -1 * reverse;
+          return -1 * factor;
         }
       } else {
         return lname == rname ? 0 : (lname < rname ? -1 : 1);
@@ -384,8 +392,6 @@ Filesystem.prototype.sort = function (option) {
 
     }
   });
-
-  self.sortOrder++;
 };
 
 export default Filesystem;

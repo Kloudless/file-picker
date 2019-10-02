@@ -16,6 +16,7 @@ import 'cldrjs';
 import ko from 'knockout';
 import sammy from 'sammy';
 import logger from 'loglevel';
+import debounce from 'lodash.debounce';
 import config from './config';
 import storage from './storage';
 import AccountManager from './accounts';
@@ -26,6 +27,7 @@ import util from './util';
 import localization from './localization';
 import Account from './models/account';
 import setupDropdown from './dropdown';
+import adjustBreadcrumbWidth from './breadcrumb';
 import './iexd-transport';
 import 'normalize.css';
 import '../css/file-explorer.less';
@@ -160,11 +162,9 @@ const FileExplorer = function () {
         for (let i = 0; i < fileManager.files().length; i += 1) {
           for (let k = 0; k < (current.children().length); k += 1) {
             if (current.children()[k].name === fileManager.files()[i].name) {
-              overwrite = window.confirm(
-                'Files already exist with the same names as the ones being '
-                + 'uploaded. Click OK to overwrite existing files with the same'
-                + ' name or Cancel to proceed without overwriting.',
-              );
+              const msg = localization.formatAndWrapMessage(
+                'files/confirmOverwrite');
+              overwrite = window.confirm(msg);
               choseOverwrite = true;
               break;
             }
@@ -451,14 +451,18 @@ const FileExplorer = function () {
         this.view_model.loading(false);
         return;
       }
-      this.view_model.error('No files selected. Please select a file.');
-      this.view_model.loading(false);
+      const msg = localization.formatAndWrapMessage('files/noFileSelected');
+      this.view_model.error(msg);
     },
 
     // Quit the file explorer.
     cancel: () => {
       logger.debug('Quitting!');
       this.lastCancelTime = new Date();
+      if (this.manager.active().account) {
+        // Remove mkdir form
+        this.view_model.files.rmdir();
+      }
       // postMessage to indicate failure.
       this.view_model.postMessage('cancel');
     },
@@ -489,7 +493,7 @@ const FileExplorer = function () {
         if (Array.isArray(data)) {
           data = [...data]
         } else {
-          data = {...data};
+          data = { ...data };
         }
         if (['selected', 'success', 'addAccount'].includes(action)
           && (config.account_key || config.retrieve_token())
@@ -585,7 +589,8 @@ const FileExplorer = function () {
               // else if it errors on folder contents, we should show an error
             } else if (err) {
               logger.warn('failed to refresh filesystem', err);
-              this.view_model.error('Error occurred. Please try again.');
+              const msg = localization.formatAndWrapMessage('files/error');
+              this.view_model.error(msg);
             } else {
               this.view_model.error('');
             }
@@ -683,7 +688,7 @@ const FileExplorer = function () {
       // Current active service name
       name: ko.pureComputed(function () {
         if (this.view_model.current() === 'computer')
-          return 'My Device';
+          return localization.formatAndWrapMessage('serviceNames/computer');
         return this.manager.active().account_name;
       }, this),
 
@@ -825,10 +830,12 @@ const FileExplorer = function () {
         const activeAccount = this.manager.active();
         // check to make sure an active account is set
         if (Object.keys(activeAccount).length === 0) {
-          return util.isMobile ? ['/'] : null;
+          return null;
         }
-        const paths = activeAccount.filesystem().path();
-        return util.isMobile ? ['/'].concat(paths) : paths;
+        const breadcrumbs = activeAccount.filesystem().path().map(
+          path => ({ path, visible: true })
+        );
+        return adjustBreadcrumbWidth(breadcrumbs);
       }),
       // Return active service
       service: ko.computed(() => this.manager.active().service),
@@ -899,10 +906,9 @@ const FileExplorer = function () {
           return this.view_model.error('');
         });
       },
-      mkdir: () => {
-        this.view_model.loading(true);
-        const name = $('.new-folder-name').val();
-        logger.debug('New folder name', name);
+      mkdir: (formElement) => {
+        const name = formElement[0].value;
+        logger.debug('New folder name:', name);
         this.manager.active().filesystem().mkdir(name, (err, result) => {
           // update first entry
           // eslint-disable-next-line no-use-before-define
@@ -924,9 +930,9 @@ const FileExplorer = function () {
         if (this.manager.active().filesystem().current().can_create_folders) {
           this.manager.active().filesystem().newdir();
         } else {
-          this.view_model.error(
-            'Sorry! Folders cannot be created in this directory',
-          );
+          const msg = localization.formatAndWrapMessage(
+            'files/cannotCreateFolder');
+          this.view_model.error(msg);
         }
       },
       rmdir: () => {
@@ -950,20 +956,32 @@ const FileExplorer = function () {
         this.manager.active().filesystem().sort(option);
       },
       searchQuery: ko.observable(''),
+      startSearchMode: () => {
+        if (!this.view_model.loading()) {
+          router.setLocation('#/search');
+          this.view_model.files.search();
+        }
+      },
+      exitSearchMode: () => {
+        router.setLocation('#/files');
+        this.view_model.files.refresh();
+        this.view_model.files.searchQuery('');
+      },
       search: () => {
         const { manager, view_model } = this;
         (function (query) {
+          const currentFs = manager.active().filesystem();
           if (query === '') {
-            view_model.files.refresh();
+            currentFs.display([]);
             return;
           }
-          const currentFs = manager.active().filesystem();
           const s = new Search(currentFs.id, currentFs.key, query);
           s.search(() => {
             const fs = manager.active().filesystem();
             fs.display(fs.filterChildren(s.results.objects));
           }, () => {
-            view_model.error('The search request was not successful.');
+            const msg = localization.formatAndWrapMessage('files/searchFail');
+            view_model.error(msg);
           });
         }(view_model.files.searchQuery()));
       },
@@ -1067,7 +1085,7 @@ FileExplorer.prototype.switchViewTo = function (to) {
   }
 
   // Initialise infinite scroll
-  if (to === 'files') {
+  if (to === 'files' || to === 'search') {
     const $fsViewBody = $('#fs-view-body');
     $fsViewBody.off('scrollstop');
     $fsViewBody.on('scrollstop', () => {
@@ -1084,60 +1102,11 @@ FileExplorer.prototype.switchViewTo = function (to) {
         fileSystem.getPage();
       }
     });
+  }
 
-    // Search jquery actions
-    $('.search').off('click');
-    $('#search-enable-button, #search-back-button').on('click', () => {
-      $('.refresh-button, #search-back-button').toggle();
-      // the following 2 vars are purely for styles.
-      const searchActiveClass = 'search-active';
-      const searchActiveData = `data-${searchActiveClass}`;
-      const $fileTable = $('.clickable');
-      if ($fileTable.attr(searchActiveData)) {
-        $fileTable.removeAttr(searchActiveData);
-      } else {
-        $fileTable.attr(searchActiveData, true);
-      }
-      const duration = 150;
-      if ($('#search-query').is(':visible')) {
-        $('#search-enable-button').removeClass(searchActiveClass);
-        explorer.view_model.files.refresh();
-        // Slide along with search query
-        $('#search-enable-button').animate({
-          left: '+=360',
-        }, duration);
-        $('#search-enable-button').animate({
-          left: '-=360',
-        }, 0);
-        $('#search-query').toggle('slide', {
-          direction: 'right',
-        }, duration, () => {
-          $('.breadcrumbs, .new-folder-button').toggle();
-        });
-        $('#search-query').val('');
-      } else {
-        $('#search-enable-button').addClass(searchActiveClass);
-        $('.new-folder-button, .breadcrumbs').toggle();
-        $('#search-enable-button').animate({
-          left: '+=360',
-        }, 0);
-        $('#search-enable-button').animate({
-          left: '-=360',
-        }, duration);
-        $('#search-query').toggle('slide', {
-          direction: 'right',
-        }, duration);
-        $('#search-query').focus()
-          .off('keyup')
-          .on('keyup', (e) => {
-            // eslint-disable-next-line eqeqeq
-            if (e.keyCode == 27) { // Escape key
-              $('#search-back-button').click();
-              e.stopPropagation();
-            }
-          });
-      }
-    });
+  if (to === 'files') {
+    // Remove mkdir dir form at first
+    explorer.view_model.files.rmdir();
   }
 
   if (to === 'computer') {
@@ -1282,9 +1251,8 @@ function initializePlUpload() {
             // eslint-disable-next-line eqeqeq
             if (util.isIE == false || util.ieVersion == 11) {
               if (uploader.total.queued > 0) {
-                const msg = (
-                  'Are you sure you want to close this tab? You have an' +
-                  ' upload in progress.');
+                const msg = localization.formatAndWrapMessage(
+                  'computer/confirmClose');
                 return msg;
               }
             }
@@ -1293,8 +1261,7 @@ function initializePlUpload() {
           // Add abort upload handler
           $btnCancel.off();
           $btnCancel.on('click', function () {
-            var msg = ('Are you sure you want to cancel? You have an' +
-              ' upload in progress.');
+            var msg = ('computer/confirmCancel');
             if (uploader.total.queued > 0) {
               uploader.stop();
               if (confirm(msg)) {
@@ -1352,9 +1319,9 @@ function initializePlUpload() {
               uploader.stop();
               uploader._offline_pause = true;
               $btnUpload.text(textResume);
-              explorer.view_model.error(
-                'Uploading has been paused due to disconnection.',
-              );
+              const msg = localization.formatAndWrapMessage(
+                'computer/disconnect');
+              explorer.view_model.error(msg);
             }
           });
 
@@ -1429,8 +1396,9 @@ function initializePlUpload() {
           // file extension error
           // eslint-disable-next-line eqeqeq
           if (args.code == plupload.FILE_EXTENSION_ERROR) {
-            const filter_msg = `Please upload files of the following types: ${
-              config.types.join(', ')}.`;
+            const filter_msg = localization.formatAndWrapMessage(
+              'computer/pleaseUploadFilesOfTypes',
+              { types: config.types.join(", ") });
             // eslint-disable-next-line no-use-before-define
             explorer.view_model.error(filter_msg);
             // eslint-disable-next-line eqeqeq
@@ -1438,10 +1406,9 @@ function initializePlUpload() {
             logger.error(`Error uploading file '${args.file.name}': ${
               args.response}`);
             if (config.uploads_pause_on_error()) {
+              const msg = localization.formatAndWrapMessage('computer/error');
               // eslint-disable-next-line no-use-before-define
-              explorer.view_model.error(
-                'Uploading has been paused due to errors. Resume to retry.',
-              );
+              explorer.view_model.error(msg);
 
               // Reset the % loaded for the file in the UI
               // plupload only resets file.loaded in handleError(),
@@ -1498,6 +1465,8 @@ FileExplorer.prototype.cleanUp = function () {
 ko.bindingHandlers.finderSelect = {
   init(element, valueAccessor) {
     const selector = $(element).finderSelect({
+      selectAllExclude: '.mkdir-form',
+      selectClass: 'ftable__row--selected',
       children: 'tr[data-type="file"]',
       enableClickDrag: config.multiselect(),
       enableShiftClick: config.multiselect(),
@@ -1512,11 +1481,19 @@ ko.bindingHandlers.finderSelect = {
   },
 };
 
+ko.bindingHandlers.selectInputText = {
+  init: function (element, valueAccessor) {
+    element.value = valueAccessor();
+    element.focus();
+    element.select();
+  },
+};
+
 // Explorer initialisation.
 const explorer = new FileExplorer();
 // TODO: we can display err.message if the new error handling is deployed
 // for now use default error message
-const error_message = 'Error! Please try again or contact support.';
+const error_message = localization.formatAndWrapMessage('global/error');
 
 // Router.
 let first_account = true;
@@ -1570,6 +1547,12 @@ const router = sammy(function () {
     explorer.switchViewTo('files');
     explorer.manager.active(explorer.manager.getByAccount(this.params.account));
   });
+
+  this.get('#/search', function () {
+    logger.debug('Switching to search files');
+    explorer.switchViewTo('search');
+  });
+
   // Switch to the computer view
   this.get('#/computer', () => {
     logger.debug('Switching to computer view');
@@ -1788,6 +1771,17 @@ $(document).ajaxStart(function () {
 $(document).ajaxStop(function () {
   explorer.view_model.loading(false);
 });
+
+const onResize = debounce(() => {
+  // force re-evaluate breadcrumb's width
+  const { view_model, manager } = explorer;
+  if (view_model.current() === 'files' && manager.active().filesystem) {
+    manager.active().filesystem().path.notifySubscribers();
+  }
+}, 200);
+
+window.removeEventListener('resize', onResize);
+window.addEventListener('resize', onResize);
 
 // This signal is placed last and indicates all the JS has loaded
 // and events can be received.

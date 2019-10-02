@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* Webpack config for dev-server */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -58,7 +59,7 @@ module.exports = [
       // explorer page
       new HtmlWebpackPlugin({
         filename: path.resolve(
-          devServerContentPath, 'dist/explorer/explorer.html',
+          devServerContentPath, 'dist/explorer/index.html',
         ),
         template: path.resolve(
           __dirname,

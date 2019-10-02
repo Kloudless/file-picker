@@ -7,7 +7,9 @@
       "upload": "Upload",
       "pause": "Pause",
       "resume": "Resume",
-      "processing": "Processing..."
+      "processing": "Processing...",
+      "poweredby": "Powered by Kloudless",
+      "error": "Error! Please try again or contact support."
     },
     "files": {
       "name": "Name",
@@ -21,21 +23,30 @@
         "kb": "{fileSize} KB",
         "mb": "{fileSize} MB",
         "gb": "{fileSize} GB"
-      }
+      },
+      "fileName": "File Name",
+      "folderName": "Folder Name",
+      "confirmOverwrite": "Files already exist with the same names as the ones being uploaded. Click OK to overwrite existing files with the same name or Cancel to proceed without overwriting.",
+      "noFileSelected": "No files selected. Please select a file.",
+      "error": "Error occurred. Please try again.",
+      "cannotCreateFolder": "Sorry! Folders cannot be created in this directory.",
+      "searchFail": "The search request was not successful."
     },
     "accounts": {
       "confirmRemove": "If you remove this account, you will no longer be able to explore it. Are you sure?",
-      "connectedAccounts": "Connected accounts",
-      "logout": "logout",
-      "manage": "Manage your cloud storage accounts here.",
+      "connectedAccounts": "All Connected Accounts",
+      "logout": "Disconnect all accounts",
+      "manage": "Manage Accounts",
       "chooseAccount": "Welcome! Please choose a service to connect",
-      "connectMore": "Connect more!",
+      "connectMore": "Add Another Account",
       "upload": "Upload",
-      "uploadFromComputer": "Upload from your computer"
+      "uploadFromComputer": "My Device"
     },
     "selector": {
       "myComputer": "My Device",
-      "accounts": "Manage Accounts"
+      "accounts": "Manage Accounts",
+      "selectFrom": "Selecting files from",
+      "switchAccount": "Switch to another account"
     },
     "serviceNames": {
       "cq5": "Adobe CQ5",
@@ -66,12 +77,17 @@
       "message": "Drag and drop files here, or click to open the File Explorer"
     },
     "computer": {
-      "noSupport": "Your browser doesn't have Flash, Silverlight or HTML5 support."
+      "noSupport": "Your browser doesn't have Flash, Silverlight or HTML5 support.",
+      "confirmClose": "Are you sure you want to close this tab? You have an upload in progress.",
+      "confirmCancel": "Are you sure you want to cancel? You have an upload in progress.",
+      "disconnect": "Uploading has been paused due to disconnection.",
+      "error": "Uploading has been paused due to errors. Resume to retry.",
+      "pleaseUploadFilesOfTypes": "Please upload files of the following types: {types}."
     },
     "addConfirm": {
-      "confirm": "Confirm account connection.",
+      "confirm": "Confirm account connection",
       "clickBelow": "Click below to connect your {serviceName} account",
-      "connectAccount": "Connect {serviceName} Account"
+      "connectAccount": "Connect"
     }
   }
 }

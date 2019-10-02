@@ -459,7 +459,9 @@ ko.bindingHandlers.translate = {
   update(element, valueAccessor) {
     const values = ko.utils.unwrapObservable(valueAccessor());
 
-    if (values && typeof values === 'object') {
+    if (values === null || values === undefined || values === '') {
+      $(element).text('');
+    } else if (values && typeof values === 'object') {
       Object.keys(values).forEach((property) => {
         const token = values[property] || {};
         const translatedText = locUtil.formatAndWrapMessage(
@@ -489,11 +491,14 @@ ko.bindingHandlers.translate = {
 ko.bindingHandlers.formatDate = {
   update(element, valueAccessor) {
     const dateString = ko.utils.unwrapObservable(valueAccessor());
-    const localizedDateString = locUtil.formatAndWrapDateTime(
-      new Date(dateString.substring(0, 19)),
-    );
-
-    $(element).html(localizedDateString);
+    if (dateString) {
+      const localizedDateString = locUtil.formatAndWrapDateTime(
+        new Date(dateString.substring(0, 19)),
+      );
+      $(element).html(localizedDateString);
+    } else {
+      $(element).html('-');
+    }
   },
 };
 

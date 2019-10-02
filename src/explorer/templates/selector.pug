@@ -11,11 +11,11 @@
     .account-selector__name(data-bind='text: name')
     .account-selector__arrow
   .dropdown(id='account-dropdown')
-    .box.box--shadow
-      .box__title Selecting files from
+    .box.box-shadow
+      .box__title(data-bind='translate: "selector/selectFrom"')
       .box__section
         .list
-          .list__item--current
+          .list__item.list__item--current
             .icon
               // ko if: $root.selectingFilesFrom().fromComputer
               .icon__computer
@@ -27,7 +27,7 @@
             .icon.icon--small
               .icon__checked
       .box__divider
-      .box__title Switch to another account
+      .box__title(data-bind='translate: "selector/switchAccount"')
       .box__section
         .list
           // ko foreach: $root.filteredAccounts
@@ -43,12 +43,10 @@
             .icon
               .icon__computer
             .list__text(data-bind='translate: "selector/myComputer"')
-              | My Device
           // /ko
           // ko if: account_management()
           .list__item(data-bind='click: $root.setLocation.bind($data, "#/accounts")')
             .icon
               .icon__accounts
             .list__text(data-bind='translate: "selector/accounts"')
-              | Manage Accounts
           // /ko

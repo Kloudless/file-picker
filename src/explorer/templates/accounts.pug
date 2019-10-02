@@ -1,72 +1,78 @@
-.accounts
-  header
-    //- Back button
-    .back
-      .backcontain(data-bind='if: accounts.all().length > 0')
-        a.backbtn(data-bind='click: $root.setLocation.bind($data, "#/files")')
-          div.arrow
-        img.klogo(data-bind='attr: {src: logo_url() || $root.static("/ext-assets/kloudless32x33.png")}')
-        span(data-bind='translate: "accounts/manage"') Manage your cloud storage accounts here.
-      .nobackcontain(data-bind='if: accounts.all().length < 1')
-        div.nobackbtn
-        img.klogo(data-bind='attr: {src: logo_url() || $root.static("/ext-assets/kloudless32x33.png")}')
-        span(data-bind='translate: "accounts/chooseAccount"') Welcome! Please choose a service to connect.
-    a.closeexplorer(data-bind='click: cancel')
-
-
-  .containall
-    .connectedaccounts(data-bind='with: accounts')
-      div.header(data-bind='if: all().length > 0')
-        .intro-message(data-bind='translate: "accounts/connectedAccounts"') Connected accounts
-        // ko if: $root.enable_logout
-        .logout-message(data-bind='click: function (){logout($root.delete_accounts_on_logout())}, translate: "accounts/logout"') logout
-        // /ko
-        //- Linked accounts
-        //- Each service group
-        ul.linked-services
-          div.service-group(data-bind='foreach: {data: Object.keys(ko.toJS(by_service)), as: "service"}')
-            li.linked-service(data-bind='if: $root.services()[service]')
-              div.servicename
-                img.servicelogo(data-bind='attr: {src: $root.services()[service].logo}')
-                span(data-bind='text: $root.services()[service].name')
-              div.accounts(data-bind='foreach: ko.toJS($parent.by_service)[service]')
-                ul.accountnames
-                  li.account
-                    div
-                      img.servicelogo(data-bind='attr: {src: $root.services()[service].logo}')
-                      a(data-bind='click: $root.setLocation.bind($data, "#/files/" + account), text: account_name')
-                    //-.unlink
-                    // ko if: $root.enable_logout
-                    a.alert(data-bind='click: function (data, element) { if (!$root.localizedConfirmPopup("accounts/confirmRemove")) return false; $root.setLocation("#/account/disconnect/" + account) }')
-                    // /ko
-                //-.refresh(data-bind='if: !connected')
-                //-  a.button(data-bind='click: $root.setLocation.bind($data, "#/account/reconnect/" + account)') Refresh
-            // ko if: $index() === (Object.keys($parent.by_service()).length - 1) && $parent.computer()
-            li.linked-service
-              div.servicename
-                img.servicelogo(data-bind='attr: {src: $root.static("/webapp/sources/computer.png")}')
-                span(data-bind='text: "Upload", translate: "accounts/upload"')
-              div.accounts
-                ul.accountnames
-                  li.account
-                    div
-                      img.servicelogo(data-bind='attr: {src: $root.static("/webapp/sources/computer.png")}')
-                      a(data-bind='click: $root.setLocation.bind($data, "#/computer"), text: "Upload from your computer", translate: "accounts/uploadFromComputer"')
-            // /ko
-
-      // ko if: Object.values($parent.services()).filter(function (service) {return service.visible}).length > 0
-      .row(data-bind='if: all().length > 0')
-        div.intro-message.more(data-bind='translate: "accounts/connectMore"') Connect more!
+.container
+  .container__header
+    .flex-row.align-items-center
+      .flex-no-shrink(data-bind="css: {'invisible': accounts.all().length === 0}")
+        .icon.icon--large
+          .icon__back(data-bind="click: $root.setLocation.bind($data, '#/files')")
+      // ko if: accounts.all().length > 0
+      .flex-grow(data-bind='translate: "accounts/manage"')
       // /ko
+      // ko ifnot: accounts.all().length > 0
+      .flex-grow(data-bind='translate: "accounts/chooseAccount"')
+      // /ko
+      .flex-no-shrink.icon.icon--large
+        .icon__close(data-bind='click: cancel')
 
-    //- Add a new account.
-    .connectmore
-      ul.small-block-grid-2.medium-block-grid-4.large-block-grid-6.add-account(data-bind='foreach: {data: Object.values(services()), as: "service"}')
-        // ko ifnot: $parent.accounts.all().length > 0 && service.id == 'computer' || !service.visible
-        li
-          a(data-bind='click: $parent.accounts.connect.bind(null, id)')
-            div.service
-              img.servicelogo(data-bind='attr: {src: logo}')
-              span.servicename-container
-                span.servicename(data-bind='text: service.name')
-        // /ko
+  .container__body.container__body--scroll
+    // ko if: accounts.all().length > 0
+    .box.mb(data-bind='with: accounts')
+      .box__title(data-bind='translate: "accounts/connectedAccounts"')
+      .box__section(
+        data-bind='foreach: {data: Object.keys(ko.toJS(by_service)), as: "service"}')
+        .list
+          // ko if: $root.services()[service]
+          // ko foreach: ko.toJS($parent.by_service)[service]
+          .list__item(data-bind='click: $root.setLocation.bind($data, "#/files/" + account)')
+            .icon
+              img.icon__service(
+                data-bind='attr: {src: $root.services()[service].logo}')
+            .list__text(data-bind='text: account_name')
+            // ko if: $root.enable_logout
+            .icon(data-bind=`
+              clickBubble: false,
+              click: function (data, element) {
+                if ($root.localizedConfirmPopup("accounts/confirmRemove")) {
+                  $root.setLocation("#/account/disconnect/" + account);
+                }
+              }`)
+              .icon__logout
+            // /ko
+          // /ko
+          // /ko
+          // ko if: $index() === (Object.keys($parent.by_service()).length - 1) && $parent.computer()
+          .list__item
+            .icon
+              .icon__computer
+            .list__text(data-bind=`
+              click: $root.setLocation.bind($data, "#/computer"),
+              translate: "accounts/uploadFromComputer"`)
+          // /ko
+      // ko if: $root.enable_logout
+      .box__divider
+      .box__section
+        .link-btn(data-bind=`
+            click: function (){logout($root.delete_accounts_on_logout())},
+            translate: "accounts/logout"`)
+      // /ko
+    // /ko
+
+    .box.mb
+      .box__title(data-bind="translate: 'accounts/connectMore', css: {'hidden': accounts.all().length === 0}")
+      .box__section
+        .service-list
+          // ko foreach: {data: Object.values(services()), as: "service"}
+          // ko ifnot: $parent.accounts.all().length > 0 && service.id == 'computer' || !service.visible
+          .service-list__item(
+            data-bind='click: $parent.accounts.connect.bind(null, id)')
+            .service-list__img
+              .icon.icon--xlarge
+                // ko if: service.id === 'computer'
+                .icon__computer
+                // /ko
+                // ko ifnot: service.id === 'computer'
+                img.icon__service(data-bind='attr: {src: logo}')
+                // /ko
+            .service-list__text(data-bind='text: service.name')
+          // /ko
+          // /ko
+  include footer

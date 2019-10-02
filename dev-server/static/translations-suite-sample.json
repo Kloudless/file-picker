@@ -35,9 +35,9 @@
       "noSupport": "votre navigateur n'a pas de support Flash, Silverlight ou HTML5."
     },
     "addConfirm": {
-      "confirm": "Confirmer la connexion au compte.",
+      "confirm": "Confirmer la connexion au compte",
       "clickBelow": "cliquez ci-dessous pour connecter votre compte {serviceName} ",
-      "connectAccount": "Connect {service} Compte"
+      "connectAccount": "Connect"
     }
   },
   "zh-CN": {
@@ -76,9 +76,9 @@
       "noSupport": "您的浏览器不支援Flash, Silverlight 或 HTML5."
     },
     "addConfirm": {
-      "confirm": "确认连接帐号.",
+      "confirm": "确认连接帐号",
       "clickBelow": "点选下方以连接您的 {serviceName} 帐号",
-      "connectAccount": "连接 {serviceName} 帐号"
+      "connectAccount": "连接"
     }
   }
 }

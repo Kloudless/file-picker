@@ -15,6 +15,9 @@ module.exports = {
     es6: true,
     node: true
   },
+  globals: {
+    '$': 'readonly',
+  },
   extends: [
     'airbnb-base',
     'plugin:@typescript-eslint/recommended'

@@ -354,7 +354,7 @@ function toggleComputer(computerEnabled) {
     config.all_services.unshift({
       computer: true,
       id: 'computer',
-      name: 'My Device',
+      name: localization.formatAndWrapMessage('serviceNames/computer'),
       visible: true,
       logo: `${config.static_path}/webapp/sources/computer.png`,
     });

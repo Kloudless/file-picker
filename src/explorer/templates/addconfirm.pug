@@ -1,24 +1,28 @@
-.addconfirm
-  header
-    //- Back button
-    .back
-      .backcontain
-        a.backbtn(data-bind='click: $root.setLocation.bind($data, "#/")')
-          div.arrow
-        img.klogo(data-bind='attr: {src: logo_url() || $root.static("/ext-assets/kloudless32x33.png")}')
-        span(data-bind='translate: "addConfirm/confirm"') Confirm account connection.
-
-  .addconfirminner
-    p.confirm(data-bind='translate: {html: { message: "addConfirm/clickBelow", variables: { serviceName: addConfirm.serviceName }}}') Click below to connect your #[span(data-bind="text: addConfirm.serviceName")] account.
-    p.imageholder
-      img(data-bind='attr: {src: addConfirm.serviceLogo}')
-      img(data-bind='attr: {src: $root.static("/launch_site/support-plus.png")}')
-      img(data-bind='attr: {src: logo_url() || $root.static("/static/kloudless_logomark.png")}', width=55, height=55)
-    .buttonscontainer
-      a.button.reg(data-bind='click: $root.setLocation.bind($data, "#/"), translate: "global/cancel"') Cancel
-      a.button.blue#confirm-add-button(data-bind='translate: {html: { message: "addConfirm/connectAccount", variables: { serviceName: addConfirm.serviceName }}}') Connect #[span(data-bind="text: addConfirm.serviceName")] Account
-
-  //- "Powered by Kloudless" footer
-  footer
-    .row
-      div(data-bind='template: {name: "powered-by-kl-footer"}')
+.container
+  .container__header
+    .flex-row.align-items-center
+      .flex-no-shrink.icon.icon--large(
+          data-bind='click: $root.setLocation.bind($data, "#/")')
+        .icon__back
+      .flex-grow.text-center(data-bind='translate: "addConfirm/confirm"')
+  .container__body
+    .flex-col.align-items-center.h-100.w-100
+      .box.flex-grow
+        .flex-col.justify-content-center.h-100
+          .box__section
+            div
+              div.flex-row.justify-content-center.mt.mb(data-bind='translate: {html: { message: "addConfirm/clickBelow", variables: { serviceName: addConfirm.serviceName }}}')
+              div.flex-row.justify-content-center.mb
+                .flex-no-shrink.icon.icon--xlarge
+                  img.icon__service(data-bind='attr: {src: addConfirm.serviceLogo}')
+                .flex-no-shrink.icon.icon--xlarge
+                  img.icon__service(data-bind='attr: {src: $root.static("/launch_site/support-plus.png")}')
+                .flex-no-shrink.icon.icon--xlarge
+                  .icon__brand
+              div.flex-row.justify-content-center.mb
+                button.btn.btn--secondary.mr(data-bind=`
+                    click: $root.setLocation.bind($data, "#/"),
+                    translate: "global/cancel"`)
+                button#confirm-add-button.btn.btn--primary(
+                    data-bind='translate: {html: { message: "addConfirm/connectAccount"}}')
+  include footer

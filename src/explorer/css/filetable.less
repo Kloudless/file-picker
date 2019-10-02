@@ -1,0 +1,83 @@
+.ftable {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background-color: @section_primary_bg_color;
+  border-radius: @border_radius;
+}
+
+.ftable__main {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 0 16px;
+  height: 100%;
+  min-height: 0;
+  border: solid 1px @section_line_color;
+}
+
+.ftable__table {
+  position: relative;
+  border-collapse: collapse;
+}
+
+.ftable__th {
+  cursor: pointer;
+  position: sticky;
+  top: 0;
+  font-size: @font_size_md;
+  background-color: @section_primary_bg_color;
+}
+
+.ftable__no-data-cell {
+  text-align: center;
+  border: 0;
+}
+
+.ftable__row {
+  cursor: pointer;
+
+  &:hover {
+    background-color: @section_primary_hover_bg_color;
+  }
+}
+
+.ftable__row--selected {
+  color: @selected_text_color;
+  background-color: @selected_bg_color;
+
+  &:hover {
+    background-color: @selected_hover_bg_color;
+  }
+}
+
+.ftable__row--disabled {
+  cursor: unset;
+  color: @disabled_text_color;
+  background-color: @section_primary_bg_color;
+
+  &:hover {
+    background-color: @section_primary_bg_color;
+  }
+}
+
+.ftable__cell-md {
+  font-size: @font_size_md;
+}
+
+.ftable__footer {
+  padding: 12px 0;
+  flex: 0 0 auto;
+  background-color: @section_secondary_bg_color;
+}
+
+.ftable__saver-input {
+  padding: 0 12px;
+  width: 100%;
+  height: 40px;
+  background-color: @input_color;
+  border: solid 1px @section_line_color;
+  border-radius: @border_radius;
+}

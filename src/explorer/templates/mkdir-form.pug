@@ -1,0 +1,14 @@
+form.mkdir-form(data-bind="submit: mkdir")
+  .flex-row.align-items-center
+    .flex-grow.mr
+      input.mkdir-form__input(required, data-bind=`
+          selectInputText: "Untitled Folder",
+          translate: {
+            value: { message: "files/untitledFolder" },
+            placeholder: { message: "files/folderName" }}`)
+    .mr
+      button.mkdir-form__button(
+        data-bind='translate: "global/save"', type="submit")
+    .flex-no-shrink
+      .icon(data-bind='click: rmdir')
+        .icon__close

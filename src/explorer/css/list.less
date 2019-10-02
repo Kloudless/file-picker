@@ -1,4 +1,6 @@
-.list { /* no styles */ }
+.list {
+  background-color: @section_primary_bg_color;
+}
 
 .list__item {
   display: flex;
@@ -14,13 +16,12 @@
 
 .list__item--current {
   cursor: default;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
   justify-content: space-between;
   pointer-events: none;
-  padding: 10px 4px;
-  color: @primary_text_color;
+
+  &:hover {
+    background-color: @section_primary_bg_color;
+  }
 }
 
 .list__text {
