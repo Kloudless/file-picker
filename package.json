@@ -40,6 +40,9 @@
   },
   "dependencies": {
     "hoist-non-react-statics": "3.3.0",
+    "izitoast": "^1.4.0",
+    "lodash.debounce": "^4.0.8",
+    "normalize.css": "8.0.1",
     "prop-types": "^15.7.2"
   },
   "devDependencies": {
