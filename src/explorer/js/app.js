@@ -95,6 +95,31 @@ const FileExplorer = function () {
     // The current view: alternates between
     // 'files', 'accounts', 'computer', 'addConfirm', and 'dropzone'
     current: ko.observable(startView),
+    selectingFilesFrom: ko.pureComputed(() => {
+      const current = explorer.view_model.current();
+      if (current === 'files') {
+        const activeAccount = explorer.manager.active();
+        return {
+          fromComputer: false,
+          account: activeAccount.account,
+          text: activeAccount.account_name,
+          icon: services()[activeAccount.service].logo,
+        };
+      }
+      if (current === 'computer') return {
+        fromComputer: true,
+        text: explorer.view_model.accounts.name(),
+      };
+      return {};
+    }),
+    filteredAccounts: ko.pureComputed(() => {
+      const data = explorer.view_model.selectingFilesFrom();
+      const accounts = explorer.view_model.accounts.all();
+      if (data.account) {
+        return accounts.filter(account => account.account !== data.account);
+      }
+      return accounts;
+    }),
     isDesktop: !util.isMobile,
 
     // Save all files in FileManager to the selected directory
@@ -665,9 +690,8 @@ const FileExplorer = function () {
 
       // Current active service name
       name: ko.pureComputed(function () {
-        if (this.view_model.current() === 'computer') {
-          return 'My Computer';
-        }
+        if (this.view_model.current() === 'computer')
+          return 'My Device';
         return this.manager.active().account_name;
       }, this),
 

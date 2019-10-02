@@ -31,8 +31,8 @@
       "uploadFromComputer": "Upload from your computer"
     },
     "selector": {
-      "myComputer": "My Computer",
-      "accounts": "Accounts"
+      "myComputer": "My Device",
+      "accounts": "Manage Accounts"
     },
     "serviceNames": {
       "cq5": "Adobe CQ5",
@@ -57,7 +57,7 @@
       "jive": "Jive",
       "webdav": "WebDAV",
       "ftp": "FTP",
-      "computer": "My Computer"
+      "computer": "My Device"
     },
     "dropzone": {
       "message": "Drag and drop files here, or click to open the File Explorer"
