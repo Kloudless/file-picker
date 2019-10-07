@@ -546,8 +546,9 @@ File Explorer JavaScript on the page.
 
   Chooser: _Optional (default: null)_
 
-  If this option is set, it will copy any file selected by the user from cloud storage
-  to the location that files uploaded from the user's computer are placed in.
+  If this option is set, it will copy any file or non-root folder selected by
+  the user from cloud storage to the location that files uploaded from the
+  user's computer are placed in.
   An Upload Location must be configured via the developer portal to make use of
   this option.
 
@@ -555,18 +556,18 @@ File Explorer JavaScript on the page.
   * `'async'`: Triggers an asynchronous copy and immediately returns a Task ID
     in the `success` event callback that can be checked using the
     [Kloudless Task API](https://developers.kloudless.com/docs/latest/core#asynchronous-requests-and-the-task-api)
-    for the copied file's metadata.
-  * `'sync'`: Triggers a synchronous API request to copy the file and polls
-    till the copying is complete. The `success` event callback receives the
-    newly uploaded file's metadata.
+    for the copied file or folder's metadata.
+  * `'sync'`: Triggers a synchronous API request to copy the file or folder and
+    polls till the copying is complete. The `success` event callback receives
+    the newly uploaded file or folder's metadata.
 
-  The deprecated `true` option returns the new file's hypothetical metadata
-  even though the copy has not yet completed. Please migrate to using
-  `'sync'` instead for similar behavior with a guarantee that the copy is
-  successful.
+  The deprecated `true` option is only available for copying files and will
+  return the new file's hypothetical metadata even though the copy has not yet
+  completed. Please migrate to using `'sync'` instead for similar behavior with
+  a guarantee that the copy is successful.
 
   The Kloudless File Explorer will fire the `error` event when the copy
-  operation is not fully successful.
+  operation is not completely successful.
 
 * `upload_location_account` : string
 
