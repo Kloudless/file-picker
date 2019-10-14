@@ -1,5 +1,5 @@
-const common = require('./config/common');
 const path = require('path');
+const common = require('./config/common');
 const packages = require('./package.json');
 
 
@@ -38,7 +38,8 @@ module.exports = {
   plugins: [
     [
       'module-resolver', {
-        root: common.resolvePaths,
+        // avoid node_modules path being relative path
+        root: common.resolvePaths.filter(p => p !== 'node_modules'),
         alias: {
           'explorer-config': path.resolve(__dirname, './src/explorer/js/',
             (process.env.NODE_ENV === 'production'
