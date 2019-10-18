@@ -1,9 +1,7 @@
 
-'use strict';
-
-var nav = navigator.userAgent.toLowerCase(),
-  isIE = false,
-  ieVersion = -1;
+const nav = navigator.userAgent.toLowerCase();
+let isIE = false;
+let ieVersion = -1;
 
 /*
   * IE 11 removes 'msie' from the UA string so that apps which sniff it to
@@ -14,73 +12,67 @@ var nav = navigator.userAgent.toLowerCase(),
   */
 if (nav.indexOf('msie') !== -1) { // IE < 11
   isIE = true;
-  ieVersion = parseInt(nav.split('msie')[1]);
+  ieVersion = parseInt(nav.split('msie')[1], 10);
 } else if (nav.indexOf('trident/') !== -1) { // IE 11+
   isIE = true;
-  ieVersion = parseInt(nav.split('rv:')[1]);
+  ieVersion = parseInt(nav.split('rv:')[1], 10);
 }
 
-var roundFileSize = function(num) {
-  return Math.round(num*100)/100;
-};
+const roundFileSize = num => Math.round(num * 100) / 100;
 
-
-var util = {
+const util = {
   /**
    * Generate random string suitable for use as a request ID
    */
-  randomID: function() {
-    return parseInt(Math.random() * 10e10).toString();
-  },
+  randomID: () => parseInt(Math.random() * 10e10).toString(),
 
   /**
    * IE Version
    */
-  ieVersion: ieVersion,
-  isIE: isIE,
+  ieVersion,
+  isIE,
   /**
    * isMobile (check if agent is mobile)
    */
-  isMobile: (!!navigator.userAgent.match(/(iPad|iPhone|iPod|android|Android)/g)),
+  isMobile: !!navigator.userAgent.match(/(iPad|iPhone|iPod|android|Android)/g),
   /**
     * Formats the sizes for files in the FileSystem.
     */
-  formatSize: function(size){
-    var fileSize;
-    var unitOfMeasure;
-      if (size === null || size === undefined || size === '')
-        return null;
-      if (size < Math.pow(2,10)) {
-        fileSize = size;
-        unitOfMeasure = 'files/sizes/b';
-      } else if (size < Math.pow(2,20)) {
-        fileSize = roundFileSize(size / Math.pow(2,10));
-        unitOfMeasure = 'files/sizes/kb';
-      } else if (size < Math.pow(2,30)) {
-        fileSize = roundFileSize(size / Math.pow(2,20));
-        unitOfMeasure = 'files/sizes/mb';
-      } else {
-        fileSize = roundFileSize(size / Math.pow(2,30));
-        unitOfMeasure = 'files/sizes/gb';
-      }
+  formatSize: (size) => {
+    let fileSize;
+    let unitOfMeasure;
+    if (size === null || size === undefined || size === '') return null;
+    if (size < 2 ** 10) {
+      fileSize = size;
+      unitOfMeasure = 'files/sizes/b';
+    } else if (size < 2 ** 20) {
+      fileSize = roundFileSize(size / (2 ** 10));
+      unitOfMeasure = 'files/sizes/kb';
+    } else if (size < 2 ** 30) {
+      fileSize = roundFileSize(size / (2 ** 20));
+      unitOfMeasure = 'files/sizes/mb';
+    } else {
+      fileSize = roundFileSize(size / (2 ** 30));
+      unitOfMeasure = 'files/sizes/gb';
+    }
 
-      // map the result so that it can be used directly with the ko
-      // translate binding handler
-      return {
-        message: unitOfMeasure,
-        variables: {
-          fileSize: fileSize
-        }
-      };
-    },
+    // map the result so that it can be used directly with the ko
+    // translate binding handler
+    return {
+      message: unitOfMeasure,
+      variables: {
+        fileSize,
+      },
+    };
+  },
 
   /**
    * Gets the base URL any JSON files.
    * Figures out the base url based on the script tag for explorer.js
    */
-  getBaseUrl: function() {
+  getBaseUrl: () => {
     // get the explorer.js script tag
-    var scriptUrl = $('#kloudless-file-explorer-script').attr('src')
+    const scriptUrl = $('#kloudless-file-explorer-script').attr('src')
       .split('/');
 
     // then remove the script file name and 'js' directory parts from the url
@@ -95,9 +87,7 @@ var util = {
    *
    * Supported by most non-IE and IE >= 10.
    */
-  supportsCORS: function() {
-    return !isIE || !(ieVersion < 10);
-  },
+  supportsCORS: () => !isIE || !(ieVersion < 10),
 
   /**
    * Determines if the browser supports postMessage to popups with a
@@ -107,8 +97,11 @@ var util = {
    * on (currently unreleased version of) IE 12, but needs testing after
    * release.
    */
-  supportsPopupPostMessage: function() {
-    return !isIE;
+  supportsPopupPostMessage: () => !isIE,
+
+  isObject: (input) => {
+    const { toString } = Object.prototype;
+    return toString.call({}) === toString.call(input);
   },
 };
 

@@ -2,8 +2,8 @@ import $ from 'jquery';
 import ko from 'knockout';
 import globalize from 'globalize';
 import 'cldr/unresolved';
-import util from './util';
 import likelySubtags from 'cldr-data/supplemental/likelySubtags.json';
+import numberingSystems from 'cldr-data/supplemental/numberingSystems.json';
 import timeData from 'cldr-data/supplemental/timeData.json';
 import weekData from 'cldr-data/supplemental/weekData.json';
 import plurals from 'cldr-data/supplemental/plurals.json';
@@ -11,11 +11,10 @@ import caGregorian from 'cldr-data/main/en/ca-gregorian.json';
 import numbers from 'cldr-data/main/en/numbers.json';
 import timeZoneNames from 'cldr-data/main/en/timeZoneNames.json';
 import messages from '../localization/messages/en.json';
-
+import util from './util';
 /**
  * Localization module that provides translation and localization services.
  */
-'use strict';
 
 // ref: lib/plupload/i18n & cldr-data/main
 const supportedLocales = {
@@ -55,67 +54,90 @@ const supportedLocales = {
   ru: { cldr: 'ru', plupload: 'ru' },
   sk: { cldr: 'sk', plupload: 'sk' },
   sq: { cldr: 'sq', plupload: 'sq' },
-  sr: { cldr: 'sr', plupload: 'sr_RS' },
+  sr: { cldr: 'sr', plupload: 'sr' },
   sv: { cldr: 'sv', plupload: 'sv' },
   th: { cldr: 'th', plupload: 'th_TH' },
   tr: { cldr: 'tr', plupload: 'tr' },
   uk: { cldr: 'uk', plupload: 'uk_UA' },
   zh: { cldr: 'zh', plupload: 'zh_CN' },
+  'zh-cn': { cldr: 'zh-Hans', plupload: 'zh_CN' },
+  'zh-tw': { cldr: 'zh-Hant', plupload: 'zh_TW' },
 };
 
 let dateTimeFmt = '';
 
 // Used to wrap text when in the TEST locale
 // e.g. "#This is a localized string#"
-var TEST_WRAPPER = '#';
+const TEST_WRAPPER = '#';
 
 // Used to wrap messages keys that do not have translated text when using
 // the TEST locale e.g. "!!!Missing translation!!!"
-var WARNING_WRAPPER = "!!!";
+const WARNING_WRAPPER = '!!!';
 
 // CLDR localization root folder
-var CLDR_DATA_URL = util.getBaseUrl() + '/localization/cldr-data/';
+const CLDR_DATA_URL = `${util.getBaseUrl()}/localization/cldr-data/`;
 
 // folder containing translated strings
-var LOCALIZATION_MESSAGES_URL = (
-  util.getBaseUrl() + '/localization/messages/');
+const LOCALIZATION_MESSAGES_URL = `${util.getBaseUrl()}/localization/messages/`;
 
-var DEFAULT_LOCALE = 'en';
-var DEFAULT_DATETIME_FORMAT = 'MMMdHm';
+const PLUPLOAD_I18N_URL = `${util.getBaseUrl()}/localization/plupload/i18n/`;
 
-var currentLocale = ko.observable();
-var isTestLocale = ko.observable(false);
-var loadedLocales = {};
-var isSupplementalCldrLoaded = false;
+const DEFAULT_LOCALE = 'en';
+const DEFAULT_DATETIME_FORMAT = 'MMMdHm';
+
+const currentLocale = ko.observable();
+const isTestLocale = ko.observable(false);
+const loadedLocales = {};
 
 const isLocaleSupported = locale => !!supportedLocales[locale];
-const resolvePluploadFileName = (locale) => {
-  return (isLocaleSupported(locale) ?
-    `${supportedLocales[locale].plupload}.js` : 'en.js')
+const resolvePluploadFileName = locale => (isLocaleSupported(locale) ?
+  `${supportedLocales[locale].plupload}.js` : 'en.js');
+const resolveCldrFolderName = locale => (isLocaleSupported(locale) ?
+  `${supportedLocales[locale].cldr}` : 'en');
+
+const deepSpread = (target, ...sources) => {
+  // it's not for general purposes but for spreading translation files
+  const spread = (innerTarget, source, key) => {
+    if (util.isObject(source)) {
+      Object.keys(source).forEach((prop) => {
+        if (util.isObject(innerTarget[prop])) {
+          spread(innerTarget[prop], source[prop], prop);
+        } else if (source[prop] !== undefined) {
+          innerTarget[prop] = source[prop];
+        }
+      });
+    } else if (key && source !== undefined
+      && !util.isObject(innerTarget[key])) {
+      innerTarget[key] = source;
+    }
+  };
+  sources.forEach(source => spread(target, source));
+  return target;
 };
 
-var locUtil = {
+const locUtil = {
 
   /**
    * Gets the supported locale that most closely matches the requested
    * locale
    * @param locale The locale desired
    */
-  getEffectiveLocale: function (locale) {
+  getEffectiveLocale(locale) {
     // normalize the locale code
-    locale = (locale || DEFAULT_LOCALE).toLowerCase();
-    if (locale === 'test') {
+    let effectiveLocale = (locale || DEFAULT_LOCALE).toLowerCase();
+    if (effectiveLocale === 'test') {
       // special case for the test locale.  Use 'en'
       return DEFAULT_LOCALE;
     }
-    
-    if (!isLocaleSupported(locale)) {
+
+    if (!isLocaleSupported(effectiveLocale)) {
       // no exact match, try the language code
-      locale = locale.split('-')[0];
-      return isLocaleSupported(locale) ? locale : DEFAULT_LOCALE;
+      [effectiveLocale] = effectiveLocale.split('-');
+      return isLocaleSupported(effectiveLocale) ?
+        effectiveLocale : DEFAULT_LOCALE;
     }
 
-    return locale;
+    return effectiveLocale;
   },
 
 
@@ -125,102 +147,99 @@ var locUtil = {
    * @param locale New locale ('en-US', 'es-ES', etc...)
    * @param translations The URL/JSON string of the translations
    * @param dateTimeFormat The date/time format for the locale
-   * @param [callback] Called when the locale is loaded
    */
-  setCurrentLocale: function (
-    locale, translations, dateTimeFormat, callback) {
-    callback = callback || function () {};
+  setCurrentLocale(locale, translations, dateTimeFormat) {
     dateTimeFmt = dateTimeFormat;
 
     const warningLocaleNotFound = 'There is no corresponding translation' +
-     ` for locale [${locale}]! Falling back to the default translation.`;
+     ` for locale "${locale}"!` +
+     ` Falling back to the default locale "${DEFAULT_LOCALE}".`;
 
-    const warningFileNotFound = 'Can not fetch the translation file from' +
-     ` ${translations}! Falling back to the default translation.`;
+    const warningCLDRNotFound = 'Failed to load CLDR data for locale' +
+     ` "${locale}"! Falling back to the default translation.`;
 
-    var effectiveLocale = this.getEffectiveLocale(locale);
+    const effectiveLocale = this.getEffectiveLocale(locale);
     isTestLocale(locale === 'TEST');
 
     // Load the plupload i18n script now.  Don't need to wait on this;
     // plupload will handle it.
-    // Append the timestamp on the end to force re-exectuion of the script.
-    $.getScript(
-      util.getBaseUrl() + '/localization/plupload/i18n/' +
-      resolvePluploadFileName(effectiveLocale) + '?timestamp=' + Date.now()
-    );
+    // Append the timestamp on the end to force re-execution of the script.
+    const baseUrl = util.getBaseUrl();
+    const name = resolvePluploadFileName(effectiveLocale);
+    const now = Date.now();
+    $.getScript(`${PLUPLOAD_I18N_URL}${name}?timestamp=${now}`);
 
     if (loadedLocales[effectiveLocale]) {
       // this locale has already been loaded
       currentLocale(loadedLocales[effectiveLocale]);
-      return callback();
     } else {
-      let deferred = null;
-      if (typeof translations !== 'string') {
-        deferred = $.Deferred();
+      let deferred = $.Deferred();
+      if (translations && util.isObject(translations)) {
         deferred.resolve([translations]);
+      } else if (translations && typeof translations === 'string') {
+        deferred = $.getJSON(translations).then(
+          data => $.Deferred().resolve([data]),
+          () => $.Deferred().resolve([null]),
+        );
+      } else {
+        deferred.resolve([undefined]);
       }
 
       // load the necessary language files
-      var cldrBaseUrl = CLDR_DATA_URL + 'main/' + effectiveLocale + '/';
+      const folderName = resolveCldrFolderName(effectiveLocale);
+      const cldrBaseUrl = `${CLDR_DATA_URL}main/${folderName}/`;
 
-      var deferreds = [
-        $.getJSON(cldrBaseUrl + 'ca-gregorian.json'),
-        $.getJSON(cldrBaseUrl + 'numbers.json'),
-        $.getJSON(cldrBaseUrl + 'timeZoneNames.json'),
-        deferred || $.getJSON(translations ||
-          LOCALIZATION_MESSAGES_URL + effectiveLocale + '.json')
+      const deferreds = [
+        deferred,
+        $.getJSON(`${LOCALIZATION_MESSAGES_URL}${effectiveLocale}.json`).then(
+          data => $.Deferred().resolve([data]),
+          () => $.Deferred().resolve([null]),
+        ),
+        $.getJSON(`${cldrBaseUrl}ca-gregorian.json`),
+        $.getJSON(`${cldrBaseUrl}numbers.json`),
+        $.getJSON(`${cldrBaseUrl}timeZoneNames.json`),
       ];
 
-      if (!isSupplementalCldrLoaded) {
-        // if the supplemental data is not loaded yet, then load it now
-        deferreds.push(
-          $.getJSON(CLDR_DATA_URL + 'supplemental/likelySubtags.json'),
-          $.getJSON(CLDR_DATA_URL + 'supplemental/timeData.json'),
-          $.getJSON(CLDR_DATA_URL + 'supplemental/weekData.json')
-        );
+      $.when(...deferreds)
+        .done((translationSuiteXhr, builtinTranslationXhr, ...cldrXhrs) => {
+          globalize.load(...cldrXhrs.map(cldrXhr => cldrXhr[0]));
+          const translationSuite = translationSuiteXhr[0] || {};
+          const builtinTranslation = builtinTranslationXhr[0] || {};
 
-        // ok to mark the supplemental data as loaded even though it
-        // hasn't finished yet
-        isSupplementalCldrLoaded = true;
-      }
+          const translation = deepSpread(
+            {}, builtinTranslation, translationSuite,
+          );
 
-      $.when.apply($, deferreds)
-        .done(
-          function (gregorianDataStatusXhr, numbersDataStatusXhr,
-                    timeZoneNamesDataStatusXhr, messagesDataStatusXhr,
-                    likelySubtagsDataStatusXhr, timeDataDataStatusXhr,
-                    weekDataDataStatusXhr) {
-            if (likelySubtagsDataStatusXhr) {
-              globalize.load(likelySubtagsDataStatusXhr[0]);
-            }
-            if (timeDataDataStatusXhr) {
-              globalize.load(timeDataDataStatusXhr[0]);
-            }
-            if (weekDataDataStatusXhr) {
-              globalize.load(weekDataDataStatusXhr[0]);
-            }
+          if (!(locale in translation)) {
+            // eslint-disable-next-line no-console
+            console.warn(warningLocaleNotFound);
+            return;
+          }
 
-            globalize.load(
-              gregorianDataStatusXhr[0], numbersDataStatusXhr[0],
-              timeZoneNamesDataStatusXhr[0]);
+          /*
+            if the original translationSuite is
+            { "zh-TW": { ...translations-for-zh-TW } }
+            after the process below, it'll become
+            { "zh-Hant": { ...translations-for-zh-TW } }
+          */
+          Object.keys(translation).forEach((key) => {
+            // if the user set `locale=fr-CA`, it'll fallback to use `locale=fr`
+            const el = this.getEffectiveLocale(key);
+            const keyCldr = supportedLocales[el].cldr;
+            translation[keyCldr] = translation[key];
+            // we need to delete the unused key, otherwise, it will cause
+            // some issues when calling globalize.loadMessages()
+            if (keyCldr !== key) delete translation[key];
+          });
 
-            const translations = messagesDataStatusXhr[0];
-
-            if (!(locale in translations)) {
-              console.warn(warningLocaleNotFound);
-              globalize.loadMessages(messages);
-            } else {
-              globalize.loadMessages({
-                // https://github.com/globalizejs/globalize/blob/master/doc/api/message/load-messages.md#messages-inheritance
-                root: messages['en'],
-                ...translations,
-              });
-              this.updateCurrentLocaleOfKo(effectiveLocale);
-            }
-
-            return callback();
-          }.bind(this)
-        ).fail(() => console.warn(warningFileNotFound));
+          globalize.loadMessages({
+            // https://github.com/globalizejs/globalize/blob/master/doc/api/message/load-messages.md#messages-inheritance
+            root: messages.en,
+            ...translation,
+          });
+          this.updateCurrentLocaleOfKo(effectiveLocale);
+        // eslint-disable-next-line no-console
+        }).fail(() => console.warn(warningCLDRNotFound));
     }
   },
 
@@ -229,14 +248,17 @@ var locUtil = {
    *
    * @param {Object} effectiveLocale
    */
-  updateCurrentLocaleOfKo: function (effectiveLocale) {
-    var globalizeLocaleObject = globalize(effectiveLocale);
-
-    loadedLocales[effectiveLocale] = {
+  updateCurrentLocaleOfKo(effectiveLocale, isDefalutLocale = false) {
+    const cldrLocale = supportedLocales[effectiveLocale].cldr;
+    const globalizeLocaleObject = globalize(cldrLocale);
+    const localeSettings = {
       globalize: globalizeLocaleObject,
-      locale: effectiveLocale
+      locale: effectiveLocale,
     };
-    currentLocale(loadedLocales[effectiveLocale]);
+    if (!isDefalutLocale) {
+      loadedLocales[effectiveLocale] = localeSettings;
+    }
+    currentLocale(localeSettings);
   },
 
   /**
@@ -244,18 +266,18 @@ var locUtil = {
    * If you want to load different locale data.
    * Modify the loading path in `define` function on the beginning of this file.
    */
-  loadDefaultLocaleData: function () {
-    globalize.load(likelySubtags, timeData, weekData, caGregorian, numbers,
-      timeZoneNames, plurals);
+  loadDefaultLocaleData() {
+    globalize.load(likelySubtags, numberingSystems, timeData, weekData,
+      caGregorian, numbers, timeZoneNames, plurals);
     globalize.loadMessages(messages);
 
-    this.updateCurrentLocaleOfKo(DEFAULT_LOCALE);
+    this.updateCurrentLocaleOfKo(DEFAULT_LOCALE, true);
   },
 
   /**
    * Returns the currently selected locale
    */
-  getCurrentLocale: function () {
+  getCurrentLocale() {
     return currentLocale();
   },
 
@@ -267,11 +289,12 @@ var locUtil = {
    * tokens
    * @returns {string} Translated text
    */
-  formatMessage: function (message, variables) {
+  formatMessage(message, variables) {
     if (this.getCurrentLocale()) {
       try {
         return this.getCurrentLocale().globalize.formatMessage(
-          message, variables);
+          message, variables,
+        );
       } catch (e) {
         if (isTestLocale()) {
           // if this is the test locale, and no translation was found,
@@ -290,12 +313,13 @@ var locUtil = {
    * Formats the given date for the current locale
    * @param date Date to format
    */
-  formatDateTime: function (date) {
+  formatDateTime(date) {
     const format = dateTimeFmt || DEFAULT_DATETIME_FORMAT;
     // https://github.com/globalizejs/globalize#dateformatter-options-
 
     return this.getCurrentLocale().globalize.dateFormatter(
-      {skeleton: format})(date);
+      { skeleton: format },
+    )(date);
   },
 
 
@@ -303,11 +327,10 @@ var locUtil = {
    * Formats the given number for the current locale
    * @param n Number to format
    */
-  formatNumber: function (n) {
-    if ((typeof n) === 'number')
-      return this.getCurrentLocale().globalize.formatNumber(n);
-    else
-      return n
+  formatNumber(n) {
+    return typeof n === 'number' ?
+      this.getCurrentLocale().globalize.formatNumber(n) :
+      n;
   },
 
 
@@ -325,11 +348,11 @@ var locUtil = {
    * the test locale is disabled or if the propertyName can't be changed
    * safely.
    */
-  wrapTestLocale: function (translatedText, propertyName) {
-    var textWrapper = '';
+  wrapTestLocale(translatedText, propertyName) {
+    let textWrapper = '';
 
     // some properties, such as urls, won't work with the text wrapper.
-    var safeProps = ['title', 'placeholder', 'html', 'value'];
+    const safeProps = ['title', 'placeholder', 'html', 'value'];
 
     if (isTestLocale()) {
       if (propertyName == null || safeProps.indexOf(propertyName) >= 0) {
@@ -349,20 +372,21 @@ var locUtil = {
    * @param [propertyName] Optional. The HTML property being localized
    * @returns {string} Translated and wrapped text
    */
-  formatAndWrapMessage: function (message, variables, propertyName) {
+  formatAndWrapMessage(message, variables, propertyName) {
     // format the variables if necessary
-    var formattedVariables = {};
+    const formattedVariables = {};
 
     if (variables) {
-      var self = this;
-      Object.keys(variables).forEach(function (key) {
-        var value = variables[key];
+      Object.keys(variables).forEach((key) => {
+        const value = variables[key];
         if ((typeof value) === 'number') {
-          formattedVariables[key] = self.formatAndWrapNumber(
-            value, propertyName);
+          formattedVariables[key] = this.formatAndWrapNumber(
+            value, propertyName,
+          );
         } else if (value instanceof Date) {
-          formattedVariables[key] = self.formatAndWrapDateTime(
-            value, propertyName);
+          formattedVariables[key] = this.formatAndWrapDateTime(
+            value, propertyName,
+          );
         } else {
           formattedVariables[key] = value;
         }
@@ -370,7 +394,8 @@ var locUtil = {
     }
 
     return this.wrapTestLocale(
-      this.formatMessage(message, formattedVariables), propertyName);
+      this.formatMessage(message, formattedVariables), propertyName,
+    );
   },
 
 
@@ -381,7 +406,7 @@ var locUtil = {
    * @param [propertyName] Optional. The HTML property being localized
    * @returns {*|string}
    */
-  formatAndWrapDateTime: function (d, propertyName) {
+  formatAndWrapDateTime(d, propertyName) {
     return this.wrapTestLocale(this.formatDateTime(d), propertyName);
   },
 
@@ -392,9 +417,9 @@ var locUtil = {
    * @param n The number to format
    * @param [propertyName] Optional. The HTML property being localized
    */
-  formatAndWrapNumber: function (n, propertyName) {
+  formatAndWrapNumber(n, propertyName) {
     return this.wrapTestLocale(this.formatNumber(n), propertyName);
-  }
+  },
 };
 
 
@@ -415,14 +440,15 @@ var locUtil = {
  *   <input (data-bind='translate: {value: { message: "somekey", variables: { var1: somevariable }}}'>
  */
 ko.bindingHandlers.translate = {
-  'update': function (element, valueAccessor) {
-    var values = ko.utils.unwrapObservable(valueAccessor());
+  update(element, valueAccessor) {
+    const values = ko.utils.unwrapObservable(valueAccessor());
 
     if (values && typeof values === 'object') {
-      Object.keys(values).forEach(function (property) {
-        var token = values[property] || {};
-        var translatedText = locUtil.formatAndWrapMessage(
-          token.message, token.variables, property);
+      Object.keys(values).forEach((property) => {
+        const token = values[property] || {};
+        const translatedText = locUtil.formatAndWrapMessage(
+          token.message, token.variables, property,
+        );
 
         if (property === 'html') {
           $(element).html(translatedText);
@@ -434,7 +460,7 @@ ko.bindingHandlers.translate = {
       // default to html property
       $(element).html(locUtil.formatAndWrapMessage(values));
     }
-  }
+  },
 };
 
 
@@ -445,13 +471,14 @@ ko.bindingHandlers.translate = {
  * <span data-bind='formatDate: created'>
  */
 ko.bindingHandlers.formatDate = {
-  'update': function (element, valueAccessor) {
-    var dateString = ko.utils.unwrapObservable(valueAccessor());
-    var localizedDateString = locUtil.formatAndWrapDateTime(
-      new Date(dateString.substring(0, 19)));
+  update(element, valueAccessor) {
+    const dateString = ko.utils.unwrapObservable(valueAccessor());
+    const localizedDateString = locUtil.formatAndWrapDateTime(
+      new Date(dateString.substring(0, 19)),
+    );
 
     $(element).html(localizedDateString);
-  }
+  },
 };
 
 export default locUtil;

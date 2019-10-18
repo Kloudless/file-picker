@@ -25,3 +25,6 @@ Contribution, under the MIT License.
 * Jackson Broussard [@jbrsrd](https://github.com/jbrsrd)
 * Katie Low [@ktmellow](https://github.com/ktmellow)
 * Artem Pisarev [@artemas](https://github.com/artemas)
+* Phil Maclachlan [@flikstrr](https://github.com/flikstrr)
+* Anovysh Itechart [@anovysh-itechart](https://github.com/anovysh-itechart)
+* Tim Sewell [@timssewell](https://github.com/timssewell)

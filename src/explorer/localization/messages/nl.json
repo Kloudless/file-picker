@@ -1,0 +1,49 @@
+{
+  "nl": {
+    "global": {
+      "select": "kiezen",
+      "cancel": "annuleren",
+      "save": "Opslaan",
+      "upload": "Uploaden"
+    },
+    "files": {
+      "name": "Naam",
+      "size": "Grootte",
+      "updated": "bijgewerkt",
+      "nofilesfound": "Geen bestanden gevonden",
+      "untitledfolder": "Map zonder titel",
+      "search": "Zoeken",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Als u dit account verwijdert, kunt u het niet meer verkennen. Weet je het zeker?",
+      "connectedaccounts": "Verbonden accounts",
+      "logout": "uitloggen",
+      "manage": "Beheer hier uw cloudopslag-accounts.",
+      "chooseaccount": "Welkom! Kies een service om verbinding te maken",
+      "connectmore": "Verbind meer!",
+      "upload": "Uploaden",
+      "uploadfromcomputer": "Upload vanaf uw computer"
+    },
+    "selector": {
+      "mycomputer": "Mijn computer",
+      "accounts": "accounts"
+    },
+    "dropzone": {
+      "message": "Versleep hier bestanden, of klik om de Verkenner te openen"
+    },
+    "computer": {
+      "nosupport": "Uw browser ondersteunt geen Flash-, Silverlight- of HTML5-ondersteuning."
+    },
+    "addconfirm": {
+      "confirm": "Bevestig de accountverbinding.",
+      "clickbelow": "Klik hieronder om verbinding te maken met uw {serviceName} account",
+      "connectaccount": "Verbind {serviceName} account"
+    }
+  }
+}

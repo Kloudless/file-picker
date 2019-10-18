@@ -335,7 +335,7 @@ File Explorer JavaScript on the page.
   `ar`, `az`, `bs`, `cs`, `cy`, `da`, `de`, `el`, `en`, `es`, `et`, `fa`,
   `fi`, `fr`, `he`, `hr`, `hu`, `hy`, `id`, `it`, `ja`, `ka`, `kk`, `km`,
   `ko`, `lt`, `lv`, `mn`, `ms`, `nl`, `pl`, `pt`, `ro`, `ru`, `sk`, `sq`,
-  `sr`, `sr`, `sv`, `th`, `tr`, `uk`, `zh`
+  `sr`, `sr`, `sv`, `th`, `tr`, `uk`, `zh-CN`, `zh-TW`
   
   The locale is used to identify the translation data to retrieve from either
   the data provided in the `translations` option below or from the out-of-the-box
