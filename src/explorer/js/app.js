@@ -1051,16 +1051,21 @@ FileExplorer.prototype.switchViewTo = function (to) {
 
   // Initialise infinite scroll
   if (to === 'files') {
-    $('#fs-scroller').off('scrollstop');
-    $('#fs-scroller').on('scrollstop', function () {
-      const scrolled = $(this).scrollTop();
-      const tableHeight = $(this).outerHeight();
-      const contentHeight = $('#fs-view-body').outerHeight();
+    const $fsViewBody = $('#fs-view-body');
+    $fsViewBody.off('scrollstop');
+    $fsViewBody.on('scrollstop', () => {
+      const scrolled = $fsViewBody.scrollTop();
+      const tableHeight = $fsViewBody.outerHeight();
+      const contentHeight = $fsViewBody[0].scrollHeight;
 
       // load more
-      if ((scrolled + tableHeight) >= contentHeight) {
+      const fileSystem = explorer.manager.active().filesystem();
+      // we can consider tableHeight as a page of a book
+      // people would want to fetch some more pages (if available) to read
+      // before they reach and finish the last page they currently possess
+      if (fileSystem.page && (scrolled + tableHeight * 2) >= contentHeight) {
         explorer.view_model.loading(true);
-        explorer.manager.active().filesystem().getPage(() => {
+        fileSystem.getPage(() => {
           explorer.view_model.loading(false);
         });
       }
