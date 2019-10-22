@@ -71,7 +71,7 @@
       select.navigator(data-bind="options: breadcrumbs, value:  breadcrumbs().slice().reverse()[0], event:{ change: navUp}")
     // /ko
     //- Current directory view
-    table#fs-scroller(data-bind='with: files').clickable
+    table(data-bind='with: files').clickable
       // ko if: $root.isDesktop
       thead
         tr
