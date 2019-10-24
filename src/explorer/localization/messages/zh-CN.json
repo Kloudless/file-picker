@@ -1,0 +1,49 @@
+{
+  "zh": {
+    "global": {
+      "select": "选择",
+      "cancel": "取消",
+      "save": "保存",
+      "upload": "上传"
+    },
+    "files": {
+      "name": "名称",
+      "size": "尺寸",
+      "updated": "更新",
+      "noFilesFound": "找不到文件",
+      "untitledFolder": "无标题文件夹",
+      "search": "搜索",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "如果您删除此帐户，则无法再浏览该帐户。 你确定吗？",
+      "connectedAccounts": "关联帐户",
+      "logout": "登出",
+      "manage": "在此管理您的云存储帐户。",
+      "chooseAccount": "欢迎！ 请选择要连接的服务",
+      "connectMore": "连接更多！",
+      "upload": "连接更多！",
+      "uploadFromComputer": "从您的计算机上传"
+    },
+    "selector": {
+      "myComputer": "我的电脑",
+      "accounts": "帐号"
+    },
+    "dropzone": {
+      "message": "在此处拖放文件，或单击以打开文件资源管理器"
+    },
+    "computer": {
+      "noSupport": "您的浏览器没有Flash，Silverlight或HTML5支持。"
+    },
+    "addConfirm": {
+      "confirm": "确认帐户连接。",
+      "clickBelow": "点击下方即可关联您的{serviceName}帐户",
+      "connectAccount": "连接{serviceName}帐户"
+    }
+  }
+}

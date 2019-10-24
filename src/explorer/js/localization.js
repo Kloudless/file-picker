@@ -60,8 +60,8 @@ const supportedLocales = {
   tr: { cldr: 'tr', plupload: 'tr' },
   uk: { cldr: 'uk', plupload: 'uk_UA' },
   zh: { cldr: 'zh', plupload: 'zh_CN' },
-  'zh-cn': { cldr: 'zh-Hans', plupload: 'zh_CN' },
-  'zh-tw': { cldr: 'zh-Hant', plupload: 'zh_TW' },
+  'zh-CN': { cldr: 'zh-Hans', plupload: 'zh_CN' },
+  'zh-TW': { cldr: 'zh-Hant', plupload: 'zh_TW' },
 };
 
 let dateTimeFmt = '';
@@ -135,6 +135,9 @@ const locUtil = {
    * @param locale The locale desired
    */
   getEffectiveLocale(locale) {
+    if (isLocaleSupported(locale)) {
+      return locale;
+    }
     // normalize the locale code
     let effectiveLocale = (locale || DEFAULT_LOCALE).toLowerCase();
     if (effectiveLocale === 'test') {
