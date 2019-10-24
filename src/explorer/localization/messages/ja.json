@@ -10,8 +10,8 @@
       "name": "名",
       "size": "サイズ",
       "updated": "更新しました",
-      "nofilesfound": "ファイルが見つかりません",
-      "untitledfolder": "無題のフォルダ",
+      "noFilesFound": "ファイルが見つかりません",
+      "untitledFolder": "無題のフォルダ",
       "search": "サーチ",
       "sizes": {
         "b": "{fileSize} B",
@@ -22,28 +22,28 @@
     },
     "accounts": {
       "confirmRemove": "このアカウントを削除すると、それを探索することはできなくなります。 本気ですか？",
-      "connectedaccounts": "接続アカウント",
+      "connectedAccounts": "接続アカウント",
       "logout": "ログアウト",
       "manage": "ここでクラウドストレージアカウントを管理します。",
-      "chooseaccount": "ようこそ！ 接続するサービスを選択してください",
-      "connectmore": "もっとつなげよう！",
+      "chooseAccount": "ようこそ！ 接続するサービスを選択してください",
+      "connectMore": "もっとつなげよう！",
       "upload": "アップロードする",
-      "uploadfromcomputer": "パソコンからアップロードする"
+      "uploadFromComputer": "パソコンからアップロードする"
     },
     "selector": {
-      "mycomputer": "私のコンピューター",
+      "myComputer": "私のコンピューター",
       "accounts": "アカウント"
     },
     "dropzone": {
       "message": "ここにファイルをドラッグアンドドロップするか、クリックしてファイルエクスプローラを開きます。"
     },
     "computer": {
-      "nosupport": "お使いのブラウザはFlash、Silverlight、またはHTML5をサポートしていません。"
+      "noSupport": "お使いのブラウザはFlash、Silverlight、またはHTML5をサポートしていません。"
     },
-    "addconfirm": {
+    "addConfirm": {
       "confirm": "アカウントの接続を確認してください。",
-      "clickbelow": "下をクリックして{serviceName}アカウントに接続してください",
-      "connectaccount": "接続{serviceName}アカウント"
+      "clickBelow": "下をクリックして{serviceName}アカウントに接続してください",
+      "connectAccount": "接続{serviceName}アカウント"
     }
   }
 }

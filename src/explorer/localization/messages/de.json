@@ -10,8 +10,8 @@
       "name": "Name",
       "size": "Größe",
       "updated": "Aktualisierte",
-      "nofilesfound": "Keine Dateien gefunden",
-      "untitledfolder": "Unbenannter Ordner",
+      "noFilesFound": "Keine Dateien gefunden",
+      "untitledFolder": "Unbenannter Ordner",
       "search": "Suche",
       "sizes": {
         "b": "{fileSize} B",
@@ -22,28 +22,28 @@
     },
     "accounts": {
       "confirmRemove": "Wenn Sie dieses Konto entfernen, können Sie es nicht mehr durchsuchen. Bist du sicher?",
-      "connectedaccounts": "Verbundene Konten",
+      "connectedAccounts": "Verbundene Konten",
       "logout": "Ausloggen",
       "manage": "Verwalten Sie hier Ihre Cloud-Speicherkonten.",
-      "chooseaccount": "Herzlich willkommen! Bitte wählen Sie einen Dienst aus, um eine Verbindung herzustellen",
-      "connectmore": "Verbinde mehr!",
+      "chooseAccount": "Herzlich willkommen! Bitte wählen Sie einen Dienst aus, um eine Verbindung herzustellen",
+      "connectMore": "Verbinde mehr!",
       "upload": "Hochladen",
-      "uploadfromcomputer": "Hochladen von Ihrem Computer"
+      "uploadFromComputer": "Hochladen von Ihrem Computer"
     },
     "selector": {
-      "mycomputer": "Mein Computer",
+      "myComputer": "Mein Computer",
       "accounts": "Konten"
     },
     "dropzone": {
       "message": "Ziehen Sie Dateien hierher, und legen Sie sie dort ab, oder klicken Sie darauf, um den Datei-Explorer zu öffnen"
     },
     "computer": {
-      "nosupport": "Ihr Browser unterstützt Flash, Silverlight oder HTML5 nicht."
+      "noSupport": "Ihr Browser unterstützt Flash, Silverlight oder HTML5 nicht."
     },
-    "addconfirm": {
+    "addConfirm": {
       "confirm": "Bestätigen Sie die Kontoverbindung.",
-      "clickbelow": "Klicken Sie unten, um eine Verbindung zu Ihrem {serviceName} Konto herzustellen",
-      "connectaccount": "{ServiceName} Konto verbinden"
+      "clickBelow": "Klicken Sie unten, um eine Verbindung zu Ihrem {serviceName} Konto herzustellen",
+      "connectAccount": "{ServiceName} Konto verbinden"
     }
   }
 }

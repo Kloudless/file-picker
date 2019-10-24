@@ -97,7 +97,7 @@ const FileExplorer = function () {
     delete_accounts_on_logout: config.delete_accounts_on_logout,
 
     // The current view: alternates between
-    // 'files', 'accounts', 'computer', 'addconfirm', and 'dropzone'
+    // 'files', 'accounts', 'computer', 'addConfirm', and 'dropzone'
     current: ko.observable(startView),
     isDesktop: !util.isMobile,
 
@@ -699,11 +699,11 @@ const FileExplorer = function () {
         getOAuthParams.then(({ oauthParams }) => {
           this.manager.addAccount(service, oauthParams, {
             on_confirm_with_iexd: () => {
-              this.view_model.addconfirm.serviceName = serviceData.name;
-              this.view_model.addconfirm.serviceLogo = serviceData.logo;
+              this.view_model.addConfirm.serviceName = serviceData.name;
+              this.view_model.addConfirm.serviceLogo = serviceData.logo;
 
               // eslint-disable-next-line no-use-before-define
-              router.setLocation('#/addconfirm');
+              router.setLocation('#/addConfirm');
 
               // position the iframe on the modal;
               //
@@ -791,8 +791,8 @@ const FileExplorer = function () {
       account_management: config.account_management,
     },
 
-    // addconfirm view model
-    addconfirm: {},
+    // addConfirm view model
+    addConfirm: {},
 
     // Files view model.
     files: {
@@ -1023,7 +1023,7 @@ FileExplorer.prototype.switchViewTo = function (to) {
     }
   }
 
-  if (to !== 'addconfirm') {
+  if (to !== 'addConfirm') {
     $(auth.iframe).hide();
   }
 
@@ -1561,8 +1561,8 @@ const router = sammy(function () {
     explorer.switchViewTo('dropzone');
   });
   // Confirm add account button
-  this.get('#/addconfirm', () => {
-    explorer.switchViewTo('addconfirm');
+  this.get('#/addConfirm', () => {
+    explorer.switchViewTo('addConfirm');
   });
 
   /*

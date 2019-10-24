@@ -10,8 +10,8 @@
       "name": "Naam",
       "size": "Grootte",
       "updated": "bijgewerkt",
-      "nofilesfound": "Geen bestanden gevonden",
-      "untitledfolder": "Map zonder titel",
+      "noFilesFound": "Geen bestanden gevonden",
+      "untitledFolder": "Map zonder titel",
       "search": "Zoeken",
       "sizes": {
         "b": "{fileSize} B",
@@ -22,28 +22,28 @@
     },
     "accounts": {
       "confirmRemove": "Als u dit account verwijdert, kunt u het niet meer verkennen. Weet je het zeker?",
-      "connectedaccounts": "Verbonden accounts",
+      "connectedAccounts": "Verbonden accounts",
       "logout": "uitloggen",
       "manage": "Beheer hier uw cloudopslag-accounts.",
-      "chooseaccount": "Welkom! Kies een service om verbinding te maken",
-      "connectmore": "Verbind meer!",
+      "chooseAccount": "Welkom! Kies een service om verbinding te maken",
+      "connectMore": "Verbind meer!",
       "upload": "Uploaden",
-      "uploadfromcomputer": "Upload vanaf uw computer"
+      "uploadFromComputer": "Upload vanaf uw computer"
     },
     "selector": {
-      "mycomputer": "Mijn computer",
+      "myComputer": "Mijn computer",
       "accounts": "accounts"
     },
     "dropzone": {
       "message": "Versleep hier bestanden, of klik om de Verkenner te openen"
     },
     "computer": {
-      "nosupport": "Uw browser ondersteunt geen Flash-, Silverlight- of HTML5-ondersteuning."
+      "noSupport": "Uw browser ondersteunt geen Flash-, Silverlight- of HTML5-ondersteuning."
     },
-    "addconfirm": {
+    "addConfirm": {
       "confirm": "Bevestig de accountverbinding.",
-      "clickbelow": "Klik hieronder om verbinding te maken met uw {serviceName} account",
-      "connectaccount": "Verbind {serviceName} account"
+      "clickBelow": "Klik hieronder om verbinding te maken met uw {serviceName} account",
+      "connectAccount": "Verbind {serviceName} account"
     }
   }
 }

@@ -268,7 +268,7 @@ $.get(
       // eslint-disable-next-line no-use-before-define
       const serviceCategory = getServiceCategory(serviceDatum);
       let localeName = localization.formatAndWrapMessage(
-        `servicenames/${serviceDatum.name}`,
+        `serviceNames/${serviceDatum.name}`,
       );
       if (localeName.indexOf('/') > -1) {
         localeName = serviceDatum.friendly_name;

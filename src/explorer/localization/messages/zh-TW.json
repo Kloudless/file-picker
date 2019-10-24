@@ -10,8 +10,8 @@
       "name": "名稱",
       "size": "尺寸",
       "updated": "更新",
-      "nofilesfound": "找不到文件",
-      "untitledfolder": "無標題文件夾",
+      "noFilesFound": "找不到文件",
+      "untitledFolder": "無標題文件夾",
       "search": "搜索",
       "sizes": {
         "b": "{fileSize} B",
@@ -22,28 +22,28 @@
     },
     "accounts": {
       "confirmRemove": "如果您刪除此帳戶，則無法再瀏覽該帳戶。 你確定嗎？",
-      "connectedaccounts": "關聯帳戶",
+      "connectedAccounts": "關聯帳戶",
       "logout": "登出",
       "manage": "在此管理您的雲存儲帳戶。",
-      "chooseaccount": "歡迎！ 請選擇要連接的服務",
-      "connectmore": "連接更多！",
+      "chooseAccount": "歡迎！ 請選擇要連接的服務",
+      "connectMore": "連接更多！",
       "upload": "上傳",
-      "uploadfromcomputer": "從您的計算機上傳"
+      "uploadFromComputer": "從您的計算機上傳"
     },
     "selector": {
-      "mycomputer": "我的電腦",
+      "myComputer": "我的電腦",
       "accounts": "帳號"
     },
     "dropzone": {
       "message": "在此處拖放文件，或單擊以打開文件資源管理器"
     },
     "computer": {
-      "nosupport": "您的瀏覽器沒有Flash，Silverlight或HTML5支持。"
+      "noSupport": "您的瀏覽器沒有Flash，Silverlight或HTML5支持。"
     },
-    "addconfirm": {
+    "addConfirm": {
       "confirm": "確認帳戶連接。",
-      "clickbelow": "點擊下方即可關聯您的{serviceName}帳戶",
-      "connectaccount": "連接{serviceName}帳戶"
+      "clickBelow": "點擊下方即可關聯您的{serviceName}帳戶",
+      "connectAccount": "連接{serviceName}帳戶"
     }
   }
 }

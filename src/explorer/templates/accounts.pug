@@ -10,14 +10,14 @@
       .nobackcontain(data-bind='if: accounts.all().length < 1')
         div.nobackbtn
         img.klogo(data-bind='attr: {src: logo_url() || $root.static("/ext-assets/kloudless32x33.png")}')
-        span(data-bind='translate: "accounts/chooseaccount"') Welcome! Please choose a service to connect.
+        span(data-bind='translate: "accounts/chooseAccount"') Welcome! Please choose a service to connect.
     a.closeexplorer(data-bind='click: cancel')
 
 
   .containall
     .connectedaccounts(data-bind='with: accounts')
       div.header(data-bind='if: all().length > 0')
-        .intro-message(data-bind='translate: "accounts/connectedaccounts"') Connected accounts
+        .intro-message(data-bind='translate: "accounts/connectedAccounts"') Connected accounts
         // ko if: $root.enable_logout
         .logout-message(data-bind='click: function (){logout($root.delete_accounts_on_logout())}, translate: "accounts/logout"') logout
         // /ko
@@ -51,12 +51,12 @@
                   li.account
                     div
                       img.servicelogo(data-bind='attr: {src: $root.static("/webapp/sources/computer.png")}')
-                      a(data-bind='click: $root.setLocation.bind($data, "#/computer"), text: "Upload from your computer", translate: "accounts/uploadfromcomputer"')
+                      a(data-bind='click: $root.setLocation.bind($data, "#/computer"), text: "Upload from your computer", translate: "accounts/uploadFromComputer"')
             // /ko
 
       // ko if: Object.values($parent.services()).filter(function (service) {return service.visible}).length > 0
       .row(data-bind='if: all().length > 0')
-        div.intro-message.more(data-bind='translate: "accounts/connectmore"') Connect more!
+        div.intro-message.more(data-bind='translate: "accounts/connectMore"') Connect more!
       // /ko
 
     //- Add a new account.
