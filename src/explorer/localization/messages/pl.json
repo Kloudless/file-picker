@@ -10,8 +10,8 @@
       "name": "Imię",
       "size": "Rozmiar",
       "updated": "Zaktualizowano",
-      "nofilesfound": "Nie znaleziono plików",
-      "untitledfolder": "Folder bez tytułu",
+      "noFilesFound": "Nie znaleziono plików",
+      "untitledFolder": "Folder bez tytułu",
       "search": "Szukaj",
       "sizes": {
         "b": "{fileSize} B",
@@ -22,28 +22,28 @@
     },
     "accounts": {
       "confirmRemove": "Jeśli usuniesz to konto, nie będziesz już mógł go poznać. Jesteś pewny?",
-      "connectedaccounts": "Połączone konta",
+      "connectedAccounts": "Połączone konta",
       "logout": "Wyloguj",
       "manage": "Zarządzaj swoimi kontami przechowywania w chmurze tutaj.",
-      "chooseaccount": "Witamy! Wybierz usługę do połączenia",
-      "connectmore": "Połącz więcej!",
+      "chooseAccount": "Witamy! Wybierz usługę do połączenia",
+      "connectMore": "Połącz więcej!",
       "upload": "Przekazać plik",
-      "uploadfromcomputer": "Prześlij z komputera"
+      "uploadFromComputer": "Prześlij z komputera"
     },
     "selector": {
-      "mycomputer": "Mój komputer",
+      "myComputer": "Mój komputer",
       "accounts": "Konta"
     },
     "dropzone": {
       "message": "Przeciągnij i upuść pliki tutaj lub kliknij, aby otworzyć Eksplorator plików"
     },
     "computer": {
-      "nosupport": "Twoja przeglądarka nie obsługuje Flash, Silverlight ani HTML5."
+      "noSupport": "Twoja przeglądarka nie obsługuje Flash, Silverlight ani HTML5."
     },
-    "addconfirm": {
+    "addConfirm": {
       "confirm": "Potwierdź połączenie z kontem.",
-      "clickbelow": "Kliknij poniżej, aby połączyć swoje konto {serviceName}",
-      "connectaccount": "Połącz konto {serviceName}"
+      "clickBelow": "Kliknij poniżej, aby połączyć swoje konto {serviceName}",
+      "connectAccount": "Połącz konto {serviceName}"
     }
   }
 }

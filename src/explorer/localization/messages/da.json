@@ -10,8 +10,8 @@
       "name": "Navn",
       "size": "Størrelse",
       "updated": "Opdateret",
-      "nofilesfound": "Ingen filer fundet",
-      "untitledfolder": "Untitled Folder",
+      "noFilesFound": "Ingen filer fundet",
+      "untitledFolder": "Untitled Folder",
       "search": "Søg",
       "sizes": {
         "b": "{fileSize} B",
@@ -22,28 +22,28 @@
     },
     "accounts": {
       "confirmRemove": "Hvis du fjerner denne konto, vil du ikke længere kunne udforske den. Er du sikker?",
-      "connectedaccounts": "Tilknyttede konti",
+      "connectedAccounts": "Tilknyttede konti",
       "logout": "Log ud",
       "manage": "Administrer dine Cloud Storage-konti her.",
-      "chooseaccount": "Velkommen! Vælg venligst en tjeneste for at oprette forbindelse",
-      "connectmore": "Tilslut mere!",
+      "chooseAccount": "Velkommen! Vælg venligst en tjeneste for at oprette forbindelse",
+      "connectMore": "Tilslut mere!",
       "upload": "Upload",
-      "uploadfromcomputer": "Upload fra din computer"
+      "uploadFromComputer": "Upload fra din computer"
     },
     "selector": {
-      "mycomputer": "Min computer",
+      "myComputer": "Min computer",
       "accounts": "Konti"
     },
     "dropzone": {
       "message": "Træk og slip filer her, eller klik for at åbne Filoversigten"
     },
     "computer": {
-      "nosupport": "Din browser har ikke Flash, Silverlight eller HTML5 support."
+      "noSupport": "Din browser har ikke Flash, Silverlight eller HTML5 support."
     },
-    "addconfirm": {
+    "addConfirm": {
       "confirm": "Bekræft kontoforbindelse.",
-      "clickbelow": "Klik nedenfor for at forbinde din {serviceName} konto",
-      "connectaccount": "Tilslut {serviceName} Konto"
+      "clickBelow": "Klik nedenfor for at forbinde din {serviceName} konto",
+      "connectAccount": "Tilslut {serviceName} Konto"
     }
   }
 }

@@ -10,8 +10,8 @@
       "name": "namn",
       "size": "Storlek",
       "updated": "Uppdaterad",
-      "nofilesfound": "Inga filer funna",
-      "untitledfolder": "Untitled Folder",
+      "noFilesFound": "Inga filer funna",
+      "untitledFolder": "Untitled Folder",
       "search": "Sök",
       "sizes": {
         "b": "{fileSize} B",
@@ -22,28 +22,28 @@
     },
     "accounts": {
       "confirmRemove": "Om du tar bort det här kontot kan du inte längre utforska det. Är du säker?",
-      "connectedaccounts": "Anslutna konton",
+      "connectedAccounts": "Anslutna konton",
       "logout": "logga ut",
       "manage": "Hantera dina Cloud Storage-konton här.",
-      "chooseaccount": "Välkommen! Välj en tjänst för att ansluta",
-      "connectmore": "Anslut mer!",
+      "chooseAccount": "Välkommen! Välj en tjänst för att ansluta",
+      "connectMore": "Anslut mer!",
       "upload": "Ladda upp",
-      "uploadfromcomputer": "Ladda upp från din dator"
+      "uploadFromComputer": "Ladda upp från din dator"
     },
     "selector": {
-      "mycomputer": "Min dator",
+      "myComputer": "Min dator",
       "accounts": "konton"
     },
     "dropzone": {
       "message": "Dra och släpp filer här, eller klicka för att öppna File Explorer"
     },
     "computer": {
-      "nosupport": "Din webbläsare har inte stöd för Flash, Silverlight eller HTML5."
+      "noSupport": "Din webbläsare har inte stöd för Flash, Silverlight eller HTML5."
     },
-    "addconfirm": {
+    "addConfirm": {
       "confirm": "Bekräfta kontoanslutning.",
-      "clickbelow": "Klicka nedan för att ansluta ditt {serviceName} -konto",
-      "connectaccount": "Anslut {serviceName} konto"
+      "clickBelow": "Klicka nedan för att ansluta ditt {serviceName} -konto",
+      "connectAccount": "Anslut {serviceName} konto"
     }
   }
 }

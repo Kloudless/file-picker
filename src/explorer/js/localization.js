@@ -60,8 +60,8 @@ const supportedLocales = {
   tr: { cldr: 'tr', plupload: 'tr' },
   uk: { cldr: 'uk', plupload: 'uk_UA' },
   zh: { cldr: 'zh', plupload: 'zh_CN' },
-  'zh-cn': { cldr: 'zh-Hans', plupload: 'zh_CN' },
-  'zh-tw': { cldr: 'zh-Hant', plupload: 'zh_TW' },
+  'zh-CN': { cldr: 'zh-Hans', plupload: 'zh_CN' },
+  'zh-TW': { cldr: 'zh-Hant', plupload: 'zh_TW' },
 };
 
 let dateTimeFmt = '';
@@ -115,6 +115,18 @@ const deepSpread = (target, ...sources) => {
   return target;
 };
 
+const getLowercaseKeyedObj = (obj, result = {}) => {
+  Object.entries(obj).forEach(([k, v]) => {
+    const key = k.toLowerCase();
+    if (util.isObject(v)) {
+      result[key] = getLowercaseKeyedObj(v);
+    } else {
+      result[key] = v;
+    }
+  })
+  return result;
+}
+
 const locUtil = {
 
   /**
@@ -123,6 +135,9 @@ const locUtil = {
    * @param locale The locale desired
    */
   getEffectiveLocale(locale) {
+    if (isLocaleSupported(locale)) {
+      return locale;
+    }
     // normalize the locale code
     let effectiveLocale = (locale || DEFAULT_LOCALE).toLowerCase();
     if (effectiveLocale === 'test') {
@@ -226,7 +241,7 @@ const locUtil = {
             // if the user set `locale=fr-CA`, it'll fallback to use `locale=fr`
             const el = this.getEffectiveLocale(key);
             const keyCldr = supportedLocales[el].cldr;
-            translation[keyCldr] = translation[key];
+            translation[keyCldr] = getLowercaseKeyedObj(translation[key]);
             // we need to delete the unused key, otherwise, it will cause
             // some issues when calling globalize.loadMessages()
             if (keyCldr !== key) delete translation[key];
@@ -234,7 +249,7 @@ const locUtil = {
 
           globalize.loadMessages({
             // https://github.com/globalizejs/globalize/blob/master/doc/api/message/load-messages.md#messages-inheritance
-            root: messages.en,
+            root: getLowercaseKeyedObj(messages.en),
             ...translation,
           });
           this.updateCurrentLocaleOfKo(effectiveLocale);
@@ -269,7 +284,7 @@ const locUtil = {
   loadDefaultLocaleData() {
     globalize.load(likelySubtags, numberingSystems, timeData, weekData,
       caGregorian, numbers, timeZoneNames, plurals);
-    globalize.loadMessages(messages);
+    globalize.loadMessages(getLowercaseKeyedObj(messages));
 
     this.updateCurrentLocaleOfKo(DEFAULT_LOCALE, true);
   },
@@ -394,7 +409,8 @@ const locUtil = {
     }
 
     return this.wrapTestLocale(
-      this.formatMessage(message, formattedVariables), propertyName,
+      this.formatMessage(message.toLowerCase(), formattedVariables),
+      propertyName,
     );
   },
 
@@ -429,8 +445,8 @@ const locUtil = {
  * Examples:
  *
  * simple example:
- *   - translates the accounts/chooseaccount key
- *   <span data-bind='translate: "accounts/chooseaccount"'>
+ *   - translates the accounts/chooseAccount key
+ *   <span data-bind='translate: "accounts/chooseAccount"'>
  *
  * more complex example:
  *   - translates the somekey key, specifying a variable used during the

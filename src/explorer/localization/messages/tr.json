@@ -10,8 +10,8 @@
       "name": "isim",
       "size": "Boyut",
       "updated": "Güncellenmiş",
-      "nofilesfound": "Dosya Bulunamadı",
-      "untitledfolder": "Adsız Klasör",
+      "noFilesFound": "Dosya Bulunamadı",
+      "untitledFolder": "Adsız Klasör",
       "search": "Arama",
       "sizes": {
         "b": "{fileSize} B",
@@ -22,28 +22,28 @@
     },
     "accounts": {
       "confirmRemove": "Bu hesabı kaldırırsanız, artık incelemeyi başaramazsınız. Emin misiniz?",
-      "connectedaccounts": "Bağlı hesaplar",
+      "connectedAccounts": "Bağlı hesaplar",
       "logout": "çıkış Yap",
       "manage": "Bulut depolama hesaplarınızı burada yönetin.",
-      "chooseaccount": "Hoşgeldiniz! Lütfen bağlanmak için bir servis seçin",
-      "connectmore": "Daha fazlasını bağla!",
+      "chooseAccount": "Hoşgeldiniz! Lütfen bağlanmak için bir servis seçin",
+      "connectMore": "Daha fazlasını bağla!",
       "upload": "Yükleme",
-      "uploadfromcomputer": "Bilgisayarınızdan yükleyin"
+      "uploadFromComputer": "Bilgisayarınızdan yükleyin"
     },
     "selector": {
-      "mycomputer": "Benim bilgisayarım",
+      "myComputer": "Benim bilgisayarım",
       "accounts": "Hesaplar"
     },
     "dropzone": {
       "message": "Dosyaları buraya sürükleyip bırakın veya Dosya Gezgini'ni açmak için tıklayın."
     },
     "computer": {
-      "nosupport": "Tarayıcınızda Flash, Silverlight veya HTML5 desteği bulunmuyor."
+      "noSupport": "Tarayıcınızda Flash, Silverlight veya HTML5 desteği bulunmuyor."
     },
-    "addconfirm": {
+    "addConfirm": {
       "confirm": "Hesap bağlantısını onayla.",
-      "clickbelow": "{ServiceName} hesabınızı bağlamak için aşağıyı tıklayın",
-      "connectaccount": "Connect {serviceName} Hesabı"
+      "clickBelow": "{ServiceName} hesabınızı bağlamak için aşağıyı tıklayın",
+      "connectAccount": "Connect {serviceName} Hesabı"
     }
   }
 }

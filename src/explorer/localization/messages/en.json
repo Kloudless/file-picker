@@ -10,8 +10,8 @@
       "name": "Name",
       "size": "Size",
       "updated": "Updated",
-      "nofilesfound": "No Files Found",
-      "untitledfolder": "Untitled Folder",
+      "noFilesFound": "No Files Found",
+      "untitledFolder": "Untitled Folder",
       "search": "Search",
       "sizes": {
         "b": "{fileSize} B",
@@ -22,19 +22,19 @@
     },
     "accounts": {
       "confirmRemove": "If you remove this account, you will no longer be able to explore it. Are you sure?",
-      "connectedaccounts": "Connected accounts",
+      "connectedAccounts": "Connected accounts",
       "logout": "logout",
       "manage": "Manage your cloud storage accounts here.",
-      "chooseaccount": "Welcome! Please choose a service to connect",
-      "connectmore": "Connect more!",
+      "chooseAccount": "Welcome! Please choose a service to connect",
+      "connectMore": "Connect more!",
       "upload": "Upload",
-      "uploadfromcomputer": "Upload from your computer"
+      "uploadFromComputer": "Upload from your computer"
     },
     "selector": {
-      "mycomputer": "My Computer",
+      "myComputer": "My Computer",
       "accounts": "Accounts"
     },
-    "servicenames": {
+    "serviceNames": {
       "cq5": "Adobe CQ5",
       "dropbox": "Dropbox",
       "gdrive": "Google Drive",
@@ -63,12 +63,12 @@
       "message": "Drag and drop files here, or click to open the File Explorer"
     },
     "computer": {
-      "nosupport": "Your browser doesn't have Flash, Silverlight or HTML5 support."
+      "noSupport": "Your browser doesn't have Flash, Silverlight or HTML5 support."
     },
-    "addconfirm": {
+    "addConfirm": {
       "confirm": "Confirm account connection.",
-      "clickbelow": "Click below to connect your {serviceName} account",
-      "connectaccount": "Connect {serviceName} Account"
+      "clickBelow": "Click below to connect your {serviceName} account",
+      "connectAccount": "Connect {serviceName} Account"
     }
   }
 }

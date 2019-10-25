@@ -90,7 +90,7 @@
         // ko if: cwd().length == 0 && !$root.loading()
         tr.info-row(align="center")
           td.info-cell
-            div(data-bind='translate: "files/nofilesfound"') No Files Found
+            div(data-bind='translate: "files/noFilesFound"') No Files Found
         // /ko
         // ko if: cwd().length > 0 && cwd()[0].type == "newfolder"
         tr.newfolder()
@@ -98,7 +98,7 @@
             span()
               div.foldericon()
             span()
-              input.new-folder-name(data-bind='attr: {value: "Untitled Folder"}, translate: {value: { message: "files/untitledfolder" }}')
+              input.new-folder-name(data-bind='attr: {value: "Untitled Folder"}, translate: {value: { message: "files/untitledFolder" }}')
             span(data-bind='click: mkdir')
               span.save-button.inline-button Save
             span(data-bind='click: rmdir')

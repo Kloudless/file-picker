@@ -10,8 +10,8 @@
       "name": "Nume",
       "size": "mărimea",
       "updated": "La curent",
-      "nofilesfound": "Niciun fișier găsit",
-      "untitledfolder": "Folder fără titlu",
+      "noFilesFound": "Niciun fișier găsit",
+      "untitledFolder": "Folder fără titlu",
       "search": "Căutare",
       "sizes": {
         "b": "{fileSize} B",
@@ -22,28 +22,28 @@
     },
     "accounts": {
       "confirmRemove": "Dacă eliminați acest cont, nu veți mai putea să îl explorați. Esti sigur?",
-      "connectedaccounts": "Conturi conectate",
+      "connectedAccounts": "Conturi conectate",
       "logout": "logout",
       "manage": "Gestionați-vă aici conturile de stocare în cloud.",
-      "chooseaccount": "Bine ati venit! Alegeți un serviciu pentru conectare",
-      "connectmore": "Conectează-te mai mult!",
+      "chooseAccount": "Bine ati venit! Alegeți un serviciu pentru conectare",
+      "connectMore": "Conectează-te mai mult!",
       "upload": "Încărcați",
-      "uploadfromcomputer": "Încărcați de pe computer"
+      "uploadFromComputer": "Încărcați de pe computer"
     },
     "selector": {
-      "mycomputer": "Calculatorul meu",
+      "myComputer": "Calculatorul meu",
       "accounts": "Conturi"
     },
     "dropzone": {
       "message": "Glisați și fixați fișierele aici sau faceți clic pentru a deschide fișierul Explorer"
     },
     "computer": {
-      "nosupport": "Browserul dvs. nu are suport Flash, Silverlight sau HTML5."
+      "noSupport": "Browserul dvs. nu are suport Flash, Silverlight sau HTML5."
     },
-    "addconfirm": {
+    "addConfirm": {
       "confirm": "Confirmați conexiunea la cont.",
-      "clickbelow": "Faceți clic mai jos pentru a vă conecta contul {serviceName}",
-      "connectaccount": "Conectați contul {serviceName}"
+      "clickBelow": "Faceți clic mai jos pentru a vă conecta contul {serviceName}",
+      "connectAccount": "Conectați contul {serviceName}"
     }
   }
 }

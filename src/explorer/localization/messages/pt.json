@@ -10,8 +10,8 @@
       "name": "Nome",
       "size": "Tamanho",
       "updated": "Atualizada",
-      "nofilesfound": "Nenhum arquivo encontrado",
-      "untitledfolder": "Pasta sem título",
+      "noFilesFound": "Nenhum arquivo encontrado",
+      "untitledFolder": "Pasta sem título",
       "search": "Procurar",
       "sizes": {
         "b": "{fileSize} B",
@@ -22,28 +22,28 @@
     },
     "accounts": {
       "confirmRemove": "Se você remover essa conta, não poderá mais explorá-la. Você tem certeza?",
-      "connectedaccounts": "Contas conectadas",
+      "connectedAccounts": "Contas conectadas",
       "logout": "sair",
       "manage": "Gerencie suas contas de armazenamento em nuvem aqui.",
-      "chooseaccount": "Bem vinda! Por favor, escolha um serviço para conectar",
-      "connectmore": "Ligue mais!",
+      "chooseAccount": "Bem vinda! Por favor, escolha um serviço para conectar",
+      "connectMore": "Ligue mais!",
       "upload": "Envio",
-      "uploadfromcomputer": "Upload do seu computador"
+      "uploadFromComputer": "Upload do seu computador"
     },
     "selector": {
-      "mycomputer": "Meu computador",
+      "myComputer": "Meu computador",
       "accounts": "Contas"
     },
     "dropzone": {
       "message": "Arraste e solte arquivos aqui ou clique para abrir o Gerenciador de arquivos"
     },
     "computer": {
-      "nosupport": "Seu navegador não tem suporte para Flash, Silverlight ou HTML5."
+      "noSupport": "Seu navegador não tem suporte para Flash, Silverlight ou HTML5."
     },
-    "addconfirm": {
+    "addConfirm": {
       "confirm": "Confirme a conexão da conta.",
-      "clickbelow": "Clique abaixo para conectar sua conta do {serviceName}",
-      "connectaccount": "Conecte a conta {serviceName}"
+      "clickBelow": "Clique abaixo para conectar sua conta do {serviceName}",
+      "connectAccount": "Conecte a conta {serviceName}"
     }
   }
 }

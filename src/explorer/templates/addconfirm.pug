@@ -6,17 +6,17 @@
         a.backbtn(data-bind='click: $root.setLocation.bind($data, "#/")')
           div.arrow
         img.klogo(data-bind='attr: {src: logo_url() || $root.static("/ext-assets/kloudless32x33.png")}')
-        span(data-bind='translate: "addconfirm/confirm"') Confirm account connection.
+        span(data-bind='translate: "addConfirm/confirm"') Confirm account connection.
 
   .addconfirminner
-    p.confirm(data-bind='translate: {html: { message: "addconfirm/clickbelow", variables: { serviceName: addconfirm.serviceName }}}') Click below to connect your #[span(data-bind="text: addconfirm.serviceName")] account.
+    p.confirm(data-bind='translate: {html: { message: "addConfirm/clickBelow", variables: { serviceName: addConfirm.serviceName }}}') Click below to connect your #[span(data-bind="text: addConfirm.serviceName")] account.
     p.imageholder
-      img(data-bind='attr: {src: addconfirm.serviceLogo}')
+      img(data-bind='attr: {src: addConfirm.serviceLogo}')
       img(data-bind='attr: {src: $root.static("/launch_site/support-plus.png")}')
       img(data-bind='attr: {src: logo_url() || $root.static("/static/kloudless_logomark.png")}', width=55, height=55)
     .buttonscontainer
       a.button.reg(data-bind='click: $root.setLocation.bind($data, "#/"), translate: "global/cancel"') Cancel
-      a.button.blue#confirm-add-button(data-bind='translate: {html: { message: "addconfirm/connectaccount", variables: { serviceName: addconfirm.serviceName }}}') Connect #[span(data-bind="text: addconfirm.serviceName")] Account
+      a.button.blue#confirm-add-button(data-bind='translate: {html: { message: "addConfirm/connectAccount", variables: { serviceName: addConfirm.serviceName }}}') Connect #[span(data-bind="text: addConfirm.serviceName")] Account
 
   //- "Powered by Kloudless" footer
   footer

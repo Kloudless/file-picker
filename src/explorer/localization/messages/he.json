@@ -10,8 +10,8 @@
       "name": "שם",
       "size": "גודל",
       "updated": "עודכן",
-      "nofilesfound": "לא נמצאו קבצים",
-      "untitledfolder": "תיקיה ללא כותרת",
+      "noFilesFound": "לא נמצאו קבצים",
+      "untitledFolder": "תיקיה ללא כותרת",
       "search": "לחפש",
       "sizes": {
         "b": "{fileSize} B",
@@ -22,28 +22,28 @@
     },
     "accounts": {
       "confirmRemove": "אם תסיר את החשבון הזה, לא תוכל עוד לחקור אותו. האם אתה בטוח?",
-      "connectedaccounts": "חשבונות מחוברים",
+      "connectedAccounts": "חשבונות מחוברים",
       "logout": "להתנתק",
       "manage": "נהל את חשבונות האחסון שלך בענן כאן..",
-      "chooseaccount": "ברוך הבא! בחר שירות לחיבור",
-      "connectmore": "התחבר עוד!",
+      "chooseAccount": "ברוך הבא! בחר שירות לחיבור",
+      "connectMore": "התחבר עוד!",
       "upload": "העלה",
-      "uploadfromcomputer": "העלה מהמחשב שלך"
+      "uploadFromComputer": "העלה מהמחשב שלך"
     },
     "selector": {
-      "mycomputer": "המחשב שלי",
+      "myComputer": "המחשב שלי",
       "accounts": "חשבונות"
     },
     "dropzone": {
       "message": "גרור ושחרר קבצים כאן, או לחץ כדי לפתוח את סייר הקבצים"
     },
     "computer": {
-      "nosupport": "לדפדפן שלך אין תמיכה ב- Flash, Silverlight או ב- HTML5."
+      "noSupport": "לדפדפן שלך אין תמיכה ב- Flash, Silverlight או ב- HTML5."
     },
-    "addconfirm": {
+    "addConfirm": {
       "confirm": "אשר את החיבור לחשבון.",
-      "clickbelow": "לחץ למטה כדי לחבר את חשבון {serviceName} שלך",
-      "connectaccount": "התחבר לחשבון {serviceName}"
+      "clickBelow": "לחץ למטה כדי לחבר את חשבון {serviceName} שלך",
+      "connectAccount": "התחבר לחשבון {serviceName}"
     }
   }
 }
