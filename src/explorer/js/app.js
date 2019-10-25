@@ -4,6 +4,8 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 import $ from 'jquery';
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.css';
 import 'jquery-ui/ui/jquery-ui';
 import 'jquery-scrollstop/jquery.scrollstop';
 import 'jquery.finderSelect';
@@ -125,9 +127,6 @@ const FileExplorer = function () {
     // Save all files in FileManager to the selected directory
     save: () => {
       const { view_model, fileManager, manager } = this;
-      // Set loading to true
-      view_model.loading(true);
-
       // Grab the current location
       const current = manager.active().filesystem().current();
       const saves = [];
@@ -206,10 +205,7 @@ const FileExplorer = function () {
           }({ name: file_data.name, url: file_data.url }));
         }
       } else {
-        this.view_model.error(
-          'Files cannot be saved to this folder. Please choose again.',
-        );
-        this.view_model.loading(false);
+        view_model.error('Files cannot be saved to this folder. Please choose again.');
       }
     },
 
@@ -219,9 +215,7 @@ const FileExplorer = function () {
         return;
       }
 
-      // Set loading to true
-      this.view_model.loading(true);
-
+      // Clone the selections, removing the parent reference.
       const current = this.manager.active().filesystem().current();
       const selections = [];
       let selectedType = 'file';
@@ -582,8 +576,6 @@ const FileExplorer = function () {
             }
           },
           (err) => {
-            this.view_model.loading(false);
-
             // if it errors on root folder metadata, we shouldn't add it
             if (err && err.message === 'failed to retrieve root folder') {
               logger.warn('failed to load account from localStorage');
@@ -628,7 +620,7 @@ const FileExplorer = function () {
 
     // Request states.
     error: ko.observable(''),
-    loading: ko.observable(true),
+    loading: ko.observable(false),
 
     localizedConfirmPopup(token, variables) {
       try {
@@ -788,7 +780,6 @@ const FileExplorer = function () {
 
               // eslint-disable-next-line no-use-before-define
               if (first_account) {
-                this.view_model.loading(true);
                 // eslint-disable-next-line no-use-before-define
                 router.setLocation('#/files');
               } else {
@@ -809,7 +800,6 @@ const FileExplorer = function () {
 
               // eslint-disable-next-line no-use-before-define
               if (first_account) {
-                this.view_model.loading(false);
                 // eslint-disable-next-line no-use-before-define
                 first_account = false;
               }
@@ -871,10 +861,8 @@ const FileExplorer = function () {
           target = parent;
         }
 
-        this.view_model.loading(true);
         this.manager.active().filesystem().navigate(target, (err, result) => {
           logger.debug('Navigation result: ', err, result);
-          this.view_model.loading(false);
           // eslint-disable-next-line no-use-before-define
           if (err && error_message) {
             // eslint-disable-next-line no-use-before-define
@@ -899,9 +887,7 @@ const FileExplorer = function () {
       up: (count) => {
         logger.debug(`Going up ${count} directories.`);
 
-        this.view_model.loading(true);
         this.manager.active().filesystem().up(count, (err) => {
-          this.view_model.loading(false);
           // eslint-disable-next-line no-use-before-define
           if (err && error_message) {
             // eslint-disable-next-line no-use-before-define
@@ -932,7 +918,6 @@ const FileExplorer = function () {
               this.view_model.files.navigate(dir);
             }
           }
-          this.view_model.loading(false);
         });
       },
       newdir: () => {
@@ -949,9 +934,7 @@ const FileExplorer = function () {
       },
       refresh: () => {
         logger.debug('Refreshing current directory');
-        this.view_model.loading(true);
         this.manager.active().filesystem().refresh(true, (err) => {
-          this.view_model.loading(false);
           // eslint-disable-next-line no-use-before-define
           if (err && error_message) {
             // eslint-disable-next-line no-use-before-define
@@ -974,16 +957,13 @@ const FileExplorer = function () {
             view_model.files.refresh();
             return;
           }
-          view_model.loading(true);
           const currentFs = manager.active().filesystem();
           const s = new Search(currentFs.id, currentFs.key, query);
           s.search(() => {
             const fs = manager.active().filesystem();
             fs.display(fs.filterChildren(s.results.objects));
-            view_model.loading(false);
           }, () => {
             view_model.error('The search request was not successful.');
-            view_model.loading(false);
           });
         }(view_model.files.searchQuery()));
       },
@@ -1008,14 +988,25 @@ const FileExplorer = function () {
       method: 'notifyWhenChangesStop',
     },
   });
+
   this.view_model.files.searchQuery.subscribe(
     this.view_model.files.search, this,
   );
-
+  this.view_model.error.subscribe(() => {
+    const error = this.view_model.error();
+    if (error) {
+      iziToast.error({
+        timeout: 10000,
+        position: 'bottomCenter',
+        title: 'Error',
+        message: error,
+      });
+    }
+  });
   ko.applyBindings(this.view_model, $('#kloudless-file-explorer')[0]);
 };
 
-// Switch views between 'accounts', 'files', and 'computer'.
+// Switch views between 'accounts', 'files', and 'computer', 'search'
 FileExplorer.prototype.switchViewTo = function (to) {
   const explorer = this;
   explorer.view_model.current(to);
@@ -1090,10 +1081,7 @@ FileExplorer.prototype.switchViewTo = function (to) {
       // people would want to fetch some more pages (if available) to read
       // before they reach and finish the last page they currently possess
       if (fileSystem.page && (scrolled + tableHeight * 2) >= contentHeight) {
-        explorer.view_model.loading(true);
-        fileSystem.getPage(() => {
-          explorer.view_model.loading(false);
-        });
+        fileSystem.getPage();
       }
     });
 
@@ -1500,7 +1488,6 @@ FileExplorer.prototype.cleanUp = function () {
   if ($('#search-query').is(':visible')) {
     $('#search-back-button').click();
   }
-  self.view_model.loading(false);
   self.view_model.error('');
   if (self.view_model.files.table) {
     self.view_model.files.table.finderSelect('unHighlightAll');
@@ -1793,6 +1780,14 @@ function dataMessageHandler(data) {
     });
   }
 }
+
+$(document).ajaxStart(function () {
+  explorer.view_model.loading(true);
+});
+
+$(document).ajaxStop(function () {
+  explorer.view_model.loading(false);
+});
 
 // This signal is placed last and indicates all the JS has loaded
 // and events can be received.
