@@ -500,7 +500,7 @@ File Explorer JavaScript on the page.
 
 * `link` : boolean
 
-  Chooser: _Optional (default: true)_
+  Chooser: _Optional (default: false)_
 
   This option adds an additional parameter to the Chooser's response with a
   link to the file chosen in the file explorer.

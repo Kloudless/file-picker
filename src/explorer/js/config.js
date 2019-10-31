@@ -55,7 +55,7 @@ Object.assign(config, {
   dateTimeFormat: ko.observable('MMMdHm'),
   enable_logout: ko.observable(true),
   flavor: ko.observable(get_query_variable('flavor')),
-  link: ko.observable(true),
+  link: ko.observable(false),
   link_options: ko.observable({}),
   locale: ko.observable('en'),
   multiselect: ko.observable(false),
