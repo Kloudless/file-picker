@@ -238,27 +238,6 @@ File Explorer JavaScript on the page.
   be taken to ensure no malicious JavaScript or XSS vulnerabilities are present
   on the page, as the Bearer Token provides complete access to that user's account.
 
-* `computer` : boolean
-
-  Chooser: _Optional (default: false)_
-
-  Saver: _Optional (default: false)_ Coming Soon
-
-  This option allows users to upload/download files directly from/to their computer.
-
-  __Configuring the Chooser's Upload Location__
-
-  The Chooser will upload files to the developer's Upload Location.
-  The Upload Location can be set in the [developer portal](https://developers.kloudless.com)
-  under 'UI Tools', select 'File Explorer'. Follow the instructions for 
-  selecting a folder in a storage service such as Amazon S3. All local files from
-  a user will be uploaded there.
-
-  __Note on the Saver__
-
-  The Computer can only be saved to if the Saver is provided a single file to save.
-  Saving to the Computer is currently unavailable and will be coming soon.
-
 * `persist` : string
 
   Chooser: "none", "local", "session" (default: "local")
@@ -498,6 +477,24 @@ File Explorer JavaScript on the page.
 
   This option allows a user to select multiple files using the Chooser.  The Chooser
   will return a list of one or more entries.
+
+
+* `computer` : boolean
+
+  Chooser: _Optional (default: false)_
+
+  Dropzone: _Always true_
+
+  This option allows users to upload files directly from their computer.
+
+  __Configuring the Chooser's Upload Location__
+
+  The Chooser will upload files to the developer's Upload Location.
+  The Upload Location can be set in the
+  [developer portal](https://developers.kloudless.com).
+  Under 'UI Tools' tab, click 'File Explorer' and follow the instructions for 
+  selecting a folder in a storage service such as Amazon S3. All local files
+  from a user will be uploaded there.
 
 * `link` : boolean
 

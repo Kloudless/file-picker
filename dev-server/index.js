@@ -81,8 +81,6 @@ import 'regenerator-runtime/runtime';
     objId: 'dropzone',
     explorerOptions: {
       elementId: 'dropzone',
-      // This applies to the clickExplorer.
-      computer: true,
       // Must be true if you want to upload more than 1 file at a time.
       multiselect: true,
     },
@@ -118,8 +116,16 @@ import 'regenerator-runtime/runtime';
     const appId = KLOUDLESS_APP_ID || window.appId;
     const options = { app_id: appId, ...explorerOptions };
 
+    function createEvents(explorer) {
+      EVENTS.forEach(event => explorer.on(
+        event,
+        data => addResultWithData(name, event, data),
+      ));
+    }
+
     if (type === 'dropzone') {
       window.explorers[objId] = global.dropzone(options);
+      createEvents(window.explorers[objId]);
       return;
     }
 
@@ -134,10 +140,7 @@ import 'regenerator-runtime/runtime';
       element.removeEventListener('click', createExplorer);
 
       const obj = global.explorer(options);
-      EVENTS.forEach(event => obj.on(
-        event,
-        data => addResultWithData(name, event, data),
-      ));
+      createEvents(obj);
       window.explorers[objId] = obj;
       if (type === 'chooser') {
         obj.choosify($(`#${elementId}`));

@@ -624,14 +624,15 @@ fileExplorer._dropzone = function (options = {}) {
     );
   }
 
+  const dropzoneOptions = { ...options, computer: true };
+
   this.dropExplorer = fileExplorer.explorer({
-    app_id: options.app_id,
+    ...dropzoneOptions,
     flavor: 'dropzone',
-    multiselect: options.multiselect,
     elementId: this.elementId,
   });
 
-  this.clickExplorer = fileExplorer.explorer(options);
+  this.clickExplorer = fileExplorer.explorer(dropzoneOptions);
 
   this.dropExplorerFrame = frames[this.dropExplorer.exp_id];
   this.clickExplorerFrame = frames[this.clickExplorer.exp_id];
