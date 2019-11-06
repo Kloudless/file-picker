@@ -337,7 +337,8 @@ File Explorer JavaScript on the page.
   `ko`, `lt`, `lv`, `mn`, `ms`, `nl`, `pl`, `pt`, `ro`, `ru`, `sk`, `sq`,
   `sr`, `sr`, `sv`, `th`, `tr`, `uk`, `zh-CN`, `zh-TW`
   
-  The locale is used to identify the translation data to retrieve from either
+  The locale is used to identify the 
+  data to retrieve from either
   the data provided in the `translations` option below or from the out-of-the-box
   translation data in the [messages directory](src/explorer/localization/messages).
   If no translation data is found, the File Explorer uses the `en` locale.
@@ -353,7 +354,7 @@ File Explorer JavaScript on the page.
   indicates which locale's translation data to use. Any translation data
   provided here overrides Kloudless' default translation data included in the
   [messages directory](src/explorer/localization/messages).
-  See [translations-suite-sample.json](test/public/translations-suite-sample.json)
+  See [translations-suite-sample.json](dev-server/static/translations-suite-sample.json)
   for an example of the translation file format.
   Any strings not translated will default to the `en` locale's representation.
 
