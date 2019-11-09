@@ -13,27 +13,18 @@ declare namespace fileExplorer {
 
   interface Explorer extends Events {
     choose(): void;
-
     choosify(element: HTMLElement): void;
-
     save(files: File[]): void;
-
     savify(element: HTMLElement, files: File[]): void;
-
     close(): void;
-
     destroy(): void;
-
     update(options: UpdateOptions): void;
-
     logout(deleteAccount?: boolean): void;
   }
 
   interface Dropzone extends Events {
     close(): void;
-
     destroy(): void;
-
     update(options: UpdateOptions): void;
   }
 
