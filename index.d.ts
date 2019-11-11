@@ -117,30 +117,42 @@ declare namespace fileExplorer {
 
   interface FileMetadata {
     id: string;
-    created: string | null;
-    modified: string;
-    size: number;
-    path: string;
-    ancestors: ParentMetadata[];
-    parent: ParentMetadata;
-    account: number;
-    ids: Record<string, string>;
-    id_type: string;
-    api: string;
-    type: string;
     name: string;
+    size: number | null;
+    created: string | null;
+    modified: string | null;
+    type: "file";
+    account: number;
+    parent: ParentMetadata;
+    ancestors: ParentMetadata[] | null;
+    path: string | null;
     mime_type: string;
     downloadable: boolean;
+    /**
+     * @deprecated Use `raw` below instead, which contains an `id` attribute.
+     */
     raw_id: string;
-    friendlySize: {
-      message: string;
-      variables: {
-        fileSize: number;
-      };
-    };
+    raw: {
+      id: string;
+      object: object;
+    }
+    owner?: UserMetadata;
+    creator?: UserMetadata;
+    last_modifier?: UserMetadata;
+    api: "storage";
+    ids?: IdsMetadata;
+    id_type?: keyof IdsMetadata;
+
+    /**
+     * Present when `retrieve_token: true` configuration option is used.
+     */
     bearer_token?: {
       key: string;
     };
+  }
+
+  interface UserMetadata {
+    id: string;
   }
 
   interface ParentMetadata {
@@ -149,13 +161,22 @@ declare namespace fileExplorer {
     id_type?: string;
   }
 
+  interface IdsMetadata {
+    default: string;
+    shared: string;
+    path: string;
+    version: string;
+  }
+
   interface FileErrorMetadata extends FileMetadata {
-    error: {
-      status_code: number;
-      message: string;
-      error_code: string;
-      id: string;
-    };
+    error: FileError;
+  }
+
+  interface FileError {
+    status_code: number;
+    message: string;
+    error_code: string;
+    id: string;
   }
 
   interface Account {
