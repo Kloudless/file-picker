@@ -65,11 +65,11 @@ declare namespace fileExplorer {
     dateTimeFormat?: string;
     create_folder?: boolean;
     /**
-     * @deprecated
+     * @deprecated Please use the `retrieve_token` option instead.
      */
     account_key?: boolean;
     /**
-     * @deprecated
+     * @deprecated Please use the `retrieve_token` option instead.
      */
     keys?: string[];
     tokens?: string[];
@@ -190,7 +190,7 @@ declare namespace fileExplorer {
     mime_type: string;
     downloadable: boolean;
     /**
-     * @deprecated Use `raw` below instead, which contains an `id` attribute.
+     * @deprecated Use `raw` instead, which contains an `id` attribute.
      */
     raw_id: string;
     raw: {
