@@ -70,7 +70,7 @@ declare namespace fileExplorer {
     enable_logout?: boolean;
     delete_accounts_on_logout?: boolean;
 
-    oauth?(service: string): object;
+    oauth?(service: ServiceName): OAuthQueryParams;
   }
 
   interface ChooserOptions {
@@ -98,6 +98,15 @@ declare namespace fileExplorer {
 
   interface BuildOptions {
     explorerUrl?: string;
+  }
+
+  interface OAuthQueryParams {
+    scope?: string;
+    form_data?: string;
+    oob_loading_delay?: number;
+    custom_properties?: object;
+    raw?: object;
+    extra_data?: object;
   }
 
   interface Events {
