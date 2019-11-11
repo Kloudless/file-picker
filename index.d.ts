@@ -31,13 +31,13 @@ declare namespace fileExplorer {
   type PersistMode = "none" | "local" | "session";
   type ServiceGroup = "file_store" | "object_store" | "construction" | "all";
   type ServiceName = "dropbox" | "box" | "gdrive" | "skydrive" | "sharefile" | "sugarsync" | "egnyte" | "evernote" | "sharepoint" 
-  | "sharepoint2013" | "onedrivebiz" | "cmis" | "alfresco" | "alfresco_cloud" | "smb" | "jive" | "webdav" | "cq5" | "ftp" | "salesforce" 
-  | "hubspot" | "slack" | "procore" | "plangrid" | "autodesk" | "bluebeam" | "s3" | "azure" | "s3_compatible";
+    | "sharepoint2013" | "onedrivebiz" | "cmis" | "alfresco" | "alfresco_cloud" | "smb" | "jive" | "webdav" | "cq5" | "ftp" | "salesforce" 
+    | "hubspot" | "slack" | "procore" | "plangrid" | "autodesk" | "bluebeam" | "s3" | "azure" | "s3_compatible";
   type ChooserCategory = "all" | "folders" | "files" | "text" | "documents" | "images" | "videos" | "audio";
   type FileExtension = string;
   type SupportedLanguage = "ar" | "az" | "bs" | "cs" | "cy" | "da" | "de" | "el" | "en" | "es" | "et" | "fa" | "fi" | "fr" | "he" | "hr" 
-  | "hu" | "hy" | "id" | "it" | "ja" | "ka" | "kk" | "km" | "ko" | "lt" | "lv" | "mn" | "ms" | "nl" | "pl" | "pt" | "ro" | "ru" | "sk" 
-  | "sq" | "sr" | "sr" | "sv" | "th" | "tr" | "uk" | "zh-CN" | "zh-TW";
+    | "hu" | "hy" | "id" | "it" | "ja" | "ka" | "kk" | "km" | "ko" | "lt" | "lv" | "mn" | "ms" | "nl" | "pl" | "pt" | "ro" | "ru" | "sk" 
+    | "sq" | "sr" | "sr" | "sv" | "th" | "tr" | "uk" | "zh-CN" | "zh-TW";
   type CustomLanguage = string;
 
   interface File {
