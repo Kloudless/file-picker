@@ -30,7 +30,9 @@ declare namespace fileExplorer {
 
   type PersistMode = "none" | "local" | "session";
   type ServiceGroup = "file_store" | "object_store" | "construction" | "all";
-  type ServiceName = string;
+  type ServiceName = "dropbox" | "box" | "gdrive" | "skydrive" | "sharefile" | "sugarsync" | "egnyte" | "evernote" | "sharepoint" | 
+  "sharepoint2013" | "onedrivebiz" | "cmis" | "alfresco" | "alfresco_cloud" | "smb" | "jive" | "webdav" | "cq5" | "ftp" | "salesforce" | 
+  "hubspot" | "slack" | "procore" | "plangrid" | "autodesk" | "bluebeam" | "s3" | "azure" | "s3_compatible";
   type ChooserCategory = "all" | "folders" | "files" | "text" | "documents" | "images" | "videos" | "audio";
   type FileExtension = string;
 
