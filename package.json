@@ -4,7 +4,7 @@
   "author": "Kloudless <hello@kloudless.com> (https://kloudless.com)",
   "description": "The Kloudless File Explorer is a JavaScript library that allows your users to browse and select files and folders from their storage services. It comes in two modes: a chooser and a saver.",
   "main": "./dist/loader/js/interface.js",
-  "types": "./index.d.ts",
+  "types": "./dist/loader/js/interface.d.ts",
   "keywords": [
     "kloudless",
     "file picker",
@@ -24,7 +24,7 @@
   "scripts": {
     "dev": "NODE_ENV=development node ./dev-server/dev-server.js",
     "install-deps": "bower install",
-    "transpile": "BABEL_ENV='transpile' babel src/loader/js -d dist/loader/js --ignore src/loader/js/webpack",
+    "transpile": "BABEL_ENV='transpile' babel src/loader/js -d dist/loader/js --ignore src/loader/js/webpack --copy-files",
     "storybook:vue": "npm run storybook --prefix storybook-vue/",
     "storybook:react": "npm run storybook --prefix storybook-react",
     "build:storybook": "npm run build --prefix ./storybook-vue && npm run build --prefix ./storybook-react",
