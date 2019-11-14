@@ -43,7 +43,8 @@ module.exports = {
         alias: {
           'explorer-config': path.resolve(__dirname, './src/explorer/js/',
             (process.env.NODE_ENV === 'production'
-             && !process.env.DEBUG) ? './config_prod.json' : './config.json'),
+              && !JSON.parse(process.env.DEBUG)) ?
+              './config_prod.json' : './config.json'),
         },
       },
     ],
