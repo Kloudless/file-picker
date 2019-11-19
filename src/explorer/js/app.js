@@ -470,7 +470,12 @@ const FileExplorer = function () {
       }
 
       if (data !== undefined) {
-        data = {...data};
+        // shallow copy data
+        if (Array.isArray(data)) {
+          data = [...data]
+        } else {
+          data = {...data};
+        }
         if (['selected', 'success', 'addAccount'].includes(action)
           && (config.account_key || config.retrieve_token())
           && config.user_data().trusted) {
