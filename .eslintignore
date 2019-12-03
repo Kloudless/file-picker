@@ -2,8 +2,8 @@
 dist
 lib
 # Disable linting for legacy scripts
-src/explorer/js/*
-!src/explorer/js/breadcrumb.js
-!src/explorer/js/dropdown.js
+src/picker/js/*
+!src/picker/js/breadcrumb.js
+!src/picker/js/dropdown.js
 src/loader/js/interface.js
 dev-server/localization

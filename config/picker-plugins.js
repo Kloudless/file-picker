@@ -1,5 +1,5 @@
 /**
- * Return a list of webpack plugins used to build explorer script and page.
+ * Return a list of webpack plugins used to build picker script and page.
  */
 
 const path = require('path');
@@ -11,8 +11,8 @@ const srcPath = path.resolve(__dirname, '../src');
 const cldrPath = path.resolve(__dirname, '../bower_components/cldr-data/');
 
 
-module.exports = function getExplorerPlugins(distPath) {
-  const localeDistPath = path.resolve(distPath, 'explorer/localization');
+module.exports = function getPickerPlugins(distPath) {
+  const localeDistPath = path.resolve(distPath, 'picker/localization');
   const cldrDistPath = path.resolve(localeDistPath, 'cldr-data');
 
   return [
@@ -28,20 +28,20 @@ module.exports = function getExplorerPlugins(distPath) {
     new CopyWebpackPlugin([
       {
         from: path.resolve(srcPath, '../node_modules/less/dist/less.min.js'),
-        to: path.resolve(distPath, 'explorer/less.js'),
+        to: path.resolve(distPath, 'picker/less.js'),
       },
     ]),
     // copy *.less
     new CopyWebpackPlugin([
       {
-        from: path.resolve(srcPath, 'explorer/css/'),
-        to: path.resolve(distPath, 'explorer/less/'),
+        from: path.resolve(srcPath, 'picker/css/'),
+        to: path.resolve(distPath, 'picker/less/'),
       },
     ]),
     // copy localization and cldr data
     new CopyWebpackPlugin([
       {
-        from: path.resolve(srcPath, 'explorer/localization'),
+        from: path.resolve(srcPath, 'picker/localization'),
         to: localeDistPath,
       },
       {
@@ -60,15 +60,15 @@ module.exports = function getExplorerPlugins(distPath) {
         to: cldrDistPath,
       },
     ]),
-    /** Attach an id to the explorer script tag
+    /** Attach an id to the picker script tag
      * for util.getBaseUrl() to identify the script tag
      * This plugin must be put after all HtmlWebpackPlugins
      */
     new ScriptExtHtmlWebpackPlugin({
       custom: {
-        test: /explorer\.js$/,
+        test: /picker\.js$/,
         attribute: 'id',
-        value: 'kloudless-file-explorer-script',
+        value: 'kloudless-file-picker-script',
       },
     }),
   ];

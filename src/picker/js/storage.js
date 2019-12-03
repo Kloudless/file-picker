@@ -96,15 +96,19 @@ storage.removeAllAccounts = function (appId) {
   }
 };
 
-storage.storeId = function (explorerId) {
-  if (!storage.container) return;
-  var key = 'k-explorerId';
-  storage.container[key] = explorerId;
+storage.storeId = function (pickerId) {
+  if (!storage.container) {
+    return
+  };
+  const key = 'k-explorerId';
+  storage.container[key] = pickerId;
 }
 
 storage.loadId = function () {
-  if (!storage.container) return;
-  var key = 'k-explorerId';
+  if (!storage.container) {
+    return
+  };
+  const key = 'k-explorerId';
   return storage.container[key];
 }
 

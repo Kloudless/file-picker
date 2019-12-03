@@ -3,7 +3,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const baseWebpackConfig = require('./webpack.base.conf');
-const getExplorerPlugins = require('./explorer-plugins');
+const getPickerPlugins = require('./picker-plugins');
 const merge = require('./merge-strategy');
 
 const distPath = path.resolve(__dirname, '../dist/');
@@ -14,7 +14,7 @@ const scripts = {
   vue: [path.resolve(srcPath, 'loader/js/vue/index.js')],
   loader: [path.resolve(srcPath, 'loader/js/interface.js')],
   loaderExportHelper: [path.resolve(__dirname, 'loader-export-helper.js')],
-  explorer: [path.resolve(srcPath, 'explorer/js/app.js')],
+  picker: [path.resolve(srcPath, 'picker/js/app.js')],
 };
 
 const prodConfig = merge(baseWebpackConfig, {
@@ -91,24 +91,24 @@ module.exports = [
       maxAssetSize: 150 * 1024,
     },
   }),
-  // explorer, minified
+  // picker, minified
   merge(prodMinifiedConfig, {
     entry: {
-      explorer: scripts.explorer,
+      picker: scripts.picker,
     },
     output: {
-      path: path.resolve(distPath, './explorer'),
+      path: path.resolve(distPath, './picker'),
       filename: '[name].js',
       publicPath: './',
     },
     plugins: [
-      // explorer page
+      // picker page
       new HtmlWebpackPlugin({
-        filename: path.resolve(distPath, 'explorer/index.html'),
-        template: path.resolve(srcPath, 'explorer/templates/index.pug'),
-        chunks: ['explorer'],
+        filename: path.resolve(distPath, 'picker/index.html'),
+        template: path.resolve(srcPath, 'picker/templates/index.pug'),
+        chunks: ['picker'],
       }),
-    ].concat(getExplorerPlugins(distPath)),
+    ].concat(getPickerPlugins(distPath)),
   }),
   // dev-server index page for dist-test
   merge(prodConfig, {
@@ -128,7 +128,7 @@ module.exports = [
           distTest: true,
           // these variables will be supplied by test-dist-server
           appIdPlaceHolder: '<%= appId %>',
-          explorerUrlPlaceHolder: '<%= explorerUrl %>',
+          pickerUrlPlaceHolder: '<%= pickerUrl %>',
         },
         chunks: [],
       }),

@@ -30,7 +30,8 @@
       "noFileSelected": "No files selected. Please select a file.",
       "error": "Error occurred. Please try again.",
       "cannotCreateFolder": "Sorry! Folders cannot be created in this directory.",
-      "searchFail": "The search request was not successful."
+      "searchFail": "The search request was not successful.",
+      "cannotUploadFiles": "Files cannot be saved to this folder. Please choose again."
     },
     "accounts": {
       "confirmRemove": "If you remove this account, you will no longer be able to explore it. Are you sure?",
@@ -74,7 +75,7 @@
       "computer": "My Device"
     },
     "dropzone": {
-      "message": "Drag and drop files here, or click to open the File Explorer"
+      "message": "Drag and drop files here, or click to open the File Picker"
     },
     "computer": {
       "noSupport": "Your browser doesn't have Flash, Silverlight or HTML5 support.",

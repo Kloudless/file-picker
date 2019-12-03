@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, no-console */
 
-import fileExplorer, {
+import filePicker, {
   Dropzone,
   ChooserOptions,
   FileMetadata,
   SaverStartFileUploadEvent,
   SaverFinishFileUploadEvent,
-  Explorer,
+  Picker,
   OAuthQueryParams,
   ErrorEvent,
   SuccessEvent,
@@ -42,19 +42,19 @@ const options: ChooserOptions = {
     return authOptions;
   },
 };
-const explorer: Explorer = Kloudless.fileExplorer.explorer(options);
-explorer.choosify(document.getElementById('button'));
-explorer.update({
+const picker: Picker = Kloudless.filePicker.picker(options);
+picker.choosify(document.getElementById('button'));
+picker.update({
   link: true,
 });
-explorer.on('success', (files: FileMetadata[]) => {
+picker.on('success', (files: FileMetadata[]) => {
   files.forEach((file) => {
     console.log(file.id, file.name);
   });
 });
 
 // Test dropzone
-const dropzone: Dropzone = fileExplorer.dropzone({
+const dropzone: Dropzone = filePicker.dropzone({
   app_id: 'APP_ID',
   elementId: 'ELEMENT_ID',
   copy_to_upload_location: 'async',

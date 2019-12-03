@@ -9,10 +9,10 @@ const packages = require('./package.json');
  * check README for variable names and purpose
  */
 const buildEnvVarDefaults = {
-  EXPLORER_URL:
+  PICKER_URL:
     'https://static-cdn.kloudless.com/p/platform/file-picker/v2/index.html',
   // old version that supports custom_css
-  EXPLORER_URL_V1:
+  PICKER_URL_V1:
     'https://static-cdn.kloudless.com/p/platform/explorer/explorer.html',
   BASE_URL: 'https://api.kloudless.com',
   // for development only
@@ -44,7 +44,7 @@ module.exports = {
         // avoid node_modules path being relative path
         root: common.resolvePaths.filter(p => p !== 'node_modules'),
         alias: {
-          'explorer-config': path.resolve(__dirname, './src/explorer/js/',
+          'picker-config': path.resolve(__dirname, './src/picker/js/',
             (process.env.NODE_ENV === 'production'
               && !JSON.parse(process.env.DEBUG || false)) ?
               './config_prod.json' : './config.json'),

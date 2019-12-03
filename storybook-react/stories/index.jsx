@@ -12,7 +12,7 @@ import {
 } from '../../src/loader/js/react';
 import { genProps, GreenButton } from './helpers';
 
-const stories = storiesOf('File Explorer with React', module);
+const stories = storiesOf('File Picker with React', module);
 
 const GreenSaver = createSaver(GreenButton);
 const GreenChooser = createChooser(GreenButton);

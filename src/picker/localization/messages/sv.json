@@ -35,7 +35,7 @@
       "accounts": "konton"
     },
     "dropzone": {
-      "message": "Dra och släpp filer här, eller klicka för att öppna File Explorer"
+      "message": "Dra och släpp filer här, eller klicka för att öppna File Picker"
     },
     "computer": {
       "noSupport": "Din webbläsare har inte stöd för Flash, Silverlight eller HTML5."

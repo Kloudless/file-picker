@@ -35,7 +35,7 @@
       "accounts": "บัญชี"
     },
     "dropzone": {
-      "message": "ลากและวางไฟล์ที่นี่หรือคลิกเพื่อเปิด File Explorer"
+      "message": "ลากและวางไฟล์ที่นี่หรือคลิกเพื่อเปิด File Picker"
     },
     "computer": {
       "noSupport": "เบราว์เซอร์ของคุณไม่มีการสนับสนุน Flash, Silverlight หรือ HTML5"

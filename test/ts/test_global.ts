@@ -3,13 +3,13 @@
 // eslint-disable-next-line spaced-comment, @typescript-eslint/triple-slash-reference
 /// <reference path="../../src/loader/js/interface.d.ts" />
 
-const options: Kloudless.fileExplorer.ChooserOptions = {
+const options: Kloudless.filePicker.ChooserOptions = {
   app_id: 'APP_ID',
   types: ['files'],
 };
-const explorer = Kloudless.fileExplorer.explorer(options);
-explorer.choosify(document.getElementById('button'));
-explorer.on('success', (files: Kloudless.fileExplorer.FileMetadata[]) => {
+const picker = Kloudless.filePicker.picker(options);
+picker.choosify(document.getElementById('button'));
+picker.on('success', (files: Kloudless.filePicker.FileMetadata[]) => {
   files.forEach((file) => {
     console.log(file.id, file.name);
   });

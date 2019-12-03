@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import fileExplorer from '../interface';
+import filePicker from '../interface';
 import {
   DROPZONE_EVENT_HANDLER_MAPPING,
   DROPZONE_EVENT_HANDLERS,
@@ -38,7 +38,7 @@ class Dropzone extends React.Component {
   }
 
   initDropzone(options) {
-    this.dropzone = fileExplorer.dropzone({
+    this.dropzone = filePicker.dropzone({
       ...options,
       elementId: this.elementId,
     });

@@ -10,7 +10,7 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 
 /**
  * @param {string} fileType less or css
- * @param {string} viewType explorer or loader
+ * @param {string} viewType picker or loader
  */
 function getStyleLoaders(fileType, viewType) {
   const result = [];
@@ -24,7 +24,7 @@ function getStyleLoaders(fileType, viewType) {
       plugins: isDevelopment ? [AutoPrefixer()] : [AutoPrefixer(), CssNano()],
     },
   };
-  if (viewType === 'explorer') {
+  if (viewType === 'picker') {
     result.push(miniCssExtractLoader);
   } else if (viewType === 'loader') {
     result.push('style-loader');
@@ -51,15 +51,15 @@ module.exports = {
     rules: [
       {
         test: /\.css$/,
-        use: getStyleLoaders('css', 'explorer'),
+        use: getStyleLoaders('css', 'picker'),
       },
       {
         test: /loader\/css\/.*\.less$/,
         use: getStyleLoaders('less', 'loader'),
       },
       {
-        test: /explorer\/css\/.*\.less$/,
-        use: getStyleLoaders('less', 'explorer'),
+        test: /picker\/css\/.*\.less$/,
+        use: getStyleLoaders('less', 'picker'),
       },
       {
         test: /\.jsx?$/,
