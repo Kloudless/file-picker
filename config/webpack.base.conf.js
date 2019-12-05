@@ -39,7 +39,7 @@ function getStyleLoaders(fileType, viewType) {
 module.exports = {
   context: root,
   resolve: {
-    extensions: ['.js'],
+    extensions: ['.js', '.jsx'],
     modules: common.resolvePaths,
     alias: {
       // set these cldr alias to avoid webpack build error
@@ -62,7 +62,7 @@ module.exports = {
         use: getStyleLoaders('less', 'explorer'),
       },
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         use: 'babel-loader',
       },
       {

@@ -232,10 +232,16 @@ In addition, we support the `onClick` event handler:
 
 ## Set/Get Global Options
 
-Please refer to the
-[File Explorer Methods](https://github.com/Kloudless/file-explorer#methods)
-for detailed information about `fileExplorer.setGlobalOptions()` and
-`fileExplorer.getGlobalOptions()`.
+```javascript
+import { setGlobalOptions, getGlobalOptions } from '@kloudless/file-explorer/react';
+
+setGlobalOptions({...});
+getGlobalOptions();
+```
+
+The return data and parameters are the same with
+`fileExplorer.setGlobalOptions()` and `fileExplorer.getGlobalOptions()`.
+Please refer to the [File Explorer Methods](https://github.com/Kloudless/file-explorer#methods).
 
 ## Testing
 

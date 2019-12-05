@@ -1,7 +1,7 @@
 /* Webpack config for dev-server */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const baseWebpackConfig = require('./webpack.base.conf');
 const getExplorerPlugins = require('./explorer-plugins');
 const merge = require('./merge-strategy');
@@ -10,7 +10,10 @@ const distPath = path.resolve(__dirname, '../dist/');
 const srcPath = path.resolve(__dirname, '../src');
 
 const scripts = {
-  loader: [path.resolve(srcPath, 'loader/js/webpack/index.js')],
+  react: [path.resolve(srcPath, 'loader/js/react/index.js')],
+  vue: [path.resolve(srcPath, 'loader/js/vue/index.js')],
+  loader: [path.resolve(srcPath, 'loader/js/interface.js')],
+  loaderExportHelper: [path.resolve(__dirname, 'loader-export-helper.js')],
   explorer: [path.resolve(srcPath, 'explorer/js/app.js')],
 };
 
@@ -31,10 +34,40 @@ const prodMinifiedConfig = merge(prodConfig, {
 
 
 module.exports = [
+  // react, export to commonjs2
+  merge(prodMinifiedConfig, {
+    entry: { 'commonjs2/react.min': scripts.react },
+    output: {
+      libraryTarget: 'commonjs2',
+    },
+  }),
+  // vue, export to commonjs2
+  merge(prodMinifiedConfig, {
+    entry: { 'commonjs2/vue.min': scripts.vue },
+    output: {
+      libraryTarget: 'commonjs2',
+    },
+  }),
+  // loader, export to commonjs2
+  merge(prodMinifiedConfig, {
+    entry: { 'commonjs2/loader.min': scripts.loader },
+    output: {
+      libraryTarget: 'commonjs2',
+    },
+    plugins: [
+      // copy *.d.ts
+      new CopyWebpackPlugin([
+        {
+          from: path.resolve(srcPath, 'loader/js/interface.d.ts'),
+          to: path.resolve(distPath, 'commonjs2/loader.d.ts'),
+        },
+      ]),
+    ],
+  }),
   // loader
   merge(prodConfig, {
     entry: {
-      loader: scripts.loader,
+      loader: scripts.loaderExportHelper,
     },
     output: {
       path: path.resolve(distPath, './loader'),
@@ -45,7 +78,7 @@ module.exports = [
   // loader, minimized
   merge(prodMinifiedConfig, {
     entry: {
-      loader: scripts.loader,
+      loader: scripts.loaderExportHelper,
     },
     output: {
       path: path.resolve(distPath, './loader'),

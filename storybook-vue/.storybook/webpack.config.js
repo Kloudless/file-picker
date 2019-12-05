@@ -1,11 +1,4 @@
-const path = require('path');
+const webpackConfigGenerator = require(
+  '../../storybook-common/webpack-config-generator');
 
-module.exports = async ({ config }) => {
-  config.module.rules.push({
-    test: /\.js$/,
-    loader: 'babel-loader',
-    include: [path.resolve(__dirname, '../../src')],
-  });
-
-  return config;
-};
+module.exports = webpackConfigGenerator(__dirname);

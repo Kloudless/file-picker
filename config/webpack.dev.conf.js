@@ -30,7 +30,7 @@ module.exports = [
   merge(devConfigBase, {
     entry: {
       index: './dev-server/index.js',
-      'loader/loader': './src/loader/js/webpack/index.js',
+      'loader/loader': './config/loader-export-helper.js',
     },
     plugins: [
       new HtmlWebpackPlugin({

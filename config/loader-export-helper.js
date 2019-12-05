@@ -1,6 +1,11 @@
+/**
+ * Export fileExplorer to the following global variables:
+ * - window.Kloudless.fileExplorer
+ * - window.Kloudless (b/w compatible)
+ */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import fileExplorer from '../interface';
+import fileExplorer from '../src/loader/js/interface';
 
 // Determine export target
 let currentScript;
