@@ -1,6 +1,6 @@
 /* eslint-disable camelcase, no-underscore-dangle, func-names,
                   prefer-destructuring */
-/* global EXPLORER_URL */
+/* global EXPLORER_URL, VERSION */
 import '../css/modal.styl';
 
 /**
@@ -657,7 +657,8 @@ fileExplorer._dropzone.prototype._configureFrame = function () {
   if (element.getElementsByTagName('span').length === 0) {
     // Add span only if not exists
     const content = document.createElement('span');
-    content.innerHTML = 'Drag and drop files here, or click to open the File Explorer';
+    content.innerHTML =
+      'Drag and drop files here, or click to open the File Explorer';
     element.appendChild(content);
   }
 

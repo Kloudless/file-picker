@@ -4,6 +4,7 @@
   "author": "Kloudless <hello@kloudless.com> (https://kloudless.com)",
   "description": "The Kloudless File Explorer is a JavaScript library that allows your users to browse and select files and folders from their storage services. It comes in two modes: a chooser and a saver.",
   "main": "./dist/loader/js/interface.js",
+  "types": "./dist/loader/js/interface.d.ts",
   "keywords": [
     "kloudless",
     "file picker",
@@ -23,7 +24,7 @@
   "scripts": {
     "dev": "NODE_ENV=development node ./dev-server/dev-server.js",
     "install-deps": "bower install",
-    "transpile": "BABEL_ENV='transpile' babel src/loader/js -d dist/loader/js --ignore src/loader/js/webpack",
+    "transpile": "BABEL_ENV='transpile' babel src/loader/js -d dist/loader/js --ignore src/loader/js/webpack --copy-files",
     "storybook:vue": "npm run storybook --prefix storybook-vue/",
     "storybook:react": "npm run storybook --prefix storybook-react",
     "build:storybook": "npm run build --prefix ./storybook-vue && npm run build --prefix ./storybook-react",
@@ -32,7 +33,8 @@
     "build:template": "pug src/explorer/templates/explorer.pug -o dist/template -s && ejs-cli template/explorer.ejs > dist/custom-explorer.html && rm -rf dist/template",
     "prepack": "bash generate_npmignore.sh && npm install && npm run build && npm run transpile",
     "postpack": "rm -f .npmignore",
-    "dist-test": "node ./test/dist-test-server.js"
+    "dist-test": "node ./test/dist-test-server.js",
+    "test:ts": "eslint test/ts/*.ts && tsc test/ts/*.ts --noEmit && echo '✅  Passed type tests.'"
   },
   "dependencies": {
     "hoist-non-react-statics": "3.3.0",
@@ -44,6 +46,8 @@
     "@babel/preset-env": "7.4.1",
     "@babel/preset-react": "7.0.0",
     "@storybook/storybook-deployer": "2.8.1",
+    "@typescript-eslint/eslint-plugin": "2.9.0",
+    "@typescript-eslint/parser": "2.9.0",
     "autoprefixer": "9.6.1",
     "autoprefixer-stylus": "0.14.0",
     "babel-loader": "^8.0.5",
@@ -83,6 +87,7 @@
     "script-ext-html-webpack-plugin": "2.1.3",
     "stylus": "0.48.1",
     "stylus-loader": "3.0.2",
+    "typescript": "3.7.2",
     "url-loader": "2.0.1",
     "webpack": "^4.29.6",
     "webpack-cli": "3.3.0",
