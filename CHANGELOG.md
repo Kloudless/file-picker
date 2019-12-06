@@ -7,8 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.9.0]
+## [1.9.1] - 2019-12-06
+
+### Fixed
+
+- Fix babel.config.js JSON.parse() error.
+
+## [1.9.0] - 2019-12-06
 
 ### Added
 
-- TS definition file
+- Add TS definition file.
