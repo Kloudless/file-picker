@@ -1,6 +1,6 @@
 /* eslint-disable camelcase, no-underscore-dangle, func-names,
                   prefer-destructuring */
-/* global EXPLORER_URL */
+/* global EXPLORER_URL, VERSION */
 import '../css/modal.styl';
 
 /**
@@ -624,14 +624,15 @@ fileExplorer._dropzone = function (options = {}) {
     );
   }
 
+  const dropzoneOptions = { ...options, computer: true };
+
   this.dropExplorer = fileExplorer.explorer({
-    app_id: options.app_id,
+    ...dropzoneOptions,
     flavor: 'dropzone',
-    multiselect: options.multiselect,
     elementId: this.elementId,
   });
 
-  this.clickExplorer = fileExplorer.explorer(options);
+  this.clickExplorer = fileExplorer.explorer(dropzoneOptions);
 
   this.dropExplorerFrame = frames[this.dropExplorer.exp_id];
   this.clickExplorerFrame = frames[this.clickExplorer.exp_id];
@@ -656,7 +657,8 @@ fileExplorer._dropzone.prototype._configureFrame = function () {
   if (element.getElementsByTagName('span').length === 0) {
     // Add span only if not exists
     const content = document.createElement('span');
-    content.innerHTML = 'Drag and drop files here, or click to open the File Explorer';
+    content.innerHTML =
+      'Drag and drop files here, or click to open the File Explorer';
     element.appendChild(content);
   }
 

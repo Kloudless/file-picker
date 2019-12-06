@@ -470,6 +470,12 @@ const FileExplorer = function () {
       }
 
       if (data !== undefined) {
+        // shallow copy data
+        if (Array.isArray(data)) {
+          data = [...data]
+        } else {
+          data = {...data};
+        }
         if (['selected', 'success', 'addAccount'].includes(action)
           && (config.account_key || config.retrieve_token())
           && config.user_data().trusted) {
@@ -500,6 +506,13 @@ const FileExplorer = function () {
                 d.account_key = { key: account.account_key };
               }
             }
+          });
+        }
+        if (['success', 'error', 'selected'].includes(action)) {
+          data = data.map((file) => {
+            // remove properties that are only for internal use
+            delete file.friendlySize;
+            return file;
           });
         }
         message.data = data;
@@ -837,12 +850,9 @@ const FileExplorer = function () {
         if (typeof file === 'string' && file === parent) {
           target = parent;
         }
-        // remove properties that are only for internal use
-        const target2 = Object.assign({}, target);
-        delete target2.friendlySize;
 
         this.view_model.loading(true);
-        this.manager.active().filesystem().navigate(target2, (err, result) => {
+        this.manager.active().filesystem().navigate(target, (err, result) => {
           logger.debug('Navigation result: ', err, result);
           this.view_model.loading(false);
           // eslint-disable-next-line no-use-before-define
