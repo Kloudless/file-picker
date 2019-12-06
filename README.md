@@ -70,6 +70,7 @@ storage services:
 * [Misc. Development Notes](#misc-development-notes)
 * [Security Vulnerabilities](#security-vulnerabilities)
 * [Support](#support)
+* [Changelog](CHANGELOG.md)
 
 ## Usage
 
