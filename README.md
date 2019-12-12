@@ -58,12 +58,15 @@ storage services:
   * [Work with mobile devices](#work-with-mobile-devices)
 * [Migration Guide](#migration-guide)
   * [From v1 to v2](#from-v1-to-v2)
-    * [Incompatible configuration options](#incompatible-configuration-options)
+    * [New Layout and New Options to Customize the UI](#new-layout-and-new-options-to-customize-the-ui)
+    * [File Explorer Renamed to File Picker](#file-explorer-renamed-to-file-picker)
+    * [React and Vue Wrapper Options Configuration](#react-and-vue-wrapper-options-configuration)
+    * [Incompatible Configuration Options](#incompatible-configuration-options)
   * [From v1.0.0 to v1.0.1](#from-v100-to-v101)
 * [Contributing](#contributing)
   * [Requirements](#requirements)
   * [Development](#development)
-    * [Typescript Definition](#typescript-definition)
+    * [TypeScript Definition](#typescript-definition)
   * [Build](#build)
     * [Build Options](#build-options)
   * [Testing](#testing)
@@ -897,7 +900,7 @@ picker.choosify(document.getElementById('file-picker-button'));
 // In addition, you can launch the file picker programmatically with choose()
 picker.choose();
 
-// Launching the Picker to save when a clicks the 'Open File Picker' button
+// Launching the Picker to save when a user clicks the 'Open File Picker' button
 // Note: you can pass in an array of files instead of using the configuration
 // option
 var files = [{
@@ -1034,33 +1037,27 @@ File Picker as well.
 
 ### From v1 to v2
 
-- React and Vue Wrapper
+#### New Layout and New Options to Customize the UI
 
-Previously, `getGlobalOptions` and `setGlobalOption` are imported from
-`@kloudless/file-picker`.
+v2 represents a new layout and set of options for the File Picker, including:
+* A completely new theme for the UI with improved responsiveness, clearer HTML
+  and CSS structure with consistent naming conventions, and several bug-fixes. 
+* A documented format for customizing UI styling such as colors and fonts
+  without forking the entire project.
 
-```javascript
-import filePicker from '@kloudless/file-picker';
+Provided your application isn't already customizing styling by using the
+`custom_css` option as detailed below, it will automatically begin using the
+new version.
 
-filePicker.getGlobalOptions()
-filePicker.setGlobalOptions({...})
-```
+#### File Explorer Renamed to File Picker
 
-Now, you can import them from `@kloudless/file-picker/react`
-(or `@kloudless/file-picker/vue`, depends on which framework you use).
+The File Explorer has been renamed to the File Picker to improve clarity.
+The entire JS namespace, as well as any relevant method, variable, or
+configuration option names, have been transitioned from referencing an
+"explorer" to a "picker", while preserving backwards-compatibility.
 
-```javascript
-import { setGlobalOptions, getGlobalOptions } from '@kloudless/file-picker/react';
-// Or use the following syntax if you use VueJS:
-// import { setGlobalOptions, getGlobalOptions } from '@kloudless/file-picker/vue';
-
-getGlobalOptions()
-setGlobalOptions({...})
-```
-
-- Rename File Explorer to File Picker, including namespace, methods and options.
-Old names are preserved for backward-compatibility.
-Here is a check list for you to check if you modify those names accordingly:
+Here is a table to assist with transitioning previously publicly documented
+names to their newer counterparts:
   
   Description | Old Name | New Name
   ---|---|---
@@ -1070,20 +1067,37 @@ Here is a check list for you to check if you modify those names accordingly:
   environment variable | EXPLORER_URL | PICKER_URL
   script tag URL | https://static-cdn.kloudless.com/p/platform/sdk/kloudless.explorer.js | https://static-cdn.kloudless.com/p/platform/sdk/kloudless.picker.js
 
-- v2 represents a new layout and set of options for the File Picker, including:
-  * A completely new theme for the UI with improved responsiveness, clearer HTML
-    and CSS structure and consistent naming conventions, and several bug-fixes. 
-  * A documented format for customizing UI styling such as colors and fonts
-    without forking the entire project.
+Forked projects that are migrating to v2 should take care to replace names
+similarly.
 
-  Provided your application isn't already customizing styling by using the
-  `custom_css` option as detailed below, it will automatically begin using the
-  new version.
+#### React and Vue Wrapper Options Configuration
 
-##### Incompatible configuration options
+Previously, `getGlobalOptions` and `setGlobalOption` were imported from
+`@kloudless/file-picker` as shown below:
 
-Below are some options that will no longer be effective or force the
-previous version to continue to be loaded instead to maintain compatibility.
+```javascript
+import filePicker from '@kloudless/file-picker';
+
+filePicker.getGlobalOptions()
+filePicker.setGlobalOptions({...})
+```
+
+Now, they can be imported from `@kloudless/file-picker/react`,
+or `@kloudless/file-picker/vue`, depending on the framework in use:
+
+```javascript
+import { setGlobalOptions, getGlobalOptions } from '@kloudless/file-picker/react';
+// Or use the following syntax for VueJS:
+// import { setGlobalOptions, getGlobalOptions } from '@kloudless/file-picker/vue';
+
+getGlobalOptions()
+setGlobalOptions({...})
+```
+
+#### Incompatible Configuration Options
+
+Below are some options that will no longer be effective, or will force the
+previous version to continue to load instead, to maintain compatibility.
 
 * `custom_css` : string
 
@@ -1161,7 +1175,7 @@ The development server supports automatically rebuilding the source files
 whenever changes are saved. However, hot reloading scripts is not supported
 yet; you will need to reload the page to view your changes.
 
-#### Typescript Definition
+#### TypeScript Definition
 
 Be sure to update **src/loader/js/interface.d.ts** if the corresponding
 interface is changed.
@@ -1179,7 +1193,7 @@ Here is an explanation of the `dist` folder's structure:
 Folder | Purpose
 ---|---
 `loader` | Contains the script that an application includes to load the File Picker.
-`picker` | Contains the File Picker assets that the `loader` loads in an iframe. Only customize this when [self-host](#self-hosting) the File Picker.
+`picker` | Contains the File Picker assets that the `loader` loads in an iframe. Only customize this when [self-hosting](#self-hosting) the File Picker.
 
 
 #### Build Options
@@ -1211,7 +1225,7 @@ To test the build generated by `npm run build`, run the following command:
 KLOUDLESS_APP_ID=<your_app_id> npm run dist-test
 ```
 
-To test TypeScript definition file, run the following command:
+To test the TypeScript definition file, run the following command:
 ```bash
 npm run test:ts
 ```

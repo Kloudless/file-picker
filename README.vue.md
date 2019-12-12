@@ -42,7 +42,7 @@ Supports Vue v2.
 * [Props](#props)
 * [Attributes](#attributes)
 * [Events](#events)
-* [Set/Get Global Option](#setget-global-option)
+* [Set/Get Global Options](#setget-global-options)
 * [Custom CSS/style](#custom-cssstyle)
 * [Testing](#testing)
 
@@ -56,7 +56,7 @@ npm install @kloudless/file-picker
 
 ### Chooser
 
-A button component that wraps the [Chooser](https://github.com/Kloudless/file-explorer#chooser)
+A button component that wraps the [Chooser](https://github.com/kloudless/file-picker#chooser)
 view of the File Picker and will launch the Chooser when clicked.
 
 #### Example
@@ -125,7 +125,7 @@ Usage:
 
 ### Saver
 
-A button component that wraps the [Saver](https://github.com/Kloudless/file-explorer#saver)
+A button component that wraps the [Saver](https://github.com/kloudless/file-picker#saver)
 view of the File Picker and will launch the Saver when clicked.
 
 #### Example
@@ -207,7 +207,7 @@ Usage:
 
 ### Dropzone
 
-A [Dropzone](https://github.com/Kloudless/file-explorer#dropzone) component that
+A [Dropzone](https://github.com/kloudless/file-picker#dropzone) component that
 will launch the Chooser when clicked or launch the Saver when files are dropped.
 
 #### Example
@@ -240,7 +240,7 @@ export default {
 
 - `options` _(Required)_  
   An object used to configure the File Picker. Requires the Kloudless App ID
-  at minimum. Refer to the full [File Picker Configuration](https://github.com/Kloudless/file-explorer#configuration)
+  at minimum. Refer to the full [File Picker Configuration](https://github.com/kloudless/file-picker#configuration)
   for more details on all possible configuration parameters.
 - `title` _(Optional)_   
   The text shown on the button for `Chooser` or `Saver`.
@@ -259,13 +259,13 @@ Here are the DOM element attributes you can set:
 
 ## Events
 
-Supports all of the events listed in [Events](https://github.com/Kloudless/file-explorer#events).
+Supports all of the events listed in [Events](https://github.com/kloudless/file-picker#events).
 
 In addition, we support the `click` event:
 - `click`
   Emitted when the component is clicked.
 
-## Set/Get Global Option
+## Set/Get Global Options
 
 ```javascript
 import { setGlobalOptions, getGlobalOptions } from '@kloudless/file-picker/vue';
@@ -274,9 +274,11 @@ setGlobalOptions({...});
 getGlobalOptions();
 ```
 
-The return data and parameters are the same with
+The returned data and parameters are the same as for
 `filePicker.setGlobalOptions()` and `filePicker.getGlobalOptions()`.
-Please refer to the [File Picker Methods](https://github.com/Kloudless/file-explorer#methods).
+Please refer to the
+[File Picker Methods](https://github.com/kloudless/file-picker#methods)
+for more details.
 
 ## Custom CSS/style
 

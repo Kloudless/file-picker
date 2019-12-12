@@ -14,10 +14,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "http://github.com/kloudless/file-explorer.git"
+    "url": "http://github.com/kloudless/file-picker.git"
   },
   "bugs": {
-    "url": "https://github.com/kloudless/file-explorer/issues",
+    "url": "https://github.com/kloudless/file-picker/issues",
     "email": "support@kloudless.com"
   },
   "homepage": "https://kloudless.com/products/file-picker",

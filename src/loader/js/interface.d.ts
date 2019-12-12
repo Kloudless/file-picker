@@ -9,7 +9,7 @@ declare global {
     function setGlobalOptions(buildOptions: Partial<BuildOptions>);
 
     /**
-     * See https://github.com/Kloudless/file-explorer#methods
+     * See https://github.com/kloudless/file-picker#methods
      */
     interface Picker extends Events {
       choose(): void;
@@ -23,7 +23,7 @@ declare global {
     }
 
     /**
-     * See https://github.com/Kloudless/file-explorer#methods-1
+     * See https://github.com/kloudless/file-picker#methods-1
      */
     interface Dropzone extends DropzoneEvents {
       close(): void;
@@ -58,7 +58,7 @@ declare global {
     }
 
     /**
-     * See https://github.com/Kloudless/file-explorer#chooser-and-saver
+     * See https://github.com/kloudless/file-picker#chooser-and-saver
      */
     interface BaseOptions {
       app_id: string;
@@ -71,12 +71,12 @@ declare global {
       // TODO: deprecate in v2
       custom_css?: string;
       /**
-       * Please refer to https://github.com/Kloudless/file-explorer#chooser-and-saver
+       * Please refer to https://github.com/kloudless/file-picker#chooser-and-saver
        * for the usage of `locale` option.
        */
       locale?: string;
       /**
-       * Please refer to https://github.com/Kloudless/file-explorer#chooser-and-saver
+       * Please refer to https://github.com/kloudless/file-picker#chooser-and-saver
        * for the usage of `translations` option.
        */
       translations?: string | object;
@@ -98,7 +98,7 @@ declare global {
     }
 
     /**
-     * See https://github.com/Kloudless/file-explorer#chooser-and-saver
+     * See https://github.com/kloudless/file-picker#chooser-and-saver
      */
     interface ChooserOptions extends BaseOptions {
       multiselect?: boolean;
@@ -112,7 +112,7 @@ declare global {
     }
 
     /**
-     * See https://github.com/Kloudless/file-explorer#chooser-and-saver
+     * See https://github.com/kloudless/file-picker#chooser-and-saver
      */
     interface SaverOptions extends BaseOptions {
       files: File[];
@@ -150,7 +150,7 @@ declare global {
     type FinishFileUploadEvent = ChooserFinishFileUploadEvent | SaverFinishFileUploadEvent;
 
     /**
-     * See https://github.com/Kloudless/file-explorer#events
+     * See https://github.com/kloudless/file-picker#events
      */
     interface Events {
       on(event: 'success', callback: (event: SuccessEvent) => void): void;
@@ -167,7 +167,7 @@ declare global {
     }
 
     /**
-     * See https://github.com/Kloudless/file-explorer#events
+     * See https://github.com/kloudless/file-picker#events
      */
     type DropzoneEvents = Events & {
       on(event: 'drop', callback: () => void): void;
@@ -200,7 +200,7 @@ declare global {
       error?: Error;
       /**
        * In case Kloudless API introduces new properties but hasn't updated here.
-       * Please notify us by creating GitHub issues: https://github.com/Kloudless/file-explorer/issues.
+       * Please notify us by creating GitHub issues: https://github.com/kloudless/file-picker/issues.
        */
       [x: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     }

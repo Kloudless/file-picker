@@ -1,7 +1,7 @@
 # React components for the Kloudless File Picker
 
 This project is a thin React wrapper around the
-[Kloudless File Picker](https://github.com/Kloudless/file-explorer). We
+[Kloudless File Picker](https://github.com/kloudless/file-picker). We
 provide the following components to add the File Picker to any React app:
 - `Chooser`:
   A button component that will launch the Chooser when clicked.
@@ -57,7 +57,7 @@ npm install @kloudless/file-picker
 ### Chooser
 
 A button component that wraps the
-[Chooser](https://github.com/Kloudless/file-explorer#chooser) view of the File
+[Chooser](https://github.com/kloudless/file-picker#chooser) view of the File
 Picker and will launch the Chooser when clicked.
 
 #### Example
@@ -114,7 +114,7 @@ ReactDOM.render(
 ### Saver
 
 A button component that wraps the
-[Saver](https://github.com/Kloudless/file-explorer#saver) view of the File
+[Saver](https://github.com/kloudless/file-picker#saver) view of the File
 Picker and will launch the Saver when clicked.
 
 #### Example
@@ -175,7 +175,7 @@ ReactDOM.render(
 
 ### Dropzone
 
-A [Dropzone](https://github.com/Kloudless/file-explorer#dropzone) component that
+A [Dropzone](https://github.com/kloudless/file-picker#dropzone) component that
 will launch the Chooser when clicked or launch the Saver when files are dropped
 into it.
 
@@ -201,7 +201,7 @@ ReactDOM.render(
 
 - `options` _(Required)_
   An object used to configure the File Picker. Requires the Kloudless App ID
-  at minimum. Refer to the full [File Picker Configuration](https://github.com/Kloudless/file-explorer#configuration)
+  at minimum. Refer to the full [File Picker Configuration](https://github.com/kloudless/file-picker#configuration)
   for more details on all possible configuration parameters.
 - `className` _(Optional)_
   CSS class that apply to `Saver` or `Chooser`.
@@ -220,7 +220,7 @@ ReactDOM.render(
 ## Event Handlers
 
 Supports all the events that are listed in
-[Events](https://github.com/Kloudless/file-explorer#events).
+[Events](https://github.com/kloudless/file-picker#events).
 The event handler's name is in following format: `on{EventName}`.
 For example, `onSuccess` is the event handler for the success event.
 `onError` is the event handler for the error event, etc.
@@ -239,9 +239,11 @@ setGlobalOptions({...});
 getGlobalOptions();
 ```
 
-The return data and parameters are the same with
+The returned data and parameters are the same as for
 `filePicker.setGlobalOptions()` and `filePicker.getGlobalOptions()`.
-Please refer to the [File Picker Methods](https://github.com/Kloudless/file-explorer#methods).
+Please refer to the
+[File Picker Methods](https://github.com/kloudless/file-picker#methods)
+for more details.
 
 ## Testing
 
