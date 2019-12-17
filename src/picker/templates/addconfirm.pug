@@ -1,0 +1,28 @@
+.container
+  .container__header
+    .flex-row.align-items-center
+      .flex-no-shrink.icon.icon--large(
+          data-bind='click: $root.setLocation.bind($data, "#/")')
+        .icon__back
+      .flex-grow.text-center(data-bind='translate: "addConfirm/confirm"')
+  .container__body
+    .flex-col.align-items-center.h-100.w-100
+      .box.flex-grow
+        .flex-col.justify-content-center.h-100
+          .box__section
+            div
+              div.flex-row.justify-content-center.mt.mb(data-bind='translate: {html: { message: "addConfirm/clickBelow", variables: { serviceName: addConfirm.serviceName }}}')
+              div.flex-row.justify-content-center.mb
+                .flex-no-shrink.icon.icon--xlarge
+                  img.icon__service(data-bind='attr: {src: addConfirm.serviceLogo}')
+                .flex-no-shrink.icon.icon--xlarge
+                  img.icon__service(data-bind='attr: {src: $root.static("/launch_site/support-plus.png")}')
+                .flex-no-shrink.icon.icon--xlarge
+                  .icon__brand
+              div.flex-row.justify-content-center.mb
+                button.btn.btn--secondary.mr(data-bind=`
+                    click: $root.setLocation.bind($data, "#/"),
+                    translate: "global/cancel"`)
+                button#confirm-add-button.btn.btn--primary(
+                    data-bind='translate: {html: { message: "addConfirm/connectAccount"}}')
+  include footer

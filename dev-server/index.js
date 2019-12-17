@@ -5,7 +5,7 @@ import 'regenerator-runtime/runtime';
 /**
  * DO NOT import the npm installed jQuery here, to simulate the case
  * where the jquery script is imported by devs integrating
- * the file-explorer, instead of from the file-explorer itself.
+ * the file-picker, instead of from the file-picker itself.
  */
 
 (function () {
@@ -31,7 +31,7 @@ import 'regenerator-runtime/runtime';
     name: 'File Chooser',
     elementId: 'file-chooser',
     objId: 'fileChooser',
-    explorerOptions: {
+    pickerOptions: {
       multiselect: true,
       link: false,
       computer: true,
@@ -49,7 +49,7 @@ import 'regenerator-runtime/runtime';
     name: 'Folder Chooser',
     elementId: 'folder-chooser',
     objId: 'folderChooser',
-    explorerOptions: {
+    pickerOptions: {
       multiselect: true,
       link: false,
       computer: true,
@@ -63,7 +63,7 @@ import 'regenerator-runtime/runtime';
     type: 'saver',
     elementId: 'saver',
     objId: 'saver',
-    explorerOptions: {
+    pickerOptions: {
       flavor: 'saver',
       files: [
         {
@@ -79,7 +79,7 @@ import 'regenerator-runtime/runtime';
     name: 'Dropzone',
     type: 'dropzone',
     objId: 'dropzone',
-    explorerOptions: {
+    pickerOptions: {
       elementId: 'dropzone',
       // Must be true if you want to upload more than 1 file at a time.
       multiselect: true,
@@ -110,22 +110,22 @@ import 'regenerator-runtime/runtime';
   }
 
   function create({
-    global = window.Kloudless.fileExplorer, name, type = 'chooser',
-    explorerOptions, elementId, objId,
+    global = window.Kloudless.filePicker, name, type = 'chooser',
+    pickerOptions, elementId, objId,
   }) {
     const appId = KLOUDLESS_APP_ID || window.appId;
-    const options = { app_id: appId, ...explorerOptions };
+    const options = { app_id: appId, ...pickerOptions };
 
-    function createEvents(explorer) {
-      EVENTS.forEach(event => explorer.on(
+    function createEvents(picker) {
+      EVENTS.forEach(event => picker.on(
         event,
         data => addResultWithData(name, event, data),
       ));
     }
 
     if (type === 'dropzone') {
-      window.explorers[objId] = global.dropzone(options);
-      createEvents(window.explorers[objId]);
+      window.pickers[objId] = global.dropzone(options);
+      createEvents(window.pickers[objId]);
       return;
     }
 
@@ -135,29 +135,29 @@ import 'regenerator-runtime/runtime';
      */
     const element = document.getElementById(elementId);
 
-    function createExplorer() {
-      // remove this function so that file explorer can bound click event on it
-      element.removeEventListener('click', createExplorer);
+    function createPicker() {
+      // remove this function so that file picker can bound click event on it
+      element.removeEventListener('click', createPicker);
 
-      const obj = global.explorer(options);
+      const obj = global.picker(options);
       createEvents(obj);
-      window.explorers[objId] = obj;
+      window.pickers[objId] = obj;
       if (type === 'chooser') {
         obj.choosify($(`#${elementId}`));
       } else {
         obj.savify(element);
       }
 
-      // load the explorer
+      // load the file picker
       setTimeout(() => {
         element.click();
       }, 0);
     }
 
-    element.addEventListener('click', createExplorer);
+    element.addEventListener('click', createPicker);
   }
 
-  window.explorers = {};
+  window.pickers = {};
 
   /**
    * File Chooser
@@ -166,7 +166,7 @@ import 'regenerator-runtime/runtime';
 
   document.getElementById('file-chooser-renew').addEventListener(
     'click', () => {
-      window.explorers.fileChooser.destroy();
+      window.pickers.fileChooser.destroy();
       create(FILE_CHOOSER_OPTIONS);
     },
   );
@@ -195,7 +195,7 @@ import 'regenerator-runtime/runtime';
 
   document.getElementById('dropzone-renew').addEventListener(
     'click', () => {
-      window.explorers.dropzone.destroy();
+      window.pickers.dropzone.destroy();
       create(DROPZONE_OPTIONS);
     },
   );
@@ -203,15 +203,15 @@ import 'regenerator-runtime/runtime';
   // Test close
   const closeButton = document.getElementById('close');
   closeButton.addEventListener('click', () => {
-    Object.values(window.explorers).forEach(explorer => explorer.close());
+    Object.values(window.pickers).forEach(picker => picker.close());
   });
 
   // Test setGlobalOptions
-  const updateExplorerURL = document.getElementById('update-explorer-url');
-  updateExplorerURL.addEventListener('click', () => {
-    window.Kloudless.fileExplorer.setGlobalOptions({
-      explorerUrl:
-        'https://static-cdn.kloudless.com/p/platform/explorer/explorer.html',
+  const updatePickerURL = document.getElementById('update-picker-url');
+  updatePickerURL.addEventListener('click', () => {
+    window.Kloudless.filePicker.setGlobalOptions({
+      pickerUrl:
+        'https://static-cdn.kloudless.com/p/platform/file-picker/v2/index.html',
     });
   });
 }());

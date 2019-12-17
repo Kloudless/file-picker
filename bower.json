@@ -1,9 +1,8 @@
 {
-  "name": "kloudless-file-explorer",
+  "name": "kloudless-file-picker",
   "version": "1.0.0",
   "private": false,
   "dependencies": {
-    "foundation": "5.2.3",
     "jquery-ui": "1.10.4",
     "requirejs": "2.1.14",
     "loglevel": "1.4.1",

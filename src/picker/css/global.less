@@ -1,0 +1,85 @@
+.font-face(
+  @font_face_name,
+  @font_face_path,
+  @font_face_format
+);
+
+body,
+html,
+a,
+p,
+span,
+div,
+input,
+textarea,
+button,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: auto;
+}
+
+html {
+  box-sizing: border-box;
+  font-size: @font_size_lg;
+  font-family: @font_family;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: @primary_text_color;
+  background-color: @container_color;
+}
+
+body {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
+
+  .iexd {
+    position: absolute;
+    display: none;
+    overflow: hidden;
+  }
+
+  #kloudless-file-picker {
+    overflow-x: hidden;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+table {
+  width: 100%;
+  background-color: @section_primary_bg_color;
+  border-spacing: 0;
+}
+
+tbody {
+  width: 100%;
+}
+
+td,
+th {
+  padding: 10px;
+  border-bottom: 1px solid @section_line_color;
+  text-align: left;
+
+  &:first-child {
+    padding-right: 0;
+    padding-left: 0;
+    width: 20px;
+  }
+}

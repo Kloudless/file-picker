@@ -1,0 +1,45 @@
+/**
+ * @font-face LESS Mixin
+ * use: .font-face(
+ *   @font-family, // name
+ *   @file-path,   // absolute/relative URL to font files
+ *   @font-format, // font format. ex: woff
+ * )
+ */
+.font-face(@font-family, @file-path, @font-format) {
+  @font-face {
+    font-family: @font-family;
+    src: url('@{file-path}') format('@{font-format}');
+    font-weight: 500;
+    font-style: normal;
+  }
+}
+
+.shadow-box {
+  border-radius: @border_radius;
+  box-shadow: 0 1px 2px 1px @shadow_color;
+}
+
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hover-supported(@rules) {
+  /*
+   * https://developer.mozilla.org/en-US/docs/Web/CSS/@media/pointer 
+   * coarse: The primary input mechanism includes a pointing device of limited accuracy.
+   */
+  @media not all and (pointer: coarse) {
+    &:hover {
+      @rules();
+    }
+  }
+}
+
+.word-break {
+  // break-all is applied by IE and Edge
+  word-break: break-all;
+  word-break: break-word;
+}

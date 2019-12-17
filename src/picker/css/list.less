@@ -1,0 +1,32 @@
+.list {
+  background-color: @section_primary_bg_color;
+}
+
+.list__item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px 4px;
+  color: @primary_text_color;
+
+  &:hover {
+    background-color: @section_primary_hover_bg_color;
+  }
+}
+
+.list__item--current {
+  cursor: default;
+  justify-content: space-between;
+  pointer-events: none;
+
+  &:hover {
+    background-color: @section_primary_bg_color;
+  }
+}
+
+.list__text {
+  .word-break();
+
+  margin: 0 10px;
+  flex: 1;
+}

@@ -1,0 +1,151 @@
+.icon__base(@url) {
+  width: 100%;
+  height: 100%;
+  background: url(@url) no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+}
+
+.icon__service {
+  width: 100%;
+  height: auto;
+}
+
+.icon__computer {
+  .icon__base(@icon_my_device);
+}
+
+.icon__accounts {
+  .icon__base(@icon_manage_accounts);
+}
+
+.icon__checked {
+  .icon__base(@icon_checked);
+}
+
+.icon__root-dir {
+  .icon__base(@icon_root_dir);
+}
+
+.icon__folder {
+  .icon__base(@icon_folder);
+}
+
+.icon__file {
+  .icon__base(@icon_file);
+}
+
+.icon__back {
+  .icon__base(@icon_back);
+
+  &:hover {
+    cursor: pointer;
+    .icon__base(@icon_back_hovered);
+  }
+}
+
+.icon__next {
+  .icon__base(@icon_next);
+}
+
+.icon__logout {
+  .icon__base(@icon_logout);
+
+  &:hover {
+    cursor: pointer;
+    .icon__base(@icon_logout_hovered);
+  }
+}
+
+.icon__close {
+  .icon__base(@icon_close);
+
+  &:hover {
+    cursor: pointer;
+    .icon__base(@icon_close_hovered);
+  }
+}
+
+.icon__new-folder {
+  .icon__base(@icon_new_folder);
+}
+
+.icon__refresh {
+  .icon__base(@icon_refresh);
+}
+
+.icon__search {
+  .icon__base(@icon_search);
+
+  &:hover {
+    cursor: pointer;
+    .icon__base(@icon_search_hovered);
+  }
+}
+
+.icon__brand {
+  .icon__base(@icon_brand);
+}
+
+.icon__sort {
+  .icon__base(@icon_sort);
+}
+
+.icon__sort--desc {
+  .icon__base(@icon_sort_desc);
+}
+
+.icon__sort--asc {
+  .icon__base(@icon_sort_asc);
+}
+
+.icon--button {
+  cursor: pointer;
+  border-radius: @border_radius;
+
+  &:hover {
+    background-color: @icon_btn_hover_color;
+  }
+}
+
+.icon--xsmall {
+  width: 12px;
+  height: 12px;
+}
+
+.icon--small {
+  width: 16px;
+  height: 16px;
+}
+
+.icon--large {
+  width: 24px;
+  height: 24px;
+}
+
+.icon--disabled {
+  .icon__search {
+    .icon__base(@icon_search);
+
+    &:hover {
+      cursor: unset;
+      .icon__base(@icon_search);
+    }
+  }
+}
+
+.icon--xlarge {
+  width: 60px;
+  height: 60px;
+
+  .icon__computer {
+    .icon__base(@icon_my_device_lg);
+  }
+}

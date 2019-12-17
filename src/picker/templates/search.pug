@@ -1,0 +1,27 @@
+.container(data-bind="css: { 'container--is-loading': loading }")
+  .container__header
+    .flex-row.align-items-center
+      .flex-no-shrink.mr
+        .icon.icon--large(data-bind='click: files.exitSearchMode')
+          .icon__back
+      .flex-grow.mr
+        form(data-bind="submit: files.search")
+          input.search-input(
+            type="text", placeholder="Search",
+            data-bind=`
+              selectInputText: files.searchQuery,
+              textInput: files.searchQuery,
+              translate: {placeholder: { message: "files/search" }}`)
+      .flex-no-shrink.invisible.sm-hidden
+        .icon.icon--large
+  .container__body
+    .flex-col.flex-grow.h-100
+      .flex-no-shrink.w-100
+        .flex-row.mb
+          .flex-no-shrink
+            .icon
+              img.icon__service(data-bind='attr: {src: accounts.active_logo()}')
+          .flex-grow
+            .account-name(data-bind='text: accounts.name')
+      include filetable
+  include footer

@@ -1,0 +1,49 @@
+{
+  "id": {
+    "global": {
+      "select": "Memilih",
+      "cancel": "Membatalkan",
+      "save": "Menyimpan",
+      "upload": "Unggah"
+    },
+    "files": {
+      "name": "Nama",
+      "size": "Ukuran",
+      "updated": "Diperbarui",
+      "noFilesFound": "Tidak Ada File",
+      "untitledFolder": "Folder Tanpa Judul",
+      "search": "Pencarian",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Jika Anda menghapus akun ini, Anda tidak lagi dapat menjelajahinya. Apakah kamu yakin",
+      "connectedAccounts": "Akun yang terhubung",
+      "logout": "keluar",
+      "manage": "Kelola akun penyimpanan cloud Anda di sini.",
+      "chooseAccount": "Selamat datang! Silakan pilih layanan yang akan dihubungkan",
+      "connectMore": "Hubungkan lebih banyak!",
+      "upload": "Unggah",
+      "uploadFromComputer": "Unggah dari komputer Anda"
+    },
+    "selector": {
+      "myComputer": "Komputer saya",
+      "accounts": "Akun"
+    },
+    "dropzone": {
+      "message": "Seret dan taruh file di sini, atau klik untuk membuka File Picker"
+    },
+    "computer": {
+      "noSupport": "Browser Anda tidak memiliki dukungan Flash, Silverlight atau HTML5."
+    },
+    "addConfirm": {
+      "confirm": "Konfirmasikan koneksi akun.",
+      "clickBelow": "Klik di bawah untuk menghubungkan akun {serviceName} Anda",
+      "connectAccount": "Hubungkan {serviceName} Akun"
+    }
+  }
+}

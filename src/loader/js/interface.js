@@ -1,7 +1,7 @@
 /* eslint-disable camelcase, no-underscore-dangle, func-names,
                   prefer-destructuring */
-/* global EXPLORER_URL, VERSION */
-import '../css/modal.styl';
+/* global PICKER_URL, VERSION */
+import '../css/modal.less';
 
 /**
  * Define the module and the interface with which developers interact.
@@ -81,27 +81,27 @@ const FX = {
 /*
  * Track all variables
  *
- * fileExplorer object, frames, explorers.
+ * filePicker object, frames, pickers.
  */
 
 /**
  * Global Options
  */
 const globalOptions = {
-  explorerUrl: '',
-  explorerOrigin: '', // computed options
+  pickerUrl: '',
+  pickerOrigin: '', // computed options
 };
 
-const fileExplorer = {
+const filePicker = {
   _frames: {},
-  _explorers: {},
+  _pickers: {},
   _queuedAction: {},
 };
 
-// Keep track of all frames and explorers
-const frames = fileExplorer._frames;
-const explorers = fileExplorer._explorers;
-const queuedAction = fileExplorer._queuedAction;
+// Keep track of all frames and pickers
+const frames = filePicker._frames;
+const pickers = filePicker._pickers;
+const queuedAction = filePicker._queuedAction;
 let backdropDiv = null;
 let bodyOverflow = null;
 const { protocol, host } = window.location;
@@ -109,33 +109,38 @@ const { protocol, host } = window.location;
 /**
  * setGlobalOptions()
  */
-fileExplorer.setGlobalOptions = ({ explorerUrl }) => {
-  const oldExplorerUrl = globalOptions.explorerUrl;
-  const pathParts = explorerUrl.split('://', 2);
-  const explorerOrigin = `${pathParts[0]}://${pathParts[1].split('/')[0]}`;
-  // update existing frames when changing explorerUrl
+filePicker.setGlobalOptions = ({ pickerUrl, explorerUrl }) => {
+  // TODO-v3: remove explorerUrl
+  if (!pickerUrl && !explorerUrl) {
+    return;
+  }
+  const newPickerUrl = pickerUrl || explorerUrl;
+  const oldPickerUrl = globalOptions.pickerUrl;
+  const pathParts = newPickerUrl.split('://', 2);
+  const pickerOrigin = `${pathParts[0]}://${pathParts[1].split('/')[0]}`;
+  // update existing frames when changing pickerUrl
   Object.keys(frames).forEach((key) => {
     const frame = frames[key];
     const src = frame.getAttribute('src');
-    frame.setAttribute('src', src.replace(oldExplorerUrl, `${explorerUrl}`));
+    frame.setAttribute('src', src.replace(oldPickerUrl, `${newPickerUrl}`));
   });
-  globalOptions.explorerUrl = explorerUrl;
-  globalOptions.explorerOrigin = explorerOrigin;
+  globalOptions.pickerUrl = newPickerUrl;
+  globalOptions.pickerOrigin = pickerOrigin;
 };
 
 /**
  * getGlobalOptions()
  */
-fileExplorer.getGlobalOptions = () => ({ ...globalOptions });
+filePicker.getGlobalOptions = () => ({ ...globalOptions });
 
-let explorerUrl = EXPLORER_URL;
-if (explorerUrl.indexOf('://') === -1) {
-  explorerUrl = `${protocol}//${host}${explorerUrl}`;
+let pickerUrl = PICKER_URL;
+if (pickerUrl.indexOf('://') === -1) {
+  pickerUrl = `${protocol}//${host}${pickerUrl}`;
 }
-fileExplorer.setGlobalOptions({ explorerUrl });
+filePicker.setGlobalOptions({ pickerUrl });
 
 /**
- * Set up messaging, frames, explorers.
+ * Set up messaging, frames, pickers.
  */
 (function () {
   function parseJsonString(data) {
@@ -151,7 +156,7 @@ fileExplorer.setGlobalOptions({ explorerUrl });
    */
 
   window.addEventListener('message', (event) => {
-    if (event.origin !== globalOptions.explorerOrigin) {
+    if (event.origin !== globalOptions.pickerOrigin) {
       return;
     }
     const message = parseJsonString(event.data);
@@ -159,19 +164,20 @@ fileExplorer.setGlobalOptions({ explorerUrl });
       return;
     }
 
-    // Grab the explorer id
+    // Grab the file picker id
     const {
       exp_id, action, data, callbackId,
     } = message;
 
-    // Listen for file explorer events.
-    // postMessage based on explorer id
-    const explorer = fileExplorer._explorers[exp_id];
-    if (explorer) {
+    // Listen for file picker events.
+    // postMessage based on picker id.
+    // TODO-v3: remove exp_id
+    const picker = filePicker._pickers[exp_id];
+    if (picker) {
       if (action === 'GET_OAUTH_PARAMS') {
-        explorer._getOAuthParams(callbackId, data);
+        picker._getOAuthParams(callbackId, data);
       } else {
-        explorer._fire(action, data);
+        picker._fire(action, data);
       }
     }
   });
@@ -199,8 +205,9 @@ const initialize_frame = function (options, elementId) {
     `create_folder=${options.create_folder}`,
     `types=${JSON.stringify(options.types)}`,
   ];
+
   frame.setAttribute(
-    'src', `${globalOptions.explorerUrl}?${queryStrings.join('&')}`,
+    'src', `${globalOptions.pickerUrl}?${queryStrings.join('&')}`,
   );
   frame.style.display = 'none';
   frames[exp_id] = frame;
@@ -217,13 +224,13 @@ const initialize_frame = function (options, elementId) {
   if (!backdropDiv) {
     const div = document.createElement('div');
     backdropDiv = body.appendChild(div);
-    addClass(backdropDiv, 'backdrop_div');
+    addClass(backdropDiv, 'backdrop-div');
   }
   return exp_id;
 };
 
 // Common file widget methods.
-fileExplorer._fileWidget = function (options) {
+filePicker._fileWidget = function (options) {
   this._setOptions(options);
   this.handlers = {};
   this.defaultHandlers = {};
@@ -232,7 +239,7 @@ fileExplorer._fileWidget = function (options) {
 };
 
 // Set options.
-fileExplorer._fileWidget.prototype._setOptions = function (options = {}) {
+filePicker._fileWidget.prototype._setOptions = function (options = {}) {
   /*
      * This method has historically set data on `this`, and passed it in
      * via the querystring. Since this isn't scalable, and pollutes the
@@ -295,7 +302,7 @@ fileExplorer._fileWidget.prototype._setOptions = function (options = {}) {
 };
 
 // Define handlers. New handlers will override pre-existing ones.
-fileExplorer._fileWidget.prototype.on = function (event, handler) {
+filePicker._fileWidget.prototype.on = function (event, handler) {
   if (this.handlers[event] === undefined) {
     this.handlers[event] = [];
   }
@@ -303,7 +310,7 @@ fileExplorer._fileWidget.prototype.on = function (event, handler) {
   return this;
 };
 
-fileExplorer._fileWidget.prototype._getOAuthParams
+filePicker._fileWidget.prototype._getOAuthParams
   = function (callbackId, data) {
     try {
       const { oauth } = this.options;
@@ -320,7 +327,7 @@ fileExplorer._fileWidget.prototype._getOAuthParams
   };
 
 // Fire an event handler. Called by the message listeners.
-fileExplorer._fileWidget.prototype._fire = function (event, data) {
+filePicker._fileWidget.prototype._fire = function (event, data) {
   if (['success', 'cancel', 'error'].indexOf(event) !== -1) {
     this.close();
   }
@@ -353,42 +360,48 @@ fileExplorer._fileWidget.prototype._fire = function (event, data) {
 };
 
 /*
-   * Explorer
+   * Picker
    */
 
-fileExplorer.explorer = function (options) {
+filePicker.picker = function (options) {
+  if (options.custom_css) {
+    console.warn(
+      'custom_css option is deprecated.',
+      'Please use custom_style_vars instead.');
+    filePicker.setGlobalOptions({ pickerUrl: PICKER_URL_V1 });
+  }
   // first step is to return a new object
-  const exp = new fileExplorer._explorer(options);
+  const picker = new filePicker._picker(options);
 
-  exp.on('load', () => {
+  picker.on('load', () => {
     // TODO: INIT post message with all config variables
-    exp.message('INIT', { options });
+    picker.message('INIT', { options });
 
-    exp.loaded = true;
-    if (queuedAction[exp.exp_id]) {
-      const { method, args } = queuedAction[exp.exp_id];
-      delete queuedAction[exp.exp_id];
-      method.apply(exp, args);
+    picker.loaded = true;
+    if (queuedAction[picker.exp_id]) {
+      const { method, args } = queuedAction[picker.exp_id];
+      delete queuedAction[picker.exp_id];
+      method.apply(picker, args);
     }
   });
 
   // only need to pass the options that can't be updated after initialization
   // the rest will be passed in when calling `_open()`
   const id = initialize_frame({
-    app_id: exp.app_id,
-    exp_id: exp.exp_id,
-    flavor: exp.flavor,
-    custom_css: exp.custom_css,
-    account_key: exp.account_key,
-    services: exp.services,
-    persist: exp.persist,
-    types: exp.types,
-    create_folder: exp.create_folder,
-  }, exp.elementId);
-  exp.exp_id = id;
+    app_id: picker.app_id,
+    exp_id: picker.exp_id,
+    flavor: picker.flavor,
+    custom_css: picker.custom_css,
+    account_key: picker.account_key,
+    services: picker.services,
+    persist: picker.persist,
+    types: picker.types,
+    create_folder: picker.create_folder,
+  }, picker.elementId);
+  picker.exp_id = id;
 
-  exp.defaultHandlers.close = function () {
-    const frame = frames[exp.exp_id];
+  picker.defaultHandlers.close = function () {
+    const frame = frames[picker.exp_id];
     if (frame) {
       FX.fadeOut(frame, {
         duration: 200,
@@ -399,39 +412,41 @@ fileExplorer.explorer = function (options) {
     }
   };
 
-  explorers[exp.exp_id] = exp;
+  pickers[picker.exp_id] = picker;
 
-  return exp;
+  return picker;
 };
+// TODO-v3: remove filePicker.explorer
+filePicker.explorer = filePicker.picker;
 
-// Construct the explorer.
-fileExplorer._explorer = function (options) {
-  fileExplorer._fileWidget.call(this, options);
+// Construct the picker.
+filePicker._picker = function (options) {
+  filePicker._fileWidget.call(this, options);
 };
-fileExplorer._explorer.prototype = Object.create(
-  fileExplorer._fileWidget.prototype,
+filePicker._picker.prototype = Object.create(
+  filePicker._fileWidget.prototype,
 );
-fileExplorer._explorer.prototype.constructor = fileExplorer._explorer;
-Object.defineProperty(fileExplorer._explorer.prototype, 'constructor', {
+filePicker._picker.prototype.constructor = filePicker._picker;
+Object.defineProperty(filePicker._picker.prototype, 'constructor', {
   enumerable: false,
-  value: fileExplorer._explorer,
+  value: filePicker._picker,
 });
 
-// Send a message to the explorer frame
-fileExplorer._explorer.prototype.message = function (action, data, callbackId) {
+// Send a message to the picker frame
+filePicker._picker.prototype.message = function (action, data, callbackId) {
   const frame = frames[this.exp_id];
   if (frame) {
     frame.contentWindow.postMessage(JSON.stringify({
       callbackId,
       action,
       data,
-    }), globalOptions.explorerUrl);
+    }), globalOptions.pickerUrl);
   }
-  // console.log('Explorer message sent.');
+  // console.log('File Picker message sent.');
 };
 
-// Update the explorer config
-fileExplorer._explorer.prototype.update = function (opts) {
+// Update the file picker config
+filePicker._picker.prototype.update = function (opts) {
   this.message('DATA', { options: opts });
 
   // Also update this.options
@@ -439,7 +454,7 @@ fileExplorer._explorer.prototype.update = function (opts) {
 };
 
 // Open the chooser
-fileExplorer._explorer.prototype.choose = function () {
+filePicker._picker.prototype.choose = function () {
   if (!this.loaded) {
     queuedAction[this.exp_id] = { method: this.choose };
     return;
@@ -453,7 +468,7 @@ fileExplorer._explorer.prototype.choose = function () {
 };
 
 // Open the saver
-fileExplorer._explorer.prototype.save = function (files) {
+filePicker._picker.prototype.save = function (files) {
   if (!this.loaded) {
     queuedAction[this.exp_id] = { method: this.save, args: [files] };
     return;
@@ -479,16 +494,16 @@ fileExplorer._explorer.prototype.save = function (files) {
   return this; // eslint-disable-line
 };
 
-fileExplorer._explorer.prototype._open = function (data) {
+filePicker._picker.prototype._open = function (data) {
   const body = document.getElementsByTagName('body')[0];
 
   data.options = this.options;
   this.message('DATA', data);
 
-  // Store the last scrollTop value so we can reset it when the explorer
+  // Store the last scrollTop value so we can reset it when the file picker
   // closes
-  fileExplorer._fileWidget.lastScrollTop = body.scrollTop;
-  // Then scroll to the top of the file explorer after it's set
+  filePicker._fileWidget.lastScrollTop = body.scrollTop;
+  // Then scroll to the top of the file picker after it's set
   // if the user is mobile
   if (isMobile()) {
     body.scrollTop = 0;
@@ -508,6 +523,9 @@ fileExplorer._explorer.prototype._open = function (data) {
     backdropDiv.style.display = 'block';
     bodyOverflow = body.style.overflow;
     body.style.overflow = 'hidden';
+    addClass(frames[this.exp_id], 'kloudless-modal--backdrop');
+  } else {
+    removeClass(frames[this.exp_id], 'kloudless-modal--backdrop');
   }
 
   this._fire('open');
@@ -515,8 +533,8 @@ fileExplorer._explorer.prototype._open = function (data) {
   return this;
 };
 
-// Close the explorer
-fileExplorer._explorer.prototype.close = function () {
+// Close the file picker
+filePicker._picker.prototype.close = function () {
   const body = document.getElementsByTagName('body')[0];
 
   if (!this.loaded) {
@@ -528,7 +546,7 @@ fileExplorer._explorer.prototype.close = function () {
 
   removeClass(body, 'kfe-active');
 
-  const { lastScrollTop } = fileExplorer._fileWidget;
+  const { lastScrollTop } = filePicker._fileWidget;
   if (typeof (lastScrollTop) !== 'undefined') {
     if (isMobile()) {
       body.scrollTop = lastScrollTop;
@@ -543,7 +561,7 @@ fileExplorer._explorer.prototype.close = function () {
   this._fire('close');
 };
 
-fileExplorer._explorer.prototype._bindElement = function (
+filePicker._picker.prototype._bindElement = function (
   element, clickHandler,
 ) {
   let elements = [];
@@ -566,21 +584,21 @@ fileExplorer._explorer.prototype._bindElement = function (
 };
 
 // Bind the file exploring dialogue to an element.
-fileExplorer._explorer.prototype.choosify = function (element) {
+filePicker._picker.prototype.choosify = function (element) {
   const clickHandler = this.choose.bind(this);
   return this._bindElement(element, clickHandler);
 };
 
 // Bind the file exploring dialogue to an element.
-fileExplorer._explorer.prototype.savify = function (element, files) {
+filePicker._picker.prototype.savify = function (element, files) {
   const clickHandler = this.save.bind(this, files);
   return this._bindElement(element, clickHandler);
 };
 
-fileExplorer._explorer.prototype.destroy = function () {
+filePicker._picker.prototype.destroy = function () {
   const frame = frames[this.exp_id];
   delete frames[this.exp_id];
-  delete explorers[this.exp_id];
+  delete pickers[this.exp_id];
   this.close();
   this.elements.forEach((e) => {
     this.clickHandlers.forEach((handler) => {
@@ -591,9 +609,9 @@ fileExplorer._explorer.prototype.destroy = function () {
   delete queuedAction[this.exp_id];
 };
 
-fileExplorer._explorer.prototype.logout = function (deleteAccount) {
+filePicker._picker.prototype.logout = function (deleteAccount) {
   /**
-   *  Removes all account tokens from file explorer localStorage or
+   *  Removes all account tokens from file picker localStorage or
    *  sessionStorage.
    *
    *  @param {Boolean} deleteAccount - If true, deletes all accounts which
@@ -610,11 +628,11 @@ fileExplorer._explorer.prototype.logout = function (deleteAccount) {
  * Dropzone
  */
 
-fileExplorer.dropzone = function (options) {
-  return new fileExplorer._dropzone({ ...options });
+filePicker.dropzone = function (options) {
+  return new filePicker._dropzone({ ...options });
 };
 
-fileExplorer._dropzone = function (options = {}) {
+filePicker._dropzone = function (options = {}) {
   this.isDestroyed = false;
   this.elementId = options.elementId;
   delete options.elementId;
@@ -626,44 +644,44 @@ fileExplorer._dropzone = function (options = {}) {
 
   const dropzoneOptions = { ...options, computer: true };
 
-  this.dropExplorer = fileExplorer.explorer({
+  this.dropPicker = filePicker.picker({
     ...dropzoneOptions,
     flavor: 'dropzone',
     elementId: this.elementId,
   });
 
-  this.clickExplorer = fileExplorer.explorer(dropzoneOptions);
+  this.clickPicker = filePicker.picker(dropzoneOptions);
 
-  this.dropExplorerFrame = frames[this.dropExplorer.exp_id];
-  this.clickExplorerFrame = frames[this.clickExplorer.exp_id];
+  this.dropPickerFrame = frames[this.dropPicker.exp_id];
+  this.clickPickerFrame = frames[this.clickPicker.exp_id];
 
   this._configureFrame();
 };
 
-fileExplorer._dropzone.prototype._configureFrame = function () {
+filePicker._dropzone.prototype._configureFrame = function () {
   /**
-   * The drop explorer is always opened. But set its iframe opacity to 0 before
+   * The drop picker is always opened. But set its iframe opacity to 0 before
    * users dropping files or after uploading process succeed/canceled.
    */
   const element = document.getElementById(this.elementId);
-  const frame = this.dropExplorerFrame;
-  const dropExp = this.dropExplorer;
-  const clickExp = this.clickExplorer;
+  const frame = this.dropPickerFrame;
+  const dropPicker = this.dropPicker;
+  const clickPicker = this.clickPicker;
   // Cannot set opacity to 0 because that makes the iframe not clickable in
   // Chrome.
   const transparentOpacity = '0.000000001';
 
-  element.classList.add('kloudless_dropzone_container');
+  element.classList.add('kloudless-dropzone-container');
   if (element.getElementsByTagName('span').length === 0) {
     // Add span only if not exists
     const content = document.createElement('span');
     content.innerHTML =
-      'Drag and drop files here, or click to open the File Explorer';
+      'Drag and drop files here, or click to open the File Picker';
     element.appendChild(content);
   }
 
   // Override default close handler so frame isn't set to 'display: none'
-  dropExp.defaultHandlers.close = function () {
+  dropPicker.defaultHandlers.close = function () {
     frame.style.opacity = transparentOpacity;
   };
 
@@ -675,16 +693,16 @@ fileExplorer._dropzone.prototype._configureFrame = function () {
 
   frame.onload = () => {
     if (frame._hasLoadedOnce) {
-      // prevent `setExplorerUrl` from duplicate event listener registration
+      // prevent `setPickerUrl` from duplicate event listener registration
       return;
     }
-    dropExp.on('dropzoneClicked', () => {
-      clickExp._open({
+    dropPicker.on('dropzoneClicked', () => {
+      clickPicker._open({
         flavor: 'chooser',
       });
     });
 
-    dropExp.on('drop', () => {
+    dropPicker.on('drop', () => {
       element.style.width = '700px';
       element.style.height = '515px';
       element.style['border-style'] = 'none';
@@ -696,12 +714,12 @@ fileExplorer._dropzone.prototype._configureFrame = function () {
     const style = window.getComputedStyle(element);
     const { height, width, 'border-style': borderStyle } = style;
 
-    dropExp.on('close', () => {
+    dropPicker.on('close', () => {
       element.style.height = height;
       element.style.width = width;
       element.style['border-style'] = borderStyle;
       if (!this.isDestroyed) {
-        dropExp._open({
+        dropPicker._open({
           flavor: 'dropzone',
         });
       }
@@ -713,30 +731,30 @@ fileExplorer._dropzone.prototype._configureFrame = function () {
   return frame;
 };
 
-fileExplorer._dropzone.prototype.on = function (event, handler) {
-  this.dropExplorer.on(event, handler);
-  this.clickExplorer.on(event, handler);
+filePicker._dropzone.prototype.on = function (event, handler) {
+  this.dropPicker.on(event, handler);
+  this.clickPicker.on(event, handler);
   return this;
 };
 
-fileExplorer._dropzone.prototype.close = function () {
-  this.dropExplorer.close();
-  this.clickExplorer.close();
+filePicker._dropzone.prototype.close = function () {
+  this.dropPicker.close();
+  this.clickPicker.close();
 };
 
-fileExplorer._dropzone.prototype.update = function (opts) {
-  this.dropExplorer.update(opts);
-  this.clickExplorer.update(opts);
+filePicker._dropzone.prototype.update = function (opts) {
+  this.dropPicker.update(opts);
+  this.clickPicker.update(opts);
 };
 
-fileExplorer._dropzone.prototype.destroy = function () {
+filePicker._dropzone.prototype.destroy = function () {
   this.isDestroyed = true;
-  this.dropExplorer.destroy();
-  this.clickExplorer.destroy();
-  this.dropExplorer = null;
-  this.clickExplorer = null;
+  this.dropPicker.destroy();
+  this.clickPicker.destroy();
+  this.dropPicker = null;
+  this.clickPicker = null;
 };
 
-fileExplorer.version = VERSION;
+filePicker.version = VERSION;
 
-export default fileExplorer;
+export default filePicker;

@@ -1,0 +1,15 @@
+.container
+  .container__header
+    .flex-row.align-items-center
+      .flex-no-shrink.mr.sm-hidden
+        //- an empty icon
+        .icon.icon--large
+      .flex-grow.mr
+        include selector
+      .flex-no-shrink
+        #plupload_btn_cancel.icon.icon--large
+          .icon__close
+  .container__body
+    #computer_uploader.h-100
+      p(data-bind='translate: "computer/noSupport"')
+  include footer

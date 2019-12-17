@@ -1,0 +1,60 @@
+.breadcrumb .dropdown .box {
+  overflow-y: auto;
+  max-height: 50vh;
+}
+
+.breadcrumb .icon {
+  flex-shrink: 0;
+}
+
+.breadcrumb {
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  width: 100%;
+  font-size: @font_size_lg;
+}
+
+.breadcrumb__hidden {
+  position: absolute;
+  width: auto;
+  height: auto;
+  white-space: nowrap;
+  visibility: hidden;
+}
+
+.breadcrumb__root-dir-text {
+  margin-left: 8px;
+  color: @primary_text_color;
+}
+
+.breadcrumb__toggle-btn {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.breadcrumb__toggle-btn--hidden {
+  display: none;
+}
+
+.breadcrumb__text {
+  white-space: nowrap;
+  color: @primary_text_color;
+}
+
+.breadcrumb__text--button {
+  cursor: pointer;
+  color: @secondary_text_color;
+
+  &:hover {
+    text-decoration: underline;
+    color: @main_color;
+  }
+}
+
+.breadcrumb__text--ellipsis {
+  .text-ellipsis();
+}

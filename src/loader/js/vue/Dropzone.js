@@ -1,4 +1,4 @@
-import fileExplorer from '../interface';
+import filePicker from '../interface';
 
 const Dropzone = {
   name: 'dropzone',
@@ -19,7 +19,7 @@ const Dropzone = {
       // deep clone options
       const options = JSON.parse(JSON.stringify(this.options));
       options.elementId = this.id;
-      this.dropzone = fileExplorer.dropzone(options);
+      this.dropzone = filePicker.dropzone(options);
       this.dropzone.on('raw', ({ action, data }) => {
         if (action === 'dropzoneClicked') {
           this.$emit('click', data);

@@ -1,0 +1,49 @@
+{
+  "sv": {
+    "global": {
+      "select": "Välj",
+      "cancel": "Annullera",
+      "save": "Spara",
+      "upload": "Ladda upp"
+    },
+    "files": {
+      "name": "namn",
+      "size": "Storlek",
+      "updated": "Uppdaterad",
+      "noFilesFound": "Inga filer funna",
+      "untitledFolder": "Untitled Folder",
+      "search": "Sök",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Om du tar bort det här kontot kan du inte längre utforska det. Är du säker?",
+      "connectedAccounts": "Anslutna konton",
+      "logout": "logga ut",
+      "manage": "Hantera dina Cloud Storage-konton här.",
+      "chooseAccount": "Välkommen! Välj en tjänst för att ansluta",
+      "connectMore": "Anslut mer!",
+      "upload": "Ladda upp",
+      "uploadFromComputer": "Ladda upp från din dator"
+    },
+    "selector": {
+      "myComputer": "Min dator",
+      "accounts": "konton"
+    },
+    "dropzone": {
+      "message": "Dra och släpp filer här, eller klicka för att öppna File Picker"
+    },
+    "computer": {
+      "noSupport": "Din webbläsare har inte stöd för Flash, Silverlight eller HTML5."
+    },
+    "addConfirm": {
+      "confirm": "Bekräfta kontoanslutning.",
+      "clickBelow": "Klicka nedan för att ansluta ditt {serviceName} -konto",
+      "connectAccount": "Anslut {serviceName} konto"
+    }
+  }
+}

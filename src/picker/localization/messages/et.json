@@ -1,0 +1,49 @@
+{
+  "et": {
+    "global": {
+      "select": "Valige",
+      "cancel": "Tühista",
+      "save": "Salvesta",
+      "upload": "Laadi üles"
+    },
+    "files": {
+      "name": "Nimi",
+      "size": "Suurus",
+      "updated": "Uuendatud",
+      "noFilesFound": "Faile ei leitud",
+      "untitledFolder": "Pealkirjata kaust",
+      "search": "Otsing",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Kui eemaldate selle konto, ei saa te seda enam uurida. Oled sa kindel?",
+      "connectedAccounts": "Ühendatud kontod",
+      "logout": "Logi välja",
+      "manage": "Hallake oma pilvesalvestuskontot siin.",
+      "chooseAccount": "Tere tulemast! Palun valige ühendatav teenus",
+      "connectMore": "Ühendage rohkem!",
+      "upload": "Laadi üles",
+      "uploadFromComputer": "Laadige oma arvutisse üles"
+    },
+    "selector": {
+      "myComputer": "Minu arvuti",
+      "accounts": "Kontod"
+    },
+    "dropzone": {
+      "message": "Lohistage failid siia ja klõpsake File Picker avamiseks"
+    },
+    "computer": {
+      "noSupport": "Teie brauseril puudub Flash, Silverlight või HTML5 tugi."
+    },
+    "addConfirm": {
+      "confirm": "Kinnitage konto ühendus.",
+      "clickBelow": "Klõpsake allpool, et ühendada oma {serviceName} konto",
+      "connectAccount": "Ühenda {serviceName} konto"
+    }
+  }
+}

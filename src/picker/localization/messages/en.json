@@ -1,0 +1,94 @@
+{
+  "en": {
+    "global": {
+      "select": "Select",
+      "cancel": "Cancel",
+      "save": "Save",
+      "upload": "Upload",
+      "pause": "Pause",
+      "resume": "Resume",
+      "processing": "Processing...",
+      "poweredby": "Powered by Kloudless",
+      "error": "Error! Please try again or contact support."
+    },
+    "files": {
+      "name": "Name",
+      "size": "Size",
+      "updated": "Updated",
+      "noFilesFound": "No Files Found",
+      "untitledFolder": "Untitled Folder",
+      "search": "Search",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      },
+      "fileName": "File Name",
+      "folderName": "Folder Name",
+      "confirmOverwrite": "Files already exist with the same names as the ones being uploaded. Click OK to overwrite existing files with the same name or Cancel to proceed without overwriting.",
+      "noFileSelected": "No files selected. Please select a file.",
+      "error": "Error occurred. Please try again.",
+      "cannotCreateFolder": "Sorry! Folders cannot be created in this directory.",
+      "searchFail": "The search request was not successful.",
+      "cannotUploadFiles": "Files cannot be saved to this folder. Please choose again."
+    },
+    "accounts": {
+      "confirmRemove": "If you remove this account, you will no longer be able to explore it. Are you sure?",
+      "connectedAccounts": "All Connected Accounts",
+      "logout": "Disconnect all accounts",
+      "manage": "Manage Accounts",
+      "chooseAccount": "Welcome! Please choose a service to connect",
+      "connectMore": "Add Another Account",
+      "upload": "Upload",
+      "uploadFromComputer": "My Device"
+    },
+    "selector": {
+      "myComputer": "My Device",
+      "accounts": "Manage Accounts",
+      "selectFrom": "Selecting files from",
+      "switchAccount": "Switch to another account"
+    },
+    "serviceNames": {
+      "cq5": "Adobe CQ5",
+      "dropbox": "Dropbox",
+      "gdrive": "Google Drive",
+      "box": "Box",
+      "evernote": "Evernote",
+      "skydrive": "OneDrive",
+      "sugarsync": "SugarSync",
+      "sharefile": "Citrix ShareFile",
+      "egnyte": "Egnyte",
+      "s3": "Amazon S3",
+      "sharepoint": "SharePoint Online",
+      "onedrivebiz": "OneDrive for Business",
+      "smb": "SMB",
+      "hubspot": "Hubspot Files",
+      "salesforce": "Salesforce Files",
+      "azure": "Azure Storage",
+      "cmis": "CMIS",
+      "alfresco": "Alfresco",
+      "alfresco_cloud": "Alfresco Cloud",
+      "jive": "Jive",
+      "webdav": "WebDAV",
+      "ftp": "FTP",
+      "computer": "My Device"
+    },
+    "dropzone": {
+      "message": "Drag and drop files here, or click to open the File Picker"
+    },
+    "computer": {
+      "noSupport": "Your browser doesn't have Flash, Silverlight or HTML5 support.",
+      "confirmClose": "Are you sure you want to close this tab? You have an upload in progress.",
+      "confirmCancel": "Are you sure you want to cancel? You have an upload in progress.",
+      "disconnect": "Uploading has been paused due to disconnection.",
+      "error": "Uploading has been paused due to errors. Resume to retry.",
+      "pleaseUploadFilesOfTypes": "Please upload files of the following types: {types}."
+    },
+    "addConfirm": {
+      "confirm": "Confirm account connection",
+      "clickBelow": "Click below to connect your {serviceName} account",
+      "connectAccount": "Connect"
+    }
+  }
+}

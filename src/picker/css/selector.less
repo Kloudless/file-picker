@@ -1,0 +1,37 @@
+.account-selector .dropdown .box {
+  overflow-y: auto;
+  max-height: 50vh;
+}
+
+.account-selector {
+  cursor: pointer;
+  position: relative;
+  width: 100%;
+  text-align: left;
+}
+
+.account-selector__button {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  width: 100%;
+  color: @primary_text_color;
+  background-color: @input_color;
+  border: solid 1px @section_line_color;
+  border-radius: @border_radius;
+}
+
+.account-selector__name {
+  .word-break();
+
+  margin: 0 8px;
+  flex: 1;
+}
+
+.account-selector__arrow {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #aaa;
+}

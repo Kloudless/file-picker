@@ -19,7 +19,7 @@ app.set('port', 3000);
 app.get('/test/dist/', (req, res) => {
   res.render('index.ejs', {
     appId: process.env.KLOUDLESS_APP_ID || '',
-    explorerUrl: `${protocol}://localhost:3000/dist/explorer/explorer.html`,
+    pickerUrl: `${protocol}://localhost:3000/dist/picker/index.html`,
   });
 });
 app.use(express.static(path.resolve(__dirname, '../')));

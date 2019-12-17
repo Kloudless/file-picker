@@ -1,5 +1,6 @@
 import { createChooser, createSaver } from './creators';
 import Dropzone from './Dropzone';
+import filePicker from '../interface';
 
 const Saver = createSaver();
 const Chooser = createChooser();
@@ -13,6 +14,8 @@ export {
   Dropzone,
 };
 
+export const { setGlobalOptions, getGlobalOptions } = filePicker;
+
 // default exports
 export default {
   createChooser,
@@ -20,4 +23,6 @@ export default {
   Saver,
   Chooser,
   Dropzone,
+  setGlobalOptions,
+  getGlobalOptions,
 };

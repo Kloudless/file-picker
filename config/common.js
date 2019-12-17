@@ -13,7 +13,8 @@ module.exports = {
    * 2. 'transformIgnorePatterns' option in jest.conf.js
    */
   ignorePaths: [
-    new RegExp('(node_modules)|(bower_components)|(lib)'),
+    new RegExp('(node_modules)|(bower_components)'),
+    new RegExp('lib/(?!(plupload/jquery.ui.plupload))'),
   ],
   /**
    * A list of paths to resolve module imports

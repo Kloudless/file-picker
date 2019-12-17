@@ -15,7 +15,7 @@
       "search": "Rechercher"
     },
     "accounts": {
-      "confirmRemove": "si vous supprimez ce compte, vous ne pourrez plus l'explorer. Êtes-vous sûr?",
+      "confirmRemove": "Si vous supprimez ce compte, vous ne pourrez plus l'explorer. Êtes-vous sûr?",
       "connectedAccounts": "comptes connectés",
       "logout": "déconnexion",
       "manage": "Gérer vos comptes de stockage en nuage ici.",
@@ -29,15 +29,15 @@
       "accounts": "les Comptes de"
     },
     "dropzone": {
-      "message": "Faites glisser et déposez des fichiers ici, ou cliquez pour ouvrir L'Explorateur de fichiers"
+      "message": "Glissez et déposez les fichiers ici, ou cliquez pour ouvrir le sélecteur de fichiers"
     },
     "computer": {
       "noSupport": "votre navigateur n'a pas de support Flash, Silverlight ou HTML5."
     },
     "addConfirm": {
-      "confirm": "Confirmer la connexion au compte.",
+      "confirm": "Confirmer la connexion au compte",
       "clickBelow": "cliquez ci-dessous pour connecter votre compte {serviceName} ",
-      "connectAccount": "Connect {service} Compte"
+      "connectAccount": "Connect"
     }
   },
   "zh-CN": {
@@ -70,15 +70,15 @@
       "accounts": "帐号"
     },
     "dropzone": {
-      "message": "拖放档案至此或点击以开启File Explorer"
+      "message": "拖放档案至此或点击以开启File Picker"
     },
     "computer": {
       "noSupport": "您的浏览器不支援Flash, Silverlight 或 HTML5."
     },
     "addConfirm": {
-      "confirm": "确认连接帐号.",
+      "confirm": "确认连接帐号",
       "clickBelow": "点选下方以连接您的 {serviceName} 帐号",
-      "connectAccount": "连接 {serviceName} 帐号"
+      "connectAccount": "连接"
     }
   }
 }

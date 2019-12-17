@@ -1,0 +1,52 @@
+//- Select account
+.account-selector(data-bind='with: accounts', data-dropdown-id='account-dropdown')
+  .account-selector__button
+    .icon
+      // ko if: $root.selectingFilesFrom().fromComputer
+      .icon__computer
+      // /ko
+      // ko ifnot: $root.selectingFilesFrom().fromComputer
+      img.icon__service(data-bind='attr: {src: active_logo()}')
+      // /ko
+    .account-selector__name(data-bind='text: name')
+    .account-selector__arrow
+  .dropdown(id='account-dropdown')
+    .box.box-shadow
+      .box__title(data-bind='translate: "selector/selectFrom"')
+      .box__section
+        .list
+          .list__item.list__item--current
+            .icon
+              // ko if: $root.selectingFilesFrom().fromComputer
+              .icon__computer
+              // /ko
+              // ko ifnot: $root.selectingFilesFrom().fromComputer
+              img.icon__service(data-bind="attr: {src: $root.selectingFilesFrom().icon}")
+              // /ko
+            .list__text(data-bind='text: $root.selectingFilesFrom().text')
+            .icon.icon--small
+              .icon__checked
+      .box__divider
+      .box__title(data-bind='translate: "selector/switchAccount"')
+      .box__section
+        .list
+          // ko foreach: $root.filteredAccounts
+          // ko if: $root.services()[service]
+          .list__item(data-bind='attr: {title: $root.services()[service].name + ": " + account_name}, click: $root.setLocation.bind($data, "#/files/" + account)')
+            .icon
+              img.icon__service(data-bind='attr: {src: $root.services()[service].logo}')
+            .list__text(data-bind='text: account_name')
+          // /ko
+          // /ko
+          // ko if: computer() && !$root.selectingFilesFrom().fromComputer
+          .list__item(data-bind='click: $root.setLocation.bind($data, "#/computer")')
+            .icon
+              .icon__computer
+            .list__text(data-bind='translate: "selector/myComputer"')
+          // /ko
+          // ko if: account_management()
+          .list__item(data-bind='click: $root.setLocation.bind($data, "#/accounts")')
+            .icon
+              .icon__accounts
+            .list__text(data-bind='translate: "selector/accounts"')
+          // /ko

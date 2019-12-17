@@ -1,0 +1,49 @@
+{
+  "de": {
+    "global": {
+      "select": "Wählen",
+      "cancel": "Stornieren",
+      "save": "sparen",
+      "upload": "Hochladen"
+    },
+    "files": {
+      "name": "Name",
+      "size": "Größe",
+      "updated": "Aktualisierte",
+      "noFilesFound": "Keine Dateien gefunden",
+      "untitledFolder": "Unbenannter Ordner",
+      "search": "Suche",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Wenn Sie dieses Konto entfernen, können Sie es nicht mehr durchsuchen. Bist du sicher?",
+      "connectedAccounts": "Verbundene Konten",
+      "logout": "Ausloggen",
+      "manage": "Verwalten Sie hier Ihre Cloud-Speicherkonten.",
+      "chooseAccount": "Herzlich willkommen! Bitte wählen Sie einen Dienst aus, um eine Verbindung herzustellen",
+      "connectMore": "Verbinde mehr!",
+      "upload": "Hochladen",
+      "uploadFromComputer": "Hochladen von Ihrem Computer"
+    },
+    "selector": {
+      "myComputer": "Mein Computer",
+      "accounts": "Konten"
+    },
+    "dropzone": {
+      "message": "Ziehen Sie Dateien hierher, und legen Sie sie dort ab, oder klicken Sie darauf, um die Dateiauswahl zu öffnen"
+    },
+    "computer": {
+      "noSupport": "Ihr Browser unterstützt Flash, Silverlight oder HTML5 nicht."
+    },
+    "addConfirm": {
+      "confirm": "Bestätigen Sie die Kontoverbindung.",
+      "clickBelow": "Klicken Sie unten, um eine Verbindung zu Ihrem {serviceName} Konto herzustellen",
+      "connectAccount": "{ServiceName} Konto verbinden"
+    }
+  }
+}

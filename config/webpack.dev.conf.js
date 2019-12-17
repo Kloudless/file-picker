@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* Webpack config for dev-server */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
-const getExplorerPlugins = require('./explorer-plugins');
+const getPickerPlugins = require('./picker-plugins');
 const baseWebpackConfig = require('./webpack.base.conf');
 const merge = require('./merge-strategy');
 
@@ -29,7 +30,7 @@ module.exports = [
   merge(devConfigBase, {
     entry: {
       index: './dev-server/index.js',
-      'loader/loader': './src/loader/js/webpack/index.js',
+      'loader/loader': './config/loader-export-helper.js',
     },
     plugins: [
       new HtmlWebpackPlugin({
@@ -42,33 +43,33 @@ module.exports = [
       }),
     ],
   }),
-  // explorer
+  // picker
   merge(devConfigBase, {
     entry: {
-      'explorer/explorer': [
+      'picker/picker': [
         'webpack-hot-middleware/client?quiet=true',
-        './src/explorer/js/app.js',
+        './src/picker/js/app.js',
       ],
-      'explorer/template-hot-loader': [
+      'picker/template-hot-loader': [
         'webpack-hot-middleware/client?quiet=true',
-        './dev-server/explorer-template-hot-loader.js',
+        './dev-server/picker-template-hot-loader.js',
       ],
     },
     plugins: [
-      // explorer page
+      // picker page
       new HtmlWebpackPlugin({
         filename: path.resolve(
-          devServerContentPath, 'dist/explorer/explorer.html',
+          devServerContentPath, 'dist/picker/index.html',
         ),
         template: path.resolve(
           __dirname,
-          '../src/explorer/templates/index.pug',
+          '../src/picker/templates/index.pug',
         ),
-        chunks: ['explorer/explorer', 'explorer/template-hot-loader'],
+        chunks: ['picker/picker', 'picker/template-hot-loader'],
       }),
       // Don't watch static json files to reduce CPU usage
       new webpack.WatchIgnorePlugin([/bower_components\/cldr-data/]),
-    ].concat(getExplorerPlugins(
+    ].concat(getPickerPlugins(
       path.resolve(devServerContentPath, 'dist'),
     )),
   }),

@@ -8,19 +8,19 @@
   <% } else { %>
     <link rel="stylesheet" href="/static/style.css">
   <% } %>
-  <title>Kloudless File Explorer Test Page</title>
+  <title>Kloudless File Picker Test Page</title>
 </head>
 <body>
   <p>
-    Click below to test the File Explorer's Chooser and Saver modes.
+    Click below to test the File Picker's Chooser and Saver modes.
   </p>
   <button id="file-chooser">Launch the File Chooser</button>
   <button id="file-chooser-renew">Reload the File Chooser configuration</button>
   <button id="folder-chooser">Launch a Chooser that only selects Folders</button>
   <button id="dropzone-create-button">Create a Dropzone</button>
   <button id="saver">Launch the File Saver</button>
-  <button id="close">Close all File Explorers</button>
-  <button id="update-explorer-url">Update the File Explorer URL to load from production</button>
+  <button id="close">Close all File Pickers</button>
+  <button id="update-picker-url">Update the File Picker URL to load from production</button>
   <br>
   <br>
   <p>Drop Zone</p>
@@ -40,11 +40,11 @@
     <script src="../../dist/loader/loader.min.js" data-kloudless-object='Kloudless2'>
     </script>
     <script>
-      window.Kloudless.fileExplorer.setGlobalOptions({
-        explorerUrl: "<%= explorerUrlPlaceHolder %>",
+      window.Kloudless.filePicker.setGlobalOptions({
+        pickerUrl: "<%= pickerUrlPlaceHolder %>",
       });
       window.Kloudless2.setGlobalOptions({
-        explorerUrl: "<%= explorerUrlPlaceHolder %>",
+        pickerUrl: "<%= pickerUrlPlaceHolder %>",
       });
       window.appId = "<%= appIdPlaceHolder %>";
       window.translations = window.location.origin

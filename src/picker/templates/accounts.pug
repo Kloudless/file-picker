@@ -1,0 +1,78 @@
+.container
+  .container__header
+    .flex-row.align-items-center
+      .flex-no-shrink(data-bind="css: {'invisible': accounts.all().length === 0}")
+        .icon.icon--large
+          .icon__back(data-bind="click: $root.setLocation.bind($data, '#/files')")
+      // ko if: accounts.all().length > 0
+      .flex-grow(data-bind='translate: "accounts/manage"')
+      // /ko
+      // ko ifnot: accounts.all().length > 0
+      .flex-grow(data-bind='translate: "accounts/chooseAccount"')
+      // /ko
+      .flex-no-shrink.icon.icon--large
+        .icon__close(data-bind='click: cancel')
+
+  .container__body.container__body--scroll
+    // ko if: accounts.all().length > 0
+    .box.mb(data-bind='with: accounts')
+      .box__title(data-bind='translate: "accounts/connectedAccounts"')
+      .box__section(
+        data-bind='foreach: {data: Object.keys(ko.toJS(by_service)), as: "service"}')
+        .list
+          // ko if: $root.services()[service]
+          // ko foreach: ko.toJS($parent.by_service)[service]
+          .list__item(data-bind='click: $root.setLocation.bind($data, "#/files/" + account)')
+            .icon
+              img.icon__service(
+                data-bind='attr: {src: $root.services()[service].logo}')
+            .list__text(data-bind='text: account_name')
+            // ko if: $root.enable_logout
+            .icon(data-bind=`
+              clickBubble: false,
+              click: function (data, element) {
+                if ($root.localizedConfirmPopup("accounts/confirmRemove")) {
+                  $root.setLocation("#/account/disconnect/" + account);
+                }
+              }`)
+              .icon__logout
+            // /ko
+          // /ko
+          // /ko
+          // ko if: $index() === (Object.keys($parent.by_service()).length - 1) && $parent.computer()
+          .list__item
+            .icon
+              .icon__computer
+            .list__text(data-bind=`
+              click: $root.setLocation.bind($data, "#/computer"),
+              translate: "accounts/uploadFromComputer"`)
+          // /ko
+      // ko if: $root.enable_logout
+      .box__divider
+      .box__section
+        .link-btn(data-bind=`
+            click: function (){logout($root.delete_accounts_on_logout())},
+            translate: "accounts/logout"`)
+      // /ko
+    // /ko
+
+    .box.mb
+      .box__title(data-bind="translate: 'accounts/connectMore', css: {'hidden': accounts.all().length === 0}")
+      .box__section
+        .service-list
+          // ko foreach: {data: Object.values(services()), as: "service"}
+          // ko ifnot: $parent.accounts.all().length > 0 && service.id == 'computer' || !service.visible
+          .service-list__item(
+            data-bind='click: $parent.accounts.connect.bind(null, id)')
+            .service-list__img
+              .icon.icon--xlarge
+                // ko if: service.id === 'computer'
+                .icon__computer
+                // /ko
+                // ko ifnot: service.id === 'computer'
+                img.icon__service(data-bind='attr: {src: logo}')
+                // /ko
+            .service-list__text(data-bind='text: service.name')
+          // /ko
+          // /ko
+  include footer

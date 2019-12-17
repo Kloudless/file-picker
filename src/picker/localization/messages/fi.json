@@ -1,0 +1,49 @@
+{
+  "fi": {
+    "global": {
+      "select": "valita",
+      "cancel": "Peruuttaa",
+      "save": "Tallentaa",
+      "upload": "upload"
+    },
+    "files": {
+      "name": "Nimi",
+      "size": "Koko",
+      "updated": "Päivitetty",
+      "noFilesFound": "Ei tiedostoja",
+      "untitledFolder": "Nimetön kansio",
+      "search": "Hae",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Jos poistat tämän tilin, et enää pysty tutkimaan sitä. Oletko varma?",
+      "connectedAccounts": "Yhdistetyt tilit",
+      "logout": "kirjautua ulos",
+      "manage": "Hallitse pilvivarastotilejäsi täällä.",
+      "chooseAccount": "Tervetuloa! Valitse palvelu, johon haluat muodostaa yhteyden",
+      "connectMore": "Liitä lisää!",
+      "upload": "upload",
+      "uploadFromComputer": "Lataa tietokoneesta"
+    },
+    "selector": {
+      "myComputer": "Tietokoneeni",
+      "accounts": "tilit"
+    },
+    "dropzone": {
+      "message": "Vedä ja pudota tiedostot täällä tai avaa File Picker"
+    },
+    "computer": {
+      "noSupport": "Selaimesi ei sisällä Flash-, Silverlight- tai HTML5-tukea."
+    },
+    "addConfirm": {
+      "confirm": "Vahvista tilin yhteys.",
+      "clickBelow": "Yhdistä {serviceName} -tili napsauttamalla alla",
+      "connectAccount": "Yhdistä {serviceName} -tili"
+    }
+  }
+}

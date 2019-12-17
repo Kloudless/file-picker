@@ -1,0 +1,49 @@
+{
+  "ro": {
+    "global": {
+      "select": "Selectați",
+      "cancel": "Anulare",
+      "save": "Salvați",
+      "upload": "Încărcați"
+    },
+    "files": {
+      "name": "Nume",
+      "size": "mărimea",
+      "updated": "La curent",
+      "noFilesFound": "Niciun fișier găsit",
+      "untitledFolder": "Folder fără titlu",
+      "search": "Căutare",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "Dacă eliminați acest cont, nu veți mai putea să îl explorați. Esti sigur?",
+      "connectedAccounts": "Conturi conectate",
+      "logout": "logout",
+      "manage": "Gestionați-vă aici conturile de stocare în cloud.",
+      "chooseAccount": "Bine ati venit! Alegeți un serviciu pentru conectare",
+      "connectMore": "Conectează-te mai mult!",
+      "upload": "Încărcați",
+      "uploadFromComputer": "Încărcați de pe computer"
+    },
+    "selector": {
+      "myComputer": "Calculatorul meu",
+      "accounts": "Conturi"
+    },
+    "dropzone": {
+      "message": "Glisați și fixați fișierele aici sau faceți clic pentru a deschide fișierul Picker"
+    },
+    "computer": {
+      "noSupport": "Browserul dvs. nu are suport Flash, Silverlight sau HTML5."
+    },
+    "addConfirm": {
+      "confirm": "Confirmați conexiunea la cont.",
+      "clickBelow": "Faceți clic mai jos pentru a vă conecta contul {serviceName}",
+      "connectAccount": "Conectați contul {serviceName}"
+    }
+  }
+}

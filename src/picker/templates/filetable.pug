@@ -1,0 +1,95 @@
+.ftable.container__loading-wrapper
+  .container__loading
+    .container__loading-icon
+  .ftable__main(data-bind='finderSelect: files')
+    table#fs-scroller.ftable__table(data-bind='with: files')
+      //- table header
+      thead
+        tr
+          th.ftable__th
+          th.ftable__th(data-bind='click: function(){sort("name")}')
+            .flex-row.align-items-center
+              div(data-bind='translate: "files/name"')
+              .icon.icon--small
+                #sort-name.icon__sort
+          th.ftable__th.sm-hidden(data-bind='click: function(){sort("largest")}')
+            .flex-row.align-items-center
+              div(data-bind='translate: "files/size"')
+              .icon.icon--small
+                #sort-largest.icon__sort
+          th.ftable__th.sm-hidden(data-bind='click: function(){sort("recent")}')
+            .flex-row.align-items-center
+              div(data-bind='translate: "files/updated"')
+              .icon.icon--small
+                #sort-recent.icon__sort
+
+      //- create folder
+      tbody
+        // ko if: cwd().length > 0 && cwd()[0].type == "newfolder"
+        tr.md-hidden
+          td
+            .icon
+              .icon__folder
+          td
+            include mkdir-form
+        tr.sm-hidden
+          td
+            .icon
+              .icon__folder
+          td(colspan=3)
+            include mkdir-form
+        // /ko
+
+      //- table body
+      tbody#fs-view-body
+
+        //- no data
+        // ko if: cwd().length == 0 && !$root.loading()
+        tr.sm-hidden
+          td.ftable__no-data-cell(colspan=4)
+            div(data-bind='translate: "files/noFilesFound"')
+        tr.md-hidden
+          td.ftable__no-data-cell(colspan=2)
+            div(data-bind='translate: "files/noFilesFound"')
+        // /ko
+
+        //- list content
+        // ko foreach: cwd
+        // ko ifnot: type == "newfolder"
+        tr.ftable__row(data-bind=`
+            attr: {'data-type': type},
+            click: !$data.disabled && type == 'folder'? $parent.navigate: function(){return false;},
+            css: {"ftable__row--disabled": !!$data.disabled }`)
+          td
+            .icon
+              div(data-bind="css: {'icon__folder': type === 'folder', 'icon__file': type === 'file'}")
+          td
+            .ie-fix-wrap
+              div(data-bind='text: name')
+          td.ftable__cell-md.sm-hidden(data-bind='translate: friendlySize && { html: friendlySize }')
+          td.ftable__cell-md.sm-hidden(data-bind='formatDate: modified || created || null')
+        // /ko
+        // /ko
+
+  .ftable__footer
+    .flex-row.justify-content-center
+      //- chooser button
+      // ko if: flavor() == 'chooser'
+      button.btn.btn--primary(data-bind='click: confirm, translate: "global/select"')
+      // /ko
+
+      //- saver button
+      // ko if: flavor() == 'saver'
+      // ko if: files.all().length == 1
+      form.flex-row.w-100(data-bind="submit: save")
+        .flex-grow.mr
+          input.ftable__saver-input(type="text", required, data-bind=`
+            selectInputText: files.all()[0].name,
+            translate: { placeholder: { message: "files/fileName" }}`)
+        button.btn.btn--primary(
+            type="submit", data-bind='translate: "global/save"')
+      // /ko
+      // ko ifnot: files.all().length == 1
+      button.btn.btn--primary(data-bind='click: save, translate: "global/save"')
+      // /ko
+      // /ko

@@ -1,0 +1,49 @@
+{
+  "th-TH": {
+    "global": {
+      "select": "เลือก",
+      "cancel": "ยกเลิก",
+      "save": "บันทึก",
+      "upload": "อัปโหลด"
+    },
+    "files": {
+      "name": "ชื่อ",
+      "size": "ขนาด",
+      "updated": "Updated",
+      "noFilesFound": "ไม่พบไฟล์",
+      "untitledFolder": "โฟลเดอร์ไม่มีชื่อ",
+      "search": "ค้นหา",
+      "sizes": {
+        "b": "{fileSize} B",
+        "kb": "{fileSize} KB",
+        "mb": "{fileSize} MB",
+        "gb": "{fileSize} GB"
+      }
+    },
+    "accounts": {
+      "confirmRemove": "หากคุณลบบัญชีนี้คุณจะไม่สามารถสำรวจได้อีกต่อไป คุณแน่ใจไหม?",
+      "connectedAccounts": "บัญชีที่เชื่อมต่อ",
+      "logout": "ออกจากระบบ",
+      "manage": "จัดการบัญชีที่เก็บข้อมูลบนคลาวด์ของคุณที่นี่",
+      "chooseAccount": "ยินดีต้อนรับ! โปรดเลือกบริการที่จะเชื่อมต่อ",
+      "connectMore": "เชื่อมต่อมากขึ้น!",
+      "upload": "อัปโหลด",
+      "uploadFromComputer": "อัปโหลดจากคอมพิวเตอร์ของคุณ"
+    },
+    "selector": {
+      "myComputer": "คอมพิวเตอร์ของฉัน",
+      "accounts": "บัญชี"
+    },
+    "dropzone": {
+      "message": "ลากและวางไฟล์ที่นี่หรือคลิกเพื่อเปิด File Picker"
+    },
+    "computer": {
+      "noSupport": "เบราว์เซอร์ของคุณไม่มีการสนับสนุน Flash, Silverlight หรือ HTML5"
+    },
+    "addConfirm": {
+      "confirm": "ยืนยันการเชื่อมต่อบัญชี",
+      "clickBelow": "คลิกด้านล่างเพื่อเชื่อมต่อบัญชี {serviceName} ของคุณ",
+      "connectAccount": "เชื่อมต่อบัญชี {serviceName}"
+    }
+  }
+}
