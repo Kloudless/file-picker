@@ -1,3 +1,3 @@
 - - -
-- Github: https://github.com/Kloudless/file-explorer
+- Github: https://github.com/kloudless/file-picker
 - Support: support@kloudless.com

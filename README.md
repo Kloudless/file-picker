@@ -1,11 +1,11 @@
-# Kloudless File Explorer
+# Kloudless File Picker
 
 **Sign up for a free account at [https://kloudless.com](https://kloudless.com) to obtain
-a Kloudless App ID to initialize the File Explorer with.** The File Explorer is built on
+a Kloudless App ID to initialize the File Picker with.** The File Picker is built on
 our unified Storage API abstraction layer
 ([Cloud Storage REST API docs here](https://developers.kloudless.com/docs/latest/storage)).
 
-The [Kloudless](https://kloudless.com) File Explorer is a JavaScript library
+The [Kloudless](https://kloudless.com) File Picker is a JavaScript library
 that allows your users to browse and select files and folders from the following
 storage services:
 
@@ -23,7 +23,7 @@ storage services:
   </tbody>
 </table>
 
-### [Click here to visit our File Explorer demo!](https://output.jsbin.com/tuwodin/)
+### [Click here to visit our File Picker demo!](https://output.jsbin.com/tuwodin/)
 
 <p align="center">
   <img src="img/demo.gif" width="650" />
@@ -32,11 +32,11 @@ storage services:
 ## Table of Contents
 
 * [Usage](#usage)
-  * [Initializing a File Explorer](#initializing-a-file-explorer)
+  * [Initializing a File Picker](#initializing-a-file-picker)
     * [Import from a script tag](#import-from-a-script-tag)
     * [Import from an ES6 module](#import-from-an-es6-module)
-    * [Launching the Explorer](#launching-the-explorer)
-  * [File Explorer Modes](#file-explorer-modes)
+    * [Launching the File Picker](#launching-the-file-picker)
+  * [File Picker Modes](#file-picker-modes)
     * [Chooser](#chooser)
       * [Dropzone](#dropzone)
     * [Saver](#saver)
@@ -52,21 +52,27 @@ storage services:
     * [Configuration](#configuration-1)
     * [Methods](#methods-1)
     * [Example](#example)
-* [File Explorer with Vue](#file-explorer-with-vue)
-* [File Explorer with React](#file-explorer-with-react)
+* [File Picker with Vue](#file-picker-with-vue)
+* [File Picker with React](#file-picker-with-react)
 * [Browser Support](#browser-support)
   * [Work with mobile devices](#work-with-mobile-devices)
 * [Migration Guide](#migration-guide)
+  * [From v1 to v2](#from-v1-to-v2)
+    * [New Layout and New Options to Customize the UI](#new-layout-and-new-options-to-customize-the-ui)
+    * [File Explorer Renamed to File Picker](#file-explorer-renamed-to-file-picker)
+    * [React and Vue Wrapper Options Configuration](#react-and-vue-wrapper-options-configuration)
+    * [Incompatible Configuration Options](#incompatible-configuration-options)
   * [From v1.0.0 to v1.0.1](#from-v100-to-v101)
 * [Contributing](#contributing)
   * [Requirements](#requirements)
   * [Development](#development)
+    * [TypeScript Definition](#typescript-definition)
   * [Build](#build)
     * [Build Options](#build-options)
   * [Testing](#testing)
 * [Self-hosting](#self-hosting)
-  * [Hosting the explorer page](#hosting-the-explorer-page)
-  * [Extending the explorer template](#extending-the-explorer-template)
+  * [Hosting the File Picker Page](#hosting-the-file-picker-page)
+  * [Extending the File Picker Template](#extending-the-file-picker-template)
 * [Misc. Development Notes](#misc-development-notes)
 * [Security Vulnerabilities](#security-vulnerabilities)
 * [Support](#support)
@@ -74,29 +80,29 @@ storage services:
 
 ## Usage
 
-### Initializing a File Explorer
+### Initializing a File Picker
 
-The File Explorer JavaScript library can be imported into web applications
+The File Picker JavaScript library can be imported into web applications
 and launched when a user clicks an element.
 
 #### Import from a script tag
 
-Include the Kloudless File Explorer JavaScript library on your HTML page using
+Include the Kloudless File Picker JavaScript library on your HTML page using
 a script tag that points to our CDN:
 
 ```html
 <script type="text/javascript"
- src="https://static-cdn.kloudless.com/p/platform/sdk/kloudless.explorer.js"></script>
+ src="https://static-cdn.kloudless.com/p/platform/sdk/kloudless.picker.js"></script>
 ```
 
-This exposes a global `Kloudless.fileExplorer` object you can use to initialize
-a File Explorer. Check out the Configuration Options section further below for
+This exposes a global `Kloudless.filePicker` object you can use to initialize
+a File Picker. Check out the Configuration Options section further below for
 a full list of configuration options.
 
 ```html
 <script type="text/javascript">
-  var explorer = window.Kloudless.fileExplorer.explorer({
-    // Explorer Initialization options here.
+  var picker = window.Kloudless.filePicker.picker({
+    // File Picker Initialization options here.
     app_id: "Your App ID", // Get your own at https://kloudless.com
   });
 </script>
@@ -104,51 +110,51 @@ a full list of configuration options.
 
 #### Import from an ES6 module
 
-You can also install the File Explorer package from NPM:
+You can also install the File Picker package from NPM:
 
 ```
-npm install @kloudless/file-explorer
+npm install @kloudless/file-picker
 ```
 
 ```javascript
-import fileExplorer from '@kloudless/file-explorer';
+import filePicker from '@kloudless/file-picker';
 
-const explorer = fileExplorer.explorer({
+const picker = filePicker.picker({
   app_id: "YOUR_APP_ID"
 });
 ```
 
-#### Launching the Explorer
+#### Launching the File Picker
 
-Here is a basic example of a button that launches the File Explorer
-given the JavaScript above that creates an `explorer` object.
+Here is a basic example of a button that launches the File Picker
+given the JavaScript above that creates a `picker` object.
 
 ```html
 <body>
   <button id="choose-files">Choose Files</button>
 
-  <script src="https://static-cdn.kloudless.com/p/platform/sdk/kloudless.explorer.js"></script>
+  <script src="https://static-cdn.kloudless.com/p/platform/sdk/kloudless.picker.js"></script>
   <script>
-    var explorer = window.Kloudless.fileExplorer.explorer({ app_id: "APP_ID" });
-    explorer.choosify(document.getElementById('choose-files'));
+    var picker = window.Kloudless.filePicker.picker({ app_id: "APP_ID" });
+    picker.choosify(document.getElementById('choose-files'));
   </script>
 </body>
 ```
 
 The HTML above adds a specific `id` to an element so that we
-can reference it later in our JavaScript that launches the File Explorer
+can reference it later in our JavaScript that launches the File Picker
 when the element is clicked. A more complete example is present
 [below](#script-tag-example) after the full list of configuration options
 as well as on our [demo page](https://output.jsbin.com/tuwodin/).
 
 Be sure to serve the page via a web server, as pages opened via the
 file URI scheme (`file://`) cannot receive postMessage messages
-from the `iframe` created to display the File Explorer due to security
+from the `iframe` created to display the File Picker due to security
 concerns.
 
-### File Explorer Modes
+### File Picker Modes
 
-The File Explorer can be configured to either be a file [chooser](#chooser) to
+The File Picker can be configured to either be a file [chooser](#chooser) to
 select files and folders from cloud storage or the local computer, or a file
 [saver](#saver) to export a specific file  to cloud storage.
 
@@ -181,7 +187,7 @@ The Saver returns metadata on the newly uploaded file to the application.
 
 ### Configuration
 
-The File Explorer has several configuration options. Below, we've included
+The File Picker has several configuration options. Below, we've included
 options that can be set on the library inclusion tag itself, options that apply
 to both the Chooser and Saver modes, and options that are specific to a
 particular mode.
@@ -189,16 +195,16 @@ particular mode.
 #### Script tag
 
 The following attributes can be set on the `<script>` tag used to include the
-File Explorer JavaScript on the page.
+File Picker JavaScript on the page.
 
 * `data-kloudless-object` : string
 
-  _Optional_. By default, the `fileExplorer` object will be exposed to 
-  `window.Kloudless.fileExplorer`.
+  _Optional_. By default, the `filePicker` object will be exposed to 
+  `window.Kloudless.filePicker`.
 
-  Specifies a different name for the `fileExplorer` object bound to `window`.
-  e.g. `data-kloudless-object="fileExplorer2"` would make the fileExplorer
-  object accessible via `window.fileExplorer2`. Do not use the `async` attribute
+  Specifies a different name for the `filePicker` object bound to `window`.
+  e.g. `data-kloudless-object="filePicker2"` would make the filePicker
+  object accessible via `window.filePicker2`. Do not use the `async` attribute
   on the script tag if this is used.
 
 #### Chooser and Saver
@@ -232,7 +238,7 @@ File Explorer JavaScript on the page.
   }]
   ```
 
-  Only File Explorers launched from Trusted Domains can make use of this option.
+  Only File Pickers launched from Trusted Domains can make use of this option.
   You can add a Trusted Domain on the App Details page.
 
   In addition, care should
@@ -245,9 +251,9 @@ File Explorer JavaScript on the page.
 
   Saver: "none", "local", "session" (default: "local")
 
-  This option specifies account persistence for the explorer in either localStorage,
-  sessionStorage, or no storage. The explorer will always fall back to localStorage
-  if an invalid option is given.
+  This option specifies account persistence for the file picker in either
+  localStorage, sessionStorage, or no storage. The file picker will always fall
+  back to localStorage if an invalid option is given.
 
 * `services` : array
 
@@ -286,7 +292,7 @@ File Explorer JavaScript on the page.
 
   Saver: _Optional (default: false)_
 
-  If `true`, displays a shadow backdrop behind the File Explorer, and prevents the
+  If `true`, displays a shadow backdrop behind the File Picker, and prevents the
   page body from scrolling.
 
 
@@ -296,7 +302,7 @@ File Explorer JavaScript on the page.
 
   Saver: _Optional (default: "en")_
 
-  The Kloudless File Explorer supports i18n/l10n. You can specify any of the
+  The Kloudless File Picker supports i18n/l10n. You can specify any of the
   following [ISO-639-1 codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes):
 
   `ar`, `az`, `bs`, `cs`, `cy`, `da`, `de`, `el`, `en`, `es`, `et`, `fa`,
@@ -307,8 +313,8 @@ File Explorer JavaScript on the page.
   The locale is used to identify the 
   data to retrieve from either
   the data provided in the `translations` option below or from the out-of-the-box
-  translation data in the [messages directory](src/explorer/localization/messages).
-  If no translation data is found, the File Explorer uses the `en` locale.
+  translation data in the [messages directory](src/picker/localization/messages).
+  If no translation data is found, the File Picker uses the `en` locale.
 
 * `translations` : string or object
 
@@ -320,7 +326,7 @@ File Explorer JavaScript on the page.
   that returns the translation data as a JSON string. The `locale` option
   indicates which locale's translation data to use. Any translation data
   provided here overrides Kloudless' default translation data included in the
-  [messages directory](src/explorer/localization/messages).
+  [messages directory](src/picker/localization/messages).
   See [translations-suite-sample.json](dev-server/static/translations-suite-sample.json)
   for an example of the translation file format.
   Any strings not translated will default to the `en` locale's representation.
@@ -366,8 +372,8 @@ File Explorer JavaScript on the page.
   Saver: _Optional (default: [])_
 
   This option should list [OAuth 2.0 Tokens](https://developers.kloudless.com/docs/latest/authentication)
-  for accounts the File Explorer should be initialized with. The File Explorer will make API
-  requests for additional information on the accounts and display them
+  for accounts the File Picker should be initialized with. The File Picker will
+  make API requests for additional information on the accounts and display them
   in the list of accounts the user has connected.
 
   ```javascript
@@ -384,7 +390,7 @@ File Explorer JavaScript on the page.
 
 * `delete_accounts_on_logout` : boolean (default: false)
     
-  If `false`, the File Explorer only removes tokens from the storage configured
+  If `false`, the File Picker only removes tokens from the storage configured
   in `persist` option when users log out. If `true`, it also deletes the accounts 
   from the Kloudless server and invalidates the OAuth tokens.
 
@@ -395,7 +401,7 @@ File Explorer JavaScript on the page.
   A full list of parameters supported is available on the
   [OAuth docs](https://developers.kloudless.com/docs/latest/authentication#oauth-2.0-first-leg).
 
-  By default, the `scope` the File Explorer uses is
+  By default, the `scope` the File Picker uses is
   `"<service_id>:normal.storage <service_id>:normal.basic"`. Note that the
   following options cannot be overridden for consistency or security reasons:
 
@@ -413,7 +419,7 @@ File Explorer JavaScript on the page.
 
   The function should return an object representing the attributes to
   include as query parameters in the OAuth flow. Don't URL-encode the values;
-  the File Explorer handles that. Here is an example that customizes the
+  the File Picker handles that. Here is an example that customizes the
   OAuth permissions requested if a user attempts to connect a Google Drive
   account, and also pre-fills the server URL if a user chooses to connect an FTP
   account:
@@ -448,7 +454,7 @@ File Explorer JavaScript on the page.
 
   If you're familiar with the configuration options accepted by the
   [Kloudless Authenticator](https://github.com/Kloudless/authenticator#options),
-  the File Explorer requires options returned in the same format that the
+  the File Picker requires options returned in the same format that the
   Authenticator accepts. For convenience, the following 
   [supported parameters](https://developers.kloudless.com/docs/latest/authentication#oauth-2.0-first-leg)
   can be specified as objects as shown in the example above:
@@ -471,7 +477,7 @@ File Explorer JavaScript on the page.
   }
   ```
 
-  Please refer to [variables.less](./src/explorer/css/variables.less) for the
+  Please refer to [variables.less](./src/picker/css/variables.less) for the
   full list of available variables. Most are related to aspects such as colors,
   fonts, or dimensions.
 
@@ -502,7 +508,7 @@ File Explorer JavaScript on the page.
   The Chooser will upload files to the developer's Upload Location.
   The Upload Location can be set in the
   [developer portal](https://developers.kloudless.com).
-  Under 'UI Tools' tab, click 'File Explorer' and follow the instructions for 
+  Under 'UI Tools' tab, click 'File Picker' and follow the instructions for 
   selecting a folder in a storage service such as Amazon S3. All local files
   from a user will be uploaded there.
 
@@ -511,12 +517,12 @@ File Explorer JavaScript on the page.
   Chooser: _Optional (default: false)_
 
   This option adds an additional parameter to the Chooser's response with a
-  link to the file chosen in the file explorer.
+  link to the file chosen in the file picker.
 
   Use with the `copy_to_upload_location` to generate a link to the newly
   copied file that is returned in the callback.
 
-  The Kloudless File Explorer will fire the `error` event when the link
+  The Kloudless File Picker will fire the `error` event when the link
   generation is not fully successful.
 
   ```javascript
@@ -531,7 +537,7 @@ File Explorer JavaScript on the page.
 
   Chooser: _Optional (default: {})_
 
-  The `link_options` object provides parameters to use when the File Explorer
+  The `link_options` object provides parameters to use when the File Picker
   creates links. See the
   [documentation for creating links](https://developers.kloudless.com/docs/latest/storage#links-create-a-link)
   for a full list of the possible options available.
@@ -574,7 +580,7 @@ File Explorer JavaScript on the page.
   completed. Please migrate to using `'sync'` instead for similar behavior with
   a guarantee that the copy is successful.
 
-  The Kloudless File Explorer will fire the `error` event when the copy
+  The Kloudless File Picker will fire the `error` event when the copy
   operation is not completely successful.
 
 * `upload_location_account` : string
@@ -584,7 +590,7 @@ File Explorer JavaScript on the page.
   If multiple Upload Locations are configured via the developer portal, this
   specifies the Account ID of the Upload Location to use. This option is not
   required if only one Upload Location is configured. The Account ID is a number
-  that can be found in the File Explorer Upload Locations section of the
+  that can be found in the File Picker Upload Locations section of the
   [App Details](http://developers.kloudless.com/applications/*/details) page.
   `upload_location_folder` must also be provided.
 
@@ -595,7 +601,7 @@ File Explorer JavaScript on the page.
   If multiple Upload Locations are configured via the developer portal, this
   specifies the Folder ID of the Upload Location to use. This option is not required
   if only one Upload Location is configured. The Folder ID is an encoded string that
-  can be found on the File Explorer Upload Locations section of the
+  can be found on the File Picker Upload Locations section of the
   [App Details](http://developers.kloudless.com/applications/*/details) page.
   `upload_location_account` must also be provided.
 
@@ -613,17 +619,17 @@ File Explorer JavaScript on the page.
 
   Chooser: _Default: ['all']_
 
-  This option specifies which types of elements the explorer will show to the user.
-  You can filter based on file extension or by the following categories:
+  This option specifies which types of elements the file picker will show to the
+  user. You can filter based on file extension or by the following categories:
 
-  * `all` This configures the explorer to show all file types and folders. The
-  user can select either files or folders. Do not combine with other options.
+  * `all` This configures the file picker to show all file types and folders.
+  The user can select either files or folders. Do not combine with other options.
 
-  * `folders` This configures the explorer to gray out files and show folders. The
-  user can only select folders.
+  * `folders` This configures the file picker to gray out files and show folders.
+  The user can only select folders.
 
-  * `files` This configures the explorer to show all file types. The user can only
-  select files.
+  * `files` This configures the file picker to show all file types. The user can
+  only select files.
 
   * `text`
 
@@ -644,7 +650,7 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
 
   Saver: _Optional (default: [])_
 
-  This option should list files for the File Explorer to save. The format
+  This option should list files for the File Picker to save. The format
   should be an array of Javascript Objects containing a file url and name.
   You can specify up to 100 files. Each file will be uploaded via the Kloudless
   API's [upload endpoint](https://developers.kloudless.com/docs/latest/storage#files-upload-a-file),
@@ -668,12 +674,12 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
 * `success(files)`
 
   The success event handler will fire when the user's operation succeeds.
-  `files` is an array of file/folder metadata. The File Explorer will be
+  `files` is an array of file/folder metadata. The File Picker will be
   closed on success.
 
 * `cancel()`
 
-  Fired if the user decides to cancel an operation. The File Explorer will
+  Fired if the user decides to cancel an operation. The File Picker will
   be closed on cancellation.
 
 * `error(files)`
@@ -699,13 +705,13 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
 
 * `open()`
 
-  Fired when the File Explorer is displayed to the user. This occurs when
+  Fired when the File Picker is displayed to the user. This occurs when
   the Chooser or Saver are opened.
 
 * `close()`
 
-  Fired when the File Explorer is hidden from the user. This occurs when
-  the File Explorer is closed. This could be due to either a user action,
+  Fired when the File Picker is hidden from the user. This occurs when
+  the File Picker is closed. This could be due to either a user action,
   such as choosing files or cancelling, or due to the `close()` method
   being called (not to be confused with this `close` event handler).
   The `success()` or `cancel()` events will also trigger if appropriate.
@@ -713,7 +719,7 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
 * `selected(files)`
 
   The selected event handler is fired when the user selects files from the
-  explorer, but before sending the list to the Kloudless API for additional
+  file picker, but before sending the list to the Kloudless API for additional
   processing. It fires before the `success` handler, and can allow you to
   perform an action while waiting to get the final list.
 
@@ -761,8 +767,8 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
 
 * `logout()`
 
-  Fired when the user clicks the logout link in the File Explorer, which
-  clears the local state of accounts connected to the File Explorer.
+  Fired when the user clicks the logout link in the File Picker, which
+  clears the local state of accounts connected to the File Picker.
 
 * `drop()`
 
@@ -770,55 +776,55 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
 
 ### Methods
 
-* `fileExplorer.explorer(options)`
+* `filePicker.picker(options)`
 
-  You can initialize a Kloudless Explorer using the options mentioned above.
+  You can initialize a Kloudless File Picker using the options mentioned above.
 
-* `fileExplorer.getGlobalOptions()`
+* `filePicker.getGlobalOptions()`
 
   Get [build options](#build-options). These are options configured when
-  the File Explorer JavaScript library was initially built. See the
+  the File Picker JavaScript library was initially built. See the
   [Self-Hosting](#self-hosting) section for more information.
 
-* `fileExplorer.setGlobalOptions(buildOptions)`
+* `filePicker.setGlobalOptions(buildOptions)`
 
   Change [build options](#build-options) during run-time. The widget is
   configured to work with default values, so these options should only be set
   when needed.
 
-* `explorer.choose()`
+* `picker.choose()`
 
   This method allows you to launch a Chooser.
 
-* `explorer.choosify(element)`
+* `picker.choosify(element)`
 
   This method binds a click handler that launches the Chooser to the DOM element.
 
-* `explorer.save(files)`
+* `picker.save(files)`
 
   This method allows you to launch a Saver. See *Saver Options* for more information
   on the format for `files`.
 
-* `explorer.savify(element, files)`
+* `picker.savify(element, files)`
 
   This method binds a click handler that launches the Saver for `files` to the
   DOM element.
 
-* `explorer.on(event, callback)`
+* `picker.on(event, callback)`
 
   Invokes a callback method on a particular event. See the `Events` section above
   for a list of event names, as well as the arguments the corresponding callback
   methods will be invoked with.
 
-* `explorer.close()`
+* `picker.close()`
 
-  This method closes the explorer window.
+  This method closes the file picker window.
 
 
-* `explorer.update(options)`
+* `picker.update(options)`
 
-  Updates the configuration options the explorer was initialized with. The
-  explorer will immediately begin using the new configuration.
+  Updates the configuration options the file picker was initialized with. The
+  file picker will immediately begin using the new configuration.
   `options` is an Object with the new configuration. Not all options can be
   updated in this manner. The following are not supported:
 
@@ -831,10 +837,10 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
   * `custom_style`
   * `custom_css` (deprecated)
   
-* `explorer.logout(deleteAccount=false)`
+* `picker.logout(deleteAccount=false)`
 
   Removes all authentication tokens for the accounts connected to the File 
-  Explorer as configured via the `persist` option. If `deleteAccount` is set 
+  Picker as configured via the `persist` option. If `deleteAccount` is set 
   to `true`, it also deletes the accounts from the Kloudless server and 
   invalidates the OAuth tokens, rendering them unusable and the accounts
   inaccessible.
@@ -843,26 +849,26 @@ For example, `['pdf', 'jpg', 'jpeg', 'png']`.
 
 ### Script tag example
 
-To start using the File Explorer, simply include the JavaScript file in your
-HTML file. You can then create an element on the page to launch the explorer.
+To start using the File Picker, simply include the JavaScript file in your
+HTML file. You can then create an element on the page to launch the file picker.
 
 ```html
 <body>
-  <button id="file-explorer">Explore!</button>
-  <script type="text/javascript" src="https://static-cdn.kloudless.com/p/platform/sdk/kloudless.explorer.js"></script>
+  <button id="file-picker-button">Open File Picker</button>
+  <script type="text/javascript" src="https://static-cdn.kloudless.com/p/platform/sdk/kloudless.picker.js"></script>
   <script type="text/javascript">
-      // Explorer initialization JS here.
+      // File Picker initialization JS here.
   </script>
 </body>
 ```
 
-The next step is to customize the file explorer according to the developer's needs.
+The next step is to customize the File Picker according to the developer's needs.
 In this example, we've decided to disable multiselect, return links, and allow for
 a few types of files.  All of this is contained within the initialization.
 
 ```javascript
-// Explorer initialization JS
-var explorer = window.Kloudless.fileExplorer.explorer({
+// File Picker initialization JS
+var picker = window.Kloudless.filePicker.picker({
   app_id: 'YOUR_APP_ID',
   multiselect: false,
   link: true,
@@ -870,31 +876,33 @@ var explorer = window.Kloudless.fileExplorer.explorer({
 });
 ```
 
-The final step is to launch the explorer and handle the events returned from the
-explorer based on a user's actions.
+The final step is to launch the file picker and handle the events returned from
+the file picker based on a user's actions.
 
-**[Visit our demo of the File Explorer!](https://output.jsbin.com/tuwodin/)**
+**[Visit our demo of the File Picker!](https://output.jsbin.com/tuwodin/)**
 
 ```javascript
 // When a user successfully selects or saves a file
-explorer.on('success', function(files) {
+picker.on('success', function(files) {
   // files is an array of JS objects that contain file metadata.
   console.log('Successfully selected files: ', files);
 });
 
-// When a user cancels the explorer
-explorer.on('cancel', function() {
+// When a user cancels the file picker
+picker.on('cancel', function() {
   console.log('File selection cancelled.');
 });
 
-// Launching the explorer to choose when a user clicks the Explore! button
-explorer.choosify(document.getElementById('file-explorer-chooser'));
+// Launching the file picker to choose when a user clicks the 'Open File Picker'
+// button.
+picker.choosify(document.getElementById('file-picker-button'));
 
-// In addition, you can launch the explorer programmatically with choose()
-explorer.choose();
+// In addition, you can launch the file picker programmatically with choose()
+picker.choose();
 
-// Launching the explorer to save when a user clicks the Explore! button
-// Note: you can pass in an array of files instead of using the configuration option
+// Launching the Picker to save when a user clicks the 'Open File Picker' button
+// Note: you can pass in an array of files instead of using the configuration
+// option
 var files = [{
   url: 'http://<your image url>',
   name: 'filename.extension'
@@ -903,9 +911,9 @@ var files = [{
   name: 'filename.extension'
 }];
 
-explorer.savify(document.getElementById('file-explorer-saver'), files);
+picker.savify(document.getElementById('file-picker-button'), files);
 
-// In addition, you can launch the explorer programmatically with save()
+// In addition, you can launch the file picker programmatically with save()
 var files = [{
   url: 'http://<your image url>',
   name: 'filename.extension'
@@ -914,14 +922,14 @@ var files = [{
   name: 'filename.extension'
 }];
 
-explorer.save(files);
+picker.save(files);
 ```
 
 ### Dropzone
 
 The Dropzone is a variety of the Chooser that allows users to drop files into
-it from their Computer rather than only click on it to launch the File
-Explorer. It opens in place when files are dropped into it.
+it from their Computer rather than only click on it to launch the File Picker.
+It opens in place when files are dropped into it.
 
 #### Configuration
 
@@ -939,17 +947,17 @@ Upload Location must be configured as described for the Chooser.
 
 #### Methods
 
-* `fileExplorer.dropzone(options)`
+* `filePicker.dropzone(options)`
 
   Initialize a Dropzone using the options mentioned above.
 
 * `dropzone.on(event, callback)`
 
-  See `explorer.on(event, callback)` for more information.
+  See `picker.on(event, callback)` for more information.
 
 * `dropzone.close()`
 
-  See `explorer.close()` for more information.
+  See `picker.close()` for more information.
 
 #### Example
 
@@ -964,7 +972,7 @@ HTML
 JavaScript
 
 ```javascript
-var dropzone = window.Kloudless.fileExplorer.dropzone({
+var dropzone = window.Kloudless.filePicker.dropzone({
   app_id: 'Your App ID',
   elementId: 'dropzone',
   multiselect: true, // To upload more than 1 file.
@@ -982,16 +990,16 @@ dropzone.on('success', function(files) {
   console.log('Successfully selected files: ', files);
 });
 
-// See the File Explorer's Example section for other events.
+// See the File Picker's Example section for other events.
 ```
 
-## File Explorer with Vue
+## File Picker with Vue
 
-See [File Explorer with Vue](./README.vue.md).
+See [File Picker with Vue](./README.vue.md).
 
-## File Explorer with React
+## File Picker with React
 
-See [File Explorer with React](./README.react.md).
+See [File Picker with React](./README.react.md).
 
 ## Browser Support
 
@@ -1003,13 +1011,13 @@ See [File Explorer with React](./README.react.md).
 * Opera 49+
 
 ### Work with mobile devices
-To use the Kloudless File Explorer on devices with narrow screens, please add a
+To use the Kloudless File Picker on devices with narrow screens, please add a
 [Viewport meta tag](https://developer.mozilla.org/en-US/docs/Mozilla/Mobile/Viewport_meta_tag)
-to the web page launching the File Explorer. This ensures the File Explorer uses styling
+to the web page launching the File Picker. This ensures the File Picker uses styling
 appropriate for mobile screen sizes.
 
 The meta tag assumes that your entire web page renders well in narrow screens 
-since it applies to your page as a whole and not just the File Explorer.
+since it applies to your page as a whole and not just the File Picker.
 Please test out your page's usability if you are adding the meta tag for the
 first time.
 
@@ -1020,7 +1028,7 @@ Here is an example meta tag:
 If your page benefits from preventing some devices such as iPhones from
 zooming in on input fields, you can also add in the `user-scalable=no` option 
 as shown below. Input fields such as `<input>` and `<select>` are used in the
-File Explorer as well.
+File Picker as well.
 
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
@@ -1029,9 +1037,11 @@ File Explorer as well.
 
 ### From v1 to v2
 
-v2 represents a new layout and set of options for the File Explorer, including:
+#### New Layout and New Options to Customize the UI
+
+v2 represents a new layout and set of options for the File Picker, including:
 * A completely new theme for the UI with improved responsiveness, clearer HTML
-  and CSS structure and consistent naming conventions, and several bug-fixes. 
+  and CSS structure with consistent naming conventions, and several bug-fixes. 
 * A documented format for customizing UI styling such as colors and fonts
   without forking the entire project.
 
@@ -1039,10 +1049,55 @@ Provided your application isn't already customizing styling by using the
 `custom_css` option as detailed below, it will automatically begin using the
 new version.
 
-##### Incompatible configuration options
+#### File Explorer Renamed to File Picker
 
-Below are some options that will no longer be effective or force the
-previous version to continue to be loaded instead to maintain compatibility.
+The File Explorer has been renamed to the File Picker to improve clarity.
+The entire JS namespace, as well as any relevant method, variable, or
+configuration option names, have been transitioned from referencing an
+"explorer" to a "picker", while preserving backwards-compatibility.
+
+Here is a table to assist with transitioning previously publicly documented
+names to their newer counterparts:
+  
+  Description | Old Name | New Name
+  ---|---|---
+  namespace | window.Kloudless.fileExplorer | window.Kloudless.filePicker
+  method | explorer() | picker()
+  global option | explorerUrl | pickerUrl
+  environment variable | EXPLORER_URL | PICKER_URL
+  script tag URL | https://static-cdn.kloudless.com/p/platform/sdk/kloudless.explorer.js | https://static-cdn.kloudless.com/p/platform/sdk/kloudless.picker.js
+
+Forked projects that are migrating to v2 should take care to replace names
+similarly.
+
+#### React and Vue Wrapper Options Configuration
+
+Previously, `getGlobalOptions` and `setGlobalOption` were imported from
+`@kloudless/file-picker` as shown below:
+
+```javascript
+import filePicker from '@kloudless/file-picker';
+
+filePicker.getGlobalOptions()
+filePicker.setGlobalOptions({...})
+```
+
+Now, they can be imported from `@kloudless/file-picker/react`,
+or `@kloudless/file-picker/vue`, depending on the framework in use:
+
+```javascript
+import { setGlobalOptions, getGlobalOptions } from '@kloudless/file-picker/react';
+// Or use the following syntax for VueJS:
+// import { setGlobalOptions, getGlobalOptions } from '@kloudless/file-picker/vue';
+
+getGlobalOptions()
+setGlobalOptions({...})
+```
+
+#### Incompatible Configuration Options
+
+Below are some options that will no longer be effective, or will force the
+previous version to continue to load instead, to maintain compatibility.
 
 * `custom_css` : string
 
@@ -1051,7 +1106,7 @@ previous version to continue to be loaded instead to maintain compatibility.
   Saver: _Optional (default: null)_
 
   This option is deprecated and no longer supported in the latest versions
-  of the File Explorer. Using this option will result in the File Explorer
+  of the File Picker. Using this option will result in the File Picker
   reverting to a previous layout that supported this option.
 
   Refer to the `custom_style_vars` option to customize styling instead.
@@ -1061,39 +1116,13 @@ previous version to continue to be loaded instead to maintain compatibility.
   **Previous Notes**
 
   `custom_css` is an optional attribute that accepts a URL to a stylesheet for
-  the File Explorer to load to override or customize styling.
+  the File Picker to load to override or customize styling.
   Supports `(http|https)://domain.com/path/to.css`, `//domain.com/path/to.css`, 
   and `/path/to.css` formats.
 
-  To use the `custom_css` option, the domain the File Explorer is launched from
+  To use the `custom_css` option, the domain the File Picker is launched from
   must be added to the application's list of
   [Trusted Domains](https://developers.kloudless.com/applications/*/details).
-
-### From v1.0.1 to v2
-
-#### React and Vue Wrapper
-
-Previously, `getGlobalOptions` and `setGlobalOption` are imported from
-`@kloudless/file-explorer`.
-
-```javascript
-import fileExplorer from '@kloudless/file-explorer';
-
-fileExplorer.getGlobalOptions()
-fileExplorer.setGlobalOptions({...})
-```
-
-Now, you can import them from `@kloudless/file-explorer/react`
-(or `@kloudless/file-explorer/vue`, depends on which framework you use).
-
-```javascript
-import { setGlobalOptions, getGlobalOptions } from '@kloudless/file-explorer/react';
-// Or use the following syntax if you use VueJS:
-// import { setGlobalOptions, getGlobalOptions } from '@kloudless/file-explorer/vue';
-
-getGlobalOptions()
-setGlobalOptions({...})
-```
 
 ### From v1.0.0 to v1.0.1
 
@@ -1105,7 +1134,7 @@ moved to `window.Kloudless.fileExplorer`.
 ## Contributing
 
 Contributions are welcome and appreciated. We'd love to discuss any ideas you
-have to improve or extend the File Explorer. We recommend
+have to improve or extend the File Picker. We recommend
 contacting us at [support@kloudless.com](mailto:support@kloudless.com)
 first for major modifications that you would like merged in so we can
 offer feedback on its implementation.
@@ -1129,9 +1158,9 @@ development server:
 KLOUDLESS_APP_ID=<your_app_id> npm run dev
 ```
 
-The File Explorer that launches on the test page uses the App ID to
+The File Picker that launches on the test page uses the App ID to
 connect accounts. It must therefore be the ID of a valid Kloudless
-Application on the Kloudless API server the File Explorer accesses.
+Application on the Kloudless API server the File Picker accesses.
 
 By default, the development server points to `https://api.kloudless.com`.
 However, you can point it to an alternate Kloudless API server using the
@@ -1146,7 +1175,7 @@ The development server supports automatically rebuilding the source files
 whenever changes are saved. However, hot reloading scripts is not supported
 yet; you will need to reload the page to view your changes.
 
-#### Typescript Definition
+#### TypeScript Definition
 
 Be sure to update **src/loader/js/interface.d.ts** if the corresponding
 interface is changed.
@@ -1163,11 +1192,11 @@ Here is an explanation of the `dist` folder's structure:
 
 Folder | Purpose
 ---|---
-`loader` | Contains the script that an application includes to load the File Explorer.
-`explorer` | Contains the File Explorer assets that the `loader` loads in an iframe. Only customize this when [self-host](#self-hosting) the File Explorer.
+`loader` | Contains the script that an application includes to load the File Picker.
+`picker` | Contains the File Picker assets that the `loader` loads in an iframe. Only customize this when [self-hosting](#self-hosting) the File Picker.
 
 
-#### Build options
+#### Build Options
 
 The options below can be set during the build process as environment variables
 to customize the build, or sometimes at run-time as well.
@@ -1175,14 +1204,14 @@ to customize the build, or sometimes at run-time as well.
 Build-time Env Var | Run-time option | Description | Default
 ---|---|---|---
 `BASE_URL` | N.A. | URL to the Kloudless API Server | https://api.kloudless.com
-`EXPLORER_URL` | `explorerUrl` | The URL that the loader loads the explorer iframe from. | https://static-cdn.kloudless.com/p/platform/file-picker/v2/index.html
+`PICKER_URL` | `pickerUrl` | The URL that the loader loads the file picker iframe from. | https://static-cdn.kloudless.com/p/platform/file-picker/v2/index.html
 
 Check out the [Self-hosting](#self-hosting) section below for an example
-that changes the `EXPLORER_URL` in order to self-host a customized fork
-of the File Explorer.
+that changes the `PICKER_URL` in order to self-host a customized fork
+of the File Picker.
 
-In addition, here is an example that directs API requests from the File
-Explorer to an alternate Kloudless server:
+In addition, here is an example that directs API requests from the File Picker
+to an alternate Kloudless server:
 
 ```
 BASE_URL=<your_kloudless_api_server_url> npm run build
@@ -1196,78 +1225,79 @@ To test the build generated by `npm run build`, run the following command:
 KLOUDLESS_APP_ID=<your_app_id> npm run dist-test
 ```
 
-To test TypeScript definition file, run the following command:
+To test the TypeScript definition file, run the following command:
 ```bash
 npm run test:ts
 ```
 
 ## Self-hosting
 
-Self-hosting the File Explorer is one way to customize all aspects of the
-File Explorer's layout, styling, and functionality beyond what the
+Self-hosting the File Picker is one way to customize all aspects of the
+File Picker's layout, styling, and functionality beyond what the
 configuration and theming options provide.
 
-You can fork the File Explorer to make the changes you need before
-[building](#build) the File Explorer, which results in a JS file at
+You can fork the File Picker to make the changes you need before
+[building](#build) the File Picker, which results in a JS file at
 `dist/loader/loader.min.js`. This file must be included in any page you would
-like to use the File Explorer on. It serves as a light-weight wrapper to load
-the actual File Explorer page via an iframe.
+like to use the File Picker on. It serves as a light-weight wrapper to load
+the actual File Picker page via an iframe.
 
-Both the loader file and the rest of the File Explorer's structure are discussed
+Both the loader file and the rest of the File Picker's structure are discussed
 in more detail in the [Build](#build) section above.
 
-### Hosting the explorer page
+### Hosting the File Picker Page
 
-The build contains an `explorer` folder which includes the actual
+The build contains an `picker` folder which includes the actual
 HTML and functionality of the widget. By default, this is hosted by Kloudless.
 
-If you would like to host this page yourself to customize the core File Explorer
+If you would like to host this page yourself to customize the core File Picker
 source code or styles, follow the steps below:
 
-1. Rebuild the assets while setting `EXPLORER_URL` to specify the file explorer
-   page URL. For example, if you'd like to host the File Explorer assets at
+1. Rebuild the assets while setting `PICKER_URL` to specify the File Picker
+   page URL. For example, if you'd like to host the File Picker assets at
    `https://example.com/kloudless/index.html`, run the following command:
 
     ```bash
-    EXPLORER_URL=https://example.com/kloudless/index.html npm run build
+    PICKER_URL=https://example.com/kloudless/index.html npm run build
     ```
 
-    Optionally, you can also set `Kloudless.fileExplorer.setGlobalOptions` at
+    Optionally, you can also set `Kloudless.filePicker.setGlobalOptions` at
     run-time instead of re-building the loader:
 
     ```js
-    Kloudless.fileExplorer.setGlobalOptions({
-      explorerUrl: 'https://example.com/kloudless/index.html',
+    Kloudless.filePicker.setGlobalOptions({
+      pickerUrl: 'https://example.com/kloudless/index.html',
     });
     ```
-2. Copy the entire `dist/explorer` folder into your web application's assets so
-   the `dist/explorer/index.html` page can be found at the URL specified in
-   the step above. In the example above, copy `dist/explorer` to `/kloudless`
+2. Copy the entire `dist/picker` folder into your web application's assets so
+   the `dist/picker/index.html` page can be found at the URL specified in
+   the step above. In the example above, copy `dist/picker` to `/kloudless`
    for `https://example.com/kloudless/index.html` to exist.
 
 3. Add your web app's domain to your Kloudless App's list of
    `Trusted Domains` on the
    [App Details Page](https://developers.kloudless.com/applications/*/details/).
-   This allows the hosted explorer to receive access tokens to the Kloudless API.
+   This allows the hosted file picker to receive access tokens to the Kloudless
+   API.
   
 4. Include `dist/loader/loader.min.js` in your pages that will launch
-   File Explorer as shown in the
+   File Picker as shown in the
    [script tag example](#import-from-a-script-tag) above.
 
-### Extending the explorer template
+### Extending the File Picker Template
 
 *This section contains advanced concepts that are not usually required in a
-fork of the File Explorer.*
+fork of the File Picker.*
 
-The `template/explorer.ejs` template contains necessary styles and scripts
-for the File Explorer as well as the compiled HTML snippets.
+The `template/picker.ejs` template contains necessary styles and scripts
+for the File Picker as well as the compiled HTML snippets.
 
 Feel free to add additional styles, scripts, or HTML elements you need.
 You can then run `npm run build:template` to build your customized
-explorer template. The built page will be available at
+file picker template. The built page will be available at
 `dist/custom-index.html`. Replace
-`dist/explorer/index.html` with this file, and follow the steps in the
-[section above](hosting-the-explorer-page) to host this page instead.
+`dist/picker/index.html` with this file, and follow the steps in the
+[section above](#hosting-the-file-picker-page) to host this page instead.
 
 For an example, run `npm run build:template` without any changes and
 check the result at `dist/custom-index.html`.

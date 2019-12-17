@@ -7,7 +7,7 @@ import logger from 'loglevel';
 import localization from './localization';
 import util from './util';
 // check babel.config.js for actual import path
-import config from 'explorer-config';
+import config from 'picker-config';
 
 
 function get_query_variable(name) {
@@ -122,7 +122,7 @@ subscribeChange(config.custom_style_vars, (newCustomStyleVars) => {
     styleElement.setAttribute('id', id);
     styleElement.setAttribute('type', 'text/less');
     styleElement.textContent =
-      `@import '${util.getBaseUrl()}/less/file-explorer.less';`;
+      `@import '${util.getBaseUrl()}/less/index.less';`;
     document.head.append(styleElement);
     return window.less.modifyVars(newCustomStyleVars);
   }).catch((err) => {
@@ -181,7 +181,7 @@ function retrieveConfig() {
     query_params.upload_location_uri = config.upload_location_uri();
   }
   $.get(
-    `${config.base_url}/file-explorer/config/`,
+    `${config.base_url}/file-picker/config/`,
     query_params,
     (config_data) => {
       config.user_data((config_data && config_data.user_data) || {});

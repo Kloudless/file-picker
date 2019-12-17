@@ -35,7 +35,7 @@
       "accounts": "tilit"
     },
     "dropzone": {
-      "message": "Vedä ja pudota tiedostot täällä tai avaa File Explorer"
+      "message": "Vedä ja pudota tiedostot täällä tai avaa File Picker"
     },
     "computer": {
       "noSupport": "Selaimesi ei sisällä Flash-, Silverlight- tai HTML5-tukea."

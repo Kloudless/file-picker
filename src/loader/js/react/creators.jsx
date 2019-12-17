@@ -2,29 +2,32 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
-import fileExplorer from '../interface';
+import filePicker from '../interface';
 import { EVENT_HANDLERS, EVENT_HANDLER_MAPPING } from './constants';
 
-const DefaultButton = ({
-  onClick, title, fileExplorerType, disabled, className,
-}) => (
-  <button
-    className={className}
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-  >
-    {
-      title
-      || (fileExplorerType === 'chooser' ? 'Choose a file' : 'Save a file')
-    }
-  </button>
-);
+const DefaultButton = (props) => {
+  const {
+    onClick, title, filePickerType, disabled, className,
+  } = props;
+  return (
+    <button
+      className={className}
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {
+        title ||
+        (filePickerType === 'chooser' ? 'Choose a file' : 'Save a file')
+      }
+    </button>
+  );
+};
 
 DefaultButton.propTypes = {
   onClick: PropTypes.func.isRequired,
   title: PropTypes.string,
-  fileExplorerType: PropTypes.string.isRequired,
+  filePickerType: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   className: PropTypes.string,
 };
@@ -35,43 +38,43 @@ DefaultButton.defaultProps = {
   title: '',
 };
 
-const create = fileExplorerType => (WrappedComponent = DefaultButton) => {
-  const isChooser = fileExplorerType === 'chooser';
+const create = filePickerType => (WrappedComponent = DefaultButton) => {
+  const isChooser = filePickerType === 'chooser';
   const useDefaultButton = WrappedComponent === DefaultButton;
 
   class Wrapper extends React.Component {
     constructor(props) {
       super(props);
-      this.explorer = null;
+      this.picker = null;
       this.onWrappedCompClick = this.onWrappedCompClick.bind(this);
-      this.initExplorer = this.initExplorer.bind(this);
+      this.initPicker = this.initPicker.bind(this);
       this.onRaw = this.onRaw.bind(this);
     }
 
     componentDidMount() {
       const { options } = this.props;
-      this.initExplorer(options);
+      this.initPicker(options);
     }
 
     componentWillReceiveProps(nextProps) {
       const { options } = this.props;
       if (nextProps.options !== options) {
-        this.explorer.destroy();
-        this.initExplorer(nextProps.options);
+        this.picker.destroy();
+        this.initPicker(nextProps.options);
       }
     }
 
     componentWillUnmount() {
-      this.explorer.destroy();
+      this.picker.destroy();
     }
 
     onWrappedCompClick(...args) {
       const { onClick } = this.props;
       onClick(...args);
       if (isChooser) {
-        this.explorer.choose();
+        this.picker.choose();
       } else {
-        this.explorer.save();
+        this.picker.save();
       }
     }
 
@@ -81,14 +84,14 @@ const create = fileExplorerType => (WrappedComponent = DefaultButton) => {
       this.props[eventHandler](data);
     }
 
-    initExplorer(options) {
+    initPicker(options) {
       const deepClonedOptions = JSON.parse(JSON.stringify(options));
       if (options.oauth) {
         deepClonedOptions.oauth = options.oauth;
       }
-      const explorer = fileExplorer.explorer(deepClonedOptions);
-      explorer.on('raw', this.onRaw);
-      this.explorer = explorer;
+      const picker = filePicker.picker(deepClonedOptions);
+      picker.on('raw', this.onRaw);
+      this.picker = picker;
     }
 
     render() {
@@ -96,7 +99,7 @@ const create = fileExplorerType => (WrappedComponent = DefaultButton) => {
       const { options, ...restProps } = this.props;
       EVENT_HANDLERS.forEach(eventHandler => delete restProps[eventHandler]);
       if (useDefaultButton) {
-        restProps.fileExplorerType = fileExplorerType;
+        restProps.filePickerType = filePickerType;
       }
       return (
         <WrappedComponent
@@ -109,7 +112,7 @@ const create = fileExplorerType => (WrappedComponent = DefaultButton) => {
 
   // Set display name
   const displayName = (
-    WrappedComponent.displayName || WrappedComponent.name || fileExplorerType);
+    WrappedComponent.displayName || WrappedComponent.name || filePickerType);
   Wrapper.displayName = (
     `create${isChooser ? 'Chooser' : 'Saver'}(${displayName})`);
 

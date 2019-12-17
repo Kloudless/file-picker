@@ -79,7 +79,7 @@ const COMPONENTS = [
   },
 ];
 
-const stories = storiesOf('Kloudless File Explorer with Vue', module);
+const stories = storiesOf('Kloudless File Picker with Vue', module);
 
 /**
  * Configure storybook

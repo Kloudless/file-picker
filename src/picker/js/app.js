@@ -1,4 +1,4 @@
-/* global plupload, mOxie */
+/* global plupload, mOxie, VERSION */
 /* eslint-disable func-names, no-underscore-dangle, camelcase, no-alert */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -30,7 +30,7 @@ import setupDropdown from './dropdown';
 import adjustBreadcrumbWidth from './breadcrumb';
 import './iexd-transport';
 import 'normalize.css';
-import '../css/file-explorer.less';
+import '../css/index.less';
 
 const EVENT_CALLBACKS = {};
 
@@ -47,8 +47,9 @@ let loadedDropConfig = false;
 // Set Kloudless source header
 $.ajaxSetup({
   headers: {
-    'X-Kloudless-Source': 'file-explorer',
-  },
+    // TODO: refer to the version number in package.json
+    "X-Kloudless-Source": "file-picker/" + VERSION,
+  }
 });
 
 // This can be generalized in the future with a config option
@@ -68,8 +69,8 @@ const services = ko.pureComputed(() => {
 if (util.isMobile) {
   $('body').addClass('mobile-view');
 }
-// Explorer declaration.
-const FileExplorer = function () {
+// File Picker declaration.
+const FilePicker = function () {
   this.manager = new AccountManager();
   this.fileManager = new FileManager();
 
@@ -100,9 +101,9 @@ const FileExplorer = function () {
     // 'files', 'accounts', 'computer', 'addConfirm', and 'dropzone'
     current: ko.observable(startView),
     selectingFilesFrom: ko.pureComputed(() => {
-      const current = explorer.view_model.current();
+      const current = picker.view_model.current();
       if (current === 'files') {
-        const activeAccount = explorer.manager.active();
+        const activeAccount = picker.manager.active();
         return {
           fromComputer: false,
           account: activeAccount.account,
@@ -112,13 +113,13 @@ const FileExplorer = function () {
       }
       if (current === 'computer') return {
         fromComputer: true,
-        text: explorer.view_model.accounts.name(),
+        text: picker.view_model.accounts.name(),
       };
       return {};
     }),
     filteredAccounts: ko.pureComputed(() => {
-      const data = explorer.view_model.selectingFilesFrom();
-      const accounts = explorer.view_model.accounts.all();
+      const data = picker.view_model.selectingFilesFrom();
+      const accounts = picker.view_model.accounts.all();
       if (data.account) {
         return accounts.filter(account => account.account !== data.account);
       }
@@ -205,7 +206,9 @@ const FileExplorer = function () {
           }({ name: file_data.name, url: file_data.url }));
         }
       } else {
-        view_model.error('Files cannot be saved to this folder. Please choose again.');
+        const msg = localization.formatAndWrapMessage(
+          'files/cannotUploadFiles');
+        view_model.error(msg);
       }
     },
 
@@ -455,7 +458,7 @@ const FileExplorer = function () {
       this.view_model.error(msg);
     },
 
-    // Quit the file explorer.
+    // Quit the file picker.
     cancel: () => {
       logger.debug('Quitting!');
       this.lastCancelTime = new Date();
@@ -1021,13 +1024,13 @@ const FileExplorer = function () {
       });
     }
   });
-  ko.applyBindings(this.view_model, $('#kloudless-file-explorer')[0]);
+  ko.applyBindings(this.view_model, $('#kloudless-file-picker')[0]);
 };
 
 // Switch views between 'accounts', 'files', and 'computer', 'search'
-FileExplorer.prototype.switchViewTo = function (to) {
-  const explorer = this;
-  explorer.view_model.current(to);
+FilePicker.prototype.switchViewTo = function (to) {
+  const picker = this;
+  picker.view_model.current(to);
 
   // When view is changed, the old view template is unloaded.
   if (to !== 'dropzone') {
@@ -1037,7 +1040,7 @@ FileExplorer.prototype.switchViewTo = function (to) {
   if (to === 'dropzone') {
     const dz = $('#dropzone');
     dz.on('click', () => {
-      explorer.view_model.postMessage('dropzoneClicked');
+      picker.view_model.postMessage('dropzoneClicked');
     });
 
     // Make sure to only load the dropzone once
@@ -1051,7 +1054,7 @@ FileExplorer.prototype.switchViewTo = function (to) {
       // Instead, add it to a queue that will be processed after
       // the router switches to the computer view.
       dropzone.ondrop = function () {
-        explorer.view_model.postMessage('drop');
+        picker.view_model.postMessage('drop');
         filesQueue.push(dropzone.files);
         // eslint-disable-next-line no-use-before-define
         router.setLocation('#/computer');
@@ -1078,7 +1081,7 @@ FileExplorer.prototype.switchViewTo = function (to) {
     $('.close').off('click');
     $('.close').on('click', (e) => {
       // clear the error
-      explorer.view_model.error('');
+      picker.view_model.error('');
       e.preventDefault();
       e.stopPropagation();
     });
@@ -1094,7 +1097,7 @@ FileExplorer.prototype.switchViewTo = function (to) {
       const contentHeight = $fsViewBody[0].scrollHeight;
 
       // load more
-      const fileSystem = explorer.manager.active().filesystem();
+      const fileSystem = picker.manager.active().filesystem();
       // we can consider tableHeight as a page of a book
       // people would want to fetch some more pages (if available) to read
       // before they reach and finish the last page they currently possess
@@ -1106,7 +1109,7 @@ FileExplorer.prototype.switchViewTo = function (to) {
 
   if (to === 'files') {
     // Remove mkdir dir form at first
-    explorer.view_model.files.rmdir();
+    picker.view_model.files.rmdir();
   }
 
   if (to === 'computer') {
@@ -1117,7 +1120,7 @@ FileExplorer.prototype.switchViewTo = function (to) {
 
 function initializePlUpload() {
   $(() => {
-    // Can't use ko.applyBindings(explorer.view_model, $('.computer')[0]);
+    // Can't use ko.applyBindings(picker.view_model, $('.computer')[0]);
     // to bind the dynamic content because it'll occur the error blow:
     // "You cannot apply bindings multiple times to the same element"
     // So we have to translate the text manually
@@ -1274,13 +1277,17 @@ function initializePlUpload() {
 
                 uploader.splice();
                 // eslint-disable-next-line no-use-before-define
-                explorer.view_model.cancel();
+                picker.view_model.cancel();
 
                 // Abort asynchronously.
                 window.setTimeout(() => {
                   $.each(file_ids_to_abort, (index, id) => {
+                    // TODO-v3: remove X-Explorer-Id
                     // eslint-disable-next-line no-use-before-define
-                    const headers = { 'X-Explorer-Id': explorer.id };
+                    const headers = {
+                      'X-Explorer-Id': picker.id,
+                      'X-Picker-Id': picker.id,
+                    };
                     const uploadAccount = config.upload_location_account();
                     const uploadFolder = config.upload_location_folder();
                     if (uploadAccount && uploadFolder) {
@@ -1309,7 +1316,7 @@ function initializePlUpload() {
               }
             } else {
               $btnUpload.text(textUpload);
-              explorer.view_model.cancel();
+              picker.view_model.cancel();
             }
           });
 
@@ -1321,7 +1328,7 @@ function initializePlUpload() {
               $btnUpload.text(textResume);
               const msg = localization.formatAndWrapMessage(
                 'computer/disconnect');
-              explorer.view_model.error(msg);
+              picker.view_model.error(msg);
             }
           });
 
@@ -1330,7 +1337,7 @@ function initializePlUpload() {
               uploader._offline_pause = false;
               uploader.start();
               $btnUpload.text(textPause);
-              explorer.view_model.error('');
+              picker.view_model.error('');
             }
           });
         },
@@ -1351,8 +1358,11 @@ function initializePlUpload() {
 
           up.settings.headers = up.settings.headers || {};
           // Not using up.id because it changes with every plUpload().
+          // TODO-v3: remove X-Explorer-Id
           // eslint-disable-next-line no-use-before-define
-          up.settings.headers['X-Explorer-Id'] = explorer.id;
+          up.settings.headers['X-Explorer-Id'] = picker.id;
+          // eslint-disable-next-line no-use-before-define
+          up.settings.headers['X-Picker-Id'] = picker.id;
           const uploadAccount = config.upload_location_account();
           const uploadFolder = config.upload_location_folder();
           if (uploadAccount && uploadFolder) {
@@ -1362,9 +1372,9 @@ function initializePlUpload() {
           }
 
           // eslint-disable-next-line no-use-before-define
-          explorer.view_model.error('');
+          picker.view_model.error('');
           // eslint-disable-next-line no-use-before-define
-          explorer.view_model.postMessage('startFileUpload',
+          picker.view_model.postMessage('startFileUpload',
             formatFileObject(file));
         },
         FileUploaded(up, file, info) {
@@ -1382,7 +1392,7 @@ function initializePlUpload() {
             const data = formatFileObject(file);
             data.metadata = responseData;
             // eslint-disable-next-line no-use-before-define
-            explorer.view_model.postMessage('finishFileUpload', data);
+            picker.view_model.postMessage('finishFileUpload', data);
           }
         },
         UploadProgress(up) {
@@ -1400,7 +1410,7 @@ function initializePlUpload() {
               'computer/pleaseUploadFilesOfTypes',
               { types: config.types.join(", ") });
             // eslint-disable-next-line no-use-before-define
-            explorer.view_model.error(filter_msg);
+            picker.view_model.error(filter_msg);
             // eslint-disable-next-line eqeqeq
           } else if (args.code == plupload.HTTP_ERROR) {
             logger.error(`Error uploading file '${args.file.name}': ${
@@ -1408,7 +1418,7 @@ function initializePlUpload() {
             if (config.uploads_pause_on_error()) {
               const msg = localization.formatAndWrapMessage('computer/error');
               // eslint-disable-next-line no-use-before-define
-              explorer.view_model.error(msg);
+              picker.view_model.error(msg);
 
               // Reset the % loaded for the file in the UI
               // plupload only resets file.loaded in handleError(),
@@ -1438,7 +1448,7 @@ function initializePlUpload() {
           $('#plupload_btn_upload').text(textUpload);
           $('#plupload_btn_upload').removeAttr('disabled');
           $('#computer_uploader_browse').removeAttr('disabled');
-          explorer.view_model.postMessage('success', selections);
+          picker.view_model.postMessage('success', selections);
           selections = [];
           this.splice();
         },
@@ -1447,8 +1457,8 @@ function initializePlUpload() {
   });
 }
 
-FileExplorer.prototype.cleanUp = function () {
-  // File Explorer will close. Clean up.
+FilePicker.prototype.cleanUp = function () {
+  // File Picker will close. Clean up.
   const self = this;
   processingConfirm = false;
 
@@ -1489,8 +1499,8 @@ ko.bindingHandlers.selectInputText = {
   },
 };
 
-// Explorer initialisation.
-const explorer = new FileExplorer();
+// File Picker initialisation.
+const picker = new FilePicker();
 // TODO: we can display err.message if the new error handling is deployed
 // for now use default error message
 const error_message = localization.formatAndWrapMessage('global/error');
@@ -1513,7 +1523,7 @@ const router = sammy(function () {
   // Switch to the accounts page.
   this.get('#/accounts', () => {
     logger.debug('Accounts page requested.');
-    explorer.switchViewTo('accounts');
+    picker.switchViewTo('accounts');
   });
 
   // Reconnect an erroneously disconnected account.
@@ -1526,45 +1536,45 @@ const router = sammy(function () {
   this.get('#/account/disconnect/:id', function () {
     logger.debug(`Account disconnection invoked for id: ${this.params.id}.`);
 
-    explorer.manager.deleteAccount(this.params.id, true, (account_data) => {
+    picker.manager.deleteAccount(this.params.id, true, (account_data) => {
       // post message for account
-      explorer.view_model.postMessage('deleteAccount',
+      picker.view_model.postMessage('deleteAccount',
         account_data.account);
       // store accounts
-      storage.storeAccounts(config.app_id, explorer.manager.accounts());
+      storage.storeAccounts(config.app_id, picker.manager.accounts());
     });
   });
 
   // Switch to the files page.
   this.get('#/files', () => {
     logger.debug('File view requested.');
-    explorer.switchViewTo('files');
+    picker.switchViewTo('files');
   });
   // Switch to the files view of a particular account.
   // TODO: test.
   this.get('#/files/:account', function () {
     logger.debug(`Switching to files of account: ${this.params.account}.`);
-    explorer.switchViewTo('files');
-    explorer.manager.active(explorer.manager.getByAccount(this.params.account));
+    picker.switchViewTo('files');
+    picker.manager.active(picker.manager.getByAccount(this.params.account));
   });
 
   this.get('#/search', function () {
     logger.debug('Switching to search files');
-    explorer.switchViewTo('search');
+    picker.switchViewTo('search');
   });
 
   // Switch to the computer view
   this.get('#/computer', () => {
     logger.debug('Switching to computer view');
-    explorer.switchViewTo('computer');
+    picker.switchViewTo('computer');
   });
   // Switch to the dropzone view
   this.get('#/dropzone', () => {
-    explorer.switchViewTo('dropzone');
+    picker.switchViewTo('dropzone');
   });
   // Confirm add account button
   this.get('#/addConfirm', () => {
-    explorer.switchViewTo('addConfirm');
+    picker.switchViewTo('addConfirm');
   });
 
   /*
@@ -1589,13 +1599,13 @@ const accountSub = config.all_services.subscribe(() => {
   const accounts = storage.loadAccounts(config.app_id);
 
   if (accounts.length > 0) {
-    explorer.view_model.sync(accounts, true);
+    picker.view_model.sync(accounts, true);
   }
 });
 
 // Expose hooks for debugging.
 if (config.debug) {
-  window.explorer = explorer;
+  window.picker = picker;
   window.ko = ko;
   window.router = router;
 }
@@ -1607,7 +1617,7 @@ if (config.debug) {
 
 // Initialize to '#/' route.
 window.addEventListener('message', (message) => {
-  logger.debug('Explorer hears message: ', message.data);
+  logger.debug('File Picker hears message: ', message.data);
   if (message.origin !== config.origin) {
     return;
   }
@@ -1626,11 +1636,11 @@ window.addEventListener('message', (message) => {
     // eslint-disable-next-line no-use-before-define
     dataMessageHandler(data);
   } else if (action === 'CLOSING') {
-    explorer.cleanUp();
+    picker.cleanUp();
   } else if (action === 'LOGOUT') {
-    explorer.view_model.accounts.logout(false);
+    picker.view_model.accounts.logout(false);
   } else if (action === 'LOGOUT:DELETE_ACCOUNT') {
-    explorer.view_model.accounts.logout(true);
+    picker.view_model.accounts.logout(true);
   } else if (action === 'CALLBACK' && callbackId
     && EVENT_CALLBACKS[callbackId]) {
     EVENT_CALLBACKS[callbackId](data);
@@ -1639,7 +1649,7 @@ window.addEventListener('message', (message) => {
 });
 
 function dataMessageHandler(data) {
-  // Used to initialize the explorer with data and config options.
+  // Used to initialize the file picker with data and config options.
   // Can also be used to update config options.
 
   /*
@@ -1677,10 +1687,10 @@ function dataMessageHandler(data) {
     // Add files to fileManager
     if (files && files.length > 0) {
       // first clear all files.
-      explorer.fileManager.files.removeAll();
+      picker.fileManager.files.removeAll();
       for (let i = 0; i < files.length; i += 1) {
         const file = files[i];
-        explorer.fileManager.add(file.url, file.name);
+        picker.fileManager.add(file.url, file.name);
       }
     }
   } else if (flavor === 'chooser') {
@@ -1696,9 +1706,9 @@ function dataMessageHandler(data) {
 
   // Call sync if frame has already been initialized and there are differences
   // between storage and current accounts
-  if (explorer.manager.accounts().length !== 0) {
+  if (picker.manager.accounts().length !== 0) {
     const accounts = storage.loadAccounts(config.app_id);
-    const local_accounts = explorer.manager.accounts();
+    const local_accounts = picker.manager.accounts();
     const accountSet = new Set(accounts.map(acc => String(acc.account)));
     const different = accounts.length !== local_accounts.length
       || local_accounts.some(acc => !accountSet.has(String(acc.account)));
@@ -1706,7 +1716,7 @@ function dataMessageHandler(data) {
     if (different) {
       // Call asynchronously to give other options some time to load.
       window.setTimeout(() => {
-        explorer.view_model.sync(accounts, true);
+        picker.view_model.sync(accounts, true);
       }, 0);
     }
   }
@@ -1720,7 +1730,7 @@ function dataMessageHandler(data) {
   if (data.options && data.options.keys) {
     config.api_version = 'v0';
     window.setTimeout(() => {
-      explorer.view_model.sync(
+      picker.view_model.sync(
         data.options.keys.map(k => ({ key: k, scheme: 'AccountKey' })), true,
       );
     }, 0);
@@ -1728,7 +1738,7 @@ function dataMessageHandler(data) {
 
   if (data.options && data.options.tokens) {
     window.setTimeout(() => {
-      explorer.view_model.sync(
+      picker.view_model.sync(
         data.options.tokens.map(k => ({ key: k, scheme: 'Bearer' })), true,
       );
     }, 0);
@@ -1765,16 +1775,16 @@ function dataMessageHandler(data) {
 }
 
 $(document).ajaxStart(function () {
-  explorer.view_model.loading(true);
+  picker.view_model.loading(true);
 });
 
 $(document).ajaxStop(function () {
-  explorer.view_model.loading(false);
+  picker.view_model.loading(false);
 });
 
 const onResize = debounce(() => {
   // force re-evaluate breadcrumb's width
-  const { view_model, manager } = explorer;
+  const { view_model, manager } = picker;
   if (view_model.current() === 'files' && manager.active().filesystem) {
     manager.active().filesystem().path.notifySubscribers();
   }
@@ -1785,4 +1795,4 @@ window.addEventListener('resize', onResize);
 
 // This signal is placed last and indicates all the JS has loaded
 // and events can be received.
-explorer.view_model.postMessage('load');
+picker.view_model.postMessage('load');

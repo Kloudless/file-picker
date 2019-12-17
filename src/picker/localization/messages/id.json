@@ -35,7 +35,7 @@
       "accounts": "Akun"
     },
     "dropzone": {
-      "message": "Seret dan taruh file di sini, atau klik untuk membuka File Explorer"
+      "message": "Seret dan taruh file di sini, atau klik untuk membuka File Picker"
     },
     "computer": {
       "noSupport": "Browser Anda tidak memiliki dukungan Flash, Silverlight atau HTML5."

@@ -1,17 +1,17 @@
 /* eslint-disable max-len */
 
 declare global {
-  namespace Kloudless.fileExplorer {
+  namespace Kloudless.filePicker {
 
-    function explorer(options: ChooserOptions | SaverOptions): Explorer;
+    function picker(options: ChooserOptions | SaverOptions): Picker;
     function dropzone(options: DropzoneOptions): Dropzone;
     function getGlobalOptions(): BuildOptions;
     function setGlobalOptions(buildOptions: Partial<BuildOptions>);
 
     /**
-     * See https://github.com/Kloudless/file-explorer#methods
+     * See https://github.com/kloudless/file-picker#methods
      */
-    interface Explorer extends Events {
+    interface Picker extends Events {
       choose(): void;
       choosify(element: HTMLElement): void;
       save(files: File[]): void;
@@ -23,7 +23,7 @@ declare global {
     }
 
     /**
-     * See https://github.com/Kloudless/file-explorer#methods-1
+     * See https://github.com/kloudless/file-picker#methods-1
      */
     interface Dropzone extends DropzoneEvents {
       close(): void;
@@ -58,7 +58,7 @@ declare global {
     }
 
     /**
-     * See https://github.com/Kloudless/file-explorer#chooser-and-saver
+     * See https://github.com/kloudless/file-picker#chooser-and-saver
      */
     interface BaseOptions {
       app_id: string;
@@ -71,12 +71,12 @@ declare global {
       // TODO: deprecate in v2
       custom_css?: string;
       /**
-       * Please refer to https://github.com/Kloudless/file-explorer#chooser-and-saver
+       * Please refer to https://github.com/kloudless/file-picker#chooser-and-saver
        * for the usage of `locale` option.
        */
       locale?: string;
       /**
-       * Please refer to https://github.com/Kloudless/file-explorer#chooser-and-saver
+       * Please refer to https://github.com/kloudless/file-picker#chooser-and-saver
        * for the usage of `translations` option.
        */
       translations?: string | object;
@@ -98,7 +98,7 @@ declare global {
     }
 
     /**
-     * See https://github.com/Kloudless/file-explorer#chooser-and-saver
+     * See https://github.com/kloudless/file-picker#chooser-and-saver
      */
     interface ChooserOptions extends BaseOptions {
       multiselect?: boolean;
@@ -112,7 +112,7 @@ declare global {
     }
 
     /**
-     * See https://github.com/Kloudless/file-explorer#chooser-and-saver
+     * See https://github.com/kloudless/file-picker#chooser-and-saver
      */
     interface SaverOptions extends BaseOptions {
       files: File[];
@@ -125,7 +125,7 @@ declare global {
     }
 
     interface BuildOptions {
-      explorerUrl?: string;
+      pickerUrl?: string;
     }
 
     /**
@@ -150,7 +150,7 @@ declare global {
     type FinishFileUploadEvent = ChooserFinishFileUploadEvent | SaverFinishFileUploadEvent;
 
     /**
-     * See https://github.com/Kloudless/file-explorer#events
+     * See https://github.com/kloudless/file-picker#events
      */
     interface Events {
       on(event: 'success', callback: (event: SuccessEvent) => void): void;
@@ -167,7 +167,7 @@ declare global {
     }
 
     /**
-     * See https://github.com/Kloudless/file-explorer#events
+     * See https://github.com/kloudless/file-picker#events
      */
     type DropzoneEvents = Events & {
       on(event: 'drop', callback: () => void): void;
@@ -200,7 +200,7 @@ declare global {
       error?: Error;
       /**
        * In case Kloudless API introduces new properties but hasn't updated here.
-       * Please notify us by creating GitHub issues: https://github.com/Kloudless/file-explorer/issues.
+       * Please notify us by creating GitHub issues: https://github.com/kloudless/file-picker/issues.
        */
       [x: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     }
@@ -284,40 +284,40 @@ declare global {
   }
 }
 
-export default Kloudless.fileExplorer;
-export type PersistMode = Kloudless.fileExplorer.PersistMode;
-export type ServiceGroup = Kloudless.fileExplorer.ServiceGroup;
-export type ServiceName = Kloudless.fileExplorer.ServiceName;
-export type ServiceCategory = Kloudless.fileExplorer.ServiceCategory;
-export type FileExtension = Kloudless.fileExplorer.FileExtension;
-export type UpdateOptions = Kloudless.fileExplorer.UpdateOptions;
-export type DropzoneUpdateOptions = Kloudless.fileExplorer.DropzoneUpdateOptions;
-export type SuccessEvent = Kloudless.fileExplorer.SuccessEvent;
-export type ErrorEvent = Kloudless.fileExplorer.ErrorEvent;
-export type SelectedEvent = Kloudless.fileExplorer.SelectedEvent;
-export type StartFileUploadEvent = Kloudless.fileExplorer.StartFileUploadEvent;
-export type FinishFileUploadEvent = Kloudless.fileExplorer.FinishFileUploadEvent;
-export type ChooserStartFileUploadEvent = Kloudless.fileExplorer.ChooserStartFileUploadEvent;
-export type SaverStartFileUploadEvent = Kloudless.fileExplorer.SaverStartFileUploadEvent;
-export type ChooserFinishFileUploadEvent = Kloudless.fileExplorer.ChooserFinishFileUploadEvent;
-export type SaverFinishFileUploadEvent = Kloudless.fileExplorer.SaverFinishFileUploadEvent;
-export type Explorer = Kloudless.fileExplorer.Explorer;
-export type Dropzone = Kloudless.fileExplorer.Dropzone;
-export type File = Kloudless.fileExplorer.File;
-export type LinkOptions = Kloudless.fileExplorer.LinkOptions;
-export type BaseOptions = Kloudless.fileExplorer.BaseOptions;
-export type ChooserOptions = Kloudless.fileExplorer.ChooserOptions;
-export type SaverOptions = Kloudless.fileExplorer.SaverOptions;
-export type DropzoneOptions = Kloudless.fileExplorer.DropzoneOptions;
-export type BuildOptions = Kloudless.fileExplorer.BuildOptions;
-export type OAuthQueryParams = Kloudless.fileExplorer.OAuthQueryParams;
-export type Events = Kloudless.fileExplorer.Events;
-export type BaseMetadata = Kloudless.fileExplorer.BaseMetadata;
-export type FileMetadata = Kloudless.fileExplorer.FileMetadata;
-export type FolderMetadata = Kloudless.fileExplorer.FolderMetadata;
-export type UserMetadata = Kloudless.fileExplorer.UserMetadata;
-export type ParentMetadata = Kloudless.fileExplorer.ParentMetadata;
-export type IdsMetadata = Kloudless.fileExplorer.IdsMetadata;
-export type Error = Kloudless.fileExplorer.Error;
-export type Account = Kloudless.fileExplorer.Account;
-export type Task = Kloudless.fileExplorer.Task;
+export default Kloudless.filePicker;
+export type PersistMode = Kloudless.filePicker.PersistMode;
+export type ServiceGroup = Kloudless.filePicker.ServiceGroup;
+export type ServiceName = Kloudless.filePicker.ServiceName;
+export type ServiceCategory = Kloudless.filePicker.ServiceCategory;
+export type FileExtension = Kloudless.filePicker.FileExtension;
+export type UpdateOptions = Kloudless.filePicker.UpdateOptions;
+export type DropzoneUpdateOptions = Kloudless.filePicker.DropzoneUpdateOptions;
+export type SuccessEvent = Kloudless.filePicker.SuccessEvent;
+export type ErrorEvent = Kloudless.filePicker.ErrorEvent;
+export type SelectedEvent = Kloudless.filePicker.SelectedEvent;
+export type StartFileUploadEvent = Kloudless.filePicker.StartFileUploadEvent;
+export type FinishFileUploadEvent = Kloudless.filePicker.FinishFileUploadEvent;
+export type ChooserStartFileUploadEvent = Kloudless.filePicker.ChooserStartFileUploadEvent;
+export type SaverStartFileUploadEvent = Kloudless.filePicker.SaverStartFileUploadEvent;
+export type ChooserFinishFileUploadEvent = Kloudless.filePicker.ChooserFinishFileUploadEvent;
+export type SaverFinishFileUploadEvent = Kloudless.filePicker.SaverFinishFileUploadEvent;
+export type Picker = Kloudless.filePicker.Picker;
+export type Dropzone = Kloudless.filePicker.Dropzone;
+export type File = Kloudless.filePicker.File;
+export type LinkOptions = Kloudless.filePicker.LinkOptions;
+export type BaseOptions = Kloudless.filePicker.BaseOptions;
+export type ChooserOptions = Kloudless.filePicker.ChooserOptions;
+export type SaverOptions = Kloudless.filePicker.SaverOptions;
+export type DropzoneOptions = Kloudless.filePicker.DropzoneOptions;
+export type BuildOptions = Kloudless.filePicker.BuildOptions;
+export type OAuthQueryParams = Kloudless.filePicker.OAuthQueryParams;
+export type Events = Kloudless.filePicker.Events;
+export type BaseMetadata = Kloudless.filePicker.BaseMetadata;
+export type FileMetadata = Kloudless.filePicker.FileMetadata;
+export type FolderMetadata = Kloudless.filePicker.FolderMetadata;
+export type UserMetadata = Kloudless.filePicker.UserMetadata;
+export type ParentMetadata = Kloudless.filePicker.ParentMetadata;
+export type IdsMetadata = Kloudless.filePicker.IdsMetadata;
+export type Error = Kloudless.filePicker.Error;
+export type Account = Kloudless.filePicker.Account;
+export type Task = Kloudless.filePicker.Task;

@@ -1,8 +1,8 @@
-import fileExplorer from '../interface';
+import filePicker from '../interface';
 import { ChooserButton, SaverButton } from './DefaultButtons';
 
-const create = fileExplorerType => (customComponent) => {
-  const isChooser = fileExplorerType === 'chooser';
+const create = filePickerType => (customComponent) => {
+  const isChooser = filePickerType === 'chooser';
   const wrappedComponent = customComponent || (
     isChooser ? ChooserButton : SaverButton);
   const wrappedCompName = wrappedComponent.name || 'component';
@@ -19,26 +19,26 @@ const create = fileExplorerType => (customComponent) => {
     },
     data() {
       return {
-        explorer: null,
+        picker: null,
       };
     },
     methods: {
       choose(...args) {
         this.$emit('click', ...args);
-        this.explorer.choose();
+        this.picker.choose();
       },
       save(...args) {
         this.$emit('click', ...args);
-        this.explorer.save();
+        this.picker.save();
       },
-      initExplorer() {
+      initPicker() {
         // deep clone options
         const options = JSON.parse(JSON.stringify(this.options));
         if (this.options.oauth) {
           options.oauth = this.options.oauth;
         }
-        this.explorer = fileExplorer.explorer(options);
-        this.explorer.on('raw', ({ action, data }) => {
+        this.picker = filePicker.picker(options);
+        this.picker.on('raw', ({ action, data }) => {
           this.$emit(action, data);
         });
       },
@@ -46,8 +46,8 @@ const create = fileExplorerType => (customComponent) => {
     watch: {
       options: {
         handler() {
-          this.explorer.destroy();
-          this.initExplorer();
+          this.picker.destroy();
+          this.initPicker();
         },
         deep: true,
       },
@@ -71,10 +71,10 @@ const create = fileExplorerType => (customComponent) => {
       return element;
     },
     mounted() {
-      this.initExplorer();
+      this.initPicker();
     },
     destroyed() {
-      this.explorer.destroy();
+      this.picker.destroy();
     },
   };
 };

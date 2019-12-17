@@ -35,7 +35,7 @@
       "accounts": "Konten"
     },
     "dropzone": {
-      "message": "Ziehen Sie Dateien hierher, und legen Sie sie dort ab, oder klicken Sie darauf, um den Datei-Explorer zu öffnen"
+      "message": "Ziehen Sie Dateien hierher, und legen Sie sie dort ab, oder klicken Sie darauf, um die Dateiauswahl zu öffnen"
     },
     "computer": {
       "noSupport": "Ihr Browser unterstützt Flash, Silverlight oder HTML5 nicht."

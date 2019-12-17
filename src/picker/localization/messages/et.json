@@ -35,7 +35,7 @@
       "accounts": "Kontod"
     },
     "dropzone": {
-      "message": "Lohistage failid siia ja klõpsake File Explorer avamiseks"
+      "message": "Lohistage failid siia ja klõpsake File Picker avamiseks"
     },
     "computer": {
       "noSupport": "Teie brauseril puudub Flash, Silverlight või HTML5 tugi."

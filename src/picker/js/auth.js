@@ -24,7 +24,7 @@ function getEffectiveOauthParams(requestId, service, oauthParams) {
     state: requestId,
     request_id: requestId,
     origin: `${window.location.protocol}//${window.location.host}`,
-    referrer: 'explorer',
+    referrer: 'picker',
   };
 
   const forbiddenKeys = [

@@ -68,12 +68,13 @@ const util = {
 
   /**
    * Gets the base URL any JSON files.
-   * Figures out the base url based on the script tag for explorer.js
+   * Figures out the base url based on the script tag for picker.js
    */
   getBaseUrl: () => {
-    // get the explorer.js script tag
-    const scriptUrl = $('#kloudless-file-explorer-script').attr('src')
-      .split('/');
+    // get the picker.js script tag
+    // TODO-v3: remove #kloudless-file-explorer-script
+    const el = $('#kloudless-file-picker-script') || $('#kloudless-file-explorer-script');
+    const scriptUrl = el.attr('src').split('/');
 
     // then remove the script file name and 'js' directory parts from the url
     // and return the result

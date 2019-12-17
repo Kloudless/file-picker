@@ -1,6 +1,6 @@
 import { createChooser, createSaver } from './creators';
 import Dropzone from './Dropzone';
-import fileExplorer from '../interface';
+import filePicker from '../interface';
 
 const Chooser = createChooser();
 const Saver = createSaver();
@@ -10,7 +10,7 @@ export {
   createChooser, createSaver, Chooser, Saver, Dropzone,
 };
 
-export const { getGlobalOptions, setGlobalOptions } = fileExplorer;
+export const { getGlobalOptions, setGlobalOptions } = filePicker;
 
 // default export
 export default {
