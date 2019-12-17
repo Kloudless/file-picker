@@ -267,9 +267,16 @@ In addition, we support the `click` event:
 
 ## Set/Get Global Option
 
-Please refer to the [File Explorer Methods](https://github.com/Kloudless/file-explorer#methods)
-for detailed information about `fileExplorer.setGlobalOptions()` and
-`fileExplorer.getGlobalOptions()`.
+```javascript
+import { setGlobalOptions, getGlobalOptions } from '@kloudless/file-explorer/vue';
+
+setGlobalOptions({...});
+getGlobalOptions();
+```
+
+The return data and parameters are the same with
+`fileExplorer.setGlobalOptions()` and `fileExplorer.getGlobalOptions()`.
+Please refer to the [File Explorer Methods](https://github.com/Kloudless/file-explorer#methods).
 
 ## Custom CSS/style
 

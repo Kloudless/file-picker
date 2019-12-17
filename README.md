@@ -1069,6 +1069,32 @@ previous version to continue to be loaded instead to maintain compatibility.
   must be added to the application's list of
   [Trusted Domains](https://developers.kloudless.com/applications/*/details).
 
+### From v1.0.1 to v2
+
+#### React and Vue Wrapper
+
+Previously, `getGlobalOptions` and `setGlobalOption` are imported from
+`@kloudless/file-explorer`.
+
+```javascript
+import fileExplorer from '@kloudless/file-explorer';
+
+fileExplorer.getGlobalOptions()
+fileExplorer.setGlobalOptions({...})
+```
+
+Now, you can import them from `@kloudless/file-explorer/react`
+(or `@kloudless/file-explorer/vue`, depends on which framework you use).
+
+```javascript
+import { setGlobalOptions, getGlobalOptions } from '@kloudless/file-explorer/react';
+// Or use the following syntax if you use VueJS:
+// import { setGlobalOptions, getGlobalOptions } from '@kloudless/file-explorer/vue';
+
+getGlobalOptions()
+setGlobalOptions({...})
+```
+
 ### From v1.0.0 to v1.0.1
 
 When using the script tag, the target exposed has been updated from

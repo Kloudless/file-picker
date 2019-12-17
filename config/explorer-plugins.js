@@ -24,6 +24,20 @@ module.exports = function getExplorerPlugins(distPath) {
       // expose mOxie to global for plupload
       mOxie: ['plupload/moxie', 'mOxie'],
     }),
+    // copy less.js
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(srcPath, '../node_modules/less/dist/less.min.js'),
+        to: path.resolve(distPath, 'explorer/less.js'),
+      },
+    ]),
+    // copy *.less
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(srcPath, 'explorer/css/'),
+        to: path.resolve(distPath, 'explorer/less/'),
+      },
+    ]),
     // copy localization and cldr data
     new CopyWebpackPlugin([
       {
