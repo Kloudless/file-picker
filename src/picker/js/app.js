@@ -438,8 +438,9 @@ const FilePicker = function () {
       if (selectedType === 'folder') {
         if (['sync', 'async'].includes(copyToUploadLocation)) {
           if (selections[0].id !== 'root') {
-            const msg = 'Are you sure to copy the folder ' +
-              ` '${selections[0].name}'?`;
+            const msg = localization.formatAndWrapMessage(
+              'files/confirmCopyFolder',
+              { folderName: selections[0].name });
             if (window.confirm(msg)) {
               // Move to upload location.
               requestsToLaunch.push({
@@ -448,7 +449,9 @@ const FilePicker = function () {
               return;
             }
           } else {
-            window.alert('Copying all data at once is not allowed.');
+            const msg = localization.formatAndWrapMessage(
+              'files/forbidCopyRootFolder')
+            window.alert(msg);
           }
         } else {
           this.view_model.postMessage('success', selections);
@@ -1266,7 +1269,8 @@ function initializePlUpload() {
           // Add abort upload handler
           $btnCancel.off();
           $btnCancel.on('click', function () {
-            var msg = ('computer/confirmCancel');
+            var msg = localization.formatAndWrapMessage(
+              'computer/confirmCancel');
             if (uploader.total.queued > 0) {
               uploader.stop();
               if (confirm(msg)) {
