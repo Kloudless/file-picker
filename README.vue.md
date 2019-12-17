@@ -21,7 +21,7 @@ Supports Vue v2.
 
 <!-- STORY HIDE START -->
 
-[DEMO](https://kloudless.github.io/file-explorer/vue)
+[DEMO](https://kloudless.github.io/file-picker/vue)
 
 <!-- STORY HIDE END -->
 

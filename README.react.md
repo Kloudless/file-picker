@@ -23,7 +23,7 @@ Supports React v15 and v16.
 
 <!-- STORY HIDE START -->
 
-[DEMO](https://kloudless.github.io/file-explorer/react)
+[DEMO](https://kloudless.github.io/file-picker/react)
 
 <!-- STORY HIDE END -->
 
