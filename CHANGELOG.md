@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0] - 2019-12-20
 
-### [Changed]
+### Changed
 
 - A completely new theme for the UI with following improvements:
   - improved responsiveness
