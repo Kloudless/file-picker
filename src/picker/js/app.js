@@ -160,9 +160,11 @@ const FilePicker = function () {
 
         let choseOverwrite = false;
         let overwrite = false;
+        const inputText = $('.ftable__saver-input').val();
         for (let i = 0; i < fileManager.files().length; i += 1) {
+          const newFileName = inputText || fileManager.files()[i].name;
           for (let k = 0; k < (current.children().length); k += 1) {
-            if (current.children()[k].name === fileManager.files()[i].name) {
+            if (current.children()[k].name === newFileName) {
               const msg = localization.formatAndWrapMessage(
                 'files/confirmOverwrite');
               overwrite = window.confirm(msg);
@@ -180,7 +182,7 @@ const FilePicker = function () {
           const file_data = {
             url: f.url,
             parent_id: current.id,
-            name: $('.kloudless-saver-name').val() || f.name,
+            name: inputText || f.name,
           };
           logger.debug('file_data.name: ', file_data.name);
 
