@@ -1315,7 +1315,8 @@ function initializePlUpload() {
                   });
                 }, 0);
               } else {
-                if ($btnUpload.text() === textPause) {
+                if ($btnUpload.text() === textPause
+                  || $btnUpload.text() === textProcessing) {
                   // means it was uploading, so we should resume the process
                   uploader.start();
                 }
