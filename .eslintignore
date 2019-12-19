@@ -6,6 +6,10 @@ lib
 src/picker/js/*
 !src/picker/js/breadcrumb.js
 !src/picker/js/dropdown.js
+!src/picker/js/models/filesystem.js
+!src/picker/js/app.js
+# !src/picker/js/router-helper.js
+# !src/picker/js/plupload-helper.js
 src/loader/js/interface.js
 dev-server/localization
 
