@@ -4,10 +4,10 @@
 import $ from 'jquery';
 import ko from 'knockout';
 import logger from 'loglevel';
+import config from 'picker-config';
 import localization from './localization';
 import util from './util';
 // check babel.config.js for actual import path
-import config from 'picker-config';
 
 
 function get_query_variable(name) {
@@ -82,7 +82,7 @@ function subscribeChange(observableObj, cb) {
   let oldValue = observableObj();
   observableObj.subscribe((value) => {
     oldValue = value;
-  }, null, "beforeChange");
+  }, null, 'beforeChange');
   observableObj.subscribe((newValue) => {
     if (typeof newValue !== typeof oldValue) {
       cb(newValue, oldValue);
@@ -131,7 +131,6 @@ subscribeChange(config.custom_style_vars, (newCustomStyleVars) => {
       JSON.stringify(newCustomStyleVars)}.`);
     logger.error(err);
   });
-  return;
 });
 
 config.localeOptions = ko.computed(() => JSON.stringify({

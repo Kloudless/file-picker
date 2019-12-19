@@ -1,3 +1,4 @@
+/* eslint-disable */
 import $ from 'jquery';
 import config from './config';
 import auth from './auth';

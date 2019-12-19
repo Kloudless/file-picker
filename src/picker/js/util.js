@@ -24,7 +24,7 @@ const util = {
   /**
    * Generate random string suitable for use as a request ID
    */
-  randomID: () => parseInt(Math.random() * 10e10).toString(),
+  randomID: () => parseInt(Math.random() * 10e10, 10).toString(),
 
   /**
    * IE Version
@@ -73,7 +73,8 @@ const util = {
   getBaseUrl: () => {
     // get the picker.js script tag
     // TODO-v3: remove #kloudless-file-explorer-script
-    const el = $('#kloudless-file-picker-script') || $('#kloudless-file-explorer-script');
+    const el = $('#kloudless-file-picker-script')
+     || $('#kloudless-file-explorer-script');
     const scriptUrl = el.attr('src').split('/');
 
     // then remove the script file name and 'js' directory parts from the url

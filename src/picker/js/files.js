@@ -1,3 +1,4 @@
+/* eslint-disable */
 import ko from 'knockout';
 import logger from 'loglevel';
 

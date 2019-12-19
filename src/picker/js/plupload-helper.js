@@ -1,7 +1,6 @@
-/* eslint-disable */
-/* eslint-disable no-underscore-dangle */
 /* global plupload */
-/* eslint-disable camelcase */
+/* eslint-disable no-underscore-dangle, camelcase */
+
 import 'plupload/moxie';
 import 'plupload/plupload.dev';
 import 'plupload/jquery.ui.plupload/jquery.ui.plupload';
@@ -65,22 +64,12 @@ function init(picker) {
       // browse_button: "uploader",
 
       // Filters
-      filters: (function () {
-        const filters = {
-          max_file_size: '50000mb',
-          prevent_duplicates: false, // unique_names instead.
-          mime_types: filtered_types,
-        };
-
-        // Don't set to 0, because it forces 0 files to be selected.
-        // Happens even though the default is supposed to be 0.
-        if (!config.multiselect()) {
-          filters.max_file_count = 1;
-        }
-
-        return filters;
-      }()),
-
+      filters: {
+        max_file_size: '50000mb',
+        prevent_duplicates: false, // unique_names instead.
+        mime_types: filtered_types,
+        max_file_count: config.multiselect() ? undefined : 1,
+      },
       // Multipart / Chunking
       multipart: false,
       multipart_params: {},
@@ -91,6 +80,7 @@ function init(picker) {
       max_upload_slots: 6,
 
       // Misc
+      // eslint-disable-next-line max-len
       // See http://www.plupload.com/docs/Frequently-Asked-Questions#when-to-use-chunking-and-when-not
       // for omitting flash when chunking is possible.
       runtimes: 'html5',
@@ -135,15 +125,15 @@ function init(picker) {
           filesQueue = [];
 
           // Add pause/resume upload handler
-          $btnUpload.click(function () {
-            if ($(this).text() === textUpload) {
-              $(this).text(textPause);
+          $btnUpload.click(() => {
+            if ($($btnUpload).text() === textUpload) {
+              $($btnUpload).text(textPause);
               uploader.start();
-            } else if ($(this).text() === textPause) {
-              $(this).text(textResume);
+            } else if ($($btnUpload).text() === textPause) {
+              $($btnUpload).text(textResume);
               uploader.stop();
-            } else if ($(this).text() === textResume) {
-              $(this).text(textPause);
+            } else if ($($btnUpload).text() === textResume) {
+              $($btnUpload).text(textPause);
               uploader.start();
             }
           });
@@ -170,7 +160,7 @@ function init(picker) {
             );
             if (uploader.total.queued > 0) {
               uploader.stop();
-              if (window.confirm(msg)) {
+              if (window.confirm(msg)) { // eslint-disable-line no-alert
                 $btnUpload.text(textUpload);
 
                 const file_ids_to_abort = uploader.files

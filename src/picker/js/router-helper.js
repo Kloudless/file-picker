@@ -1,17 +1,15 @@
-/* eslint-disable */
+/* eslint-disable camelcase */
 import sammy from 'sammy';
 import logger from 'loglevel';
 import storage from './storage';
 import config from './config';
 
 function init(picker) {
-  const router = sammy(function () {
-    const self = this;
-
+  const router = sammy(function () { // eslint-disable-line func-names
     // Override setLocation to disable history modifications.
     this.disable_push_state = true;
-    this.setLocation = function (path) {
-      self.runRoute('get', path);
+    this.setLocation = (path) => {
+      this.runRoute('get', path);
     };
 
     /*
@@ -26,12 +24,12 @@ function init(picker) {
 
     // Reconnect an erroneously disconnected account.
     // WARNING: THIS HAS NOT YET BEEN IMPLEMENTED.
-    this.get('#/account/reconnect/:id', function () {
+    this.get('#/account/reconnect/:id', () => {
       logger.debug(`Account reconnection invoked for id: ${this.params.id}.`);
     });
 
     // Disconnect an account.
-    this.get('#/account/disconnect/:id', function () {
+    this.get('#/account/disconnect/:id', () => {
       logger.debug(`Account disconnection invoked for id: ${this.params.id}.`);
 
       picker.manager.deleteAccount(this.params.id, true, (account_data) => {
@@ -49,7 +47,7 @@ function init(picker) {
       picker.switchViewTo('files');
     });
     // Switch to the files view of a particular account.
-    // TODO: test.
+    // eslint-disable-next-line func-names
     this.get('#/files/:account', function () {
       logger.debug(`Switching to files of account: ${this.params.account}.`);
       picker.switchViewTo('files');
@@ -81,6 +79,11 @@ function init(picker) {
 
     this.get('#/', () => {
       router.setLocation('#/accounts');
+    });
+
+    this.get(/.*/, () => {
+      // Pass.
+      // Add this to avoid 404 error from sammy router.
     });
   });
   return router;
