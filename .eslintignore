@@ -1,3 +1,4 @@
+node_modules
 .tmp
 dist
 lib
@@ -7,3 +8,6 @@ src/picker/js/*
 !src/picker/js/dropdown.js
 src/loader/js/interface.js
 dev-server/localization
+
+!.eslintrc.js
+!.eslintrc-ts.js
