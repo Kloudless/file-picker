@@ -43,6 +43,7 @@
   }
 }
 
+// applied for selected file and folder row
 .ftable__row--selected {
   color: @selected_text_color;
   background-color: @selected_bg_color;
@@ -52,6 +53,7 @@
   }
 }
 
+// applied for disabled file row
 .ftable__row--disabled {
   cursor: unset;
   color: @disabled_text_color;
@@ -60,6 +62,11 @@
   &:hover {
     background-color: @section_primary_bg_color;
   }
+}
+
+// applied when clicking on a disabled folder row
+.ftable__row--focus {
+  .ftable__row--selected();
 }
 
 .ftable__cell-md {

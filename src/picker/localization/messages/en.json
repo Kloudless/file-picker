@@ -4,6 +4,7 @@
       "select": "Select",
       "cancel": "Cancel",
       "save": "Save",
+      "open": "Open",
       "upload": "Upload",
       "pause": "Pause",
       "resume": "Resume",
@@ -33,6 +34,7 @@
       "searchFail": "The search request was not successful.",
       "cannotUploadFiles": "Files cannot be saved to this folder. Please choose again.",
       "confirmCopyFolder": "Are you sure to copy the folder '{folderName}'?",
+      "confirmCopy": "You have selected {folderNum} folders and {fileNum} files. Are you sure to copy them?",
       "forbidCopyRootFolder": "Copying all data at once is not allowed."
     },
     "accounts": {

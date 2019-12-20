@@ -189,6 +189,10 @@ Filesystem.prototype.filterChildren = function (data) {
     logger.debug('Child failed type test.');
     return false;
   }).map((child) => {
+    if (child.type === 'folder'
+        && !config.types.some(t => t === 'all' || t === 'folders')) {
+      child.disabled = true;
+    }
     // Set custom attributes.
     child.parent_obs = this.current();
     if (child.size == null) {
@@ -205,24 +209,21 @@ Filesystem.prototype.filterChildren = function (data) {
  * callback on completion.
  */
 // eslint-disable-next-line func-names
-Filesystem.prototype.navigate = function (next, callback = () => {}) {
+Filesystem.prototype.navigate = function (id, callback = () => {}) {
   this.clearSort();
 
-  logger.debug(
-    'FS Nav: ', next, typeof next === 'string',
-    next === this.PARENT_FLAG, this.PARENT_FLAG,
-  );
+  logger.debug('FS Nav: ', id);
 
-  if (typeof next === 'string' && next === this.PARENT_FLAG) {
+  if (id === this.PARENT_FLAG) {
     logger.debug('Shifting to parent...');
     if (this.current().id === this.rootMetadata().id) {
       return callback(new Error('Attempting to navigate above root.'), null);
     }
     this.path.pop();
     this.current(this.current().parent_obs);
-  } else if (next.type === 'folder') {
+  } else {
     const target = ko.utils.arrayFirst(
-      this.current().children(), f => f.id === next.id,
+      this.current().children(), f => f.id === id && f.type === 'folder',
     );
 
     if (target === null) {
@@ -233,7 +234,7 @@ Filesystem.prototype.navigate = function (next, callback = () => {}) {
       target.children = ko.observableArray();
     }
 
-    this.path.push(next.name);
+    this.path.push(target.name);
     this.current(target);
   }
 

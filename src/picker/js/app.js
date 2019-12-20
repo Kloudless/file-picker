@@ -30,6 +30,7 @@ import '../css/index.less';
 import routerHelper from './router-helper';
 import pluploadHelper from './plupload-helper';
 
+const FOCUSED_FOLDER_SELECTOR = 'tr.ftable__row--focus:not([data-selectable])';
 const EVENT_CALLBACKS = {};
 
 // Initialise and configure.
@@ -43,7 +44,9 @@ let loadedDropConfig = false;
 // Set Kloudless source header
 $.ajaxSetup({
   headers: {
-    'X-Kloudless-Source': `file-picker/${VERSION}`,
+    // VERSION will be replaced by Babel.
+    // eslint-disable-next-line prefer-template
+    'X-Kloudless-Source': 'file-picker/' + VERSION,
   },
 });
 
@@ -122,10 +125,16 @@ const FilePicker = function () {
       return accounts;
     }),
     isDesktop: !util.isMobile,
-
     // Save all files in FileManager to the selected directory
     save: () => {
       const { view_model, fileManager, manager } = this;
+      const selected = view_model.files.selected();
+      if (selected.length > 0) {
+        // If user selects a folder, then navigate into that folder.
+        const id = selected[0].getAttribute('data-id');
+        this.view_model.files.navigate(id);
+        return;
+      }
       // Grab the current location
       const current = manager.active().filesystem().current();
       const saves = [];
@@ -213,18 +222,27 @@ const FilePicker = function () {
     },
 
     processingConfirm: ko.observable(false),
+
     // Select files or a folder.
     confirm: () => {
       if (this.view_model.processingConfirm()) {
         return;
       }
+      if (this.view_model.files.chooserButtonTextKey() === 'global/open') {
+        const tr = document.querySelector(FOCUSED_FOLDER_SELECTOR);
+        const id = tr.getAttribute('data-id');
+        this.view_model.files.navigate(id);
+        return;
+      }
 
-      // Clone the selections, removing the parent reference.
-      const current = this.manager.active().filesystem().current();
+      const fs = this.manager.active().filesystem();
+      const current = fs.current();
       const selections = [];
-      let selectedType = 'file';
-
+      const copyToUploadLocation = config.copy_to_upload_location();
+      const copyFolder = ['async', 'sync'].includes(copyToUploadLocation);
+      const link = config.link();
       const { table } = this.view_model.files;
+
       if (table) {
         const selectedElements = table.finderSelect('selected');
         for (let i = 0; i < selectedElements.length; i += 1) {
@@ -234,16 +252,15 @@ const FilePicker = function () {
         }
       }
 
+      // in case of the following cases, select the current folder if no items
+      // are selected:
+      // 1. in mobile devices
+      // 2. in chooser mode and in root folder
       if (selections.length === 0 && (
         config.types.includes('all') || config.types.includes('folders'))) {
-        selectedType = 'folder';
         // removing the parent reference.
         const { parent_obs, ...rest } = current;
         selections.push(rest);
-      }
-
-      if (selections.length > 0) {
-        this.view_model.processingConfirm(true);
       }
 
       const accountId = this.manager.active().filesystem().id;
@@ -415,55 +432,80 @@ const FilePicker = function () {
         requestCountStarted += 1;
       };
 
-      // postMessage to indicate success.
-      const copyToUploadLocation = config.copy_to_upload_location();
-      if (selectedType === 'file' && selections.length > 0) {
-        logger.debug('Files selected! ', selections);
-        this.view_model.postMessage('selected', selections);
+      // Should select at least one item
+      if (selections.length === 0) {
+        const msg = localization.formatAndWrapMessage('files/noFileSelected');
+        this.view_model.error(msg);
+        return;
+      }
 
-        if (copyToUploadLocation) {
-          // Move to upload location.
-          for (let i = 0; i < selections.length; i += 1) {
-            requestsToLaunch.push({
-              fn: moveToDrop, args: [selectedType, i],
-            });
-          }
-        } else if (config.link()) {
-          for (let i = 0; i < selections.length; i += 1) {
-            requestsToLaunch.push({ fn: createLink, args: [i] });
-          }
-        } else {
-          this.view_model.postMessage('success', selections);
-        }
-        return;
+      // Emit 'selected' event with selected files
+      if (selections.some(s => s.type === 'file')) {
+        logger.debug('Files selected! ', selections);
+        this.view_model.postMessage(
+          'selected', selections.filter(s => s.type === 'file'),
+        );
       }
-      if (selectedType === 'folder') {
-        if (['sync', 'async'].includes(copyToUploadLocation)) {
-          if (selections[0].id !== 'root') {
-            const msg = localization.formatAndWrapMessage(
-              'files/confirmCopyFolder',
-              { folderName: selections[0].name },
-            );
-            if (window.confirm(msg)) {
-              // Move to upload location.
-              requestsToLaunch.push({
-                fn: moveToDrop, args: [selectedType, 0],
-              });
-              return;
-            }
-          } else {
-            const msg = localization.formatAndWrapMessage(
-              'files/forbidCopyRootFolder',
-            );
-            window.alert(msg);
-          }
-        } else {
-          this.view_model.postMessage('success', selections);
+
+      // Confirm copy to upload location
+      if (copyFolder) {
+        const folders = selections.filter(s => s.type === 'folder');
+        const files = selections.filter(s => s.type === 'file');
+        const hasRootDir = folders.some(f => f.id === fs.rootMetadata().id);
+        let msg = null;
+        if (hasRootDir) {
+          // Copy root folder is not allowed
+          msg = localization.formatAndWrapMessage(
+            'files/forbidCopyRootFolder',
+          );
+          this.view_model.error(msg);
+          return;
         }
-        return;
+        if (folders.length === 1 && files.length === 0) {
+          // when only selecting one folder
+          msg = localization.formatAndWrapMessage(
+            'files/confirmCopyFolder', { folderName: folders[0].name },
+          );
+        } else if (folders.length > 0) {
+          // when selecting multiple folders and any number of files
+          msg = localization.formatAndWrapMessage(
+            'files/confirmCopy',
+            { folderNum: folders.length, fileNum: files.length },
+          );
+        }
+
+        // Only show confirmation if folder is selected
+        if (msg && !window.confirm(msg)) {
+          return;
+        }
       }
-      const msg = localization.formatAndWrapMessage('files/noFileSelected');
-      this.view_model.error(msg);
+
+      this.view_model.processingConfirm(true);
+      selections.forEach((selection, i) => {
+        /**
+         * process each selected item according to configuration and item's type
+         * 1. type='file', copy_to_upload_location='async'/'sync'/true
+         * 2. type='file', link=true
+         * 3. type='folder', copy_to_upload_location='async'/'sync'
+         * 4. else
+         */
+        const { type } = selection;
+        if (type === 'file' && copyToUploadLocation) {
+          // Case 1
+          requestsToLaunch.push({ fn: moveToDrop, args: [type, i] });
+        } else if (type === 'file' && link) {
+          // Case 2
+          requestsToLaunch.push({ fn: createLink, args: [i] });
+        } else if (type === 'folder' && copyFolder) {
+          // Case 3
+          requestsToLaunch.push({ fn: moveToDrop, args: [type, i] });
+        } else {
+          // Case 4
+          // No need to make a request, just pretend the request succeed
+          requestCountStarted += 1;
+          selectionComplete(true);
+        }
+      });
     },
 
     // Quit the file picker.
@@ -839,6 +881,46 @@ const FilePicker = function () {
      * when this.manager.active() is an empty object.
      */
     files: {
+      selected: ko.observable([]),
+      enableChooserButton: ko.computed(() => {
+        /**
+         * In the following cases, the chooser button is enabled:
+         * - in mobile device
+         * - in the root directory and folder is selectable
+         * - there are more than 1 item selected
+         * - chooserButtonTextKey = 'global/open'
+         */
+        const activeAccount = this.manager.active();
+        if (Object.keys(activeAccount).length === 0) {
+          return false;
+        }
+        if (util.isMobile) {
+          return true;
+        }
+        const path = activeAccount.filesystem().path();
+        if (path.length === 0
+            && config.types.some(t => t === 'folders' || t === 'all')) {
+          return true;
+        }
+        if (this.view_model.files.chooserButtonTextKey() === 'global/open') {
+          return true;
+        }
+        const selected = this.view_model.files.selected();
+        return selected.length > 0;
+      }),
+      chooserButtonTextKey: ko.observable('global/select'),
+      saverButtonTextKey: ko.pureComputed(() => {
+        /**
+         * If user selects folder then show 'Open' for the saver button;
+         * otherwise, show 'Save'.
+         */
+        const activeAccount = this.manager.active();
+        if (Object.keys(activeAccount).length === 0) {
+          return 'global/save';
+        }
+        const selected = this.view_model.files.selected();
+        return selected.length > 0 ? 'global/open' : 'global/save';
+      }),
       all: this.fileManager.files,
       // Compute breadcrumbs.
       breadcrumbs: ko.computed(() => {
@@ -886,15 +968,9 @@ const FilePicker = function () {
         return activeAccount.filesystem().cwd();
       }),
       // Relative navigation.
-      navigate: (file) => {
-        logger.debug('Navigating to file: ', file);
-        let target = file;
-        const parent = this.manager.active().filesystem().PARENT_FLAG;
-        if (typeof file === 'string' && file === parent) {
-          target = parent;
-        }
-
-        this.manager.active().filesystem().navigate(target, (err, result) => {
+      navigate: (id) => {
+        logger.debug('Navigating to file: ', id);
+        this.manager.active().filesystem().navigate(id, (err, result) => {
           logger.debug('Navigation result: ', err, result);
           // eslint-disable-next-line no-use-before-define
           if (err && error_message) {
@@ -947,7 +1023,7 @@ const FilePicker = function () {
             this.view_model.error('');
             const dir = this.manager.active().filesystem().updatedir(result);
             if (dir) {
-              this.view_model.files.navigate(dir);
+              this.view_model.files.navigate(dir.id);
             }
           }
         });
@@ -996,26 +1072,27 @@ const FilePicker = function () {
       },
       search: () => {
         const { manager, view_model } = this;
-        (function (query) {
-          const currentFs = manager.active().filesystem();
-          if (query === '') {
-            currentFs.display([]);
-            return;
-          }
-          const s = new Search(
-            currentFs.id,
-            currentFs.key,
-            query,
-            currentFs.rootMetadata().id,
-          );
-          s.search(() => {
-            const fs = manager.active().filesystem();
+
+        // de-select files/folders
+        const selector = view_model.files.table;
+        selector.finderSelect('unHighlightAll');
+
+        const searchQuery = view_model.files.searchQuery();
+        const fs = manager.active().filesystem();
+        if (searchQuery === '') {
+          fs.display([]);
+          return;
+        }
+        const s = new Search(fs.id, fs.key, searchQuery, fs.rootMetadata().id);
+        s.search(
+          () => {
             fs.display(fs.filterChildren(s.results.objects));
-          }, () => {
+          },
+          () => {
             const msg = localization.formatAndWrapMessage('files/searchFail');
             view_model.error(msg);
-          });
-        }(view_model.files.searchQuery()));
+          },
+        );
       },
 
       allow_newdir: config.create_folder,
@@ -1160,22 +1237,65 @@ FilePicker.prototype.cleanUp = function () {
   self.fileManager.files.removeAll(); // Saver
 };
 
+// File Picker initialization.
+const picker = new FilePicker();
+
 ko.bindingHandlers.finderSelect = {
-  init(element, valueAccessor) {
+  init(element, valueAccessor, allBindings, viewModel) {
     const selector = $(element).finderSelect({
       selectAllExclude: '.mkdir-form',
       selectClass: 'ftable__row--selected',
-      children: 'tr[data-type="file"]',
+      children: 'tr[data-selectable]',
       enableClickDrag: config.multiselect(),
       enableShiftClick: config.multiselect(),
       enableCtrlClick: config.multiselect(),
       enableSelectAll: config.multiselect(),
     });
-    const files = ko.unwrap(valueAccessor());
-    files.table = selector;
+
+    viewModel.files.table = selector;
+
+    const findClosestTr = (event) => {
+      const target = $(event.target);
+      return target.is('tr') || target.closest('tr');
+    };
+
+    const navigate = (event) => {
+      const tr = findClosestTr(event);
+      const type = tr.attr('data-type');
+      const id = tr.attr('data-id');
+      if (type === 'folder' && id) {
+        viewModel.files.navigate(id);
+      }
+    };
+
+    selector.dblclick(navigate);
+    selector.click((event) => {
+      if (util.isMobile) {
+        navigate(event);
+      } else {
+        const tr = findClosestTr(event);
+        if (tr.attr('data-type') === 'folder' && !tr.attr('data-selectable')) {
+          selector.finderSelect('unHighlightAll');
+          tr.addClass('ftable__row--focus');
+          viewModel.files.chooserButtonTextKey('global/open');
+        }
+      }
+    });
+
+    const onHighlightChange = () => {
+      $(FOCUSED_FOLDER_SELECTOR).removeClass('ftable__row--focus');
+      viewModel.files.chooserButtonTextKey('global/select');
+      const selected = selector.finderSelect('selected');
+      viewModel.files.selected(selected);
+    };
+    selector.finderSelect('addHook', 'highlight:after', onHighlightChange);
+    selector.finderSelect('addHook', 'unHighlight:after', onHighlightChange);
   },
-  update(element) {
-    $(element).finderSelect('update');
+  update(element, valueAccessor, allBindings, viewModel) {
+    ko.unwrap(valueAccessor());
+    const selector = viewModel.files.table;
+    selector.finderSelect('update');
+    selector.finderSelect('unHighlightAll');
   },
 };
 
@@ -1186,9 +1306,6 @@ ko.bindingHandlers.selectInputText = {
     element.select();
   },
 };
-
-// File Picker initialisation.
-const picker = new FilePicker();
 
 // TODO: we can display err.message if the new error handling is deployed
 // for now use default error message

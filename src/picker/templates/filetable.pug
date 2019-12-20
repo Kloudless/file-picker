@@ -1,7 +1,7 @@
 .ftable.container__loading-wrapper
   .container__loading
     .container__loading-icon
-  .ftable__main(data-bind='finderSelect: files')
+  .ftable__main(data-bind='finderSelect: files.cwd')
     table#fs-scroller.ftable__table(data-bind='with: files')
       //- table header
       thead
@@ -57,9 +57,12 @@
         // ko foreach: cwd
         // ko ifnot: type == "newfolder"
         tr.ftable__row(data-bind=`
-            attr: {'data-type': type},
-            click: !$data.disabled && type == 'folder'? $parent.navigate: function(){return false;},
-            css: {"ftable__row--disabled": !!$data.disabled }`)
+            attr: {
+              'data-type': type,
+              'data-id': id,
+              'data-selectable': !$data.disabled
+            },
+            css: {"ftable__row--disabled": !!$data.disabled && $data.type == 'file' }`)
           td
             .icon
               div(data-bind="css: {'icon__folder': type === 'folder', 'icon__file': type === 'file'}")
@@ -75,7 +78,9 @@
     .flex-row.justify-content-center
       //- chooser button
       // ko if: flavor() == 'chooser' || flavor() == 'dropzone'
-      button.btn.btn--primary(data-bind='click: confirm, translate: "global/select"')
+      button.btn.btn--primary(data-bind=`
+        click: confirm, translate: files.chooserButtonTextKey,
+        enable: files.enableChooserButton`)
       // /ko
 
       //- saver button
@@ -87,9 +92,13 @@
             selectInputText: files.all()[0].name,
             translate: { placeholder: { message: "files/fileName" }}`)
         button.btn.btn--primary(
-            type="submit", data-bind='translate: "global/save"')
+            type="submit",
+            data-bind='translate: {html: { message: files.saverButtonTextKey() }}')
       // /ko
       // ko ifnot: files.all().length == 1
-      button.btn.btn--primary(data-bind='click: save, translate: "global/save"')
+      button.btn.btn--primary(
+        data-bind=`
+          click: save,
+          translate: {html: { message: files.saverButtonTextKey() }}`)
       // /ko
       // /ko
