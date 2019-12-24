@@ -1,3 +1,4 @@
+@import '../../picker/css/constants.less';
 @import '../../picker/css/variables.less';
 
 .kloudless-modal-mixin() {
@@ -17,8 +18,8 @@
   -webkit-transition: all 0;
   transition: all 0;
 
-  @media only screen and (max-width: @modal_width),
-    only screen and (max-device-width: @modal_width) {
+  @media only screen and (max-width: @MODAL_WIDTH),
+    only screen and (max-device-width: @MODAL_WIDTH) {
     position: fixed;
     left: 0;
     margin-left: 0;
@@ -30,8 +31,8 @@
     }
   }
 
-  @media only screen and (max-width: @breaking_point),
-    only screen and (max-device-width: @breaking_point) {
+  @media only screen and (max-width: @BREAKING_POINT),
+    only screen and (max-device-width: @BREAKING_POINT) {
     position: fixed;
     top: 0;
     left: 0;

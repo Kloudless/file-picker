@@ -59,22 +59,22 @@
 }
 
 .sm-hidden {
-  @media only screen and (max-width: @breaking_point) {
+  @media only screen and (max-width: @BREAKING_POINT) {
     display: none;
   }
 }
 
 .md-hidden {
-  @media only screen and (min-width: @breaking_point) {
+  @media only screen and (min-width: @BREAKING_POINT) {
     display: none;
   }
 
-  // Revert display when width is exactly = @breaking_point
+  // Revert display when width is exactly = @BREAKING_POINT
   // Note: not all elements' initial value of display is 'block'.
   // Here we only apply md-hidden to <tr> tag. So 'block' is fine.
   // Be careful when applying md-hidden to HTML tags whose initial
   // display value is not 'block'.
-  @media only screen and (width: @breaking_point) {
+  @media only screen and (width: @BREAKING_POINT) {
     display: block;
   }
 }
