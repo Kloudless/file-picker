@@ -104,12 +104,16 @@ const FilePicker = function () {
       const current = picker.view_model.current();
       if (current === 'files') {
         const activeAccount = picker.manager.active();
-        return {
-          fromComputer: false,
-          account: activeAccount.account,
-          text: activeAccount.account_name,
-          icon: services()[activeAccount.service].logo,
-        };
+        const service = services()[activeAccount.service];
+        if (service) {
+          return {
+            fromComputer: false,
+            account: activeAccount.account,
+            text: activeAccount.account_name,
+            icon: service.logo,
+          };
+        }
+        return {};
       }
       if (current === 'computer') return {
         fromComputer: true,
