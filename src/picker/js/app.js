@@ -41,7 +41,6 @@ logger.setLevel(config.logLevel);
 $.support.cors = true;
 let dropzoneLoaded = false;
 let filesQueue = [];
-let processingConfirm = false;
 let loadedDropConfig = false;
 
 // Set Kloudless source header
@@ -218,9 +217,10 @@ const FilePicker = function () {
       }
     },
 
+    processingConfirm: ko.observable(false),
     // Select files or a folder.
     confirm: () => {
-      if (processingConfirm) {
+      if (this.view_model.processingConfirm()) {
         return;
       }
 
@@ -245,6 +245,10 @@ const FilePicker = function () {
         // removing the parent reference.
         const { parent_obs, ...rest } = current;
         selections.push(rest);
+      }
+
+      if (selections.length > 0) {
+        this.view_model.processingConfirm(true);
       }
 
       const accountId = this.manager.active().filesystem().id;
@@ -280,7 +284,7 @@ const FilePicker = function () {
         if (this.lastCancelTime > lastCancelTime) {
           logger.info('A cancellation occurred prior to the operation ' +
             'being completed. Ignoring response.');
-          processingConfirm = false;
+            this.view_model.processingConfirm(false);
           window.clearInterval(requestLauncherInterval);
           return;
         }
@@ -291,7 +295,7 @@ const FilePicker = function () {
           this.view_model.postMessage(
             requestCountError ? 'error' : 'success', selections,
           );
-          processingConfirm = false;
+          this.view_model.processingConfirm(false);
         }
       };
 
@@ -431,7 +435,6 @@ const FilePicker = function () {
           }
         } else if (config.link()) {
           for (let i = 0; i < selections.length; i += 1) {
-            processingConfirm = true;
             requestsToLaunch.push({ fn: createLink, args: [i] });
           }
         } else {
@@ -460,7 +463,6 @@ const FilePicker = function () {
         } else {
           this.view_model.postMessage('success', selections);
         }
-        this.view_model.loading(false);
         return;
       }
       const msg = localization.formatAndWrapMessage('files/noFileSelected');
@@ -1498,7 +1500,7 @@ function initializePlUpload() {
 FilePicker.prototype.cleanUp = function () {
   // File Picker will close. Clean up.
   const self = this;
-  processingConfirm = false;
+  self.view_model.processingConfirm(false);
 
   if ($('#search-query').is(':visible')) {
     $('#search-back-button').click();
