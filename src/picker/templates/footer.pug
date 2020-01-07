@@ -4,5 +4,7 @@
     .icon.icon--xsmall
       .icon__brand
     | &nbsp;
-    div(data-bind='translate: "global/poweredby"')
+    a.container__footer-link(
+      href="https://kloudless.com", target="_blank",
+      data-bind='translate: {html: { message: "global/poweredby" }}')
   // /ko
