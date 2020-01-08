@@ -9,7 +9,7 @@ import util from '../util';
 // TODO: replace some methods by using knockouts utils library
 // http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
 
-var Filesystem = function (id, key, callback) {
+var Filesystem = function (id, key, callback, rootFolderId = 'root') {
   this.id = id;
   this.key = key; // This key may change if we need to reconnect.
   this.path = ko.observableArray();
@@ -18,15 +18,20 @@ var Filesystem = function (id, key, callback) {
   this.page_size = 1000;
   this.sortOption = null;
 
-  // default - 'root'
-  // This is later replaced with updated metadata.
+  // This is later replaced with updated folder metadata.
   this.current = ko.observable({
-    id: 'root',
-    name: 'root',
+    id: null,
+    name: null,
     type: 'folder',
     parent_obs: null,
-    path: '/',
+    path: null,
     children: ko.observableArray(),
+  });
+
+  // Some logic requires access root folder metadata while this.current points
+  // to other folders. This is set after getting metadata from API below.
+  this.rootMetadata = ko.observable({
+    id: rootFolderId,
   });
 
   this.cwd = ko.computed(function () {
@@ -39,7 +44,7 @@ var Filesystem = function (id, key, callback) {
   (function (fs) {
     var success = false;
     var request = $.ajax({
-      url: config.getAccountUrl(fs.id, 'storage', '/folders/root'),
+      url: config.getAccountUrl(fs.id, 'storage', `/folders/${rootFolderId}`),
       type: 'GET',
       headers: {
         Authorization: fs.key.scheme + ' ' + fs.key.key
@@ -48,6 +53,10 @@ var Filesystem = function (id, key, callback) {
       var updatedCurrent = fs.filterChildren([data])[0];
       updatedCurrent.children = fs.current().children
       fs.current(updatedCurrent);
+      const { children, parent_obs, id, ...rest } = fs.current();
+      // never update root folder ID, in case the returned ID is different
+      // and break the UI
+      fs.rootMetadata(rest);
       success = true;
     }).fail(function (xhr, status, err) {
       logger.warn('Retrieving root folder failed: ', status, err, xhr);
@@ -206,7 +215,7 @@ Filesystem.prototype.navigate = function (next, callback) {
 
   if (typeof next == 'string' && next == this.PARENT_FLAG) {
     logger.debug('Shifting to parent...');
-    if (this.current().id === 'root') {
+    if (this.current().id === this.rootMetadata().id) {
       return callback(new Error('Attempting to navigate above root.'), null);
     }
     this.path.pop();
@@ -235,7 +244,7 @@ Filesystem.prototype.navigate = function (next, callback) {
 Filesystem.prototype.up = function (count, callback) {
   this.clearSort();
   while (count > 0) {
-    if (this.current().id === 'root') {
+    if (this.current().id === this.rootMetadata().id) {
       return callback(new Error('Attempting to navigate above root.'), null);
     }
     this.path.pop();

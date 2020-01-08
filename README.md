@@ -485,6 +485,36 @@ File Picker JavaScript on the page.
   the resources on your own, since we don't guarantee backward-compatibility 
   when overriding undocumented variables.
 
+* `root_folder_id`: object
+
+  Chooser: _Optional (default: {})_
+
+  Saver: _Optional (default: {})_
+
+  This option is used when you want to specify a folder as the root folder
+  in File Picker for specific accounts. Configure this option with a map of
+  Account ID and the Kloudless Folder ID, in format of
+  `{[account_id]: "root_folder_id"}`:
+
+  ```js
+  {
+    1234: "Fabcxyz12345",
+    5678: "Fsomefolder678"
+  }
+  ```
+
+  The above example sets root folder to `Fabcxyz12345` for account `1234` and
+  `Fsomefolder678` for account `5678`.
+
+  When connecting or switching to an account having root folder ID configured,
+  the default folder opened will be the specified root folder, and users won't
+  be able to navigate outside of the folder.
+  
+  Note: To obtain the Kloudless Folder ID from upstream folder
+  path, please refer to
+  [Encode Raw Data endpoint](https://developers.kloudless.com/docs/v1/core#raw-data-and-the-pass-through-api-raw-data-kloudless-id)
+  to convert upstream folder path into Kloudless Folder ID.
+
 #### Chooser Options
 
 * `multiselect` : boolean

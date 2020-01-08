@@ -6,7 +6,7 @@
           .list__item(data-bind='click: up.bind(null, breadcrumbs().length)')
             .icon
               .icon__folder
-            .list__text(data-bind='text: service_friendly')
+            .list__text(data-bind='text: root_folder_name')
           // ko foreach: breadcrumbs
           .list__item(data-bind='click: $parent.up.bind(null, $parent.breadcrumbs().length - parseInt("" + ($index() + 1), 10))')
             .icon
@@ -21,7 +21,7 @@
   //- breadcrumb width and decide whether to ellipsis breadcrumb
   .breadcrumb__hidden
   .icon.icon--button.icon--large(data-bind=`
-      attr: {'title': '/'},
+      attr: {'title': root_folder_name},
       click: up.bind(null, breadcrumbs().length)`)
     .icon__root-dir
   .breadcrumb__toggle-btn(
