@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- action button in file view is missing for dropzone
 - remove @breaking_point and @modal_width from variables.less
 
 ## [2.0.1] - 2019-12-24

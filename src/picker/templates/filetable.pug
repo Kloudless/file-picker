@@ -74,7 +74,7 @@
   .ftable__footer
     .flex-row.justify-content-center
       //- chooser button
-      // ko if: flavor() == 'chooser'
+      // ko if: flavor() == 'chooser' || flavor() == 'dropzone'
       button.btn.btn--primary(data-bind='click: confirm, translate: "global/select"')
       // /ko
 
