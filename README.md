@@ -491,10 +491,15 @@ File Picker JavaScript on the page.
 
   Saver: _Optional (default: {})_
 
-  This option is used when you want to specify a folder as the root folder
-  in File Picker for specific accounts. Configure this option with a map of
-  Account ID and the Kloudless Folder ID, in format of
-  `{[account_id]: "root_folder_id"}`:
+  This option is used to specify a specific folder as the root folder
+  for any existing account browsable via the File Picker. This is helpful for
+  scenarios where the user may not have access to the root or other high-level
+  folders but does have access to specific known folders within the account.
+  For existing accounts,
+  be sure to also use the `tokens` attribute to specify the Bearer tokens to use
+  to browse the account. This option accepts a map of
+  the Kloudless Account ID to the Kloudless Folder ID in the format
+  `{[account_id]: "root_folder_id"}`, as shown below:
 
   ```js
   {
@@ -503,17 +508,23 @@ File Picker JavaScript on the page.
   }
   ```
 
-  The above example sets root folder to `Fabcxyz12345` for account `1234` and
-  `Fsomefolder678` for account `5678`.
+  The example above sets the root folder to `Fabcxyz12345` for account `1234`
+  and `Fsomefolder678` for the account `5678`.
 
-  When connecting or switching to an account having root folder ID configured,
-  the default folder opened will be the specified root folder, and users won't
-  be able to navigate outside of the folder.
+  When connecting or switching to an account that has a root folder ID
+  configured, the default folder opened will be the specified folder rather 
+  than the usual root folder `root`. The File Picker UI won't enable navigation
+  outside of the chosen root folder, although it may be accessible to the user
+  via direct API requests. This configuration option should therefore not be
+  used to limit access for security purposes.
   
-  Note: To obtain the Kloudless Folder ID from upstream folder
-  path, please refer to
-  [Encode Raw Data endpoint](https://developers.kloudless.com/docs/v1/core#raw-data-and-the-pass-through-api-raw-data-kloudless-id)
-  to convert upstream folder path into Kloudless Folder ID.
+  To obtain the Kloudless Folder ID for an upstream folder path, please
+  use the
+  [Encode Raw Data API endpoint](https://developers.kloudless.com/docs/latest/core#raw-data-and-the-pass-through-api-raw-data-kloudless-id).
+
+  Note: Search requests may still return results outside the root folder
+  specified for services that do not support the `parents`
+  [query parameter](https://developers.kloudless.com/docs/latest/storage#locate-files-search).
 
 #### Chooser Options
 
