@@ -56,7 +56,7 @@ var Filesystem = function (id, key, callback, rootFolderId = 'root') {
       const { children, parent_obs, id, ...rest } = fs.current();
       // never update root folder ID, in case the returned ID is different
       // and break the UI
-      fs.rootMetadata(rest);
+      fs.rootMetadata({id: rootFolderId, ...rest});
       success = true;
     }).fail(function (xhr, status, err) {
       logger.warn('Retrieving root folder failed: ', status, err, xhr);
