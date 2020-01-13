@@ -592,13 +592,20 @@ const FilePicker = function () {
             }
           },
           (err) => {
-            // if it errors on root folder metadata, we shouldn't add it
-            if (err && err.message === 'failed to retrieve root folder') {
+            /** 
+             * If the account errors on getting metadata due to invalid token,
+             * it will be removed from the storage.
+             *
+             * If there is no account metadata that means this account object
+             * is created by config.tokens, so there's no need to update
+             * the account manager.
+             */
+            if (err && err.invalidToken === true && account.account) {
               logger.warn('failed to load account from localStorage');
               this.manager.removeAccount(account.account);
               // store accounts
               storage.storeAccounts(config.app_id, this.manager.accounts());
-              // else if it errors on folder contents, we should show an error
+            // else if it errors on folder contents, we should show an error
             } else if (err) {
               logger.warn('failed to refresh filesystem', err);
               const msg = localization.formatAndWrapMessage('files/error');
@@ -820,7 +827,6 @@ const FilePicker = function () {
                 // eslint-disable-next-line no-use-before-define
                 first_account = false;
               }
-
               // store accounts
               storage.storeAccounts(config.app_id, this.manager.accounts());
             },
@@ -835,6 +841,11 @@ const FilePicker = function () {
     addConfirm: {},
 
     // Files view model.
+    /**
+     * It's better to return empty object / array instead of null
+     * to reduce the chance of breaking File Table UI, sepecially for the case
+     * when this.manager.active() is an empty object.
+     */
     files: {
       all: this.fileManager.files,
       // Compute breadcrumbs.
@@ -842,7 +853,7 @@ const FilePicker = function () {
         const activeAccount = this.manager.active();
         // check to make sure an active account is set
         if (Object.keys(activeAccount).length === 0) {
-          return null;
+          return [];
         }
         const breadcrumbs = activeAccount.filesystem().path().map(
           path => ({ path, visible: true })
@@ -862,11 +873,22 @@ const FilePicker = function () {
         }
         return allServices[activeAccount.service].name;
       }),
+
+      root_folder_name: ko.pureComputed(() => {
+        const activeAccount = this.manager.active();
+        // check to make sure an active account is set
+        if (Object.keys(activeAccount).length === 0) {
+          return '';
+        }
+        return activeAccount.filesystem().rootMetadata().name;
+      }),
+
       // Compute current working directory.
       cwd: ko.computed(() => {
         const activeAccount = this.manager.active();
+        // check to make sure an active account is set
         if (Object.keys(activeAccount).length === 0) {
-          return null;
+          return [];
         }
         logger.debug('Recomputing cwd...');
         return activeAccount.filesystem().cwd();
@@ -987,7 +1009,12 @@ const FilePicker = function () {
             currentFs.display([]);
             return;
           }
-          const s = new Search(currentFs.id, currentFs.key, query);
+          const s = new Search(
+            currentFs.id,
+            currentFs.key,
+            query,
+            currentFs.rootMetadata().id
+          );
           s.search(() => {
             const fs = manager.active().filesystem();
             fs.display(fs.filterChildren(s.results.objects));
@@ -1737,12 +1764,12 @@ function dataMessageHandler(data) {
    */
 
   // account key and token data
-
   if (data.options && data.options.keys) {
     config.api_version = 'v0';
     window.setTimeout(() => {
       picker.view_model.sync(
-        data.options.keys.map(k => ({ key: k, scheme: 'AccountKey' })), true,
+        data.options.keys.map(k => (
+          { key: { key: k, scheme: 'AccountKey' }})), true,
       );
     }, 0);
   }
@@ -1750,7 +1777,8 @@ function dataMessageHandler(data) {
   if (data.options && data.options.tokens) {
     window.setTimeout(() => {
       picker.view_model.sync(
-        data.options.tokens.map(k => ({ key: k, scheme: 'Bearer' })), true,
+        data.options.tokens.map(k => (
+          { key: { key: k, scheme: 'Bearer' }})), true,
       );
     }, 0);
   }

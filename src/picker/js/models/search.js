@@ -5,19 +5,25 @@ import config from '../config';
 'use strict';
 
 //Create a search object
-var Search = function (account, key, query) {
+var Search = function (account, key, query, rootFolderId = 'root') {
   this.account = account;
   this.key = key;
   this.q = query;
   this.results = null;
   this.request = null;
+  this.rootFolderId = rootFolderId;
 };
 
 Search.prototype.search = function (callback, errback) {
   var self = this;
 
+  let searchUrl = `/search/?q=${self.q}`;
+  if (self.rootFolderId !== 'root') {
+    searchUrl += `&parents=${self.rootFolderId}`;
+  }
+
   self.request = $.ajax({
-    url: config.getAccountUrl(self.account, 'storage', '/search/?q=' + self.q),
+    url: config.getAccountUrl(self.account, 'storage', searchUrl),
     type: 'GET',
     headers: {
       Authorization: self.key.scheme + ' ' + self.key.key

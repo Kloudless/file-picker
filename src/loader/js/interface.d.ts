@@ -95,6 +95,8 @@ declare global {
       delete_accounts_on_logout?: boolean;
 
       oauth?(service: ServiceName): OAuthQueryParams;
+
+      root_folder_id?: { [key: number]: string; }
     }
 
     /**

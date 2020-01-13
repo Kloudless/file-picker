@@ -485,6 +485,47 @@ File Picker JavaScript on the page.
   the resources on your own, since we don't guarantee backward-compatibility 
   when overriding undocumented variables.
 
+* `root_folder_id`: object
+
+  Chooser: _Optional (default: {})_
+
+  Saver: _Optional (default: {})_
+
+  This option is used to specify a specific folder as the root folder
+  for any existing account browsable via the File Picker. This is helpful for
+  scenarios where the user may not have access to the root or other high-level
+  folders but does have access to specific known folders within the account.
+  For existing accounts,
+  be sure to also use the `tokens` attribute to specify the Bearer tokens to use
+  to browse the account. This option accepts a map of
+  the Kloudless Account ID to the Kloudless Folder ID in the format
+  `{[account_id]: "root_folder_id"}`, as shown below:
+
+  ```js
+  {
+    1234: "Fabcxyz12345",
+    5678: "Fsomefolder678"
+  }
+  ```
+
+  The example above sets the root folder to `Fabcxyz12345` for account `1234`
+  and `Fsomefolder678` for the account `5678`.
+
+  When connecting or switching to an account that has a root folder ID
+  configured, the default folder opened will be the specified folder rather 
+  than the usual root folder `root`. The File Picker UI won't enable navigation
+  outside of the chosen root folder, although it may be accessible to the user
+  via direct API requests. This configuration option should therefore not be
+  used to limit access for security purposes.
+  
+  To obtain the Kloudless Folder ID for an upstream folder path, please
+  use the
+  [Encode Raw Data API endpoint](https://developers.kloudless.com/docs/latest/core#raw-data-and-the-pass-through-api-raw-data-kloudless-id).
+
+  Note: Search requests may still return results outside the root folder
+  specified for services that do not support the `parents`
+  [query parameter](https://developers.kloudless.com/docs/latest/storage#locate-files-search).
+
 #### Chooser Options
 
 * `multiselect` : boolean

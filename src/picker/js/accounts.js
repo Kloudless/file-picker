@@ -19,7 +19,7 @@ AccountManager.prototype.addAccount
       service, oauthParams, (data) => {
         logger.debug('Authenticated for: ', data.service || data.scope);
         const created = new Account( // eslint-disable-line no-unused-vars
-          { scheme: 'Bearer', key: data.access_token },
+          { key: { scheme: 'Bearer', key: data.access_token } },
           callbacks.on_account_ready, callbacks.on_fs_ready,
         );
       },

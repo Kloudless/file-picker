@@ -5,6 +5,18 @@ import logger from 'loglevel';
 import config from '../config';
 import Filesystem from './filesystem';
 
+/**
+ * 
+ * @param {object} data
+ * {
+ *   key: {scheme: "Bearer", key: BEARER_TOKEN }
+ *   ...account_metadata
+ * }
+ *
+ * "key" is always provided from localStorage or from OOB OAuth flow,
+ * but the rest of account metadata is only provided when initialized from
+ * localStorage.
+ */
 function Account(data, account_callback, filesystem_callback) {
   /*
    *  Data should normally be of the format
@@ -25,9 +37,12 @@ function Account(data, account_callback, filesystem_callback) {
   const self = this;
   this.request = null;
 
-  function initialize_account(data) { // eslint-disable-line no-shadow
+  function initialize_account(data, invalidToken) { // eslint-disable-line no-shadow
     if (!data) {
-      filesystem_callback(new Error('Account data empty'), null);
+      const error = new Error('Account data empty');
+      // hack to pass invalidToken flag
+      error.invalidToken = invalidToken;
+      filesystem_callback(error, null);
       return;
     }
 
@@ -56,7 +71,12 @@ function Account(data, account_callback, filesystem_callback) {
       self.key.scheme = 'AccountKey';
     }
     self.filesystem = ko.observable(
-      new Filesystem(self.account, self.key, filesystem_callback),
+      new Filesystem(
+        self.account,
+        self.key,
+        filesystem_callback,
+        config.root_folder_id()[self.account],
+      ),
     );
 
     const callback = () => {
@@ -71,13 +91,16 @@ function Account(data, account_callback, filesystem_callback) {
     }
   }
 
-  // If data is an object with 'account', then we already have account data
-  // to initialize with. Otherwise, fetch the data from the Key.
-  if (data.account) {
-    initialize_account(data);
-  } else {
-    self.data_from_key(data, initialize_account);
-  }
+  /**
+   * When initialized from localStorage, even though the account metadata
+   * is already available, we still get metadata from API again
+   * in order to verify if account token is still valid
+   *
+   * Verifying token when getting root folder metadata in filesystem is
+   * difficult because we don't know if a 403 error is caused by invalid token
+   * or insufficient permission to access the defined root folder.
+   */
+  self.data_from_key(data, initialize_account);
 }
 
 // Reconnect this account.
@@ -93,10 +116,10 @@ Account.prototype.disconnect = function () { // eslint-disable-line func-names
   return this.connected;
 };
 
+// Get this account's metadata
 // eslint-disable-next-line func-names
-Account.prototype.data_from_key = function (key, callback = () => {}) {
+Account.prototype.data_from_key = function ({ key }, callback = () => {}) {
   const self = this;
-
   if (self.request !== null) {
     self.request.abort();
   }
@@ -126,9 +149,8 @@ Account.prototype.data_from_key = function (key, callback = () => {}) {
 
       callback(acct);
     }
-  }).fail(() => {
-    logger.debug('Retrieving account failed.');
-    callback(null);
+  }).fail((err) => {
+    callback(null, (err && err.status === 403));
   }).always(() => {
     self.request = null;
   });
