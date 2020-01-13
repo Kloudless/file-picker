@@ -681,9 +681,12 @@ File Picker JavaScript on the page.
   * `videos`
 
   * `audio`
-  
-To filter by file extension, include the extension in the array without the period (`.`) prefix.
-For example, `['pdf', 'jpg', 'jpeg', 'png']`.
+
+The categories will be transferred to the corresponding file extensions
+internally. (Check `TYPE_ALIAS` in [constants.js](src/picker/js/constants.js)
+for the mapping table).
+You can also specify file extensions by including the extension in the array
+without the period (`.`) prefix. For example, `['pdf', 'jpg', 'jpeg', 'png']`.
 
 #### Saver Options
 

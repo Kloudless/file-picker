@@ -164,33 +164,32 @@ Filesystem.prototype.display = function (files) {
   this.sort();
 };
 
+/**
+ * Attach disabled and friendlySize attributes to the file/folder metadata.
+ * Setting 'excludeDisabled' to true to filter out the disabled items.
+ * @param {Array<Object>} data Array of files and folders' metadata.
+ * @param {Boolean} excludeDisabled Whether to filter out the disabled items.
+ *  Defaults to 'false'.
+ */
 // eslint-disable-next-line func-names
-Filesystem.prototype.filterChildren = function (data) {
-  return data.filter((child) => {
-    // Filter types.
-    const extension = child.name.substr(child.name.lastIndexOf('.') + 1);
-    logger.debug('Filtering child: ', child.name, extension);
+Filesystem.prototype.filterChildren = function (data, excludeDisabled = false) {
+  const result = data.map((child) => {
+    const { type: childType, name } = child;
+    const ext = name.includes('.') ?
+      name.substr(name.lastIndexOf('.') + 1).toLowerCase() : '';
+    const { types: allowedTypes } = config;
 
-    if (child.type === 'folder' ||
-      (((config.types.length === 1 && config.types.indexOf('files') !== -1) ||
-        (config.types.length === 1 && config.types.indexOf('all') !== -1) ||
-        (config.types.indexOf(extension.toLowerCase()) !== -1) ||
-        (config.types.indexOf('') !== -1 && child.name.indexOf('.') === -1))
-        && config.flavor() === 'chooser')) {
-      logger.debug('Child passed type test.');
-      return true;
+    logger.debug('Filtering child: ', name, ext);
+
+    if (childType === 'file') {
+      if (!allowedTypes.some(t => t !== 'folders')) {
+        child.disabled = true;
+      }
+      if (!allowedTypes.includes('files') && !allowedTypes.includes(ext)) {
+        child.disabled = true;
+      }
     }
-    if (config.types.indexOf('folders') !== -1
-        || config.flavor() === 'saver') {
-      // add grayed out files
-      child.disabled = true;
-      return true;
-    }
-    logger.debug('Child failed type test.');
-    return false;
-  }).map((child) => {
-    if (child.type === 'folder'
-        && !config.types.some(t => t === 'all' || t === 'folders')) {
+    if (childType === 'folder' && !allowedTypes.includes('folders')) {
       child.disabled = true;
     }
     // Set custom attributes.
@@ -202,6 +201,7 @@ Filesystem.prototype.filterChildren = function (data) {
     }
     return child;
   });
+  return excludeDisabled ? result.filter(e => !e.disabled) : result;
 };
 
 /**

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- grayed out un-matched files instead of filtering out
+
 ## [2.2.0] - 2020-02-17
 
 ### Changed

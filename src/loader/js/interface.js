@@ -1,7 +1,8 @@
 /* eslint-disable camelcase, no-underscore-dangle, func-names,
                   prefer-destructuring */
-/* global PICKER_URL, VERSION */
+/* global PICKER_URL, VERSION, PICKER_URL_V1 */
 import '../css/modal.less';
+import { FLAVOR } from '../../picker/js/constants';
 
 /**
  * Define the module and the interface with which developers interact.
@@ -258,7 +259,8 @@ filePicker._fileWidget.prototype._setOptions = function (options = {}) {
   this.custom_css = (options.custom_css) ? options.custom_css : false;
   // These don't need to be passed for query variables
   this.elementId = options.elementId;
-  this.flavor = (options.flavor === undefined) ? 'chooser' : options.flavor;
+  this.flavor = (
+    options.flavor === undefined) ? FLAVOR.chooser : options.flavor;
   this.multiselect = (
     options.multiselect === undefined) ? false : options.multiselect;
   this.link = (options.link === undefined) ? true : options.link;
@@ -310,21 +312,22 @@ filePicker._fileWidget.prototype.on = function (event, handler) {
   return this;
 };
 
-filePicker._fileWidget.prototype._getOAuthParams
-  = function (callbackId, data) {
-    try {
-      const { oauth } = this.options;
-      const oauthParams = oauth ? oauth(data.service) : {};
-      this.message('CALLBACK', { oauthParams }, callbackId);
-    } catch (err) {
-      console.error(err); // eslint-disable-line no-console
-      window.alert( // eslint-disable-line no-alert
-        'An error occurred. ' +
-        'Please contact Support for further assistance connecting your ' +
-        `${data.service} account.`,
-      );
-    }
-  };
+filePicker._fileWidget.prototype._getOAuthParams = function (
+  callbackId, data,
+) {
+  try {
+    const { oauth } = this.options;
+    const oauthParams = oauth ? oauth(data.service) : {};
+    this.message('CALLBACK', { oauthParams }, callbackId);
+  } catch (err) {
+    console.error(err); // eslint-disable-line no-console
+    window.alert( // eslint-disable-line no-alert
+      'An error occurred. ' +
+      'Please contact Support for further assistance connecting your ' +
+      `${data.service} account.`,
+    );
+  }
+};
 
 // Fire an event handler. Called by the message listeners.
 filePicker._fileWidget.prototype._fire = function (event, data) {
@@ -367,7 +370,8 @@ filePicker.picker = function (options) {
   if (options.custom_css) {
     console.warn(
       'custom_css option is deprecated.',
-      'Please use custom_style_vars instead.');
+      'Please use custom_style_vars instead.',
+    );
     filePicker.setGlobalOptions({ pickerUrl: PICKER_URL_V1 });
   }
   // first step is to return a new object
@@ -461,7 +465,7 @@ filePicker._picker.prototype.choose = function () {
   }
 
   this._open({
-    flavor: 'chooser',
+    flavor: FLAVOR.chooser,
   });
 
   return this; // eslint-disable-line
@@ -487,7 +491,7 @@ filePicker._picker.prototype.save = function (files) {
 
   // Send over files inside the options or those sent with save()
   this._open({
-    flavor: 'saver',
+    flavor: FLAVOR.saver,
     files,
   });
 
@@ -513,7 +517,7 @@ filePicker._picker.prototype._open = function (data) {
   frames[this.exp_id].style.opacity = 0;
   addClass(body, 'kfe-active');
 
-  if (data.flavor !== 'dropzone') {
+  if (data.flavor !== FLAVOR.dropzone) {
     FX.fadeIn(frames[this.exp_id], {
       duration: 200,
     });
@@ -646,7 +650,7 @@ filePicker._dropzone = function (options = {}) {
 
   this.dropPicker = filePicker.picker({
     ...dropzoneOptions,
-    flavor: 'dropzone',
+    flavor: FLAVOR.dropzone,
     elementId: this.elementId,
   });
 
@@ -698,7 +702,7 @@ filePicker._dropzone.prototype._configureFrame = function () {
     }
     dropPicker.on('dropzoneClicked', () => {
       clickPicker._open({
-        flavor: 'chooser',
+        flavor: FLAVOR.chooser,
       });
     });
 
@@ -720,7 +724,7 @@ filePicker._dropzone.prototype._configureFrame = function () {
       element.style['border-style'] = borderStyle;
       if (!this.isDestroyed) {
         dropPicker._open({
-          flavor: 'dropzone',
+          flavor: FLAVOR.dropzone,
         });
       }
       frame.style.opacity = transparentOpacity;
