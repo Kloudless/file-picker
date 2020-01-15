@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.1.0] - 2020-01-15
+
+### Added
+
+- new configuration option `root_folder_id`
+
 ### Fixed
 
 - action button in file view is missing for dropzone
