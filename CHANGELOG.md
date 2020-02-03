@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- keep showing loading spinner until confirm process is done
+
 ## [2.1.0] - 2020-01-15
 
 ### Added
