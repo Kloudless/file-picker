@@ -2,10 +2,6 @@ node_modules
 .tmp
 dist
 lib
-# Disable linting for legacy scripts
-src/picker/js/*
-!src/picker/js/breadcrumb.js
-!src/picker/js/dropdown.js
 src/loader/js/interface.js
 dev-server/localization
 

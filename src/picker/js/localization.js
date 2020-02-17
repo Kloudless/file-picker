@@ -123,9 +123,9 @@ const getLowercaseKeyedObj = (obj, result = {}) => {
     } else {
       result[key] = v;
     }
-  })
+  });
   return result;
-}
+};
 
 const locUtil = {
 
@@ -179,7 +179,6 @@ const locUtil = {
     // Load the plupload i18n script now.  Don't need to wait on this;
     // plupload will handle it.
     // Append the timestamp on the end to force re-execution of the script.
-    const baseUrl = util.getBaseUrl();
     const name = resolvePluploadFileName(effectiveLocale);
     const now = Date.now();
     $.getScript(`${PLUPLOAD_I18N_URL}${name}?timestamp=${now}`);
@@ -248,6 +247,7 @@ const locUtil = {
           });
 
           globalize.loadMessages({
+            // eslint-disable-next-line max-len
             // https://github.com/globalizejs/globalize/blob/master/doc/api/message/load-messages.md#messages-inheritance
             root: getLowercaseKeyedObj(messages.en),
             ...translation,
@@ -453,7 +453,8 @@ const locUtil = {
  *     translation.
  *   - specifies that the translated text should go into the 'value'
  *     property.
- *   <input (data-bind='translate: {value: { message: "somekey", variables: { var1: somevariable }}}'>
+ *   <input (data-bind='translate: {value: {
+ *      message: "somekey", variables: { var1: somevariable }}}'>
  */
 ko.bindingHandlers.translate = {
   update(element, valueAccessor) {

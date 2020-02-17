@@ -145,7 +145,7 @@ declare global {
       form_data?: object;
     }
 
-    type SuccessEvent = FileMetadata[] | FolderMetadata[] | Task[];
+    type SuccessEvent = Array<FileMetadata | FolderMetadata | Task>;
     type ErrorEvent = Array<FileMetadata | FolderMetadata | Task>;
     type SelectedEvent = FileMetadata[] | FolderMetadata[];
     type StartFileUploadEvent = ChooserStartFileUploadEvent | SaverStartFileUploadEvent;

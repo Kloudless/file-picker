@@ -1,3 +1,4 @@
+/* eslint-disable */
 import $ from 'jquery';
 import logger from 'loglevel';
 import config from '../config';

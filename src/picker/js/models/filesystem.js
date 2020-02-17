@@ -4,12 +4,10 @@ import logger from 'loglevel';
 import config from '../config';
 import util from '../util';
 
-'use strict';
-
 // TODO: replace some methods by using knockouts utils library
 // http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
 
-var Filesystem = function (id, key, callback, rootFolderId = 'root') {
+function Filesystem(id, key, callback, rootFolderId = 'root') {
   this.id = id;
   this.key = key; // This key may change if we need to reconnect.
   this.path = ko.observableArray();
@@ -34,196 +32,199 @@ var Filesystem = function (id, key, callback, rootFolderId = 'root') {
     id: rootFolderId,
   });
 
-  this.cwd = ko.computed(function () {
-    var folder = this.current();
+  this.cwd = ko.computed(() => {
+    const folder = this.current();
     return folder.children();
-  }, this);
+  });
 
-  // query the root folder for this id to find can_create_folders and
-  // can_upload_files
-  (function (fs) {
-    var success = false;
-    var request = $.ajax({
-      url: config.getAccountUrl(fs.id, 'storage', `/folders/${rootFolderId}`),
-      type: 'GET',
-      headers: {
-        Authorization: fs.key.scheme + ' ' + fs.key.key
-      }
-    }).done(function (data) {
-      var updatedCurrent = fs.filterChildren([data])[0];
-      updatedCurrent.children = fs.current().children
-      fs.current(updatedCurrent);
-      const { children, parent_obs, id, ...rest } = fs.current();
-      // never update root folder ID, in case the returned ID is different
-      // and break the UI
-      fs.rootMetadata({id: rootFolderId, ...rest});
-      success = true;
-    }).fail(function (xhr, status, err) {
-      logger.warn('Retrieving root folder failed: ', status, err, xhr);
-      callback(new Error("failed to retrieve root folder"), null);
-    }).always(function () {
-      logger.info('Filesystem construction finished. Refreshing...');
-      request = null;
-      if (success) {
-        fs.refresh(false, callback);
-      }
-    });
-  })(this);
+  this._init(callback); // eslint-disable-line no-underscore-dangle
+}
+
+/**
+ * query the root folder for this id to find can_create_folders and
+ * can_upload_files
+ */
+// eslint-disable-next-line no-underscore-dangle
+Filesystem.prototype._init = function _init(callback) {
+  const rootFolderId = this.rootMetadata().id;
+  let success = false;
+  return $.ajax({
+    url: config.getAccountUrl(this.id, 'storage', `/folders/${rootFolderId}`),
+    type: 'GET',
+    headers: {
+      Authorization: `${this.key.scheme} ${this.key.key}`,
+    },
+  }).done((data) => {
+    const updatedCurrent = this.filterChildren([data])[0];
+    updatedCurrent.children = this.current().children;
+    this.current(updatedCurrent);
+    const {
+      children, parent_obs, id, ...rest // eslint-disable-line camelcase
+    } = this.current();
+    // never update root folder ID, in case the returned ID is different
+    // and break the UI
+    this.rootMetadata({ id: rootFolderId, ...rest });
+    success = true;
+  }).fail((xhr, status, err) => {
+    logger.warn('Retrieving root folder failed: ', status, err, xhr);
+    callback(new Error('failed to retrieve root folder'), null);
+  }).always(() => {
+    logger.info('Filesystem construction finished. Refreshing...');
+    if (success) {
+      this.refresh(false, callback);
+    }
+  });
 };
 
 // This flag indicates that we want to go to the parent folder.
 Filesystem.prototype.PARENT_FLAG = 'PARENT';
 
-// This method refreshes the current directory, NOT the whole tree.
-// It lets you specify a callback to fire on completion and whether to force refresh.
-// By default, it will NOT force refresh i.e. if the files have already been cached, it will load the cache.
-// TODO: if the current directory doesn't exist, kick all the way up to the root.
-Filesystem.prototype.refresh = function (force, callback) {
-  // Default arguments.
-  if (force === undefined) {
-    force = false;
+/**
+ * This method refreshes the current directory, NOT the whole tree.
+ * It lets you specify a callback to fire on completion and whether to force
+ * refresh.
+ * By default, it will NOT force refresh i.e. if the files have already been
+ * cached, it will load the cache.
+ * TODO: if the current directory doesn't exist, kick all the way up to the
+ * root.
+ */
+// eslint-disable-next-line func-names
+Filesystem.prototype.refresh = function (force = false, callback = () => {}) {
+  if (this.request !== null) {
+    this.request.abort();
   }
-  if (callback === undefined) {
-    callback = function () {
-    };
-  }
-
-  var self = this;
-
-  if (self.request !== null) {
-    self.request.abort();
-  }
-  if (!force && self.current().children().length > 0) {
-    return callback(null, self.current().children);
-  }
-
-  // reset page
-  self.page = 1;
-
-  self.getPage(callback);
-};
-
-Filesystem.prototype.getPage = function (callback) {
-  var self = this;
-
-  if (callback === undefined) {
-    callback = function () {
-    };
-  }
-
-  if (!self.page) {
-    callback(null, self.current().children);
+  if (!force && this.current().children().length > 0) {
+    callback(null, this.current().children);
     return;
   }
 
-  var page_url = config.getAccountUrl(self.id, 'storage', '/folders/' + self.current().id + '/contents');
-  page_url += '?page=' + self.page + '&page_size=' + self.page_size;
+  // reset page
+  this.page = 1;
+  this.getPage(callback);
+};
+
+// eslint-disable-next-line func-names
+Filesystem.prototype.getPage = function (callback = () => {}) {
+  if (!this.page) {
+    callback(null, this.current().children);
+    return;
+  }
+
+  let url = config.getAccountUrl(
+    this.id, 'storage', `/folders/${this.current().id}/contents`,
+  );
+  url += `?page=${this.page}&page_size=${this.page_size}`;
 
   logger.debug('Loading the next page of infinite scroll data.');
 
-  self.request = $.ajax({
-    url: page_url,
+  this.request = $.ajax({
+    url,
     type: 'GET',
     headers: {
-      Authorization: self.key.scheme + ' ' + self.key.key
-    }
-  }).done(function (data) {
+      Authorization: `${this.key.scheme} ${this.key.key}`,
+    },
+  }).done((data) => {
     logger.debug('Received new data.');
 
-    var currentChildren;
-    if (self.page === 1 || self.page === data.next_page) {
+    let currentChildren;
+    if (this.page === 1 || this.page === data.next_page) {
       currentChildren = [];
     } else {
-      currentChildren = self.current().children();
+      currentChildren = this.current().children();
     }
 
-    self.page = data.next_page;
+    this.page = data.next_page;
 
     // Add filtered children.
-    ko.utils.arrayPushAll(currentChildren, self.filterChildren(data.objects));
+    ko.utils.arrayPushAll(currentChildren, this.filterChildren(data.objects));
 
-    self.display(currentChildren);
+    this.display(currentChildren);
 
-    logger.debug('Directory updated: ', self.current());
+    logger.debug('Directory updated: ', this.current());
 
-    callback(null, self.current().children);
-  }).fail(function (xhr, status, err) {
+    callback(null, this.current().children);
+  }).fail((xhr, status, err) => {
     logger.info('Refresh failed: ', status, err, xhr);
-    if (status != 'abort') {
+    if (status !== 'abort') {
       // then we have a real problem
       callback(new Error(err), null);
     }
-  }).always(function () {
+  }).always(() => {
     logger.info('Refresh/pagination completed.');
 
-    self.request = null;
+    this.request = null;
   });
-}
+};
 
+// eslint-disable-next-line func-names
 Filesystem.prototype.display = function (files) {
   // Be sure to call filterChildren on any new objects in
   // files prior to calling this method with files.
-  var self = this;
-  self.current().children(files);
-  self.sort();
+  this.current().children(files);
+  this.sort();
 };
 
+// eslint-disable-next-line func-names
 Filesystem.prototype.filterChildren = function (data) {
-  var self = this;
-  return data.filter(function (child) {
+  return data.filter((child) => {
     // Filter types.
-    var extension = child.name.substr(child.name.lastIndexOf('.') + 1);
+    const extension = child.name.substr(child.name.lastIndexOf('.') + 1);
     logger.debug('Filtering child: ', child.name, extension);
 
-    if (child.type == 'folder' ||
-      (((config.types.length === 1 && config.types.indexOf('files') != -1) ||
-        (config.types.length === 1 && config.types.indexOf('all') != -1) ||
-        (config.types.indexOf(extension.toLowerCase()) != -1) ||
-        (config.types.indexOf('') != -1 && child.name.indexOf('.') == -1))
-        && config.flavor() == 'chooser')) {
+    if (child.type === 'folder' ||
+      (((config.types.length === 1 && config.types.indexOf('files') !== -1) ||
+        (config.types.length === 1 && config.types.indexOf('all') !== -1) ||
+        (config.types.indexOf(extension.toLowerCase()) !== -1) ||
+        (config.types.indexOf('') !== -1 && child.name.indexOf('.') === -1))
+        && config.flavor() === 'chooser')) {
       logger.debug('Child passed type test.');
       return true;
-    } else if (config.types.indexOf('folders') != -1 || config.flavor() == 'saver') {
+    }
+    if (config.types.indexOf('folders') !== -1
+        || config.flavor() === 'saver') {
       // add grayed out files
       child.disabled = true;
       return true;
     }
     logger.debug('Child failed type test.');
     return false;
-  }).map(function (child) {
+  }).map((child) => {
+    if (child.type === 'folder'
+        && !config.types.some(t => t === 'all' || t === 'folders')) {
+      child.disabled = true;
+    }
     // Set custom attributes.
-    child.parent_obs = self.current();
+    child.parent_obs = this.current();
     if (child.size == null) {
-      child.friendlySize = "";
+      child.friendlySize = '';
     } else {
       child.friendlySize = util.formatSize(child.size);
     }
     return child;
   });
-}
+};
 
-// Navigate to a file relative to the current working directory and fire a callback on completion.
-Filesystem.prototype.navigate = function (next, callback) {
+/**
+ * Navigate to a file relative to the current working directory and fire a
+ * callback on completion.
+ */
+// eslint-disable-next-line func-names
+Filesystem.prototype.navigate = function (id, callback = () => {}) {
   this.clearSort();
-  // Default arguments.
-  if (callback === undefined) {
-    callback = function () {
-    };
-  }
 
-  logger.debug('FS Nav: ', next, typeof next == 'string', next == this.PARENT_FLAG, this.PARENT_FLAG);
+  logger.debug('FS Nav: ', id);
 
-  if (typeof next == 'string' && next == this.PARENT_FLAG) {
+  if (id === this.PARENT_FLAG) {
     logger.debug('Shifting to parent...');
     if (this.current().id === this.rootMetadata().id) {
       return callback(new Error('Attempting to navigate above root.'), null);
     }
     this.path.pop();
     this.current(this.current().parent_obs);
-  } else if (next.type == 'folder') {
-    var target = ko.utils.arrayFirst(this.current().children(), function (f) {
-      return f.id == next.id;
-    });
+  } else {
+    const target = ko.utils.arrayFirst(
+      this.current().children(), f => f.id === id && f.type === 'folder',
+    );
 
     if (target === null) {
       return callback(new Error('Target file does not exist.'), null);
@@ -233,7 +234,7 @@ Filesystem.prototype.navigate = function (next, callback) {
       target.children = ko.observableArray();
     }
 
-    this.path.push(next.name);
+    this.path.push(target.name);
     this.current(target);
   }
 
@@ -241,6 +242,7 @@ Filesystem.prototype.navigate = function (next, callback) {
 };
 
 // Go up a certain number of directories.
+// eslint-disable-next-line func-names
 Filesystem.prototype.up = function (count, callback) {
   this.clearSort();
   while (count > 0) {
@@ -249,119 +251,113 @@ Filesystem.prototype.up = function (count, callback) {
     }
     this.path.pop();
     this.current(this.current().parent_obs);
-    count--;
+    count -= 1; // eslint-disable-line no-param-reassign
   }
 
   return this.refresh(false, callback);
 };
 
+// eslint-disable-next-line func-names
 Filesystem.prototype.newdir = function () {
   // This function shows an input field for the new folder
-  var self = this;
-  self.clearSort();
-  var list = self.current().children();
-  var first = list[0];
-  var el = {};
+  this.clearSort();
+  const list = this.current().children();
+  const first = list[0];
+  const el = {};
 
   if (!first || first.type !== 'newfolder') {
     el.name = 'new';
-    el.parent_obs = self.current();
+    el.parent_obs = this.current();
     el.type = 'newfolder';
     el.size = null;
     el.friendlySize = null;
     el.modified = null;
-    el.path = self.path() ? "/" + self.path().join('/') + "/new" : self.path();
+    el.path = this.path() ? `/${this.path().join('/')}/new` : this.path();
 
     list.unshift(el);
 
-    self.current().children(list);
+    this.current().children(list);
   }
 };
 
+// eslint-disable-next-line func-names
 Filesystem.prototype.rmdir = function () {
   // This function removes the input field for the new folder
-  const self = this;
-  const list = self.current().children();
+  const list = this.current().children();
   if (list.length > 0) {
     const first = list[0];
     if (first.type === 'newfolder') {
       list.shift();
-      self.current().children(list);
+      this.current().children(list);
     }
   }
 };
 
+// eslint-disable-next-line func-names, consistent-return
 Filesystem.prototype.updatedir = function (data) {
   // This function updates the new folder data
-  var self = this;
-  var list = self.current().children();
-  var first = list[0];
+  const list = this.current().children();
+  const first = list[0];
 
-  if (first.type == 'newfolder') {
-    first.type = 'folder';
-    for (var data_key in data) {
-      if (data_key === 'parent_obs') continue;
-      first[data_key] = data[data_key];
-    }
-    self.sort();
+  if (first.type === 'newfolder') {
+    const { parent_obs, ...rest } = data; // eslint-disable-line camelcase
+    Object.assign(first, { type: 'folder', ...rest });
+    this.sort();
     return first;
   }
-}
+};
 
-Filesystem.prototype.mkdir = function (folder_name, callback) {
-  var self = this;
-  self.clearSort();
+// eslint-disable-next-line func-names
+Filesystem.prototype.mkdir = function (folderName, callback = () => {}) {
+  this.clearSort();
 
-  if (callback === undefined) {
-    callback = function () {
-    };
+  if (this.request !== null) {
+    this.request.abort();
   }
 
-  if (self.request !== null) {
-    self.request.abort();
-  }
-
-  self.request = $.ajax({
-    url: config.getAccountUrl(self.id, 'storage', '/folders/'),
+  this.request = $.ajax({
+    url: config.getAccountUrl(this.id, 'storage', '/folders/'),
     type: 'POST',
     headers: {
-      Authorization: self.key.scheme + ' ' + self.key.key
+      Authorization: `${this.key.scheme} ${this.key.key}`,
     },
     contentType: 'application/json',
     data: JSON.stringify({
-      name: folder_name,
-      parent_id: self.current().id
+      name: folderName,
+      parent_id: this.current().id,
     }),
-  }).done(function (data) {
+  }).done((data) => {
     logger.debug('Create new folder succeeded.');
 
     callback(null, data);
-  }).fail(function (xhr, status, err) {
+  }).fail((xhr, status, err) => {
     logger.debug('Create new folder failed.');
 
-    if (status != 'abort') {
+    if (status !== 'abort') {
       // then we have a real problem
       callback(new Error(err), null);
     }
-  }).always(function () {
+  }).always(() => {
     logger.debug('Create new folder completed.');
-
-    self.request = null;
+    this.request = null;
   });
 };
 
+// eslint-disable-next-line func-names
 Filesystem.prototype.clearSort = function () {
   this.sortOption = null;
   $('.icon__sort').removeClass('icon__sort--asc icon__sort--desc');
-}
+};
 
 // Sort by preference
+// eslint-disable-next-line func-names
 Filesystem.prototype.sort = function (option) {
   const self = this;
+  // eslint-disable-next-line no-underscore-dangle
   const _option = option || self.sortOption || 'name';
   const reverse = !!option;
   self.sortOption = _option;
-  
+
   const element = $(`#sort-${_option}`);
   let direction = 'asc';
   if (reverse && element.hasClass('icon__sort--asc')) {
@@ -373,33 +369,30 @@ Filesystem.prototype.sort = function (option) {
   element.addClass(`icon__sort--${direction}`);
 
   const factor = direction === 'asc' ? 1 : -1;
-  self.current().children.sort(function (left, right) {
-    if (left.type == 'folder' && right.type != 'folder') {
+  self.current().children.sort((left, right) => {
+    if (left.type === 'folder' && right.type !== 'folder') {
       return -1;
-    } else if (left.type != 'folder' && right.type == 'folder') {
+    } if (left.type !== 'folder' && right.type === 'folder') {
       return 1;
-    } else {
-      var lname = left.name.toLowerCase();
-      var rname = right.name.toLowerCase();
-      if (_option === "name") {
-        return lname == rname ? 0 : (lname < rname ? -1 * factor : 1 * factor);
-      } else if (_option === "recent" && left.modified != right.modified) {
-        if (left.modified > right.modified) {
-          return 1 * factor;
-        } else if (left.modified < right.modified) {
-          return -1 * factor;
-        }
-      } else if (_option === "largest" && left.size != right.size) {
-        if (left.size > right.size) {
-          return 1 * factor;
-        } else if (left.size < right.size) {
-          return -1 * factor;
-        }
-      } else {
-        return lname == rname ? 0 : (lname < rname ? -1 : 1);
-      }
-
     }
+    const lname = left.name.toLowerCase();
+    const rname = right.name.toLowerCase();
+    if (_option === 'name') {
+      if (lname === rname) {
+        return 0;
+      }
+      return lname < rname ? -1 * factor : 1 * factor;
+    }
+    if (_option === 'recent' && left.modified !== right.modified) {
+      return left.modified > right.modified ? 1 * factor : -1 * factor;
+    }
+    if (_option === 'largest' && left.size !== right.size) {
+      return left.size > right.size ? 1 * factor : -1 * factor;
+    }
+    if (lname === rname) {
+      return 0;
+    }
+    return lname < rname ? -1 : 1;
   });
 };
 
