@@ -682,9 +682,10 @@ File Picker JavaScript on the page.
 
   * `audio`
 
-The categories will be transferred to the corresponding file extensions
-internally. (Check `TYPE_ALIAS` in [constants.js](src/picker/js/constants.js)
-for the mapping table).
+The categories will be translated to the corresponding file extensions
+internally. Check `TYPE_ALIAS` in [constants.js](src/picker/js/constants.js)
+for the specific file extensions mapped to.
+
 You can also specify file extensions by including the extension in the array
 without the period (`.`) prefix. For example, `['pdf', 'jpg', 'jpeg', 'png']`.
 
