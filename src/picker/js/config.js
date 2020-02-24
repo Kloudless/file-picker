@@ -4,10 +4,11 @@
 import $ from 'jquery';
 import ko from 'knockout';
 import logger from 'loglevel';
+// check babel.config.js for actual import path
 import config from 'picker-config';
 import localization from './localization';
 import util from './util';
-// check babel.config.js for actual import path
+import { TYPE_ALIAS, FLAVOR } from './constants';
 
 
 function get_query_variable(name) {
@@ -19,6 +20,33 @@ function get_query_variable(name) {
     : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
+const flavor = get_query_variable('flavor');
+
+function getTypes(_flavor) {
+  if (_flavor === FLAVOR.saver) {
+    return ['folders'];
+  }
+  let types = JSON.parse(get_query_variable('types'));
+  if (types.length === 0) {
+    types = ['all'];
+  }
+  /**
+   * Parse config.types
+   * 1. transfer to lowercase
+   * 2. resolve alias
+   * 3. remove duplicated
+   */
+  types = types.map(t => t.toLowerCase())
+    .reduce((pre, cur) => {
+      if (cur in TYPE_ALIAS) {
+        pre.push(...TYPE_ALIAS[cur]);
+      } else {
+        pre.push(cur);
+      }
+      return pre;
+    }, []);
+  return Array.from(new Set(types));
+}
 
 // the following options are undocumented (internal use only)
 // - exp_id
@@ -38,9 +66,7 @@ Object.assign(config, {
   origin: get_query_variable('origin'),
   persist: JSON.parse(get_query_variable('persist')),
   services: JSON.parse(get_query_variable('services')),
-  // Make sure all types are lowercase since we do a case-insensitive
-  // search by lowercasing the search key and using types#indexOf.
-  types: JSON.parse(get_query_variable('types')).map(str => str.toLowerCase()),
+  types: getTypes(flavor),
 
   /* options that can be updated by config.update() */
   account_management: ko.observable(true),
@@ -51,11 +77,11 @@ Object.assign(config, {
   }),
   base_url: String(BASE_URL).replace(/\/$/, ''),
   chunk_size: 5 * 1024 * 1024,
-  computer: ko.observable(get_query_variable('flavor') === 'dropzone'),
+  computer: ko.observable(get_query_variable('flavor') === FLAVOR.dropzone),
   copy_to_upload_location: ko.observable(),
   dateTimeFormat: ko.observable('MMMdHm'),
   enable_logout: ko.observable(true),
-  flavor: ko.observable(get_query_variable('flavor')),
+  flavor: ko.observable(flavor),
   link: ko.observable(false),
   link_options: ko.observable({}),
   locale: ko.observable('en'),
@@ -340,12 +366,10 @@ $.get(
 
 // Handle the Computer service being enabled/disabled.
 config.visible_computer = ko.pureComputed(() => (
-  config.computer() && config.flavor() !== 'saver'
+  config.computer() && config.flavor() !== FLAVOR.saver
   // Types other than 'folders' are present.
-  && (
-    config.types.length === 0
-    || config.types.filter(f => f !== 'folders').length > 0
-  )));
+  && config.types.some(t => t !== 'folders')
+));
 
 
 function toggleComputer(computerEnabled) {
@@ -386,266 +410,6 @@ config.getAccountUrl = function getAccountUrl(accountId, api, path) {
   }
   return url;
 };
-
-
-// Type aliases
-const aliases = {
-  all: [
-    'all',
-  ],
-  text: [
-    'applescript',
-    'as',
-    'as3',
-    'c',
-    'cc',
-    'clisp',
-    'coffee',
-    'cpp',
-    'cs',
-    'css',
-    'csv',
-    'cxx',
-    'def',
-    'diff',
-    'erl',
-    'fountain',
-    'ft',
-    'h',
-    'hpp',
-    'htm',
-    'html',
-    'hxx',
-    'inc',
-    'ini',
-    'java',
-    'js',
-    'json',
-    'less',
-    'log',
-    'lua',
-    'm',
-    'markdown',
-    'mat',
-    'md',
-    'mdown',
-    'mkdn',
-    'mm',
-    'mustache',
-    'mxml',
-    'patch',
-    'php',
-    'phtml',
-    'pl',
-    'plist',
-    'properties',
-    'py',
-    'rb',
-    'sass',
-    'scss',
-    'sh',
-    'shtml',
-    'sql',
-    'tab',
-    'taskpaper',
-    'tex',
-    'text',
-    'tmpl',
-    'tsv',
-    'txt',
-    'url',
-    'vb',
-    'xhtml',
-    'xml',
-    'yaml',
-    'yml',
-    ''],
-  documents: [
-    'csv',
-    'doc',
-    'dochtml',
-    'docm',
-    'docx',
-    'docxml',
-    'dot',
-    'dothtml',
-    'dotm',
-    'dotx',
-    'eps',
-    'fdf',
-    'key',
-    'keynote',
-    'kth',
-    'mpd',
-    'mpp',
-    'mpt',
-    'mpx',
-    'nmbtemplate',
-    'numbers',
-    'odc',
-    'odg',
-    'odp',
-    'ods',
-    'odt',
-    'pages',
-    'pdf',
-    'pdfxml',
-    'pot',
-    'pothtml',
-    'potm',
-    'potx',
-    'ppa',
-    'ppam',
-    'pps',
-    'ppsm',
-    'ppsx',
-    'ppt',
-    'ppthtml',
-    'pptm',
-    'pptx',
-    'pptxml',
-    'prn',
-    'ps',
-    'pwz',
-    'rtf',
-    'tab',
-    'template',
-    'tsv',
-    'txt',
-    'vdx',
-    'vsd',
-    'vss',
-    'vst',
-    'vsx',
-    'vtx',
-    'wbk',
-    'wiz',
-    'wpd',
-    'wps',
-    'xdf',
-    'xdp',
-    'xlam',
-    'xll',
-    'xlr',
-    'xls',
-    'xlsb',
-    'xlsm',
-    'xlsx',
-    'xltm',
-    'xltx',
-    'xps'],
-  images: [
-    'bmp',
-    'cr2',
-    'gif',
-    'ico',
-    'ithmb',
-    'jpeg',
-    'jpg',
-    'nef',
-    'png',
-    'raw',
-    'svg',
-    'tif',
-    'tiff',
-    'wbmp',
-    'webp'],
-  videos: [
-    '3g2',
-    '3gp',
-    '3gpp',
-    '3gpp2',
-    'asf',
-    'avi',
-    'dv',
-    'dvi',
-    'flv',
-    'm2t',
-    'm4v',
-    'mkv',
-    'mov',
-    'mp4',
-    'mpeg',
-    'mpg',
-    'mts',
-    'ogv',
-    'ogx',
-    'rm',
-    'rmvb',
-    'ts',
-    'vob',
-    'webm',
-    'wmv'],
-  audio: [
-    'aac',
-    'aif',
-    'aifc',
-    'aiff',
-    'au',
-    'flac',
-    'm4a',
-    'm4b',
-    'm4p',
-    'm4r',
-    'mid',
-    'mp3',
-    'oga',
-    'ogg',
-    'opus',
-    'ra',
-    'ram',
-    'spx',
-    'wav',
-    'wma'],
-  ebooks: [
-    'acsm',
-    'aeh',
-    'azw',
-    'cb7',
-    'cba',
-    'cbr',
-    'cbt',
-    'cbz',
-    'ceb',
-    'chm',
-    'epub',
-    'fb2',
-    'ibooks',
-    'kf8',
-    'lit',
-    'lrf',
-    'lrx',
-    'mobi',
-    'opf',
-    'oxps',
-    'pdf',
-    'pdg',
-    'prc',
-    'tebr',
-    'tr2',
-    'tr3',
-    'xeb',
-    'xps'],
-};
-let additions = [];
-
-config.types = config.types.filter((type) => {
-  if (type in aliases) {
-    additions = additions.concat(aliases[type]);
-    return false;
-  }
-  return true;
-}).concat(additions);
-
-// remove any duplicates
-config.types = config.types.filter(
-  (elem, pos) => config.types.indexOf(elem) === pos,
-);
-
-// default to 'all'
-if (config.types.length === 0) {
-  config.types.push('all');
-}
 
 // update the locale when the config changes
 config.localeOptions.subscribe((options) => {

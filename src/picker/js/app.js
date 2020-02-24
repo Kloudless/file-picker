@@ -29,6 +29,7 @@ import 'normalize.css';
 import '../css/index.less';
 import routerHelper from './router-helper';
 import pluploadHelper from './plupload-helper';
+import { VIEW, FLAVOR } from './constants';
 
 const FOCUSED_FOLDER_SELECTOR = 'tr.ftable__row--focus:not([data-selectable])';
 const EVENT_CALLBACKS = {};
@@ -51,7 +52,8 @@ $.ajaxSetup({
 });
 
 // This can be generalized in the future with a config option
-const startView = (config.flavor() === 'dropzone') ? 'dropzone' : 'accounts';
+const startView = (config.flavor() === FLAVOR.dropzone) ?
+  VIEW.dropzone : VIEW.accounts;
 
 const services = ko.pureComputed(() => {
   const result = {};
@@ -95,7 +97,7 @@ const FilePicker = function () {
     current: ko.observable(startView),
     selectingFilesFrom: ko.pureComputed(() => {
       const current = this.view_model.current();
-      if (current === 'files') {
+      if (current === VIEW.files) {
         const activeAccount = this.manager.active();
         const service = services()[activeAccount.service];
         if (service) {
@@ -108,7 +110,7 @@ const FilePicker = function () {
         }
         return {};
       }
-      if (current === 'computer') {
+      if (current === VIEW.computer) {
         return {
           fromComputer: true,
           text: this.view_model.accounts.name(),
@@ -241,6 +243,7 @@ const FilePicker = function () {
       const copyToUploadLocation = config.copy_to_upload_location();
       const copyFolder = ['async', 'sync'].includes(copyToUploadLocation);
       const link = config.link();
+      const { types } = config;
       const { table } = this.view_model.files;
 
       if (table) {
@@ -256,8 +259,7 @@ const FilePicker = function () {
       // are selected:
       // 1. in mobile devices
       // 2. in chooser mode and in root folder
-      if (selections.length === 0 && (
-        config.types.includes('all') || config.types.includes('folders'))) {
+      if (selections.length === 0 && types.includes('folders')) {
         // removing the parent reference.
         const { parent_obs, ...rest } = current;
         selections.push(rest);
@@ -629,7 +631,7 @@ const FilePicker = function () {
             // if no valid accounts from local storage are loaded
             if (this.manager.accounts().length === 0) {
               this.router.setLocation('#/accounts');
-            } else if (config.flavor() !== 'dropzone') {
+            } else if (config.flavor() !== FLAVOR.dropzone) {
               this.router.setLocation('#/files');
             }
           },
@@ -659,7 +661,7 @@ const FilePicker = function () {
             // need to make sure on files view since we're loading
             // asynchronously from local storage
             // eslint-disable-next-line no-use-before-define
-            if (first_account && this.view_model.current() === 'files') {
+            if (first_account && this.view_model.current() === VIEW.files) {
               this.router.setLocation('#/files');
               first_account = false; // eslint-disable-line no-use-before-define
             }
@@ -714,7 +716,7 @@ const FilePicker = function () {
 
       // Current active service
       active: ko.pureComputed(function () {
-        if (this.view_model.current() === 'computer') {
+        if (this.view_model.current() === VIEW.computer) {
           return 'computer';
         }
         return this.manager.active().service;
@@ -744,7 +746,7 @@ const FilePicker = function () {
 
       // Current active service name
       name: ko.pureComputed(function () {
-        if (this.view_model.current() === 'computer') {
+        if (this.view_model.current() === VIEW.computer) {
           return localization.formatAndWrapMessage('serviceNames/computer');
         }
         return this.manager.active().account_name;
@@ -898,8 +900,7 @@ const FilePicker = function () {
           return true;
         }
         const path = activeAccount.filesystem().path();
-        if (path.length === 0
-            && config.types.some(t => t === 'folders' || t === 'all')) {
+        if (path.length === 0 && config.types.includes('folders')) {
           return true;
         }
         if (this.view_model.files.chooserButtonTextKey() === 'global/open') {
@@ -1086,7 +1087,7 @@ const FilePicker = function () {
         const s = new Search(fs.id, fs.key, searchQuery, fs.rootMetadata().id);
         s.search(
           () => {
-            fs.display(fs.filterChildren(s.results.objects));
+            fs.display(fs.filterChildren(s.results.objects, true));
           },
           () => {
             const msg = localization.formatAndWrapMessage('files/searchFail');
@@ -1138,11 +1139,11 @@ FilePicker.prototype.switchViewTo = function (to) {
   this.view_model.current(to);
 
   // When view is changed, the old view template is unloaded.
-  if (to !== 'dropzone') {
+  if (to !== VIEW.dropzone) {
     dropzoneLoaded = false;
   }
 
-  if (to === 'dropzone') {
+  if (to === VIEW.dropzone) {
     const dz = $('#dropzone');
     dz.on('click', () => {
       this.view_model.postMessage('dropzoneClicked');
@@ -1169,7 +1170,7 @@ FilePicker.prototype.switchViewTo = function (to) {
     }
   }
 
-  if (to !== 'addConfirm') {
+  if (to !== VIEW.addConfirm) {
     $(auth.iframe).hide();
   }
 
@@ -1178,7 +1179,7 @@ FilePicker.prototype.switchViewTo = function (to) {
   }
 
   // Initialise the dropdowns
-  if (to === 'files' || to === 'computer') {
+  if (to === VIEW.files || to === VIEW.computer) {
     setupDropdown();
 
     // Since we're not using foundation, add click handler to 'x'
@@ -1192,7 +1193,7 @@ FilePicker.prototype.switchViewTo = function (to) {
   }
 
   // Initialise infinite scroll
-  if (to === 'files' || to === 'search') {
+  if (to === VIEW.files || to === VIEW.search) {
     const $fsViewBody = $('#fs-view-body');
     $fsViewBody.off('scrollstop');
     $fsViewBody.on('scrollstop', () => {
@@ -1211,12 +1212,12 @@ FilePicker.prototype.switchViewTo = function (to) {
     });
   }
 
-  if (to === 'files') {
+  if (to === VIEW.files) {
     // Remove mkdir dir form at first
     this.view_model.files.rmdir();
   }
 
-  if (to === 'computer') {
+  if (to === VIEW.computer) {
     // eslint-disable-next-line no-use-before-define
     pluploadHelper.init(picker);
   }
@@ -1353,7 +1354,7 @@ window.addEventListener('message', (message) => {
   if (action === 'INIT') {
     // eslint-disable-next-line no-use-before-define
     dataMessageHandler(data);
-    if (startView && startView !== 'accounts') {
+    if (startView && startView !== VIEW.accounts) {
       picker.router.run(`#/${startView}`);
     } else {
       picker.router.run('#/');
@@ -1409,7 +1410,7 @@ function dataMessageHandler(data) {
     config.update(options);
   }
 
-  if (flavor === 'saver') {
+  if (flavor === FLAVOR.saver) {
     // Add files to fileManager
     if (files && files.length > 0) {
       // first clear all files.
@@ -1419,14 +1420,14 @@ function dataMessageHandler(data) {
         picker.fileManager.add(file.url, file.name);
       }
     }
-  } else if (flavor === 'chooser') {
+  } else if (flavor === FLAVOR.chooser) {
     // Default to computer view if account management is disabled and no
     // tokens are provided.
     if (config.visible_computer() && !config.account_management() &&
       !(options && options.tokens && options.tokens.length > 0)) {
       picker.router.setLocation('#/computer');
     }
-  } else if (flavor === 'dropzone') {
+  } else if (flavor === FLAVOR.dropzone) {
     picker.router.setLocation('#/dropzone');
   }
 
@@ -1512,7 +1513,7 @@ $(document).ajaxStop(() => {
 const onResize = debounce(() => {
   // force re-evaluate breadcrumb's width
   const { view_model, manager } = picker;
-  if (view_model.current() === 'files' && manager.active().filesystem) {
+  if (view_model.current() === VIEW.files && manager.active().filesystem) {
     manager.active().filesystem().path.notifySubscribers();
   }
 }, 200);

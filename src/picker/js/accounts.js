@@ -12,23 +12,24 @@ function AccountManager() {
 }
 
 // Connect an account of a particular service, then fire callbacks on init.
-AccountManager.prototype.addAccount
-  = function (service, oauthParams, callbacks) {
-    logger.debug('Starting authentication.');
-    const response = Authenticator.authenticate(
-      service, oauthParams, (data) => {
-        logger.debug('Authenticated for: ', data.service || data.scope);
-        const created = new Account( // eslint-disable-line no-unused-vars
-          { key: { scheme: 'Bearer', key: data.access_token } },
-          callbacks.on_account_ready, callbacks.on_fs_ready,
-        );
-      },
-    );
+AccountManager.prototype.addAccount = function (
+  service, oauthParams, callbacks,
+) {
+  logger.debug('Starting authentication.');
+  const response = Authenticator.authenticate(
+    service, oauthParams, (data) => {
+      logger.debug('Authenticated for: ', data.service || data.scope);
+      const created = new Account( // eslint-disable-line no-unused-vars
+        { key: { scheme: 'Bearer', key: data.access_token } },
+        callbacks.on_account_ready, callbacks.on_fs_ready,
+      );
+    },
+  );
 
-    if (response.authUsingIEXDFrame) {
-      callbacks.on_confirm_with_iexd();
-    }
-  };
+  if (response.authUsingIEXDFrame) {
+    callbacks.on_confirm_with_iexd();
+  }
+};
 
 /**
  * Add authed account

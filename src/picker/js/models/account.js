@@ -6,7 +6,7 @@ import config from '../config';
 import Filesystem from './filesystem';
 
 /**
- * 
+ *
  * @param {object} data
  * {
  *   key: {scheme: "Bearer", key: BEARER_TOKEN }
@@ -37,7 +37,8 @@ function Account(data, account_callback, filesystem_callback) {
   const self = this;
   this.request = null;
 
-  function initialize_account(data, invalidToken) { // eslint-disable-line no-shadow
+  // eslint-disable-next-line no-shadow
+  function initialize_account(data, invalidToken) {
     if (!data) {
       const error = new Error('Account data empty');
       // hack to pass invalidToken flag

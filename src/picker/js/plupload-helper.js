@@ -12,7 +12,7 @@ import util from './util';
 let filesQueue = [];
 
 function addFiles(files) {
-  filesQueue.push(files);
+  filesQueue.push(...files);
 }
 
 function init(picker) {
@@ -30,12 +30,12 @@ function init(picker) {
 
     let selections = [];
     const filtered_types = [];
+    const { types } = config;
     // if not default 'all' or 'files', add the mimetypes
-    if ((!config.types.includes('all') && !config.types.includes('files'))
-      || config.types.length !== 1) {
+    if (!types.includes('files')) {
       filtered_types.push({
         title: 'Uploadable files',
-        extensions: config.types.join(','),
+        extensions: types.join(','),
       });
     }
 
@@ -301,7 +301,7 @@ function init(picker) {
           if (args.code == plupload.FILE_EXTENSION_ERROR) {
             const filter_msg = localization.formatAndWrapMessage(
               'computer/pleaseUploadFilesOfTypes',
-              { types: config.types.join(', ') },
+              { types: types.join(', ') },
             );
             // eslint-disable-next-line no-use-before-define
             picker.view_model.error(filter_msg);

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Grayed out non-matching file types instead of filtering them out.
+
 ## [2.2.0] - 2020-02-17
 
 ### Changed
@@ -28,14 +32,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- action button in file view is missing for dropzone
-- remove @breaking_point and @modal_width from variables.less
+- The action button in the file view was missing for the dropzone.
+- Removed `@breaking_point` and `@modal_width` from variables.less.
 
 ## [2.0.1] - 2019-12-24
 
 ### Fixed
 
-- check if service exist before accessing it
+- Checking if services exist before accessing them.
 
 ## [2.0.0] - 2019-12-20
 
