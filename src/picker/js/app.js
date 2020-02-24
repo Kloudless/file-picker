@@ -243,7 +243,7 @@ const FilePicker = function () {
       const copyToUploadLocation = config.copy_to_upload_location();
       const copyFolder = ['async', 'sync'].includes(copyToUploadLocation);
       const link = config.link();
-      const { types } = config;
+      const types = config.types();
       const { table } = this.view_model.files;
 
       if (table) {
@@ -900,7 +900,7 @@ const FilePicker = function () {
           return true;
         }
         const path = activeAccount.filesystem().path();
-        if (path.length === 0 && config.types.includes('folders')) {
+        if (path.length === 0 && config.types().includes('folders')) {
           return true;
         }
         if (this.view_model.files.chooserButtonTextKey() === 'global/open') {
@@ -1044,6 +1044,9 @@ const FilePicker = function () {
       },
       refresh: () => {
         logger.debug('Refreshing current directory');
+        if (!this.manager.active().account) {
+          return;
+        }
         this.manager.active().filesystem().refresh(true, (err) => {
           // eslint-disable-next-line no-use-before-define
           if (err && error_message) {
@@ -1395,13 +1398,6 @@ function dataMessageHandler(data) {
   // Differentiate between saver and chooser
   // Check the flavor on init call
   if (flavor) {
-    // refresh and go back to accounts if going from saver to chooser
-    // or vice versa
-    if (config.flavor() !== flavor) {
-      logger.debug('SWITCHING FLAVORS');
-      picker.router.setLocation('#/accounts');
-    }
-
     config.flavor(flavor);
   }
 
@@ -1501,6 +1497,13 @@ function dataMessageHandler(data) {
     });
   }
 }
+
+config.flavor.subscribe(() => {
+  // refresh and go back to accounts when flavor changes
+  logger.debug('SWITCHING FLAVOR');
+  picker.router.setLocation('#/accounts');
+  picker.view_model.files.refresh();
+});
 
 $(document).ajaxStart(() => {
   picker.view_model.loading(true);

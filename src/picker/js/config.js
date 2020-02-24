@@ -20,33 +20,8 @@ function get_query_variable(name) {
     : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
-const flavor = get_query_variable('flavor');
-
-function getTypes(_flavor) {
-  if (_flavor === FLAVOR.saver) {
-    return ['folders'];
-  }
-  let types = JSON.parse(get_query_variable('types'));
-  if (types.length === 0) {
-    types = ['all'];
-  }
-  /**
-   * Parse config.types
-   * 1. transfer to lowercase
-   * 2. resolve alias
-   * 3. remove duplicated
-   */
-  types = types.map(t => t.toLowerCase())
-    .reduce((pre, cur) => {
-      if (cur in TYPE_ALIAS) {
-        pre.push(...TYPE_ALIAS[cur]);
-      } else {
-        pre.push(cur);
-      }
-      return pre;
-    }, []);
-  return Array.from(new Set(types));
-}
+const initFlavor = get_query_variable('flavor');
+const initTypes = JSON.parse(get_query_variable('types'));
 
 // the following options are undocumented (internal use only)
 // - exp_id
@@ -66,7 +41,6 @@ Object.assign(config, {
   origin: get_query_variable('origin'),
   persist: JSON.parse(get_query_variable('persist')),
   services: JSON.parse(get_query_variable('services')),
-  types: getTypes(flavor),
 
   /* options that can be updated by config.update() */
   account_management: ko.observable(true),
@@ -77,11 +51,11 @@ Object.assign(config, {
   }),
   base_url: String(BASE_URL).replace(/\/$/, ''),
   chunk_size: 5 * 1024 * 1024,
-  computer: ko.observable(get_query_variable('flavor') === FLAVOR.dropzone),
+  computer: ko.observable(initFlavor === FLAVOR.dropzone),
   copy_to_upload_location: ko.observable(),
   dateTimeFormat: ko.observable('MMMdHm'),
   enable_logout: ko.observable(true),
-  flavor: ko.observable(flavor),
+  flavor: ko.observable(initFlavor),
   link: ko.observable(false),
   link_options: ko.observable({}),
   locale: ko.observable('en'),
@@ -178,6 +152,9 @@ if (!config.api_version) {
 }
 
 config.update = function update(data) {
+  // Not support updating types yet.
+  delete data.types;
+
   const configKeys = Object.keys(config);
 
   $.each(data, (k, v) => {
@@ -364,13 +341,40 @@ $.get(
   },
 );
 
+
+config.types = ko.computed(() => {
+  const flavor = config.flavor();
+  if (flavor === FLAVOR.saver) {
+    return ['folders'];
+  }
+  let types = [...initTypes];
+  if (types.length === 0) {
+    types = ['all'];
+  }
+  /**
+   * Parse config.types
+   * 1. transfer to lowercase
+   * 2. resolve alias
+   * 3. remove duplicated
+   */
+  types = types.map(t => t.toLowerCase())
+    .reduce((pre, cur) => {
+      if (cur in TYPE_ALIAS) {
+        pre.push(...TYPE_ALIAS[cur]);
+      } else {
+        pre.push(cur);
+      }
+      return pre;
+    }, []);
+  return Array.from(new Set(types));
+});
+
 // Handle the Computer service being enabled/disabled.
 config.visible_computer = ko.pureComputed(() => (
   config.computer() && config.flavor() !== FLAVOR.saver
   // Types other than 'folders' are present.
-  && config.types.some(t => t !== 'folders')
+  && config.types().some(t => t !== 'folders')
 ));
-
 
 function toggleComputer(computerEnabled) {
   // Called after services are retrieved.

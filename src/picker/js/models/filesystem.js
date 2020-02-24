@@ -177,7 +177,7 @@ Filesystem.prototype.filterChildren = function (data, excludeDisabled = false) {
     const { type: childType, name } = child;
     const ext = name.includes('.') ?
       name.substr(name.lastIndexOf('.') + 1).toLowerCase() : '';
-    const { types: allowedTypes } = config;
+    const allowedTypes = config.types();
 
     logger.debug('Filtering child: ', name, ext);
 

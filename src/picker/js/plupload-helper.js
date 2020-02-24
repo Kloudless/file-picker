@@ -30,7 +30,7 @@ function init(picker) {
 
     let selections = [];
     const filtered_types = [];
-    const { types } = config;
+    const types = config.types();
     // if not default 'all' or 'files', add the mimetypes
     if (!types.includes('files')) {
       filtered_types.push({
