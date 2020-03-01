@@ -689,6 +689,8 @@ for the specific file extensions mapped to.
 You can also specify file extensions by including the extension in the array
 without the period (`.`) prefix. For example, `['pdf', 'jpg', 'jpeg', 'png']`.
 
+Include `''` to allow files without a file extension to be selected.
+
 #### Saver Options
 
 * `files` : array
