@@ -8,7 +8,7 @@ import logger from 'loglevel';
 import config from 'picker-config';
 import localization from './localization';
 import util from './util';
-import { TYPE_ALIAS, FLAVOR } from './constants';
+import { TYPE_ALIAS, MIME_TYPE_ALIAS, FLAVOR } from './constants';
 
 
 function get_query_variable(name) {
@@ -20,8 +20,31 @@ function get_query_variable(name) {
     : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
+const isMIMEFormat = str => str.includes('/');
+function getMimeTypes(inputTypes) {
+  const results = inputTypes.reduce((mimeTypes, type) => {
+    if (type in MIME_TYPE_ALIAS) {
+      mimeTypes.push(...MIME_TYPE_ALIAS[type]);
+    } else if (type === '') {
+      mimeTypes.push(...MIME_TYPE_ALIAS._unknown_);
+    } else if (isMIMEFormat(type)) {
+      mimeTypes.push(type);
+    }
+    return mimeTypes;
+  }, []);
+  return Array.from(new Set(results));
+}
+
+function getInitTypes(rawTypes) {
+  // If the input types str contains dot, take the last part.
+  const getExt = str => (str.includes('.') ?
+    str.substr(str.lastIndexOf('.') + 1) : str);
+  return rawTypes.map(type => (isMIMEFormat(type) ?
+    type.toLowerCase() : getExt(type).toLowerCase()));
+}
+
 const initFlavor = get_query_variable('flavor');
-const initTypes = JSON.parse(get_query_variable('types'));
+const initTypes = getInitTypes(JSON.parse(get_query_variable('types')));
 
 // the following options are undocumented (internal use only)
 // - exp_id
@@ -70,6 +93,7 @@ Object.assign(config, {
   delete_accounts_on_logout: ko.observable(false),
   custom_style_vars: ko.observable({}),
   root_folder_id: ko.observable({}),
+  mimeTypes: getMimeTypes(initTypes),
 });
 
 /**
@@ -341,32 +365,29 @@ $.get(
   },
 );
 
-
 config.types = ko.computed(() => {
   const flavor = config.flavor();
   if (flavor === FLAVOR.saver) {
     return ['folders'];
   }
-  let types = [...initTypes];
-  if (types.length === 0) {
-    types = ['all'];
+  let inputTypes = [...initTypes];
+  if (inputTypes.length === 0) {
+    inputTypes = ['all'];
   }
   /**
    * Parse config.types
-   * 1. transfer to lowercase
-   * 2. resolve alias
-   * 3. remove duplicated
+   * 1. resolve alias
+   * 2. remove duplicated
    */
-  types = types.map(t => t.toLowerCase())
-    .reduce((pre, cur) => {
-      if (cur in TYPE_ALIAS) {
-        pre.push(...TYPE_ALIAS[cur]);
-      } else {
-        pre.push(cur);
-      }
-      return pre;
-    }, []);
-  return Array.from(new Set(types));
+  const results = inputTypes.reduce((types, type) => {
+    if (type in TYPE_ALIAS) {
+      types.push(...TYPE_ALIAS[type]);
+    } else if (!isMIMEFormat(type)) {
+      types.push(type);
+    }
+    return types;
+  }, []);
+  return Array.from(new Set(results));
 });
 
 // Handle the Computer service being enabled/disabled.
