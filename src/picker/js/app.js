@@ -286,13 +286,24 @@ const FilePicker = function () {
         }
       }, 200);
 
-      // Selection Complete Callback
-      const selectionComplete = (success) => {
+      /**
+       * Check if all the requests are done. If yes, then fire success/error
+       * event accordingly.
+       * @param {boolean} success - Whether the request succeed or not.
+       * @param {number} i - The index of the file/folder in `selections` list.
+       */
+      const selectionComplete = (success, i) => {
         if (success) {
           requestCountSuccess += 1;
         } else {
           requestCountError += 1;
-          logger.warn('Error with ajax requests for selection');
+          logger.warn(
+            'Error with ajax requests for selection: ', selections[i],
+          );
+          iziToastHelper.error(
+            localization.formatAndWrapMessage('global/error'),
+            { detail: JSON.stringify(selections[i].error) },
+          );
         }
 
         if (this.lastCancelTime > lastCancelTime) {
@@ -306,9 +317,16 @@ const FilePicker = function () {
         // All requests are done
         if (requestCountSuccess + requestCountError === selections.length) {
           window.clearInterval(requestLauncherInterval);
-          this.view_model.postMessage(
-            requestCountError ? 'error' : 'success', selections,
-          );
+          if (requestCountSuccess) {
+            this.view_model.postMessage(
+              'success', selections.filter(s => !s.error),
+            );
+          }
+          if (requestCountError) {
+            this.view_model.postMessage(
+              'error', selections.filter(s => s.error),
+            );
+          }
           this.view_model.processingConfirm(false);
         }
       };
@@ -328,11 +346,11 @@ const FilePicker = function () {
           data: JSON.stringify(linkData),
         }).done((data) => {
           selections[selection_index].link = data.url;
-          selectionComplete(true);
+          selectionComplete(true, selection_index);
         }).fail((xhr, status, err) => {
           logger.warn('Error creating link: ', status, err, xhr);
           selections[selection_index].error = xhr.responseJSON;
-          selectionComplete(false);
+          selectionComplete(false, selection_index);
         });
         requestCountStarted += 1;
       };
@@ -413,23 +431,23 @@ const FilePicker = function () {
             pollTask(res.id, {
               onComplete(metadata) {
                 selections[selection_index] = metadata;
-                selectionComplete(true);
+                selectionComplete(true, selection_index);
               },
               onError(xhr, status, err) {
                 logger.error(
                   `Task[${res.id}] failed: ${JSON.stringify(err)}`,
                 );
                 selections[selection_index].error = xhr.responseJSON;
-                selectionComplete(false);
+                selectionComplete(false, selection_index);
               },
             });
           } else {
             selections[selection_index] = res;
-            selectionComplete(true);
+            selectionComplete(true, selection_index);
           }
         }).fail((xhr) => {
           selections[selection_index].error = xhr.responseJSON;
-          selectionComplete(false);
+          selectionComplete(false, selection_index);
         });
         requestCountStarted += 1;
       };
@@ -505,7 +523,7 @@ const FilePicker = function () {
           // Case 4
           // No need to make a request, just pretend the request succeed
           requestCountStarted += 1;
-          selectionComplete(true);
+          selectionComplete(true, i);
         }
       });
     },
