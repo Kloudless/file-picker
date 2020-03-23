@@ -533,8 +533,8 @@ File Picker JavaScript on the page.
 
   Chooser: _Optional (default: false)_
 
-  This option allows a user to select multiple files using the Chooser.  The Chooser
-  will return a list of one or more entries.
+  This option allows a user to select multiple files from cloud storage or their
+  local device. The Chooser will return a list of one or more entries.
 
 
 * `computer` : boolean
