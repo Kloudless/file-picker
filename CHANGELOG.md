@@ -7,12 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- FP closes unexpectedly when there are less than 6 files uploaded in the
+  Computer view and the upload fails, even though
+  `uploads_pause_on_fail` is set to `true`.
+- Emit the `success` event for successfully uploaded files if users cancel the
+  upload mid-way through uploading a set of files in the Computer view.
 
 ## [2.2.4] - 2020-04-20
 
 ### Fixed
 
-- Improve UI of when loading the next page.
+- Improve UI when loading the next page of files.
 
 ## [2.2.3] - 2020-04-15
 

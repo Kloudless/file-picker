@@ -892,6 +892,7 @@ Include `''` to allow files without a file extension to be selected.
   * `account_key`
   * `custom_style`
   * `custom_css` (deprecated)
+  * `locale`
   
 * `picker.logout(deleteAccount=false)`
 

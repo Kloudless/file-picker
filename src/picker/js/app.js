@@ -1179,7 +1179,7 @@ FilePicker.prototype.switchViewTo = function (to) {
   }
 
   if (to === VIEW.computer) {
-    this.pluploadHelper.init();
+    this.pluploadHelper.setupPlupload();
   }
 };
 
