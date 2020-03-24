@@ -19,8 +19,7 @@ const webpackConfigs = require('../config/webpack.dev.conf');
 
 const app = express();
 
-process.env.PICKER_URL = `${sslCert.certificate ? 'https' : 'http'}://`
- + 'localhost:3000/picker/index.html';
+process.env.PICKER_URL = '/picker/index.html';
 
 app.set('port', process.env.PORT || 3000);
 app.use(morgan('dev'));
