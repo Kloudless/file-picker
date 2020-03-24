@@ -4,8 +4,6 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 import $ from 'jquery';
-import iziToast from 'izitoast';
-import 'izitoast/dist/css/iziToast.css';
 import 'jquery-ui/ui/jquery-ui';
 import 'jquery-scrollstop/jquery.scrollstop';
 import 'jquery.finderSelect';
@@ -29,6 +27,7 @@ import 'normalize.css';
 import '../css/index.less';
 import routerHelper from './router-helper';
 import pluploadHelper from './plupload-helper';
+import iziToastHelper from './izitoast-helper';
 import { VIEW, FLAVOR } from './constants';
 
 const FOCUSED_FOLDER_SELECTOR = 'tr.ftable__row--focus:not([data-selectable])';
@@ -219,7 +218,7 @@ const FilePicker = function () {
         const msg = localization.formatAndWrapMessage(
           'files/cannotUploadFiles',
         );
-        view_model.error(msg);
+        iziToastHelper.error(msg);
       }
     },
 
@@ -437,7 +436,7 @@ const FilePicker = function () {
       // Should select at least one item
       if (selections.length === 0) {
         const msg = localization.formatAndWrapMessage('files/noFileSelected');
-        this.view_model.error(msg);
+        iziToastHelper.error(msg);
         return;
       }
 
@@ -460,7 +459,7 @@ const FilePicker = function () {
           msg = localization.formatAndWrapMessage(
             'files/forbidCopyRootFolder',
           );
-          this.view_model.error(msg);
+          iziToastHelper.error(msg);
           return;
         }
         if (folders.length === 1 && files.length === 0) {
@@ -653,9 +652,7 @@ const FilePicker = function () {
             } else if (err) {
               logger.warn('failed to refresh filesystem', err);
               const msg = localization.formatAndWrapMessage('files/error');
-              this.view_model.error(msg);
-            } else {
-              this.view_model.error('');
+              iziToastHelper.error(msg);
             }
 
             // need to make sure on files view since we're loading
@@ -683,8 +680,6 @@ const FilePicker = function () {
       this.router.setLocation(path);
     },
 
-    // Request states.
-    error: ko.observable(''),
     loading: ko.observable(false),
 
     localizedConfirmPopup(token, variables) {
@@ -848,14 +843,9 @@ const FilePicker = function () {
               }
             },
             on_fs_ready: (err) => {
-              // eslint-disable-next-line no-use-before-define
-              if (err && error_message) {
+              if (err) {
                 // eslint-disable-next-line no-use-before-define
-                this.view_model.error(error_message);
-              } else if (err) {
-                this.view_model.error(err.message);
-              } else {
-                this.view_model.error('');
+                iziToastHelper.error(error_message, { detail: err.message });
               }
 
               // eslint-disable-next-line no-use-before-define
@@ -973,14 +963,10 @@ const FilePicker = function () {
         logger.debug('Navigating to file: ', id);
         this.manager.active().filesystem().navigate(id, (err, result) => {
           logger.debug('Navigation result: ', err, result);
-          // eslint-disable-next-line no-use-before-define
-          if (err && error_message) {
+          if (err) {
             // eslint-disable-next-line no-use-before-define
-            return this.view_model.error(error_message);
-          } if (err) {
-            return this.view_model.error(err.message);
+            iziToastHelper.error(error_message, { detail: err.message });
           }
-          return this.view_model.error('');
         });
       },
       // Breadcrumb navigation.
@@ -998,15 +984,10 @@ const FilePicker = function () {
         logger.debug(`Going up ${count} directories.`);
 
         this.manager.active().filesystem().up(count, (err) => {
-          // eslint-disable-next-line no-use-before-define
-          if (err && error_message) {
-            // eslint-disable-next-line no-use-before-define
-            return this.view_model.error(error_message);
-          }
           if (err) {
-            return this.view_model.error(err.message);
+            // eslint-disable-next-line no-use-before-define
+            iziToastHelper.error(error_message, { detail: err.message });
           }
-          return this.view_model.error('');
         });
       },
       mkdir: (formElement) => {
@@ -1014,14 +995,10 @@ const FilePicker = function () {
         logger.debug('New folder name:', name);
         this.manager.active().filesystem().mkdir(name, (err, result) => {
           // update first entry
-          // eslint-disable-next-line no-use-before-define
-          if (err && error_message) {
+          if (err) {
             // eslint-disable-next-line no-use-before-define
-            this.view_model.error(error_message);
-          } else if (err) {
-            this.view_model.error(err.message);
+            iziToastHelper.error(error_message, { detail: err.message });
           } else {
-            this.view_model.error('');
             const dir = this.manager.active().filesystem().updatedir(result);
             if (dir) {
               this.view_model.files.navigate(dir.id);
@@ -1036,7 +1013,7 @@ const FilePicker = function () {
           const msg = localization.formatAndWrapMessage(
             'files/cannotCreateFolder',
           );
-          this.view_model.error(msg);
+          iziToastHelper.error(msg);
         }
       },
       rmdir: () => {
@@ -1048,15 +1025,10 @@ const FilePicker = function () {
           return;
         }
         this.manager.active().filesystem().refresh(true, (err) => {
-          // eslint-disable-next-line no-use-before-define
-          if (err && error_message) {
-            // eslint-disable-next-line no-use-before-define
-            return this.view_model.error(error_message);
-          }
           if (err) {
-            return this.view_model.error(err.message);
+            // eslint-disable-next-line no-use-before-define
+            iziToastHelper.error(error_message, { detail: err.message });
           }
-          return this.view_model.error('');
         });
       },
       sort: (option) => {
@@ -1094,7 +1066,7 @@ const FilePicker = function () {
           },
           () => {
             const msg = localization.formatAndWrapMessage('files/searchFail');
-            view_model.error(msg);
+            iziToastHelper.error(msg);
           },
         );
       },
@@ -1123,17 +1095,6 @@ const FilePicker = function () {
   this.view_model.files.searchQuery.subscribe(
     this.view_model.files.search, this,
   );
-  this.view_model.error.subscribe(() => {
-    const error = this.view_model.error();
-    if (error) {
-      iziToast.error({
-        timeout: 10000,
-        position: 'bottomCenter',
-        title: 'Error',
-        message: error,
-      });
-    }
-  });
   ko.applyBindings(this.view_model, $('#kloudless-file-picker')[0]);
 };
 
@@ -1188,8 +1149,7 @@ FilePicker.prototype.switchViewTo = function (to) {
     // Since we're not using foundation, add click handler to 'x'
     $('.close').off('click');
     $('.close').on('click', (e) => {
-      // clear the error
-      this.view_model.error('');
+      iziToastHelper.destroy();
       e.preventDefault();
       e.stopPropagation();
     });
@@ -1234,7 +1194,7 @@ FilePicker.prototype.cleanUp = function () {
   if ($('#search-query').is(':visible')) {
     $('#search-back-button').click();
   }
-  self.view_model.error('');
+  iziToastHelper.destroy();
   if (self.view_model.files.table) {
     self.view_model.files.table.finderSelect('unHighlightAll');
   }
