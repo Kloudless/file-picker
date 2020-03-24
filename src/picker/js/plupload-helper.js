@@ -8,6 +8,7 @@ import logger from 'loglevel';
 import config from './config';
 import localization from './localization';
 import util from './util';
+import iziToastHelper from './izitoast-helper';
 
 let filesQueue = [];
 
@@ -221,7 +222,7 @@ function init(picker) {
               const msg = localization.formatAndWrapMessage(
                 'computer/disconnect',
               );
-              picker.view_model.error(msg);
+              iziToastHelper.error(msg, { timeout: 0 });
             }
           });
 
@@ -230,7 +231,7 @@ function init(picker) {
               uploader._offline_pause = false;
               uploader.start();
               $btnUpload.text(textPause);
-              picker.view_model.error('');
+              iziToastHelper.destroy();
             }
           });
         },
@@ -264,8 +265,7 @@ function init(picker) {
             up.settings.headers['X-Drop-Folder'] = uploadFolder;
           }
 
-          // eslint-disable-next-line no-use-before-define
-          picker.view_model.error('');
+          iziToastHelper.destroy();
           // eslint-disable-next-line no-use-before-define
           picker.view_model.postMessage('startFileUpload',
             formatFileObject(file));
@@ -303,16 +303,14 @@ function init(picker) {
               'computer/pleaseUploadFilesOfTypes',
               { types: types.join(', ') },
             );
-            // eslint-disable-next-line no-use-before-define
-            picker.view_model.error(filter_msg);
+            iziToastHelper.error(filter_msg, { timeout: 0 });
             // eslint-disable-next-line eqeqeq
           } else if (args.code == plupload.HTTP_ERROR) {
             logger.error(`Error uploading file '${args.file.name}': ${
               args.response}`);
             if (config.uploads_pause_on_error()) {
               const msg = localization.formatAndWrapMessage('computer/error');
-              // eslint-disable-next-line no-use-before-define
-              picker.view_model.error(msg);
+              iziToastHelper.error(msg, { timeout: 0 });
 
               // Reset the % loaded for the file in the UI
               // plupload only resets file.loaded in handleError(),

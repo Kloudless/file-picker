@@ -70,6 +70,7 @@ storage services:
   * [Build](#build)
     * [Build Options](#build-options)
   * [Testing](#testing)
+    * [Test in Legacy Microsoft Edge or Internet Explorer 11](#test-in-legacy-microsoft-edge-or-internet-explorer-11)
 * [Self-hosting](#self-hosting)
   * [Hosting the File Picker Page](#hosting-the-file-picker-page)
   * [Extending the File Picker Template](#extending-the-file-picker-template)
@@ -1013,7 +1014,7 @@ Upload Location must be configured as described for the Chooser.
 HTML
 
 ```html
-<div id="dropzone" style="width:600px; height:100px"></div>
+<div id="dropzone" style="width: 600px; height: 100px;"></div>
 ```
 
 JavaScript
@@ -1276,6 +1277,19 @@ To test the TypeScript definition file, run the following command:
 ```bash
 npm run test:ts
 ```
+
+#### Test in Legacy Microsoft Edge or Internet Explorer 11
+
+Microsoft provides
+[Windows 10 virtual machines](https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/)
+that can be used to test the File Picker in Legacy Microsoft Edge and Internet
+Explorer 11. Note that the development server won't be accessible at
+`http://localhost:3000` by default because `localhost` translates to `127.0.0.1`
+which points to the VM itself instead of the host running the development
+server. To work around this, determine the actual IP address of the host running
+the development server, such as `10.0.2.2` when using VirtualBox, and edit
+`C:\windows\system32\drivers\etc\hosts` as an Administrator to add a record
+that maps `localhost` to that IP.
 
 ## Self-hosting
 
