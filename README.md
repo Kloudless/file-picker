@@ -23,7 +23,7 @@ storage services:
   </tbody>
 </table>
 
-### [Click here to visit our File Picker demo!](https://output.jsbin.com/tuwodin/)
+### [Click here to visit our File Picker demo!](https://output.jsbin.com/tuwodin/27)
 
 <p align="center">
   <img src="img/demo.gif" width="650" />
@@ -145,7 +145,7 @@ The HTML above adds a specific `id` to an element so that we
 can reference it later in our JavaScript that launches the File Picker
 when the element is clicked. A more complete example is present
 [below](#script-tag-example) after the full list of configuration options
-as well as on our [demo page](https://output.jsbin.com/tuwodin/).
+as well as on our [demo page](https://output.jsbin.com/tuwodin/27).
 
 Be sure to serve the page via a web server, as pages opened via the
 file URI scheme (`file://`) cannot receive postMessage messages
@@ -926,7 +926,7 @@ var picker = window.Kloudless.filePicker.picker({
 The final step is to launch the file picker and handle the events returned from
 the file picker based on a user's actions.
 
-**[Visit our demo of the File Picker!](https://output.jsbin.com/tuwodin/)**
+**[Visit our demo of the File Picker!](https://output.jsbin.com/tuwodin/27)**
 
 ```javascript
 // When a user successfully selects or saves a file
@@ -1008,7 +1008,7 @@ Upload Location must be configured as described for the Chooser.
 
 #### Example
 
-[Visit our JSBin example of the Dropzone!](https://output.jsbin.com/tariday/)
+[Visit our JSBin example of the Dropzone!](https://output.jsbin.com/tariday/6)
 
 HTML
 
