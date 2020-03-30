@@ -21,7 +21,7 @@
       }
     },
     "accounts": {
-      "confirmRemove": "如果您删除此帐户，则无法再浏览该帐户。 你确定吗？",
+      "confirmRemove": "如果您删除此帐户，则无法再浏览该帐户。 您确定吗？（此动作并不会将您登出该帐户）",
       "connectedAccounts": "关联帐户",
       "logout": "登出",
       "manage": "在此管理您的云存储帐户。",

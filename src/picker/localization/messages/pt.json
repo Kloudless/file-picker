@@ -21,7 +21,7 @@
       }
     },
     "accounts": {
-      "confirmRemove": "Se você remover essa conta, não poderá mais explorá-la. Você tem certeza?",
+      "confirmRemove": "Você não será mais capaz de navegar esta conta. Tem certeza de que gostaria de removê-lo? (Note que isso não desconectá-lo da conta neste navegador)",
       "connectedAccounts": "Contas conectadas",
       "logout": "sair",
       "manage": "Gerencie suas contas de armazenamento em nuvem aqui.",

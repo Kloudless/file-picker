@@ -21,7 +21,7 @@
       }
     },
     "accounts": {
-      "confirmRemove": "Als u dit account verwijdert, kunt u het niet meer verkennen. Weet je het zeker?",
+      "confirmRemove": "U zult niet langer in staat zijn om deze account te bladeren. Bent u zeker dat u wilt om het te verwijderen? (Merk op dat dit niet je uitgelogd van het account op deze browser)",
       "connectedAccounts": "Verbonden accounts",
       "logout": "uitloggen",
       "manage": "Beheer hier uw cloudopslag-accounts.",

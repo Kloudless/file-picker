@@ -21,7 +21,7 @@
       }
     },
     "accounts": {
-      "confirmRemove": "Si elimina esta cuenta, ya no podrá explorarla. ¿Estás seguro?",
+      "confirmRemove": "Ya no podrás navegar por esta cuenta. ¿Estás seguro de que deseas eliminarlo? (Tenga en cuenta que esto no cierra la sesión de la cuenta en este navegador)",
       "connectedAccounts": "Cuentas conectadas",
       "logout": "cerrar sesión",
       "manage": "Gérez vos comptes de stockage en nuage ici.",

@@ -21,7 +21,7 @@
       }
     },
     "accounts": {
-      "confirmRemove": "Hvis du fjerner denne konto, vil du ikke længere kunne udforske den. Er du sikker?",
+      "confirmRemove": "Du vil ikke længere være i stand til at gennemse denne konto. Er du sikker på du ønsker at fjerne det? (Bemærk at dette ikke logge dig ud af kontoen på denne browser)",
       "connectedAccounts": "Tilknyttede konti",
       "logout": "Log ud",
       "manage": "Administrer dine Cloud Storage-konti her.",

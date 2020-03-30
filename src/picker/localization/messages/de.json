@@ -21,7 +21,7 @@
       }
     },
     "accounts": {
-      "confirmRemove": "Wenn Sie dieses Konto entfernen, können Sie es nicht mehr durchsuchen. Bist du sicher?",
+      "confirmRemove": "Sie können auf dieses Konto nicht mehr sehen. Sind Sie sicher, Sie möchten es entfernen? (Beachten Sie, dass diese Sie nicht melden Sie sich von dem Konto auf diesem Browser)",
       "connectedAccounts": "Verbundene Konten",
       "logout": "Ausloggen",
       "manage": "Verwalten Sie hier Ihre Cloud-Speicherkonten.",
