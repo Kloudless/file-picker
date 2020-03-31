@@ -30,6 +30,8 @@ import PluploadHelper from './plupload-helper';
 import iziToastHelper from './izitoast-helper';
 import { VIEW, FLAVOR } from './constants';
 
+// Keep `PENDING` and `RECEIVED` to b/w compatible with v1.
+const UNREADY_STATUS = ['PENDING', 'RECEIVED', 'STARTED', 'UNKNOWN'];
 const FOCUSED_FOLDER_SELECTOR = 'tr.ftable__row--focus:not([data-selectable])';
 const EVENT_CALLBACKS = {};
 
@@ -359,22 +361,27 @@ const FilePicker = function () {
         const POLLING_INTERVAL = 3000; // in millisecond
         // eslint-disable-next-line no-param-reassign
         callbacks = callbacks || {};
+        callbacks.onError = callbacks.onError || (() => {});
+        callbacks.onComplete = callbacks.onComplete || (() => {});
         setTimeout(() => {
           $.ajax({
             url: config.getAccountUrl(accountId, 'tasks', `/${task_id}`),
             type: 'GET',
             headers: { Authorization: `${authKey.scheme} ${authKey.key}` },
           }).done((data) => {
-            if (data.state && data.state.toUpperCase() === 'PENDING') {
+            // Keep `state` to b/w compatible with v1.
+            const status = data.status || data.state;
+            if (
+              status &&
+              UNREADY_STATUS.includes(status.toUpperCase())
+            ) {
+              // TODO: DEV-3176: Use info.time_remaining to measure when to
+              // start the next polling.
               pollTask(task_id, callbacks);
             } else {
-              // eslint-disable-next-line no-unused-expressions
-              callbacks.onComplete && callbacks.onComplete(data);
+              callbacks.onComplete(data);
             }
-          }).fail((xhr, status, err) => {
-            // eslint-disable-next-line no-unused-expressions
-            callbacks.onError && callbacks.onError(xhr, status, err);
-          });
+          }).fail(callbacks.onError);
         }, POLLING_INTERVAL);
       };
 
