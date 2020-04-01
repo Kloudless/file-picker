@@ -1,4 +1,4 @@
-/* global $, KLOUDLESS_APP_ID */
+/* global KLOUDLESS_APP_ID */
 /* eslint-disable func-names, no-console */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';

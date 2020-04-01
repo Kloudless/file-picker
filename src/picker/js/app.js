@@ -26,7 +26,7 @@ import './iexd-transport';
 import 'normalize.css';
 import '../css/index.less';
 import routerHelper from './router-helper';
-import pluploadHelper from './plupload-helper';
+import PluploadHelper from './plupload-helper';
 import iziToastHelper from './izitoast-helper';
 import { VIEW, FLAVOR } from './constants';
 
@@ -66,6 +66,7 @@ const services = ko.pureComputed(() => {
 const FilePicker = function () {
   this.manager = new AccountManager();
   this.fileManager = new FileManager();
+  this.pluploadHelper = new PluploadHelper(this);
   this.router = routerHelper.init(this);
 
   this.id = (function () {
@@ -1133,7 +1134,7 @@ FilePicker.prototype.switchViewTo = function (to) {
       // the router switches to the computer view.
       dropzone.ondrop = () => {
         this.view_model.postMessage('drop');
-        pluploadHelper.addFiles(dropzone.files);
+        this.pluploadHelper.addFiles(dropzone.files);
         this.router.setLocation('#/computer');
       };
 
@@ -1178,8 +1179,7 @@ FilePicker.prototype.switchViewTo = function (to) {
   }
 
   if (to === VIEW.computer) {
-    // eslint-disable-next-line no-use-before-define
-    pluploadHelper.init(picker);
+    this.pluploadHelper.init();
   }
 };
 
