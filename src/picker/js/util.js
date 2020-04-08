@@ -105,6 +105,12 @@ const util = {
     const { toString } = Object.prototype;
     return toString.call({}) === toString.call(input);
   },
+
+  /**
+   * Get friendlySize.
+   * @param {(null|number)} size - The file size.
+   */
+  getFriendlySize: size => (size === null ? '' : util.formatSize(size)),
 };
 
 export default util;

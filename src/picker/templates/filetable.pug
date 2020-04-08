@@ -60,9 +60,9 @@
             attr: {
               'data-type': type,
               'data-id': id,
-              'data-selectable': !$data.disabled
+              'data-selectable': !$data.disabled()
             },
-            css: {"ftable__row--disabled": !!$data.disabled && $data.type == 'file' }`)
+            css: {"ftable__row--disabled": $data.disabled() && $data.type == 'file' }`)
           td
             .icon
               div(data-bind="css: {'icon__folder': type === 'folder', 'icon__file': type === 'file'}")
