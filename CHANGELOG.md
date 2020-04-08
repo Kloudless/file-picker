@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- Forbid non-downloadable files from being selected if `copy_to_upload_location`
+  is configured or `link_options.direct` is `true`.
 
 ## [2.2.2] - 2020-04-09
 

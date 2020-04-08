@@ -584,7 +584,9 @@ File Picker JavaScript on the page.
   [documentation for creating links](https://developers.kloudless.com/docs/latest/storage#links-create-a-link)
   for a full list of the possible options available.
   Note that links to selected files are only created if the `link`
-  configuration option is set to `true`.
+  configuration option is set to `true`. In addition, files with the
+  `downloadable` attribute set to `false` cannot be downloaded so
+  won't be possible to select if `link_options.direct` is `true`.
 
   For example:
 
@@ -605,6 +607,12 @@ File Picker JavaScript on the page.
   If this option is set, it will copy any file or non-root folder selected by
   the user from cloud storage to the location that files uploaded from the
   user's computer are placed in.
+
+  Since the file must be able to be downloaded for this to occur, only files
+  with the `downloadable` attribute set to `true` can be selected when this
+  option is enabled. When copying folders, the non-downloadable files will
+  be skipped.
+
   An Upload Location must be configured via the developer portal to make use of
   this option.
 
