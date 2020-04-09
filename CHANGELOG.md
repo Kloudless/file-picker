@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Ensure that consecutive duplicate error messages appear if necessary.
+- Ensure to get the next page when scrolling to the near bottom.
 
 ## [2.2.1] - 2020-02-24
 

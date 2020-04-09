@@ -1,8 +1,8 @@
 .ftable.container__loading-wrapper
   .container__loading
     .container__loading-icon
-  .ftable__main(data-bind='finderSelect: files.cwd')
-    table#fs-scroller.ftable__table(data-bind='with: files')
+  .ftable__main.j-ftable(data-bind='finderSelect: files.cwd')
+    table.ftable__table(data-bind='with: files')
       //- table header
       thead
         tr
@@ -41,7 +41,7 @@
         // /ko
 
       //- table body
-      tbody#fs-view-body
+      tbody
 
         //- no data
         // ko if: cwd().length == 0 && !$root.loading()

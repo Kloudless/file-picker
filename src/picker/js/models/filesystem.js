@@ -105,7 +105,9 @@ Filesystem.prototype.refresh = function (force = false, callback = () => {}) {
 
 // eslint-disable-next-line func-names
 Filesystem.prototype.getPage = function (callback = () => {}) {
-  if (!this.page) {
+  // If there is no next page or the previous request hasn't done yet.
+  // Return the current children.
+  if (!this.page || this.request) {
     callback(null, this.current().children);
     return;
   }

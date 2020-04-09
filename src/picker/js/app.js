@@ -1157,22 +1157,11 @@ FilePicker.prototype.switchViewTo = function (to) {
 
   // Initialise infinite scroll
   if (to === VIEW.files || to === VIEW.search) {
-    const $fsViewBody = $('#fs-view-body');
-    $fsViewBody.off('scrollstop');
-    $fsViewBody.on('scrollstop', () => {
-      const scrolled = $fsViewBody.scrollTop();
-      const tableHeight = $fsViewBody.outerHeight();
-      const contentHeight = $fsViewBody[0].scrollHeight;
-
-      // load more
-      const fileSystem = this.manager.active().filesystem();
-      // we can consider tableHeight as a page of a book
-      // people would want to fetch some more pages (if available) to read
-      // before they reach and finish the last page they currently possess
-      if (fileSystem.page && (scrolled + tableHeight * 2) >= contentHeight) {
-        fileSystem.getPage();
-      }
-    });
+    const fileTable = $('.j-ftable');
+    // eslint-disable-next-line no-use-before-define
+    fileTable.off('scroll', onFileTableScroll);
+    // eslint-disable-next-line no-use-before-define
+    fileTable.on('scroll', onFileTableScroll);
   }
 
   if (to === VIEW.files) {
@@ -1478,6 +1467,18 @@ const onResize = debounce(() => {
   const { view_model, manager } = picker;
   if (view_model.current() === VIEW.files && manager.active().filesystem) {
     manager.active().filesystem().path.notifySubscribers();
+  }
+}, 200);
+
+const onFileTableScroll = debounce(() => {
+  const fileTable = $('.j-ftable');
+  const scrolled = fileTable.scrollTop();
+  const tableHeight = fileTable.outerHeight();
+  const contentHeight = fileTable[0].scrollHeight;
+  const { manager } = picker;
+  const fileSystem = manager.active().filesystem();
+  if (fileSystem.page && (scrolled + tableHeight * 2) >= contentHeight) {
+    fileSystem.getPage();
   }
 }, 200);
 
