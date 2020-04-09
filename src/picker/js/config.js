@@ -1,5 +1,5 @@
 /* global BASE_URL */
-/* eslint-disable camelcase, no-underscore-dangle */
+/* eslint-disable camelcase */
 
 import $ from 'jquery';
 import ko from 'knockout';

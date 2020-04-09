@@ -7,14 +7,18 @@ import util from '../util';
 // TODO: replace some methods by using knockouts utils library
 // http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
 
+const DEFAULT_SORT_OPTION = 'name';
+const FIRST_PAGE = 1;
+const PAGE_SIZE = 1000;
+
 function Filesystem(id, key, callback, rootFolderId = 'root') {
   this.id = id;
   this.key = key; // This key may change if we need to reconnect.
   this.path = ko.observableArray();
   this.request = null; // The currently active request.
-  this.page = 1;
-  this.page_size = 1000;
-  this.sortOption = null;
+  this.getPageTask = Promise.resolve();
+  this.isLoadingNextPage = ko.observable(false);
+  this.sortOption = DEFAULT_SORT_OPTION;
 
   // This is later replaced with updated folder metadata.
   this.current = ko.observable({
@@ -23,6 +27,7 @@ function Filesystem(id, key, callback, rootFolderId = 'root') {
     type: 'folder',
     parent_obs: null,
     path: null,
+    page: FIRST_PAGE,
     children: ko.observableArray(),
   });
 
@@ -37,14 +42,13 @@ function Filesystem(id, key, callback, rootFolderId = 'root') {
     return folder.children();
   });
 
-  this._init(callback); // eslint-disable-line no-underscore-dangle
+  this._init(callback);
 }
 
 /**
  * query the root folder for this id to find can_create_folders and
  * can_upload_files
  */
-// eslint-disable-next-line no-underscore-dangle
 Filesystem.prototype._init = function _init(callback) {
   const rootFolderId = this.rootMetadata().id;
   let success = false;
@@ -56,10 +60,11 @@ Filesystem.prototype._init = function _init(callback) {
     },
   }).done((data) => {
     const updatedCurrent = this.filterChildren([data])[0];
+    updatedCurrent.page = FIRST_PAGE;
     updatedCurrent.children = this.current().children;
     this.current(updatedCurrent);
     const {
-      children, parent_obs, id, ...rest // eslint-disable-line camelcase
+      children, parent_obs, id, page, ...rest // eslint-disable-line camelcase
     } = this.current();
     // never update root folder ID, in case the returned ID is different
     // and break the UI
@@ -94,68 +99,109 @@ Filesystem.prototype.refresh = function (force = false, callback = () => {}) {
     this.request.abort();
   }
   if (!force && this.current().children().length > 0) {
+    this.rmdir();
+    this.sort();
     callback(null, this.current().children);
     return;
+  }
+
+  if (force) {
+    // Reset sorting rule.
+    this.clearSort();
+    this.sortOption = DEFAULT_SORT_OPTION;
   }
 
   // reset page
-  this.page = 1;
+  this.current().page = FIRST_PAGE;
   this.getPage(callback);
 };
 
-// eslint-disable-next-line func-names
-Filesystem.prototype.getPage = function (callback = () => {}) {
-  // If there is no next page or the previous request hasn't done yet.
-  // Return the current children.
-  if (!this.page || this.request) {
-    callback(null, this.current().children);
-    return;
-  }
-
-  let url = config.getAccountUrl(
-    this.id, 'storage', `/folders/${this.current().id}/contents`,
-  );
-  url += `?page=${this.page}&page_size=${this.page_size}`;
-
-  logger.debug('Loading the next page of infinite scroll data.');
-
-  this.request = $.ajax({
-    url,
-    type: 'GET',
-    headers: {
-      Authorization: `${this.key.scheme} ${this.key.key}`,
-    },
-  }).done((data) => {
-    logger.debug('Received new data.');
-
-    let currentChildren;
-    if (this.page === 1 || this.page === data.next_page) {
-      currentChildren = [];
-    } else {
-      currentChildren = this.current().children();
+/**
+ * Return a promise that makes a get folder content request.
+ * If the request success, reject if errors occur.
+ */
+Filesystem.prototype._getPage = function _getPage() {
+  return new Promise((resolve, reject) => {
+    const current = this.current();
+    // Resolve if there is no next page.
+    if (!current.page) {
+      resolve();
+      return;
     }
 
-    this.page = data.next_page;
+    this.isLoadingNextPage(current.page !== FIRST_PAGE);
 
-    // Add filtered children.
-    ko.utils.arrayPushAll(currentChildren, this.filterChildren(data.objects));
+    let url = config.getAccountUrl(
+      this.id, 'storage', `/folders/${current.id}/contents`,
+    );
+    url += `?page=${current.page}&page_size=${PAGE_SIZE}`;
 
-    this.display(currentChildren);
+    logger.debug('Loading the next page of infinite scroll data.');
 
-    logger.debug('Directory updated: ', this.current());
+    this.request = $.ajax({
+      url,
+      type: 'GET',
+      headers: {
+        Authorization: `${this.key.scheme} ${this.key.key}`,
+      },
+    }).always(() => {
+      logger.info('Refresh/pagination completed.');
+      this.isLoadingNextPage(false);
+      this.request = null;
+    }).done((data) => {
+      logger.debug('Received new data.');
 
-    callback(null, this.current().children);
-  }).fail((xhr, status, err) => {
-    logger.info('Refresh failed: ', status, err, xhr);
-    if (status !== 'abort') {
-      // then we have a real problem
-      callback(new Error(err), null);
-    }
-  }).always(() => {
-    logger.info('Refresh/pagination completed.');
+      let newChildren;
+      if (current.page === FIRST_PAGE || current.page === data.next_page) {
+        newChildren = [];
+      } else {
+        // Do not sort when loading the next page.
+        this.clearSort();
+        newChildren = current.children();
+      }
 
-    this.request = null;
+      current.page = data.next_page;
+
+      // Add filtered children.
+      ko.utils.arrayPushAll(newChildren, this.filterChildren(data.objects));
+
+      // Don't display but just update children in case that the current folder
+      // is changed.
+      if (current.id === this.current().id) {
+        this.display(newChildren);
+      } else {
+        current.children(newChildren);
+      }
+
+      logger.debug('Directory updated: ', this.current());
+      /**
+       * TODO: It's a bit confusing that we're not sure whether the next task or
+       * the always callback will be executed first if we call resolve() here
+       * instead of in the always callback method.
+       * Using async/await or refactoring to the following pattern may help:
+       *  $.ajax(...).then(doneFunc, failFunc).then((err) => {
+       *    // resolve() or reject() here.
+       *  })
+       */
+      resolve();
+    }).fail((xhr, status, err) => {
+      logger.info('Refresh failed: ', status, err, xhr);
+      if (status === 'abort') {
+        // Ignore this case.
+        resolve();
+      } else {
+        reject(new Error(err));
+      }
+    });
   });
+};
+
+Filesystem.prototype.getPage = function getPage(callback = () => {}) {
+  // Ensure there is only one request on the fly.
+  this.getPageTask = this.getPageTask
+    .then(() => this._getPage())
+    .then(() => callback(null))
+    .catch(callback);
 };
 
 // eslint-disable-next-line func-names
@@ -220,10 +266,7 @@ Filesystem.prototype.filterChildren = function (data, excludeDisabled = false) {
  */
 // eslint-disable-next-line func-names
 Filesystem.prototype.navigate = function (id, callback = () => {}) {
-  this.clearSort();
-
   logger.debug('FS Nav: ', id);
-
   if (id === this.PARENT_FLAG) {
     logger.debug('Shifting to parent...');
     if (this.current().id === this.rootMetadata().id) {
@@ -244,6 +287,10 @@ Filesystem.prototype.navigate = function (id, callback = () => {}) {
       target.children = ko.observableArray();
     }
 
+    if (target.page === undefined) {
+      target.page = FIRST_PAGE;
+    }
+
     this.path.push(target.name);
     this.current(target);
   }
@@ -254,7 +301,6 @@ Filesystem.prototype.navigate = function (id, callback = () => {}) {
 // Go up a certain number of directories.
 // eslint-disable-next-line func-names
 Filesystem.prototype.up = function (count, callback) {
-  this.clearSort();
   while (count > 0) {
     if (this.current().id === this.rootMetadata().id) {
       return callback(new Error('Attempting to navigate above root.'), null);
@@ -270,7 +316,6 @@ Filesystem.prototype.up = function (count, callback) {
 // eslint-disable-next-line func-names
 Filesystem.prototype.newdir = function () {
   // This function shows an input field for the new folder
-  this.clearSort();
   const list = this.current().children();
   const first = list[0];
   const el = {};
@@ -319,8 +364,6 @@ Filesystem.prototype.updatedir = function (data) {
 
 // eslint-disable-next-line func-names
 Filesystem.prototype.mkdir = function (folderName, callback = () => {}) {
-  this.clearSort();
-
   if (this.request !== null) {
     this.request.abort();
   }
@@ -359,12 +402,22 @@ Filesystem.prototype.clearSort = function () {
   $('.icon__sort').removeClass('icon__sort--asc icon__sort--desc');
 };
 
-// Sort by preference
+/**
+ * Sort this.current().children() by this.sortOption and current sorting
+ * direction.
+ * The priority:
+ * 1. The item whose id is `newfolder`.
+ * 2. The item whose type is `folder`.
+ * 3. Compare by this.sortOption.
+ * 4. Compare by name.
+ */
 // eslint-disable-next-line func-names
 Filesystem.prototype.sort = function (option) {
   const self = this;
-  // eslint-disable-next-line no-underscore-dangle
-  const _option = option || self.sortOption || 'name';
+  const _option = option || self.sortOption;
+  if (!_option) {
+    return;
+  }
   const reverse = !!option;
   self.sortOption = _option;
 
@@ -380,6 +433,12 @@ Filesystem.prototype.sort = function (option) {
 
   const factor = direction === 'asc' ? 1 : -1;
   self.current().children.sort((left, right) => {
+    if (left.type === 'newfolder') {
+      return -1;
+    }
+    if (right.type === 'newfolder') {
+      return 1;
+    }
     if (left.type === 'folder' && right.type !== 'folder') {
       return -1;
     } if (left.type !== 'folder' && right.type === 'folder') {

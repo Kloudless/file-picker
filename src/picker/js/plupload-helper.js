@@ -1,5 +1,5 @@
 /* global plupload */
-/* eslint-disable no-underscore-dangle, camelcase */
+/* eslint-disable camelcase */
 
 import 'plupload/moxie';
 import 'plupload/plupload.dev';

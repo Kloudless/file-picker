@@ -74,6 +74,21 @@
         // /ko
         // /ko
 
+        // ko if: $root.loadingNextPage()
+        tr.sm-hidden
+          td.ftable__no-data-cell(colspan=4)
+            .flex-row.justify-content-center
+              .icon
+                .icon__loading
+        tr.md-hidden
+          td.ftable__no-data-cell(colspan=2)
+            .flex-row.justify-content-center
+              .icon
+                .icon__loading
+        // /ko
+
+
+
   .ftable__footer
     .flex-row.justify-content-center
       //- chooser button
