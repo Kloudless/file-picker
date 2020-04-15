@@ -175,19 +175,27 @@ Filesystem.prototype.display = function (files) {
  */
 // eslint-disable-next-line func-names
 Filesystem.prototype.filterChildren = function (data, excludeDisabled = false) {
+  const allowedTypes = config.types();
+  const copyToUploadLocation = !!config.copy_to_upload_location();
+  const createDirectLink = config.link() && config.link_options().direct;
   const result = data.map((child) => {
     const { type: childType, name } = child;
     const ext = name.includes('.') ?
       name.substr(name.lastIndexOf('.') + 1).toLowerCase() : '';
-    const allowedTypes = config.types();
 
     logger.debug('Filtering child: ', name, ext);
 
     if (childType === 'file') {
+      // Type checking.
       if (!allowedTypes.some(t => t !== 'folders')) {
         child.disabled = true;
       }
       if (!allowedTypes.includes('files') && !allowedTypes.includes(ext)) {
+        child.disabled = true;
+      }
+      // Downloadable checking: the file must be downloadable in case of copy
+      // to upload location and create direct link.
+      if (!child.downloadable && (copyToUploadLocation || createDirectLink)) {
         child.disabled = true;
       }
     }
