@@ -1,4 +1,5 @@
-.container(data-bind="css: { 'container--is-loading': loading() || processingConfirm() }")
+.container(data-bind=`css: { 'container--is-loading': (
+    loading() && !loadingNextPage()) || processingConfirm() }`)
   .container__header
     .flex-row.align-items-center
       // ko if: $root.flavor() == 'chooser'

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Improve UI of when loading the next page.
 
 ## [2.2.3] - 2020-04-15
 

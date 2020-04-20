@@ -1,5 +1,5 @@
 /* global mOxie, VERSION */
-/* eslint-disable func-names, no-underscore-dangle, camelcase, no-alert */
+/* eslint-disable func-names, camelcase, no-alert */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
@@ -680,7 +680,15 @@ const FilePicker = function () {
       this.router.setLocation(path);
     },
 
+    // true if there are any requests on the fly.
     loading: ko.observable(false),
+    loadingNextPage: ko.computed(() => {
+      const activeAccount = this.manager.active();
+      if (Object.keys(activeAccount).length === 0) {
+        return false;
+      }
+      return activeAccount.filesystem().isLoadingNextPage();
+    }),
 
     localizedConfirmPopup(token, variables) {
       try {
@@ -1019,12 +1027,12 @@ const FilePicker = function () {
       rmdir: () => {
         this.manager.active().filesystem().rmdir();
       },
-      refresh: () => {
+      refresh: (force = true) => {
         logger.debug('Refreshing current directory');
         if (!this.manager.active().account) {
           return;
         }
-        this.manager.active().filesystem().refresh(true, (err) => {
+        this.manager.active().filesystem().refresh(force, (err) => {
           if (err) {
             // eslint-disable-next-line no-use-before-define
             iziToastHelper.error(error_message, { detail: err.message });
@@ -1043,7 +1051,7 @@ const FilePicker = function () {
       },
       exitSearchMode: () => {
         this.router.setLocation('#/files');
-        this.view_model.files.refresh();
+        this.view_model.files.refresh(false);
         this.view_model.files.searchQuery('');
       },
       search: () => {
@@ -1477,7 +1485,10 @@ const onFileTableScroll = debounce(() => {
   const contentHeight = fileTable[0].scrollHeight;
   const { manager } = picker;
   const fileSystem = manager.active().filesystem();
-  if (fileSystem.page && (scrolled + tableHeight * 2) >= contentHeight) {
+  if (
+    fileSystem.current().page
+    && (scrolled + tableHeight * 2) >= contentHeight
+  ) {
     fileSystem.getPage();
   }
 }, 200);

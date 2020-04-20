@@ -1,4 +1,4 @@
-/* eslint-disable camelcase, no-underscore-dangle, func-names,
+/* eslint-disable camelcase, func-names,
                   prefer-destructuring */
 /* global PICKER_URL, VERSION, PICKER_URL_V1 */
 import '../css/modal.less';

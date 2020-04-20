@@ -36,5 +36,7 @@ module.exports = {
     'no-param-reassign': ['error', { props: false }],
     'max-len': ['error', { code: 80 }],
     'operator-linebreak': 'off',
+    // allow prefix private functions with underscore
+    'no-underscore-dangle': 'off',
   },
 };
