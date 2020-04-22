@@ -641,7 +641,7 @@ File Picker JavaScript on the page.
   specifies the Account ID of the Upload Location to use. This option is not
   required if only one Upload Location is configured. The Account ID is a number
   that can be found in the File Picker Upload Locations section of the
-  [App Details](http://developers.kloudless.com/applications/*/details) page.
+  [Developer Portal](https://developers.kloudless.com/applications/*/ui-tools/file-picker) page.
   `upload_location_folder` must also be provided.
 
 * `upload_location_folder` : string
@@ -652,7 +652,7 @@ File Picker JavaScript on the page.
   specifies the Folder ID of the Upload Location to use. This option is not required
   if only one Upload Location is configured. The Folder ID is an encoded string that
   can be found on the File Picker Upload Locations section of the
-  [App Details](http://developers.kloudless.com/applications/*/details) page.
+  [Developer Portal](https://developers.kloudless.com/applications/*/ui-tools/file-picker).
   `upload_location_account` must also be provided.
 
 * `uploads_pause_on_error` : boolean
@@ -1178,7 +1178,7 @@ previous version to continue to load instead, to maintain compatibility.
 
   To use the `custom_css` option, the domain the File Picker is launched from
   must be added to the application's list of
-  [Trusted Domains](https://developers.kloudless.com/applications/*/details).
+  [Trusted Domains](https://developers.kloudless.com/applications/*/details#trusted-domains).
 
 ### From v1.0.0 to v1.0.1
 
@@ -1345,7 +1345,7 @@ source code or styles, follow the steps below:
 
 3. Add your web app's domain to your Kloudless App's list of
    `Trusted Domains` on the
-   [App Details Page](https://developers.kloudless.com/applications/*/details/).
+   [App Details Page](https://developers.kloudless.com/applications/*/details#trusted-domains).
    This allows the hosted file picker to receive access tokens to the Kloudless
    API.
   
