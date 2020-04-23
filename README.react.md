@@ -54,7 +54,11 @@ npm install @kloudless/file-picker
 
 ## How It Works
 
+<!-- STORY HIDE START -->
+
 [**Click here to test out our File Picker React component interactively**](https://kloudless.github.io/file-picker/react)
+
+<!-- STORY HIDE END -->
 
 ### Chooser
 
