@@ -21,7 +21,7 @@ Supports Vue v2.
 
 <!-- STORY HIDE START -->
 
-[DEMO](https://kloudless.github.io/file-picker/vue)
+[**Click here to test out our File Picker Vue component interactively**](https://kloudless.github.io/file-picker/vue)
 
 <!-- STORY HIDE END -->
 
@@ -53,6 +53,12 @@ npm install @kloudless/file-picker
 ```
 
 ## How It Works
+
+<!-- STORY HIDE START -->
+
+[**Click here to test out our File Picker Vue component interactively**](https://kloudless.github.io/file-picker/vue)
+
+<!-- STORY HIDE END -->
 
 ### Chooser
 
