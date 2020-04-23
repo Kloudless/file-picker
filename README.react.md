@@ -23,7 +23,7 @@ Supports React v15 and v16.
 
 <!-- STORY HIDE START -->
 
-[DEMO](https://kloudless.github.io/file-picker/react)
+[**Click here to test out our File Picker React component interactively**](https://kloudless.github.io/file-picker/react)
 
 <!-- STORY HIDE END -->
 
@@ -53,6 +53,8 @@ npm install @kloudless/file-picker
 ```
 
 ## How It Works
+
+[**Click here to test out our File Picker React component interactively**](https://kloudless.github.io/file-picker/react)
 
 ### Chooser
 
