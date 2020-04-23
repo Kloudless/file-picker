@@ -10,14 +10,36 @@ import localization from './localization';
 import util from './util';
 import iziToastHelper from './izitoast-helper';
 
-let filesQueue = [];
+class PluploadHelper {
+  constructor(picker) {
+    this.documentReady = new Promise(resolve => $(document).ready(resolve));
+    this.picker = picker;
+    this.filesQueue = [];
+  }
 
-function addFiles(files) {
-  filesQueue.push(...files);
-}
+  static formatFileObject(file) {
+    /**
+       * Format a file info dict to be emitted to the API.
+       *
+       * Returns a subset of the info (rather than returning a
+       * Pluploadfile object) to avoid exposing internals that may
+       * change.
+       */
+    return {
+      id: file.id,
+      name: file.name,
+      size: file.size,
+      mime_type: file.type,
+    };
+  }
 
-function init(picker) {
-  $(() => {
+  addFiles(files) {
+    this.filesQueue.push(...files);
+  }
+
+  async init() {
+    await this.documentReady;
+
     // Can't use ko.applyBindings(picker.view_model, $('.computer')[0]);
     // to bind the dynamic content because it'll occur the error blow:
     // "You cannot apply bindings multiple times to the same element"
@@ -42,22 +64,6 @@ function init(picker) {
 
     const upload_url = (config.upload_location_uri() ||
       (`${config.base_url}/drop/${config.app_id}`));
-
-    function formatFileObject(file) {
-      /**
-       * Format a file info dict to be emitted to the API.
-       *
-       * Returns a subset of the info (rather than returning a
-       * Pluploadfile object) to avoid exposing internals that may
-       * change.
-       */
-      return {
-        id: file.id,
-        name: file.name,
-        size: file.size,
-        mime_type: file.type,
-      };
-    }
 
     $('#computer_uploader').plupload({
       // Required
@@ -113,29 +119,26 @@ function init(picker) {
       },
 
       init: {
-        PostInit() {
+        PostInit: (up) => {
           const $btnCancel = $('#plupload_btn_cancel');
           const $btnUpload = $('#plupload_btn_upload');
           $btnUpload.text(textUpload);
-          const uploader = this;
 
           // Add drag & dropped files
-          for (let i = 0; i < filesQueue.length; i += 1) {
-            uploader.addFile(filesQueue[i]);
-          }
-          filesQueue = [];
+          up.addFile(this.filesQueue);
+          this.filesQueue = [];
 
           // Add pause/resume upload handler
           $btnUpload.click(() => {
             if ($($btnUpload).text() === textUpload) {
               $($btnUpload).text(textPause);
-              uploader.start();
+              up.start();
             } else if ($($btnUpload).text() === textPause) {
               $($btnUpload).text(textResume);
-              uploader.stop();
+              up.stop();
             } else if ($($btnUpload).text() === textResume) {
               $($btnUpload).text(textPause);
-              uploader.start();
+              up.start();
             }
           });
           // Add confirmation when closing tabs during uploading process
@@ -144,7 +147,7 @@ function init(picker) {
             // Add confirmation if not IE or IE 11 only.
             // eslint-disable-next-line eqeqeq
             if (util.isIE == false || util.ieVersion == 11) {
-              if (uploader.total.queued > 0) {
+              if (up.total.queued > 0) {
                 const msg = localization.formatAndWrapMessage(
                   'computer/confirmClose',
                 );
@@ -159,28 +162,26 @@ function init(picker) {
             const msg = localization.formatAndWrapMessage(
               'computer/confirmCancel',
             );
-            if (uploader.total.queued > 0) {
-              uploader.stop();
+            if (up.total.queued > 0) {
+              up.stop();
               if (window.confirm(msg)) { // eslint-disable-line no-alert
                 $btnUpload.text(textUpload);
 
-                const file_ids_to_abort = uploader.files
+                const file_ids_to_abort = up.files
                   .filter(f => (
                     [plupload.QUEUED, plupload.UPLOADING].includes(f.status)))
                   .map(f => f.id);
 
-                uploader.splice();
-                // eslint-disable-next-line no-use-before-define
-                picker.view_model.cancel();
+                up.splice();
+                this.picker.view_model.cancel();
 
                 // Abort asynchronously.
                 window.setTimeout(() => {
                   $.each(file_ids_to_abort, (index, id) => {
                     // TODO-v3: remove X-Explorer-Id
-                    // eslint-disable-next-line no-use-before-define
                     const headers = {
-                      'X-Explorer-Id': picker.id,
-                      'X-Picker-Id': picker.id,
+                      'X-Explorer-Id': this.picker.id,
+                      'X-Picker-Id': this.picker.id,
                     };
                     const uploadAccount = config.upload_location_account();
                     const uploadFolder = config.upload_location_folder();
@@ -202,22 +203,24 @@ function init(picker) {
                     });
                   });
                 }, 0);
-              } else if ($btnUpload.text() === textPause
-                  || $btnUpload.text() === textProcessing) {
+              } else if (
+                $btnUpload.text() === textPause
+                || $btnUpload.text() === textProcessing
+              ) {
                 // means it was uploading, so we should resume the process
-                uploader.start();
+                up.start();
               }
             } else {
               $btnUpload.text(textUpload);
-              picker.view_model.cancel();
+              this.picker.view_model.cancel();
             }
           });
 
           $(window).off('offline').on('offline', () => {
             // eslint-disable-next-line eqeqeq
-            if (uploader.state == plupload.STARTED) {
-              uploader.stop();
-              uploader._offline_pause = true;
+            if (up.state == plupload.STARTED) {
+              up.stop();
+              up._offline_pause = true;
               $btnUpload.text(textResume);
               const msg = localization.formatAndWrapMessage(
                 'computer/disconnect',
@@ -227,15 +230,15 @@ function init(picker) {
           });
 
           $(window).off('online').on('online', () => {
-            if (uploader._offline_pause) {
-              uploader._offline_pause = false;
-              uploader.start();
+            if (up._offline_pause) {
+              up._offline_pause = false;
+              up.start();
               $btnUpload.text(textPause);
               iziToastHelper.destroy();
             }
           });
         },
-        BeforeUpload(up, file) {
+        BeforeUpload: (up, file) => {
           /**
            * Called just before a file begins to upload. Called once
            * per file being uploaded.
@@ -253,10 +256,8 @@ function init(picker) {
           up.settings.headers = up.settings.headers || {};
           // Not using up.id because it changes with every plUpload().
           // TODO-v3: remove X-Explorer-Id
-          // eslint-disable-next-line no-use-before-define
-          up.settings.headers['X-Explorer-Id'] = picker.id;
-          // eslint-disable-next-line no-use-before-define
-          up.settings.headers['X-Picker-Id'] = picker.id;
+          up.settings.headers['X-Explorer-Id'] = this.picker.id;
+          up.settings.headers['X-Picker-Id'] = this.picker.id;
           const uploadAccount = config.upload_location_account();
           const uploadFolder = config.upload_location_folder();
           if (uploadAccount && uploadFolder) {
@@ -266,11 +267,11 @@ function init(picker) {
           }
 
           iziToastHelper.destroy();
-          // eslint-disable-next-line no-use-before-define
-          picker.view_model.postMessage('startFileUpload',
-            formatFileObject(file));
+          this.picker.view_model.postMessage(
+            'startFileUpload', PluploadHelper.formatFileObject(file),
+          );
         },
-        FileUploaded(up, file, info) {
+        FileUploaded: (up, file, info) => {
           /**
            * Called just after a file has been successfully uploaded to
            * Kloudless. Called once per file being uploaded.
@@ -282,20 +283,19 @@ function init(picker) {
               selections.push(responseData);
             }
 
-            const data = formatFileObject(file);
+            const data = PluploadHelper.formatFileObject(file);
             data.metadata = responseData;
-            // eslint-disable-next-line no-use-before-define
-            picker.view_model.postMessage('finishFileUpload', data);
+            this.picker.view_model.postMessage('finishFileUpload', data);
           }
         },
-        UploadProgress(up) {
+        UploadProgress: (up) => {
           if (up.total.percent === 100) {
             $('#plupload_btn_upload').attr('disabled', true);
             $('#plupload_btn_upload').text(textProcessing);
             $('#computer_uploader_browse').attr('disabled', true);
           }
         },
-        Error(up, args) {
+        Error: (up, args) => {
           // file extension error
           // eslint-disable-next-line eqeqeq
           if (args.code == plupload.FILE_EXTENSION_ERROR) {
@@ -336,20 +336,17 @@ function init(picker) {
             }
           }
         },
-        UploadComplete() {
+        UploadComplete: (up) => {
           $('#plupload_btn_upload').text(textUpload);
           $('#plupload_btn_upload').removeAttr('disabled');
           $('#computer_uploader_browse').removeAttr('disabled');
-          picker.view_model.postMessage('success', selections);
+          this.picker.view_model.postMessage('success', selections);
           selections = [];
-          this.splice();
+          up.splice();
         },
       },
     });
-  });
+  }
 }
 
-export default {
-  init,
-  addFiles,
-};
+export default PluploadHelper;

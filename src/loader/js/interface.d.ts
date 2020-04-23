@@ -96,7 +96,7 @@ declare global {
 
       oauth?(service: ServiceName): OAuthQueryParams;
 
-      root_folder_id?: { [key: number]: string; }
+      root_folder_id?: { [key: number]: string };
     }
 
     /**
