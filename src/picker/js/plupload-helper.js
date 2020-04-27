@@ -158,7 +158,6 @@ class PluploadHelper {
       this.buttons.add.removeAttr('disabled');
     }
 
-    // TODO: disable addMore button if multiselect is false.
     // Reset upload and addMore button.
     this.buttons.upload.removeAttr('disabled');
     this.buttons.addMore.removeAttr('disabled');
@@ -179,6 +178,12 @@ class PluploadHelper {
       this.buttons.upload.text(
         this.hasStarted ? this.texts.resume : this.texts.upload,
       );
+    }
+
+    // disable addMore button if multiselect is false and there are files
+    // selected.
+    if (!config.multiselect() && up.files.length > 0) {
+      this.buttons.addMore.attr('disabled', true);
     }
   }
 
@@ -233,6 +238,7 @@ class PluploadHelper {
       (`${config.base_url}/drop/${config.app_id}`));
 
     this.pluploader = $(SELECTORS.PLUPLOAD).plupload({
+      multi_selection: config.multiselect(),
       // Required
       url: upload_url,
       // browse_button: "uploader",
