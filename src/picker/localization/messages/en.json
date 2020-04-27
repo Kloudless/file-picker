@@ -86,7 +86,8 @@
       "confirmClose": "Are you sure you want to close this tab? You have an upload in progress.",
       "confirmCancel": "Are you sure you want to cancel? You have an upload in progress.",
       "disconnect": "Uploading has been paused due to disconnection.",
-      "error": "Uploading has been paused due to errors. Resume to retry.",
+      "error": "Uploading has been paused due to errors when uploading the file '{file}'. Resume to retry.",
+      "uploadFail": "Failed to upload the file '{file}'. Please try again or contact Support.",
       "pleaseUploadFilesOfTypes": "Please upload files of the following types: {types}."
     },
     "addConfirm": {
