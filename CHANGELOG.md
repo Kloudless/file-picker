@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+
+## [2.2.5] - 2020-04-29
+
+### Fixed
+
 - FP closes unexpectedly when there are less than 6 files uploaded in the
   Computer view and the upload fails, even though
   `uploads_pause_on_fail` is set to `true`.
