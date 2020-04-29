@@ -38,8 +38,8 @@ const create = filePickerType => (customComponent) => {
           options.oauth = this.options.oauth;
         }
         this.picker = filePicker.picker(options);
-        this.picker.on('raw', ({ action, data }) => {
-          this.$emit(action, data);
+        this.picker.on('raw', (...args) => {
+          this.$emit(...args);
         });
       },
     },

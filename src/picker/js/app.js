@@ -1,4 +1,4 @@
-/* global mOxie, VERSION */
+/* global mOxie, BABEL_VERSION */
 /* eslint-disable func-names, camelcase, no-alert */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -49,7 +49,7 @@ $.ajaxSetup({
   headers: {
     // VERSION will be replaced by Babel.
     // eslint-disable-next-line prefer-template
-    'X-Kloudless-Source': 'file-picker/' + VERSION,
+    'X-Kloudless-Source': 'file-picker/' + BABEL_VERSION,
   },
 });
 

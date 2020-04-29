@@ -20,11 +20,11 @@ const buildEnvVarDefaults = {
 };
 
 const transformDefines = {
-  VERSION: packages.version,
+  BABEL_VERSION: packages.version,
 };
 
 Object.keys(buildEnvVarDefaults).forEach((varName) => {
-  transformDefines[varName] = (
+  transformDefines[`BABEL_${varName}`] = (
     process.env[varName] || buildEnvVarDefaults[varName]);
 });
 

@@ -1,4 +1,4 @@
-/* global BASE_URL */
+/* global BABEL_BASE_URL */
 /* eslint-disable camelcase */
 
 import $ from 'jquery';
@@ -121,7 +121,8 @@ Object.assign(config, {
     // logic only.
     rateLimit: 500,
   }),
-  base_url: String(BASE_URL).replace(/\/$/, ''),
+  base_url: (get_query_variable('baseUrl') || String(BABEL_BASE_URL))
+    .replace(/\/$/, ''),
   chunk_size: 5 * 1024 * 1024,
   computer: ko.observable(initFlavor === FLAVOR.dropzone),
   copy_to_upload_location: ko.observable(),
