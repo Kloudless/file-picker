@@ -957,15 +957,26 @@ const FilePicker = function () {
         return activeAccount.filesystem().rootMetadata().name;
       }),
 
-      // Compute current working directory.
+      // Compute current working directory. If it's in file search view, then
+      // return the search result. Otherwise, return filesystem.cwd().
+      // TODO: could do sort here instead of in filesystem.display().
       cwd: ko.computed(() => {
-        const activeAccount = this.manager.active();
+        const { view_model: viewModel, manager } = this;
+        const activeAccount = manager.active();
+
         // check to make sure an active account is set
         if (Object.keys(activeAccount).length === 0) {
           return [];
         }
-        logger.debug('Recomputing cwd...');
-        return activeAccount.filesystem().cwd();
+
+        const currentView = viewModel.current();
+        const fs = activeAccount.filesystem();
+        if (currentView === VIEW.search) {
+          const searchResult = viewModel.files.searchResult();
+          return fs.filterChildren(searchResult, true);
+        }
+
+        return fs.filterChildren(fs.cwd());
       }),
       // Relative navigation.
       navigate: (id) => {
@@ -1002,6 +1013,13 @@ const FilePicker = function () {
       mkdir: (formElement) => {
         const name = formElement[0].value;
         logger.debug('New folder name:', name);
+        /**
+         * TODO: If the folder name already exists, then API server will return
+         * the existing one instead of creating new folder. As a result, FP will
+         * display duplicated folders in the table. We should avoid this by
+         * either prevent user from creating duplicated folder or check the
+         * result of adding folder request.
+         * */
         this.manager.active().filesystem().mkdir(name, (err, result) => {
           // update first entry
           if (err) {
@@ -1043,35 +1061,33 @@ const FilePicker = function () {
       sort: (option) => {
         this.manager.active().filesystem().sort(option);
       },
+      searchResult: ko.observableArray(),
       searchQuery: ko.observable(''),
-      startSearchMode: () => {
-        if (!this.view_model.loading()) {
+      toggleSearchView: (enabled) => {
+        this.view_model.files.searchQuery('');
+        if (enabled) {
           this.router.setLocation('#/search');
-          this.view_model.files.search();
+        } else {
+          this.router.setLocation('#/files');
         }
       },
-      exitSearchMode: () => {
-        this.router.setLocation('#/files');
-        this.view_model.files.refresh(false);
-        this.view_model.files.searchQuery('');
-      },
-      search: () => {
-        const { manager, view_model } = this;
+      doSearch: () => {
+        const { view_model: viewModel, manager } = this;
+        const fs = manager.active().filesystem();
+        const searchQuery = viewModel.files.searchQuery();
 
         // de-select files/folders
-        const selector = view_model.files.table;
+        const selector = viewModel.files.table;
         selector.finderSelect('unHighlightAll');
 
-        const searchQuery = view_model.files.searchQuery();
-        const fs = manager.active().filesystem();
         if (searchQuery === '') {
-          fs.display([]);
+          viewModel.files.searchResult.removeAll();
           return;
         }
         const s = new Search(fs.id, fs.key, searchQuery, fs.rootMetadata().id);
         s.search(
           () => {
-            fs.display(fs.filterChildren(s.results.objects, true));
+            viewModel.files.searchResult(s.results.objects);
           },
           () => {
             const msg = localization.formatAndWrapMessage('files/searchFail');
@@ -1102,7 +1118,7 @@ const FilePicker = function () {
   });
 
   this.view_model.files.searchQuery.subscribe(
-    this.view_model.files.search, this,
+    this.view_model.files.doSearch, this,
   );
   ko.applyBindings(this.view_model, $('#kloudless-file-picker')[0]);
 };
@@ -1454,13 +1470,6 @@ function dataMessageHandler(data) {
     });
   }
 }
-
-config.flavor.subscribe(() => {
-  // refresh and go back to accounts when flavor changes
-  logger.debug('SWITCHING FLAVOR');
-  picker.router.setLocation('#/accounts');
-  picker.view_model.files.refresh();
-});
 
 $(document).ajaxStart(() => {
   picker.view_model.loading(true);

@@ -59,7 +59,7 @@ Filesystem.prototype._init = function _init(callback) {
       Authorization: `${this.key.scheme} ${this.key.key}`,
     },
   }).done((data) => {
-    const updatedCurrent = this.filterChildren([data])[0];
+    const updatedCurrent = data;
     updatedCurrent.page = FIRST_PAGE;
     updatedCurrent.children = this.current().children;
     this.current(updatedCurrent);
@@ -162,8 +162,14 @@ Filesystem.prototype._getPage = function _getPage() {
 
       current.page = data.next_page;
 
-      // Add filtered children.
-      ko.utils.arrayPushAll(newChildren, this.filterChildren(data.objects));
+      // Add parent_obs and friendlySize
+      data.objects = data.objects.map((obj) => {
+        obj.parent_obs = this.current();
+        obj.friendlySize = util.getFriendlySize(obj.size);
+        return obj;
+      });
+
+      ko.utils.arrayPushAll(newChildren, data.objects);
 
       // Don't display but just update children in case that the current folder
       // is changed.
@@ -213,7 +219,7 @@ Filesystem.prototype.display = function (files) {
 };
 
 /**
- * Attach disabled and friendlySize attributes to the file/folder metadata.
+ * Check if the file/folder is disabled or not based on config.types().
  * Setting 'excludeDisabled' to true to filter out the disabled items.
  * @param {Array<Object>} data Array of files and folders' metadata.
  * @param {Boolean} excludeDisabled Whether to filter out the disabled items.
@@ -231,33 +237,33 @@ Filesystem.prototype.filterChildren = function (data, excludeDisabled = false) {
 
     logger.debug('Filtering child: ', name, ext);
 
+    if (child.disabled === undefined) {
+      child.disabled = ko.observable(false);
+    }
+    child.disabled(false);
+
+    // Type checking.
     if (childType === 'file') {
-      // Type checking.
-      if (!allowedTypes.some(t => t !== 'folders')) {
-        child.disabled = true;
+      // This relies on that allowedTypes is impossible to be empty or contain
+      // duplicated entries.
+      if (allowedTypes.length === 1 && allowedTypes[0] === 'folders') {
+        child.disabled(true);
       }
       if (!allowedTypes.includes('files') && !allowedTypes.includes(ext)) {
-        child.disabled = true;
+        child.disabled(true);
       }
       // Downloadable checking: the file must be downloadable in case of copy
       // to upload location and create direct link.
       if (!child.downloadable && (copyToUploadLocation || createDirectLink)) {
-        child.disabled = true;
+        child.disabled(true);
       }
     }
     if (childType === 'folder' && !allowedTypes.includes('folders')) {
-      child.disabled = true;
-    }
-    // Set custom attributes.
-    child.parent_obs = this.current();
-    if (child.size == null) {
-      child.friendlySize = '';
-    } else {
-      child.friendlySize = util.formatSize(child.size);
+      child.disabled(true);
     }
     return child;
   });
-  return excludeDisabled ? result.filter(e => !e.disabled) : result;
+  return excludeDisabled ? result.filter(e => !e.disabled()) : result;
 };
 
 /**
@@ -325,10 +331,9 @@ Filesystem.prototype.newdir = function () {
     el.parent_obs = this.current();
     el.type = 'newfolder';
     el.size = null;
-    el.friendlySize = null;
     el.modified = null;
     el.path = this.path() ? `/${this.path().join('/')}/new` : this.path();
-
+    el.friendlySize = util.getFriendlySize(el.size);
     list.unshift(el);
 
     this.current().children(list);

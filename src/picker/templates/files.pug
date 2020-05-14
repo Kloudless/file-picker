@@ -5,7 +5,8 @@
       // ko if: $root.flavor() == 'chooser'
       .flex-no-shrink.mr
         .icon.icon--large(data-bind=`
-            click: files.startSearchMode, css: { 'icon--disabled': loading}`)
+            click: files.toggleSearchView.bind($data, true),
+            css: { 'icon--disabled': loading}`)
           .icon__search
       // /ko
       .flex-grow.mr

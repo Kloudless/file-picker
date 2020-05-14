@@ -2,10 +2,11 @@
   .container__header
     .flex-row.align-items-center
       .flex-no-shrink.mr
-        .icon.icon--large(data-bind='click: files.exitSearchMode')
+        .icon.icon--large(
+            data-bind='click: files.toggleSearchView.bind($data, false)')
           .icon__back
       .flex-grow.mr
-        form(data-bind="submit: files.search")
+        form(data-bind="submit: files.doSearch")
           input.search-input(
             type="text", placeholder="Search",
             data-bind=`

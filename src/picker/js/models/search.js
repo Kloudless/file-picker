@@ -2,6 +2,7 @@
 import $ from 'jquery';
 import logger from 'loglevel';
 import config from '../config';
+import util from '../util';
 
 'use strict';
 
@@ -33,6 +34,10 @@ Search.prototype.search = function (callback, errback) {
       self.results = data;
       logger.debug('[Account ' + self.account + '] Search results on ',
         self.q, ': ', self.results);
+      self.results.objects = self.results.objects.map((obj)=>{
+        obj.friendlySize = util.getFriendlySize(obj.size);
+        return obj;
+      });
       if (callback) callback();
     },
     error: function () {
