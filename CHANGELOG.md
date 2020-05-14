@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Ensure to refresh the file table when switching between Chooser and Saver.
 
 ## [2.2.5] - 2020-04-29
 
@@ -20,7 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Emit the `success` event for successfully uploaded files if users cancel the
   upload mid-way through uploading a set of files in the Computer view.
 - Improve UI when the `multiselect` option is configured to `false`.
-- Ensure to refresh the file table when switching between Chooser and Saver.
 
 ## [2.2.4] - 2020-04-20
 
