@@ -496,21 +496,18 @@ File Picker JavaScript on the page.
   for any existing account browsable via the File Picker. This is helpful for
   scenarios where the user may not have access to the root or other high-level
   folders but does have access to specific known folders within the account.
-  For existing accounts,
-  be sure to also use the `tokens` attribute to specify the Bearer tokens to use
-  to browse the account. This option accepts a map of
-  the Kloudless Account ID to the Kloudless Folder ID in the format
-  `{[account_id]: "root_folder_id"}`, as shown below:
+  This option accepts a map of the Kloudless Account ID to the Kloudless Folder
+  ID in the format `{[account_id]: "root_folder_id"}`, as shown below:
 
   ```js
   {
-    1234: "Fabcxyz12345",
-    5678: "Fsomefolder678"
+    1234: "folder_abc1234",
+    5678: "folder_somefolder5678"
   }
   ```
 
-  The example above sets the root folder to `Fabcxyz12345` for account `1234`
-  and `Fsomefolder678` for the account `5678`.
+  The example above sets the root folder to `folder_abc1234` for account
+  `1234` and `folder_somefolder5678` for the account `5678`.
 
   When connecting or switching to an account that has a root folder ID
   configured, the default folder opened will be the specified folder rather 
@@ -518,7 +515,17 @@ File Picker JavaScript on the page.
   outside of the chosen root folder, although it may be accessible to the user
   via direct API requests. This configuration option should therefore not be
   used to limit access for security purposes.
-  
+
+  For existing accounts, be sure to also use the `tokens` attribute to specify
+  the Bearer tokens to use to browse the account. If `account_management` is
+  enabled (the default), the user may also connect new accounts. Since the
+  root folder ID is not possible to provide in advance until the newly
+  connected account's ID is known, please first listen for the
+  `addAccount` [event](#events), then perform API requests to determine
+  the ID of the root folder to display, and finally call the `picker.update()`
+  [method](#methods) with the updated configuration that includes the root
+  folder ID for the newly connected account within it.
+
   To obtain the Kloudless Folder ID for an upstream folder path, please
   use the
   [Encode Raw Data API endpoint](https://developers.kloudless.com/docs/latest/core#raw-data-and-the-pass-through-api-raw-data-kloudless-id).
