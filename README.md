@@ -524,7 +524,19 @@ File Picker JavaScript on the page.
   `addAccount` [event](#events), then perform API requests to determine
   the ID of the root folder to display, and finally call the `picker.update()`
   [method](#methods) with the updated configuration that includes the root
-  folder ID for the newly connected account within it.
+  folder ID for the newly connected account within it:
+
+  ```
+  let root_folder_id = {}; // Any existing root folder IDs
+  picker.on('addAccount', account => {
+    // Set `retrieve_token: true` in the config to retrieve the Bearer token
+    // to use in API requests to determine the right root folder ID, and
+    // then include that root folder ID below.
+    root_folder_id[account.id] = 'root';
+
+    picker.update({ root_folder_id });
+  });
+  ```
 
   To obtain the Kloudless Folder ID for an upstream folder path, please
   use the

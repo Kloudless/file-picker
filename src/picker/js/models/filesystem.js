@@ -8,10 +8,11 @@ import util from '../util';
 // http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
 
 const DEFAULT_SORT_OPTION = 'name';
+const DEFAULT_ROOT_FOLDER_ID = 'root';
 const FIRST_PAGE = 1;
 const PAGE_SIZE = 1000;
 
-function Filesystem(id, key, callback, rootFolderId = 'root') {
+function Filesystem(id, key, callback) {
   this.id = id;
   this.key = key; // This key may change if we need to reconnect.
   this.path = ko.observableArray();
@@ -31,16 +32,26 @@ function Filesystem(id, key, callback, rootFolderId = 'root') {
     children: ko.observableArray(),
   });
 
-  // Some logic requires access root folder metadata while this.current points
-  // to other folders. This is set after getting metadata from API below.
-  this.rootMetadata = ko.observable({
-    id: rootFolderId,
-  });
-
   this.cwd = ko.computed(() => {
     const folder = this.current();
     return folder.children();
   });
+
+  // rootMetadata is stored here for referencing during traversal as well
+  // as comparisons when the default root configured changes.
+  // It is deliberately not a computed observable so that the state remains
+  // unchanged until we set it ourselves, so we can use it for comparisons.
+  this.rootMetadata = ko.observable({
+    id: config.root_folder_id()[this.id] || DEFAULT_ROOT_FOLDER_ID
+  });
+
+  config.root_folder_id.subscribe((newRootFolderIds) => {
+    let newRootFolderId = newRootFolderIds[this.id] || DEFAULT_ROOT_FOLDER_ID;
+    if (newRootFolderId !== this.rootMetadata().id) {
+      this.rootMetadata({id: newRootFolderId});
+      this._init(callback);
+    }
+  }, this);
 
   this._init(callback);
 }
@@ -63,12 +74,15 @@ Filesystem.prototype._init = function _init(callback) {
     updatedCurrent.page = FIRST_PAGE;
     updatedCurrent.children = this.current().children;
     this.current(updatedCurrent);
+    this.path.removeAll();
+
     const {
       children, parent_obs, id, page, ...rest // eslint-disable-line camelcase
     } = this.current();
     // never update root folder ID, in case the returned ID is different
-    // and break the UI
+    // and breaks the UI or subscribe() check above.
     this.rootMetadata({ id: rootFolderId, ...rest });
+
     success = true;
   }).fail((xhr, status, err) => {
     logger.warn('Retrieving root folder failed: ', status, err, xhr);
@@ -76,7 +90,7 @@ Filesystem.prototype._init = function _init(callback) {
   }).always(() => {
     logger.info('Filesystem construction finished. Refreshing...');
     if (success) {
-      this.refresh(false, callback);
+      this.refresh(true, callback);
     }
   });
 };
