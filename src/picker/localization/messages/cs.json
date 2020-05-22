@@ -21,7 +21,7 @@
       }
     },
     "accounts": {
-      "confirmRemove": "Pokud tento účet odstraníte, nebudete jej již moci prozkoumat. Jsi si jistá?",
+      "confirmRemove": "Již nebude moci procházet tento účet. Jsou si jisti, že chcete odstranit? (Všimněte si, že to není odhlásit z účtu v tomto prohlížeči)",
       "connectedAccounts": "Připojené účty",
       "logout": "odhlásit se",
       "manage": "Zde můžete spravovat účty cloudového úložiště.",

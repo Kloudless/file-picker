@@ -21,7 +21,7 @@
       }
     },
     "accounts": {
-      "confirmRemove": "Jika Anda menghapus akun ini, Anda tidak lagi dapat menjelajahinya. Apakah kamu yakin",
+      "confirmRemove": "Anda tidak lagi dapat menelusuri akun ini. Apakah Anda yakin ingin menghapusnya? (Perhatikan bahwa ini tidak membuat Anda keluar dari akun di browser ini)",
       "connectedAccounts": "Akun yang terhubung",
       "logout": "keluar",
       "manage": "Kelola akun penyimpanan cloud Anda di sini.",

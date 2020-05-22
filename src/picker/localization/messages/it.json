@@ -21,7 +21,7 @@
       }
     },
     "accounts": {
-      "confirmRemove": "Se rimuovi questo account, non sarai più in grado di esplorarlo. Sei sicuro?",
+      "confirmRemove": "Non sarà più in grado di navigare questo account. Sei sicuro di voler rimuovere esso? (Si noti che questo non ti logout dell'account su questo browser)",
       "connectedAccounts": "Account collegati",
       "logout": "disconnettersi",
       "manage": "Gestisci i tuoi account di archiviazione cloud qui.",

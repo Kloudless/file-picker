@@ -21,7 +21,7 @@
       }
     },
     "accounts": {
-      "confirmRemove": "Dacă eliminați acest cont, nu veți mai putea să îl explorați. Esti sigur?",
+      "confirmRemove": "Nu veți mai putea naviga în acest cont. Sunteți sigur că doriți să îl eliminați? (Rețineți că acest lucru nu vă deconectează din cont în acest browser)",
       "connectedAccounts": "Conturi conectate",
       "logout": "logout",
       "manage": "Gestionați-vă aici conturile de stocare în cloud.",

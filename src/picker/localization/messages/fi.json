@@ -21,7 +21,7 @@
       }
     },
     "accounts": {
-      "confirmRemove": "Jos poistat tämän tilin, et enää pysty tutkimaan sitä. Oletko varma?",
+      "confirmRemove": "Et enää voi selata tämän tilin. Oletko varma, että haluat poistaa sen? (Huomaa, että tämä ei kirjata ulos tilin tässä selaimessa)",
       "connectedAccounts": "Yhdistetyt tilit",
       "logout": "kirjautua ulos",
       "manage": "Hallitse pilvivarastotilejäsi täällä.",

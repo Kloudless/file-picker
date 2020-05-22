@@ -21,7 +21,7 @@
       }
     },
     "accounts": {
-      "confirmRemove": "Si vous supprimez ce compte, vous ne pourrez plus l'explorer. Êtes-vous sûr?",
+      "confirmRemove": "Vous ne serez plus en mesure de parcourir ce compte. Etes-vous sûr que vous souhaitez supprimer? (Notez que cela ne vous déconnecte pas du compte sur ce navigateur)",
       "connectedAccounts": "Comptes connectés",
       "logout": "Connectez - Out",
       "manage": "Gérez vos comptes de stockage en nuage ici.",

@@ -21,7 +21,7 @@
       }
     },
     "accounts": {
-      "confirmRemove": "Bu hesabı kaldırırsanız, artık incelemeyi başaramazsınız. Emin misiniz?",
+      "confirmRemove": "Artık bu hesaba göz atamayacaksınız. Kaldırmak istediğinizden emin misiniz? (Bunun sizi bu tarayıcıdaki hesaptan çıkmadığını unutmayın)",
       "connectedAccounts": "Bağlı hesaplar",
       "logout": "çıkış Yap",
       "manage": "Bulut depolama hesaplarınızı burada yönetin.",

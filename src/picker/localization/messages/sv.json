@@ -21,7 +21,7 @@
       }
     },
     "accounts": {
-      "confirmRemove": "Om du tar bort det här kontot kan du inte längre utforska det. Är du säker?",
+      "confirmRemove": "Du kommer inte längre att kunna surfa på kontot. Är du säker på att du vill ta bort den? (Observera att detta inte loggar du ut från kontot på denna webbläsare)",
       "connectedAccounts": "Anslutna konton",
       "logout": "logga ut",
       "manage": "Hantera dina Cloud Storage-konton här.",

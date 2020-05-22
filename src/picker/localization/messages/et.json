@@ -21,7 +21,7 @@
       }
     },
     "accounts": {
-      "confirmRemove": "Kui eemaldate selle konto, ei saa te seda enam uurida. Oled sa kindel?",
+      "confirmRemove": "Te ei saa seda kontot enam sirvida. Kas olete kindel, et soovite selle eemaldada? (Pange tähele, et see ei logi teid selle brauseri kontolt välja)",
       "connectedAccounts": "Ühendatud kontod",
       "logout": "Logi välja",
       "manage": "Hallake oma pilvesalvestuskontot siin.",

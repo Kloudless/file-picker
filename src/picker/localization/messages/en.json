@@ -38,7 +38,7 @@
       "forbidCopyRootFolder": "Copying all data at once is not allowed."
     },
     "accounts": {
-      "confirmRemove": "If you remove this account, you will no longer be able to explore it. Are you sure?",
+      "confirmRemove": "You will no longer be able to browse this account. Are you sure you would like to remove it? (Note that this does not log you out of the account on this browser)",
       "connectedAccounts": "All Connected Accounts",
       "logout": "Disconnect all accounts",
       "manage": "Manage Accounts",
