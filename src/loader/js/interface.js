@@ -289,7 +289,6 @@ filePicker._fileWidget.prototype._setOptions = function (options = {}) {
   if (!(this.types instanceof Array)) {
     this.types = [this.types];
   }
-  this.types = this.types.map(type => type.substr(type.lastIndexOf('.') + 1));
 
   // Backwards compatibility for direct_link
   if (!this.options.link_options) {

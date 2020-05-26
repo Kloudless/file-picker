@@ -15,9 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- FP closes unexpectedly when there are less than 6 files uploaded in the
-  Computer view and the upload fails, even though
-  `uploads_pause_on_fail` is set to `true`.
+- The modal closes unexpectedly when there are less than 6 files uploaded in the
+  Computer view and the upload fails, even though `uploads_pause_on_fail` is set
+  to `true`.
 - Emit the `success` event for successfully uploaded files if users cancel the
   upload mid-way through uploading a set of files in the Computer view.
 - Improve UI when the `multiselect` option is configured to `false`.

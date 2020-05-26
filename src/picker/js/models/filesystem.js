@@ -232,6 +232,13 @@ Filesystem.prototype.display = function (files) {
   this.sort();
 };
 
+// Treat a file as no extension if the extension does not match the format
+const PATTERN_EXT = /\.([\w-]+)$/;
+const getExt = (filename) => {
+  const result = filename.match(PATTERN_EXT);
+  return result ? result[1] : '';
+};
+
 /**
  * Check if the file/folder is disabled or not based on config.types().
  * Setting 'excludeDisabled' to true to filter out the disabled items.
@@ -241,13 +248,13 @@ Filesystem.prototype.display = function (files) {
  */
 // eslint-disable-next-line func-names
 Filesystem.prototype.filterChildren = function (data, excludeDisabled = false) {
-  const allowedTypes = config.types();
   const copyToUploadLocation = !!config.copy_to_upload_location();
   const createDirectLink = config.link() && config.link_options().direct;
   const result = data.map((child) => {
-    const { type: childType, name } = child;
-    const ext = name.includes('.') ?
-      name.substr(name.lastIndexOf('.') + 1).toLowerCase() : '';
+    const { type: childType, mime_type: mimeType, name } = child;
+    const ext = getExt(name);
+    const allowedTypes = config.types();
+    const allowedMIMETypes = config.mimeTypes;
 
     logger.debug('Filtering child: ', name, ext);
 
@@ -263,7 +270,8 @@ Filesystem.prototype.filterChildren = function (data, excludeDisabled = false) {
       if (allowedTypes.length === 1 && allowedTypes[0] === 'folders') {
         child.disabled(true);
       }
-      if (!allowedTypes.includes('files') && !allowedTypes.includes(ext)) {
+      if (!allowedTypes.includes('files') && !allowedTypes.includes(ext)
+          && !allowedMIMETypes.includes(mimeType)) {
         child.disabled(true);
       }
       // Downloadable checking: the file must be downloadable in case of copy

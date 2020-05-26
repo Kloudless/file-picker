@@ -710,14 +710,18 @@ File Picker JavaScript on the page.
 
   * `audio`
 
-The categories will be translated to the corresponding file extensions
-internally. Check `TYPE_ALIAS` in [constants.js](src/picker/js/constants.js)
-for the specific file extensions mapped to.
+The categories will be translated to the corresponding file extensions and MIME
+types internally. Check `TYPE_ALIAS` and `MIME_TYPE_ALIAS` in
+[constants.js](src/picker/js/constants.js) for the specific file extensions
+and MIME types mapped to.
 
-You can also specify file extensions by including the extension in the array
-without the period (`.`) prefix. For example, `['pdf', 'jpg', 'jpeg', 'png']`.
+You can also specify file extensions as well as MIME types by including them
+in the array without the period (`.`) prefix. For example, 
+`['pdf', 'jpg', 'jpeg', 'png', 'application/vnd.google-apps.document']`.
 
-Include `''` to allow files without a file extension to be selected.
+Include `''` to allow files with the MIME type `application/octet-stream` or
+without a file extension to be selected.
+
 
 #### Saver Options
 

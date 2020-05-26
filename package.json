@@ -36,7 +36,8 @@
     "dist-test": "node ./test/dist-test-server.js",
     "test:ts": "eslint --config .eslintrc-ts.js --ext .ts . && tsc test/ts/*.ts --noEmit && echo '✅  Passed type tests.'",
     "stylelint": "stylelint ./src/**/*.less --syntax less",
-    "stylelint:fix": "npm run stylelint -- --fix"
+    "stylelint:fix": "npm run stylelint -- --fix",
+    "lint": "eslint ."
   },
   "dependencies": {
     "hoist-non-react-statics": "3.3.0",

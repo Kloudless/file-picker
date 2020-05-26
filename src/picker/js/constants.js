@@ -54,5 +54,35 @@ const TYPE_ALIAS = {
   ],
 };
 
-export { TYPE_ALIAS, VIEW, FLAVOR };
-export default { TYPE_ALIAS, VIEW, FLAVOR };
+const MIME_TYPE_ALIAS = {
+  text: [
+    'application/octet-stream',
+  ],
+  documents: [
+    'application/vnd.google-apps.spreadsheet',
+    'application/vnd.google-apps.document',
+    'application/vnd.google-apps.drawing',
+    'application/vnd.google-apps.presentation',
+  ],
+  images: [
+    'application/vnd.google-apps.drawing',
+    'application/vnd.google-apps.photo',
+  ],
+  videos: [
+    'application/vnd.google-apps.video',
+  ],
+  audio: [
+    'application/vnd.google-apps.audio',
+  ],
+  // The MIME type that mapped by `''`
+  _unknown_: [
+    'application/octet-stream',
+  ],
+};
+
+export {
+  TYPE_ALIAS, MIME_TYPE_ALIAS, VIEW, FLAVOR,
+};
+export default {
+  TYPE_ALIAS, MIME_TYPE_ALIAS, VIEW, FLAVOR,
+};
