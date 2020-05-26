@@ -106,7 +106,6 @@ const util = {
     return toString.call({}) === toString.call(input);
   },
 
-
   /**
    * Get friendlySize.
    * @param {(null|number)} size - The file size.
