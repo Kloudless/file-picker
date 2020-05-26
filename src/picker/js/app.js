@@ -837,6 +837,10 @@ const FilePicker = function () {
                 );
               }
 
+              // Must be done before emitting event. In case that devs call
+              // update() when receiving `addAccount` event.
+              storage.storeAccounts(config.app_id, this.manager.accounts());
+
               // post message for account
               this.view_model.postMessage('addAccount', {
                 id: account.account,
@@ -862,8 +866,6 @@ const FilePicker = function () {
                 // eslint-disable-next-line no-use-before-define
                 first_account = false;
               }
-              // store accounts
-              storage.storeAccounts(config.app_id, this.manager.accounts());
             },
           });
         });
