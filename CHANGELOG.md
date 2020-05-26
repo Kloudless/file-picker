@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.3.0] - 2020-05-26
+
+### Added
+
+- Support MIME type filtering.
+- Support dynamically updating root_folder_id.
+- Add warning when disconnecting an account.
+
 ### Fixed
 
 - Ensure to refresh the file table when switching between Chooser and Saver.
