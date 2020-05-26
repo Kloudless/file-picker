@@ -1,6 +1,6 @@
 {
   "name": "@kloudless/file-picker",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "author": "Kloudless <hello@kloudless.com> (https://kloudless.com)",
   "description": "The Kloudless File Picker is a JavaScript library that allows your users to browse and select files and folders from their storage services. It comes in two modes: a chooser and a saver.",
   "main": "./dist/commonjs2/loader.min.js",
