@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Ensure to refresh the file table when switching between Chooser and Saver.
+- Refresh the filesystem state when switching between the Chooser and Saver.
 
 ## [2.2.5] - 2020-04-29
 
