@@ -254,6 +254,9 @@ declare global {
       id: string;
       name: string;
       service: ServiceName;
+      bearer_token?: {
+        key: string;
+      };
     }
 
     interface ChooserStartFileUploadEvent {
@@ -282,6 +285,10 @@ declare global {
     interface Task {
       id: string;
       state: 'PENDING' | 'RECEIVED' | 'STARTED';
+      account?: number;
+      bearer_token?: {
+        key: string;
+      };
     }
   }
 }

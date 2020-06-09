@@ -238,6 +238,9 @@ const saverSuccess: SuccessEvent = [
 // test chooser success event with copy_to_upload_location=true
 const successWithCopyToUploadLocationAsync: SuccessEvent = [
   {
+    account: 17820416,
+    bearer_token: { key: 'p4yL2x***' },
+    info: null,
     id: '4c025***',
     state: 'PENDING',
   },

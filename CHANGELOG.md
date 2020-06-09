@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Chooser: Partially successful selections should still fire the `success` event
   for those files/folders, and the `error` event for the remainder.
+- The `copy_to_upload_location: "async"` configuration now includes the bearer
+  token, and Account ID in responses to enable checking the Task API easily.
 
 ## [2.3.1] - 2020-06-22
 
