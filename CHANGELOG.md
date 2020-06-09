@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.3.1] - 2020-06-22
+
+### Added
+- Double-clicking on a file selects it
+
 ## [2.3.0] - 2020-05-26
 
 ### Added
@@ -93,7 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A completely new theme for the UI with following improvements:
   - improved responsiveness
   - clearer HTML and CSS structure and consistent naming conventions.
-  The new `custom_style_vars` option allows customizing specific documented 
+  The new `custom_style_vars` option allows customizing specific documented
   aspects of the UI such as colors and fonts without forking the entire project.
   The `custom_css` option is now deprecated. Please refer to the
   [migration guide](README.md#incompatible-configuration-options) for details.

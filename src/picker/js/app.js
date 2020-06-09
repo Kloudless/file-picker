@@ -1244,10 +1244,19 @@ ko.bindingHandlers.finderSelect = {
       const id = tr.attr('data-id');
       if (type === 'folder' && id) {
         viewModel.files.navigate(id);
+        return true;
+      }
+      return false;
+    };
+
+    const confirmSelectOrNavigate = (event) => {
+      if (!navigate(event)) {
+        // Automatically fire confirm() when double-clicking on a file
+        viewModel.confirm();
       }
     };
 
-    selector.dblclick(navigate);
+    selector.dblclick(confirmSelectOrNavigate);
     selector.click((event) => {
       if (util.isMobile) {
         navigate(event);
