@@ -80,9 +80,25 @@ const MIME_TYPE_ALIAS = {
   ],
 };
 
+// set default error message timeout as 10 seconds,
+// and set error message timeout for computer uploads as false,
+// to keep all errors visible to users.
+const ERROR_MSG_TIMEOUT = 10000;
+const UPLOAD_ERROR_MSG_TIMEOUT = false;
+
 export {
-  TYPE_ALIAS, MIME_TYPE_ALIAS, VIEW, FLAVOR,
+  TYPE_ALIAS,
+  MIME_TYPE_ALIAS,
+  VIEW,
+  FLAVOR,
+  ERROR_MSG_TIMEOUT,
+  UPLOAD_ERROR_MSG_TIMEOUT,
 };
 export default {
-  TYPE_ALIAS, MIME_TYPE_ALIAS, VIEW, FLAVOR,
+  TYPE_ALIAS,
+  MIME_TYPE_ALIAS,
+  VIEW,
+  FLAVOR,
+  ERROR_MSG_TIMEOUT,
+  UPLOAD_ERROR_MSG_TIMEOUT,
 };

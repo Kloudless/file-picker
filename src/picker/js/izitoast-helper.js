@@ -1,6 +1,15 @@
+/* eslint no-unused-vars: ["error", { "args": "none" }] */
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.css';
+import '../css/izitoast.less';
+import localization from './localization';
 import util from './util';
+import { ERROR_MSG_TIMEOUT } from './constants';
+
+const supportsCopy =
+  (typeof document.queryCommandSupported === 'function') &&
+  (typeof document.execCommand === 'function') &&
+  document.queryCommandSupported('Copy');
 
 /**
  * Show an error toast.
@@ -16,8 +25,26 @@ function error(message, options = {}) {
   }
   const {
     detail,
-    timeout = 10000,
+    timeout = ERROR_MSG_TIMEOUT,
+    buttons = [],
   } = options;
+
+  const copyButton = [
+    `<button>${localization.formatAndWrapMessage('global/copy')}</button>`,
+    (instance, toast) => {
+      const msg = detail ? `${message} (detail: ${detail})` : message;
+      const eltemp = document.createElement('textarea');
+      eltemp.value = msg;
+      eltemp.readOnly = true;
+      eltemp.className = 'visual-invisible';
+      eltemp.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(eltemp);
+      eltemp.select();
+      document.execCommand('copy');
+      document.body.removeChild(eltemp);
+    }, false,
+  ];
+
   let msg = message;
   if (detail) {
     if (util.isIE) {
@@ -27,7 +54,7 @@ function error(message, options = {}) {
       msg = `
       ${msg}
       <details>
-        <summary>show details</summary>
+        <summary class="iziToast__details-toggle-button">show details</summary>
         ${detail}
       </details>`;
     }
@@ -36,10 +63,13 @@ function error(message, options = {}) {
     iziToast.destroy();
   }
   iziToast.error({
+    pauseOnHover: true,
+    drag: false, // to allow user to select text
     timeout: timeout || false,
     position: 'bottomCenter',
     title: 'Error',
     message: msg,
+    buttons: supportsCopy ? [copyButton, ...buttons] : [...buttons],
   });
 }
 

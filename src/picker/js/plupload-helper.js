@@ -9,6 +9,7 @@ import config from './config';
 import localization from './localization';
 import util from './util';
 import iziToastHelper from './izitoast-helper';
+import { UPLOAD_ERROR_MSG_TIMEOUT } from './constants';
 
 // Translation keys
 const TRANSLATION_KEYS = {
@@ -65,7 +66,7 @@ class PluploadHelper {
   }
 
   static showError(msg, detail) {
-    iziToastHelper.error(msg, { detail, timeout: 0 });
+    iziToastHelper.error(msg, { detail, timeout: UPLOAD_ERROR_MSG_TIMEOUT });
   }
 
   static clearError() {

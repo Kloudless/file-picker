@@ -2,6 +2,7 @@
   "en": {
     "global": {
       "select": "Select",
+      "copy": "Copy",
       "cancel": "Cancel",
       "save": "Save",
       "open": "Open",
