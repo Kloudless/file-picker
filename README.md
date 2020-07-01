@@ -672,7 +672,9 @@ File Picker JavaScript on the page.
   if only one Upload Location is configured. The Folder ID is an encoded string that
   can be found on the File Picker Upload Locations section of the
   [Developer Portal](https://developers.kloudless.com/applications/*/ui-tools/file-picker).
-  `upload_location_account` must also be provided.
+  The ID of a sub-folder may be specified if the option is enabled in the
+  Developer Portal. `upload_location_account` must also be provided if more than
+  one upload location exists.
 
 * `uploads_pause_on_error` : boolean
 
