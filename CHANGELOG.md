@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- Chooser: Partially successful selections should still fire the `success` event
+  for those files/folders, and the `error` event for the remainder.
+
 ## [2.3.1] - 2020-06-22
 
 ### Added
@@ -34,8 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Emit the `success` event for successfully uploaded files if users cancel the
   upload mid-way through uploading a set of files in the Computer view.
 - Improve UI when the `multiselect` option is configured to `false`.
-- Chooser: Partially successful selections should still fire the `success` event
-  for those files/folders, and the `error` event for the remainder.
 
 ## [2.2.4] - 2020-04-20
 
