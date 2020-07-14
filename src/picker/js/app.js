@@ -443,6 +443,12 @@ const FilePicker = function () {
             });
           } else {
             selections[selection_index] = res;
+            if (isTask) {
+              // Provide account id in 'account' field to user.
+              // Doing this also allows this.view_model.postMessage()
+              // to include bearer token appropriately.
+              selections[selection_index].account = accountId;
+            }
             selectionComplete(true, selection_index);
           }
         }).fail((xhr) => {
