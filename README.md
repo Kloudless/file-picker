@@ -1231,6 +1231,12 @@ Then run the following commands:
     npm install
     npm run install-deps
 
+To develop Vue or React wrapper, you might want to install the
+corresponding storybook:
+
+    npm install --prefix=storybook-vue    # for Vue
+    npm install --prefix=storybook-react  # for React
+
 ### Development
 
 Use the following command to set a Kloudless App ID and run the local
