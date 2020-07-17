@@ -307,6 +307,7 @@ $.get(
   {
     apis: 'storage',
     app_id: config.app_id,
+    retrieve_properties: true,
   },
   (serviceData) => {
     config._retrievedServices = true;
@@ -317,7 +318,40 @@ $.get(
       config.services = ['file_store', 'object_store', 'construction'];
     }
 
-    ko.utils.arrayForEach(serviceData.objects, (serviceDatum) => {
+    const requiredFeatures = ['storage.folders.list', 'storage.folders.read'];
+    const capabilityFilter = (service) => {
+      const { capabilities } = service.properties;
+      return requiredFeatures.reduce((prevResult, currFeature) => {
+        const capablityItems = capabilities[currFeature];
+        const supportsCurrFeature = capablityItems.reduce(
+          ({ foundAdminFalse, result }, c) => {
+            // if there is an object with admin:false in it,
+            // we just use its result, ignoring other objects.
+            // if we haven't found an admin-false object, search for the one
+            // with the only key 'result' in it. Use its result.
+            // For other cases, just pass result to the next iteration.
+            if (foundAdminFalse) {
+              return { foundAdminFalse, result };
+            }
+            if (c.admin === false) {
+              return { foundAdminFalse: true, result: c.result };
+            }
+
+            if (Object.keys(c).length === 1 &&
+                typeof c.admin === 'undefined' && c.result === true) {
+              // foundAdminFalse must be false here.
+              return { foundAdminFalse, result: true };
+            }
+            // foundAdminFalse must be false here.
+            return { foundAdminFalse, result };
+          }, { foundAdminFalse: false, result: false },
+        );
+        return supportsCurrFeature.result && prevResult;
+      }, true);
+    };
+    const filteredServiceData = serviceData.objects.filter(capabilityFilter);
+
+    ko.utils.arrayForEach(filteredServiceData, (serviceDatum) => {
       // eslint-disable-next-line no-use-before-define
       const serviceCategory = getServiceCategory(serviceDatum);
       let localeName = localization.formatAndWrapMessage(
