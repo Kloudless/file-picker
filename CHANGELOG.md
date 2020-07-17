@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.3.3] - 2020-07-17
+
+### Fixed
+
+- A regression in 2.3.2 causes the file picker to sometimes return async-type
+  Task objects even if `copy_to_upload_location: sync` is specified.
+
 ## [2.3.2] - 2020-07-16
 
 ### Fixed
