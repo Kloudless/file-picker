@@ -539,7 +539,7 @@ File Picker JavaScript on the page.
   ```
   Here is an example of limiting users connecting SharePoint accounts to only
   selecting files from within the primary document library of the main site
-  collection: [https://jsfiddle.net/x2h5gvp8/](https://jsfiddle.net/x2h5gvp8/).
+  collection: [https://jsfiddle.net/kloudless/uwax8tqy/](https://jsfiddle.net/kloudless/uwax8tqy/).
   
   The example above uses a known folder ID based on a consistent location within the
   SharePoint tenant, but most folders' IDs are random and must be obtained dynamically.
