@@ -537,10 +537,17 @@ File Picker JavaScript on the page.
     picker.update({ root_folder_id });
   });
   ```
-
+  Here is an example of limiting users connecting SharePoint accounts to only
+  selecting files from within the primary document library of the main site
+  collection: [https://jsfiddle.net/x2h5gvp8/](https://jsfiddle.net/x2h5gvp8/).
+  
+  The example above uses a known folder ID based on a consistent location within the
+  SharePoint tenant, but most folders' IDs are random and must be obtained dynamically.
   To obtain the Kloudless Folder ID for an upstream folder path, please
   use the
-  [Encode Raw Data API endpoint](https://developers.kloudless.com/docs/latest/core#raw-data-and-the-pass-through-api-raw-data-kloudless-id).
+  [Encode Raw Data API endpoint](https://developers.kloudless.com/docs/latest/core#raw-data-and-the-pass-through-api-raw-data-kloudless-id)
+  or list the contents of the account, beginning at the `root`, until the required
+  folder's metadata is obtained.
 
   Note: Search requests may still return results outside the root folder
   specified for services that do not support the `parents`
