@@ -7,6 +7,7 @@ import $ from 'jquery';
 import 'jquery-ui/ui/jquery-ui';
 import 'jquery-scrollstop/jquery.scrollstop';
 import 'jquery.finderSelect';
+import 'jquery.ajax-retry';
 import 'cldrjs';
 import ko from 'knockout';
 import logger from 'loglevel';
@@ -31,10 +32,20 @@ import iziToastHelper from './izitoast-helper';
 import { VIEW, FLAVOR } from './constants';
 import { LOADER_FEATURES } from '../../constants';
 
+const MAX_REQUESTS_IN_PROGRESS = 6;
+const MAX_AJAX_TRIES = 3;
+
 // Keep `PENDING` and `RECEIVED` to b/w compatible with v1.
 const UNREADY_STATUS = ['PENDING', 'RECEIVED', 'STARTED', 'UNKNOWN'];
 const FOCUSED_FOLDER_SELECTOR = 'tr.ftable__row--focus:not([data-selectable])';
 const EVENT_CALLBACKS = {};
+
+// Jquery Ajax Retry Options
+const AJAX_RETRY_OPTIONS = {
+  times: MAX_AJAX_TRIES,
+  statusCodes: [429],
+  delayStrategy: util.getExpBackoffDelayMs,
+};
 
 // Initialise and configure.
 logger.setLevel(config.logLevel);
@@ -71,6 +82,53 @@ const FilePicker = function () {
   this.fileManager = new FileManager();
   this.pluploadHelper = new PluploadHelper(this);
   this.router = routerHelper.init(this);
+
+  this.requestsToLaunch = [];
+  this.requestCountActive = 0;
+  this.launcherInterval = null;
+
+  this.addActiveRequest = () => {
+    this.requestCountActive += 1;
+    return this.requestCountActive;
+  };
+
+  this.removeActiveRequest = () => {
+    this.requestCountActive -= 1;
+    return this.requestCountActive;
+  };
+
+  this.getCancelTimeComparator = () => {
+    // preserve the lastCancelTime of the call time, and return a function that
+    // compares any future lastCancelTime with it.
+    const prevLastCancelTime = this.lastCancelTime;
+    return () => this.lastCancelTime > prevLastCancelTime;
+  };
+
+  this.startLauncherInterval = () => {
+    this.launcherInterval = window.setInterval(() => {
+      while (this.requestsToLaunch.length > 0 &&
+        this.requestCountActive < MAX_REQUESTS_IN_PROGRESS) {
+        const { fn, args } = this.requestsToLaunch.shift();
+        fn.apply(this, args);
+        // this.requestCountActive might be updated.
+      }
+    }, 200);
+  };
+
+  this.stopLauncherInterval = () => {
+    if (this.launcherInterval) {
+      window.clearInterval(this.launcherInterval);
+      this.launcherInterval = null;
+    }
+  };
+
+  this.resetRequestQueue = () => {
+    this.requestsToLaunch = [];
+    // Should not manually set this.requestCountActive to 0.
+    // this.requestCountActive > 0 only if there is still ajax call in progress,
+    // and the counter should always decrease in the done callback,
+    // regardless whether that ajax request succeeded or failed.
+  };
 
   this.id = (function () {
     let _id = storage.loadId();
@@ -142,40 +200,65 @@ const FilePicker = function () {
       }
       // Grab the current location
       const current = manager.active().filesystem().current();
-      const saves = [];
-      const errors = [];
+
+      const saves = new Array(fileManager.files().length).fill(null);
 
       // If you can save here
       if (current.can_upload_files) {
         const accountId = manager.active().filesystem().id;
         const authKey = manager.active().filesystem().key;
+
+        const isCancelled = this.getCancelTimeComparator();
         let requestCountSuccess = 0;
         let requestCountError = 0;
 
+        this.stopLauncherInterval();
+        this.resetRequestQueue();
+        this.startLauncherInterval();
+
         // Save Complete Callback
-        const saveComplete = (success, errorData) => {
+        const saveComplete = (success, file_index) => {
+          this.removeActiveRequest();
+          if (isCancelled()) {
+            logger.info('A cancellation occurred prior to the operation ' +
+              'being completed. Ignoring response.');
+            // Stop counting success and error requests and do not fire sending
+            // messages.
+            return;
+          }
+
           if (success) {
             requestCountSuccess += 1;
           } else {
             requestCountError += 1;
-            logger.warn('Error with ajax requests for save', errorData);
+            logger.warn('Error with ajax requests for save file: ',
+              fileManager.files()[file_index]);
             iziToastHelper.error(
               localization.formatAndWrapMessage('global/error'),
-              { detail: JSON.stringify(errorData.error) },
+              { detail: JSON.stringify(saves[file_index].error) },
             );
           }
 
           // All requests are done
           if (requestCountSuccess + requestCountError
-                === fileManager.files().length) {
+            === fileManager.files().length) {
+            this.stopLauncherInterval();
             if (requestCountSuccess) {
-              view_model.files.refresh();
-              view_model.postMessage('success', saves);
-              logger.debug('Successfully uploaded files: ', saves);
+              this.view_model.files.refresh();
+              this.view_model.postMessage(
+                'success', saves.filter(s => !s.error),
+              );
+              logger.debug('Successfully uploaded files: ',
+                saves.filter(s => !s.error));
             }
             if (requestCountError) {
-              view_model.postMessage('error', errors);
+              this.view_model.postMessage(
+                'error', saves.filter(s => s.error),
+              );
             }
+
+            this.view_model.processingConfirm(false);
+
             if (requestCountSuccess && !requestCountError) {
               this.initClose();
             }
@@ -185,6 +268,7 @@ const FilePicker = function () {
         let choseOverwrite = false;
         let overwrite = false;
         const inputText = $('.ftable__saver-input').val();
+
         for (let i = 0; i < fileManager.files().length; i += 1) {
           const newFileName = inputText || fileManager.files()[i].name;
           for (let k = 0; k < (current.children().length); k += 1) {
@@ -202,14 +286,16 @@ const FilePicker = function () {
           }
         }
 
-        for (let i = 0; i < fileManager.files().length; i += 1) {
-          const f = fileManager.files()[i];
+        const saveFileWithIndex = (file_index) => {
+          const f = fileManager.files()[file_index];
           const file_data = {
             url: f.url,
             parent_id: current.id,
             name: inputText || f.name,
           };
           logger.debug('file_data.name: ', file_data.name);
+
+          this.addActiveRequest();
 
           (function (event_data) {
             view_model.postMessage('startFileUpload', event_data);
@@ -221,18 +307,27 @@ const FilePicker = function () {
               contentType: 'application/json',
               headers: { Authorization: `${authKey.scheme} ${authKey.key}` },
               data: JSON.stringify(file_data),
+            }).retry({
+              ...AJAX_RETRY_OPTIONS,
+              checkIsAborted: isCancelled,
             }).done((data) => {
-              saves.push(data);
+              saves[file_index] = data;
               event_data.metadata = data;
               view_model.postMessage('finishFileUpload', event_data);
-              saveComplete(true);
+              saveComplete(true, file_index);
             }).fail((xhr, status, err) => {
               logger.error('Error uploading file: ', status, err, xhr);
-              event_data.error = xhr.responseJSON;
-              errors.push(event_data);
-              saveComplete(false, event_data);
+              saves[file_index] = {
+                ...event_data,
+                error: xhr.responseJSON,
+              };
+              saveComplete(false, file_index);
             });
           }({ name: file_data.name, url: file_data.url }));
+        };
+        this.view_model.processingConfirm(true);
+        for (let i = 0; i < fileManager.files().length; i += 1) {
+          this.requestsToLaunch.push({ fn: saveFileWithIndex, args: [i] });
         }
       } else {
         const msg = localization.formatAndWrapMessage(
@@ -264,6 +359,7 @@ const FilePicker = function () {
       const link = config.link();
       const types = config.types();
       const { table } = this.view_model.files;
+      const isCancelled = this.getCancelTimeComparator();
 
       if (table) {
         const selectedElements = table.finderSelect('selected');
@@ -286,24 +382,13 @@ const FilePicker = function () {
 
       const accountId = this.manager.active().filesystem().id;
       const authKey = this.manager.active().filesystem().key;
-      const { lastCancelTime } = this;
 
       let requestCountSuccess = 0;
       let requestCountError = 0;
-      let requestCountStarted = 0;
-      const maxRequestsInProgress = 4;
-      const requestsToLaunch = [];
 
-      const requestLauncherInterval = window.setInterval(() => {
-        const requestsComplete = requestCountSuccess + requestCountError;
-        let requestsInProgress = requestCountStarted - requestsComplete;
-        while (requestsToLaunch.length > 0 &&
-          requestsInProgress < maxRequestsInProgress) {
-          const { fn, args } = requestsToLaunch.shift();
-          fn.apply(this, args);
-          requestsInProgress = requestCountStarted - requestsComplete;
-        }
-      }, 200);
+      this.stopLauncherInterval();
+      this.resetRequestQueue();
+      this.startLauncherInterval();
 
       /**
        * Check if all the requests are done. If yes, then fire success/error
@@ -312,6 +397,15 @@ const FilePicker = function () {
        * @param {number} i - The index of the file/folder in `selections` list.
        */
       const selectionComplete = (success, i) => {
+        this.removeActiveRequest();
+        if (isCancelled()) {
+          logger.info('A cancellation occurred prior to the operation ' +
+            'being completed. Ignoring response.');
+          // Stop counting success and error requests and do not fire sending
+          // messages.
+          return;
+        }
+
         if (success) {
           requestCountSuccess += 1;
         } else {
@@ -325,17 +419,9 @@ const FilePicker = function () {
           );
         }
 
-        if (this.lastCancelTime > lastCancelTime) {
-          logger.info('A cancellation occurred prior to the operation ' +
-            'being completed. Ignoring response.');
-          this.view_model.processingConfirm(false);
-          window.clearInterval(requestLauncherInterval);
-          return;
-        }
-
         // All requests are done
         if (requestCountSuccess + requestCountError === selections.length) {
-          window.clearInterval(requestLauncherInterval);
+          this.stopLauncherInterval();
           if (requestCountSuccess) {
             this.view_model.postMessage(
               'success', selections.filter(s => !s.error),
@@ -358,6 +444,8 @@ const FilePicker = function () {
         const linkData = $.extend({}, config.link_options());
         linkData.file_id = selections[selection_index].id;
 
+        this.addActiveRequest();
+
         $.ajax({
           url: config.getAccountUrl(accountId, 'storage', '/links/'),
           type: 'POST',
@@ -366,6 +454,9 @@ const FilePicker = function () {
           },
           contentType: 'application/json',
           data: JSON.stringify(linkData),
+        }).retry({
+          ...AJAX_RETRY_OPTIONS,
+          checkIsAborted: isCancelled,
         }).done((data) => {
           selections[selection_index].link = data.url;
           selectionComplete(true, selection_index);
@@ -374,7 +465,6 @@ const FilePicker = function () {
           selections[selection_index].error = xhr.responseJSON;
           selectionComplete(false, selection_index);
         });
-        requestCountStarted += 1;
       };
 
       const pollTask = (task_id, callbacks) => {
@@ -446,12 +536,17 @@ const FilePicker = function () {
           headers['X-Kloudless-Async'] = true;
         }
 
+        this.addActiveRequest();
+
         $.ajax({
           url,
           type: 'POST',
           contentType: 'application/json',
           headers,
           data: JSON.stringify(data),
+        }).retry({
+          ...AJAX_RETRY_OPTIONS,
+          checkIsAborted: isCancelled,
         }).done((res) => {
           if (copyMode === 'sync') {
             // polling for the result (file metadata)
@@ -482,7 +577,6 @@ const FilePicker = function () {
           selections[selection_index].error = xhr.responseJSON;
           selectionComplete(false, selection_index);
         });
-        requestCountStarted += 1;
       };
 
       // Should select at least one item
@@ -545,17 +639,17 @@ const FilePicker = function () {
         const { type } = selection;
         if (type === 'file' && copyToUploadLocation) {
           // Case 1
-          requestsToLaunch.push({ fn: moveToDrop, args: [type, i] });
+          this.requestsToLaunch.push({ fn: moveToDrop, args: [type, i] });
         } else if (type === 'file' && link) {
           // Case 2
-          requestsToLaunch.push({ fn: createLink, args: [i] });
+          this.requestsToLaunch.push({ fn: createLink, args: [i] });
         } else if (type === 'folder' && copyFolder) {
           // Case 3
-          requestsToLaunch.push({ fn: moveToDrop, args: [type, i] });
+          this.requestsToLaunch.push({ fn: moveToDrop, args: [type, i] });
         } else {
           // Case 4
           // No need to make a request, just pretend the request succeed
-          requestCountStarted += 1;
+          this.addActiveRequest();
           selectionComplete(true, i);
         }
       });
@@ -565,6 +659,8 @@ const FilePicker = function () {
     cancel: () => {
       logger.debug('Quitting!');
       this.lastCancelTime = new Date();
+      // Prevent launcher to run comming tasks
+      this.resetRequestQueue();
       if (this.manager.active().account) {
         // Remove mkdir form
         this.view_model.files.rmdir();
@@ -1257,6 +1353,8 @@ FilePicker.prototype.cleanUp = function () {
   // File Picker will close. Clean up.
   const self = this;
   self.view_model.processingConfirm(false);
+  self.stopLauncherInterval();
+  self.resetRequestQueue();
 
   if ($('#search-query').is(':visible')) {
     $('#search-back-button').click();
