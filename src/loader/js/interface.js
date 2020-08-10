@@ -360,6 +360,7 @@ filePicker._fileWidget.prototype._fire = function (event, data) {
 
 filePicker.picker = function (options) {
   if (options.custom_css) {
+    // eslint-disable-next-line no-console
     console.warn(
       'custom_css option is deprecated.',
       'Please use custom_style_vars instead.',
@@ -476,6 +477,7 @@ filePicker._picker.prototype.save = function (files) {
 
   // Need to have at least 1 file to save
   if (files.length < 1) {
+    // eslint-disable-next-line no-console
     console.log('ERROR: No files to save');
     return;
   }

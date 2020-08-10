@@ -75,7 +75,7 @@ function Account(data, account_callback, filesystem_callback) {
       new Filesystem(
         self.account,
         self.key,
-        filesystem_callback
+        filesystem_callback,
       ),
     );
 

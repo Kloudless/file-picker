@@ -747,6 +747,7 @@ const FilePicker = function () {
           data = data.map((file) => {
             // remove properties that are only for internal use
             delete file.friendlySize;
+            delete file.newLoaded;
             return file;
           });
         }

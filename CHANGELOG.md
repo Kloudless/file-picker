@@ -97,6 +97,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fire an error event if an upload via the Saver fails.
 
+### Changed 
+- The sorting rule will be kept and applied after new items are loaded. 
+
 ## [2.3.3] - 2020-07-17
 
 ### Fixed
