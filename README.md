@@ -103,7 +103,7 @@ a full list of configuration options.
 ```html
 <script type="text/javascript">
   var picker = window.Kloudless.filePicker.picker({
-    // File Picker Initialization options here.
+    // File Picker initialization options here.
     app_id: "Your App ID", // Get your own at https://kloudless.com
   });
 </script>
@@ -252,8 +252,8 @@ File Picker JavaScript on the page.
 
   Saver: "none", "local", "session" (default: "local")
 
-  This option specifies account persistence for the file picker in either
-  localStorage, sessionStorage, or no storage. The file picker will always fall
+  This option specifies account persistence for the File Picker in either
+  localStorage, sessionStorage, or no storage. The File Picker will always fall
   back to localStorage if an invalid option is given.
 
 * `services` : array
@@ -526,7 +526,7 @@ File Picker JavaScript on the page.
   [method](#methods) with the updated configuration that includes the root
   folder ID for the newly connected account within it:
 
-  ```
+  ```javascript
   let root_folder_id = {}; // Any existing root folder IDs
   picker.on('addAccount', account => {
     // Set `retrieve_token: true` in the config to retrieve the Bearer token
@@ -584,17 +584,19 @@ File Picker JavaScript on the page.
 
   Chooser: _Optional (default: false)_
 
-  This option adds an additional parameter to the Chooser's response with a
-  link to the file chosen in the file picker.
+  If `true`, generates a link to the selected file(s). The link will be provided
+  in the `link` key of the response sent to the `success` event. For asynchronous
+  requests, the result of the [Kloudless Task](https://developers.kloudless.com/docs/latest/core#asynchronous-requests-and-the-task-api)
+  will contain the link instead.
 
-  Use with the `copy_to_upload_location` to generate a link to the newly
-  copied file that is returned in the callback.
+  Use with the `copy_to_upload_location` option to generate a link to the newly
+  copied file.
 
-  The Kloudless File Picker will fire the `error` event when the link
-  generation is not fully successful.
+  The Kloudless File Picker will fire the `error` event if the link
+  generation fails.
 
   ```javascript
-  // Example response of selecting a file
+  // Success event result when `link` is true:
   [{
     "link": "https://<the file link>",
     ...
@@ -612,7 +614,7 @@ File Picker JavaScript on the page.
   Note that links to selected files are only created if the `link`
   configuration option is set to `true`. In addition, files with the
   `downloadable` attribute set to `false` cannot be downloaded so
-  won't be possible to select if `link_options.direct` is `true`.
+  they cannot be selected if `link_options.direct` is `true`.
 
   For example:
 
@@ -647,6 +649,54 @@ File Picker JavaScript on the page.
     in the `success` event callback that can be checked using the
     [Kloudless Task API](https://developers.kloudless.com/docs/latest/core#asynchronous-requests-and-the-task-api)
     for the copied file or folder's metadata.
+
+    The Kloudless Task API returns a Task object that includes progress
+    information until the task finishes.  
+    When the task finishes, the API endpoint returns
+    [File](https://developers.kloudless.com/docs/latest/storage#files)
+    or [Folder](https://developers.kloudless.com/docs/latest/storage#folders)
+    object instead.  
+    If the task fails, the endpoints returns an
+    [Error](https://developers.kloudless.com/docs/latest/core#error-handling-error-message-format).
+
+    Here is an example of polling for the result of a task using jQuery:
+    ```javascript
+      function pollingTask(taskId, accountToken, delay) {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            $.ajax({
+              url: `https://api.kloudless.com/v1/accounts/me/tasks/${taskId}`,
+              headers: { Authorization: `Bearer ${accountToken}` },
+            }).done(resolve).fail(reject);
+          }, 5000);  // Poll every 5 seconds
+        });
+      }
+
+      picker.on('success', async (results) => {
+        // Assume the user only selects one item.
+        const [
+          {
+            id: taskId,
+            // Should enable `retrieve_token` option to get bearer_token.
+            bearer_token: { key: accountToken },
+          },
+        ] = results;
+        try {
+          let response = await pollingTask(taskId, accountToken);
+          while (response.id === taskId) {
+            // Task has not finished yet, so keep polling.
+            response = await pollingTask(taskId, accountToken);
+          }
+          // Task has finished.
+          console.log(response);
+        } catch (jqXHR) {
+          if (jqXHR.responseJSON) {
+            // Kloudless API Server returned an error.
+            console.error(response.responseJSON);
+          }
+        }
+      });
+    ```
   * `'sync'`: Triggers a synchronous API request to copy the file or folder and
     polls till the copying is complete. The `success` event callback receives
     the newly uploaded file or folder's metadata.
@@ -656,7 +706,7 @@ File Picker JavaScript on the page.
   completed. Please migrate to using `'sync'` instead for similar behavior with
   a guarantee that the copy is successful.
 
-  The Kloudless File Picker will fire the `error` event when the copy
+  The Kloudless File Picker will fire the `error` event if the copy
   operation is not completely successful.
 
 * `upload_location_account` : string
@@ -697,16 +747,16 @@ File Picker JavaScript on the page.
 
   Chooser: _Default: ['all']_
 
-  This option specifies which types of elements the file picker will show to the
+  This option specifies which types of elements the File Picker will show to the
   user. You can filter based on file extension or by the following categories:
 
-  * `all` This configures the file picker to show all file types and folders.
+  * `all` This configures the File Picker to show all file types and folders.
   The user can select either files or folders. Do not combine with other options.
 
-  * `folders` This configures the file picker to gray out files and show folders.
+  * `folders` This configures the File Picker to gray out files and show folders.
   The user can only select folders.
 
-  * `files` This configures the file picker to show all file types. The user can
+  * `files` This configures the File Picker to show all file types. The user can
   only select files.
 
   * `text`
@@ -759,27 +809,51 @@ without a file extension to be selected.
 
 ### Events
 
-* `success(files)`
+* `success(results)`
 
-  The success event handler will fire when the user's operation succeeds.
-  `files` is an array of file/folder metadata. The File Picker will be
-  closed on success.
+  Fired when the user's selections in the Chooser are processed successfully, or
+  files are uploaded successfully via the Chooser's Computer option or Saver.  
+  The `success` event is still fired even if only part of the items were
+  succesfully chosen or saved.
+
+  `results` is an array of [File](https://developers.kloudless.com/docs/latest/storage#files)
+  or [Folder](https://developers.kloudless.com/docs/latest/storage#folders)
+  objects that were successfully selected.
+
+  When `copy_to_upload_location` is set to `async`, `results` will instead be
+  an array of Task objects returned by the
+  [Kloudless Task API](https://developers.kloudless.com/docs/latest/core#asynchronous-requests-and-the-task-api).
+
+  The File Picker closes once this event has triggered.
 
 * `cancel()`
 
   Fired if the user decides to cancel an operation. The File Picker will
   be closed on cancellation.
 
-* `error(files)`
+* `error(results)`
 
-  Fired in the event of an unrecoverable error with any of the items selected.
-  The `success` event will not be fired even if the selection partially succeeds.
-  Unlike the result provided for the `success` event, `files` includes an extra
-  `error` key within the metadata of failed selections that contains the error
-  response from the Kloudless API. Here is an example of the `error` sub-object
-  that may be present:
+  Fired when any of the selections fail to process or any of the
+  files being uploaded fail to upload successfully.  
+  The `error` event is still fired even if only part of the items failed to
+  be chosen or saved.
 
-  ```javascript
+  `results` is an array of failed objects. The object structure varies based
+  on usage. For the selections in the Chooser, the object is a
+  [File](https://developers.kloudless.com/docs/latest/storage#files)
+  or [Folder](https://developers.kloudless.com/docs/latest/storage#folders)
+  object.
+
+  For uploads via the Chooser's Computer option or Saver, the object is the
+  same as that for the `startFileUpload` event mentioned below.
+
+  An additional key, `error`, is added to the object metadata and includes
+  the error returned from the
+  [Kloudless API](https://developers.kloudless.com/docs/latest/core#error-handling-error-message-format)
+  describing why the operation failed.
+
+  Here is an example of the `error` object:
+  ```json
   {
     "status_code": 404,
     "message": "File not found: 1D-QuGwx7acbeGQ3STSCphysJsQs8YHJR",
@@ -788,8 +862,6 @@ without a file extension to be selected.
   }
   ```
 
-  This information helps your application identify selections that failed to be
-  copied over to upload locations, or have links generated.
 
 * `open()`
 
@@ -802,30 +874,39 @@ without a file extension to be selected.
   the File Picker is closed. This could be due to either a user action,
   such as choosing files or cancelling, or due to the `close()` method
   being called (not to be confused with this `close` event handler).
-  The `success()` or `cancel()` events will also trigger if appropriate.
+  The `success` or `cancel` events will also be fired if appropriate.
 
 * `selected(files)`
 
-  The selected event handler is fired when the user selects files from the
-  file picker, but before sending the list to the Kloudless API for additional
-  processing. It fires before the `success` handler, and can allow you to
-  perform an action while waiting to get the final list.
+  Fired when the user selects files from the
+  File Picker, but before the list is sent to the Kloudless API for additional
+  processing. This means this event fires before the `success` event,
+  and allows you to perform any action while waiting to get the final list.
 
-  If `copy_to_upload_location` and `link` are both false, then this event is
+  If `copy_to_upload_location` and `link` are both disabled, then this event is
   equivalent to the `success` event (since nothing needs to happen on the
-  server after the selections are made), so this event probably isn't useful
-  for you.
+  server after the selections are made), so this event serves no purpose then.
 
-  `files` is an array of files, formatted the same way as the array passed to
-  `success`.
+  `files` is an array of
+  [File](https://developers.kloudless.com/docs/latest/storage#files) objects.
 
   This event is not fired when the user uses the Chooser's Computer option or
-  the Saver. See `startFileUpload` and `finishFileUpload` for those.
+  the Saver. See `startFileUpload` and `finishFileUpload` for events fired
+  in those cases.
 
 * `addAccount(account)`
 
-  Fired when a user successfully adds an account.
-  `account` is an object containing the account id, name, and service.
+  Fired when a user successfully connects an account.
+  `account` is an object containing the account ID, name, and service ID.
+
+  Here is an example:
+  ```json
+  {
+    "id": 123456,
+    "name": "user@domain.com",
+    "service": "gdrive"
+  }
+  ```
 
 * `deleteAccount(accountId)`
 
@@ -836,19 +917,45 @@ without a file extension to be selected.
   Fired when a file upload starts, or is requested to be retried by a user
   after encountering errors (see the `uploads_pause_on_error` option).
   This event is only fired when the user uploads a file via the Chooser's
-  Computer option or the Saver. For the Chooser, `file` is an object containing
-  keys `id`, `name`, `size` and `mime_type`. For the Saver, it contains `url`
-  and `name`.
-  This event is fired per file and not per chunk.
+  Computer option or the Saver. 
+
+  For the Chooser's Computer option, the `file` object has the following
+  attributes:
+  * `id` A randomly generated ID.
+  * `name` The uploaded file's name.
+  * `size` The uploaded file's size.
+  * `mime_type` The uploaded file's MIME type.
+
+  Here is an example:
+  ```json
+  {
+    "id": "o_1efeta5ej5ac1v4t139e39l1ldka",
+    "mime_type": "image/jpeg",
+    "name": "15224125762.jpeg",
+    "size": 9834
+  }
+  ```
+
+  For the Saver, the `file` object has the following attributes instead:
+  * `url` The file URL specified in the Saver's launch options.
+  * `name` The file name specified in the Saver's launch options.
+
+  Here is an example:
+  ```json
+  {
+    "url": "https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/static/kloudless-logo-white.png",
+    "name": "kloudless-logo.png"
+  }
+  ```
+
+  This event is fired once per file and not per uploaded chunk.
 
 * `finishFileUpload(file)`
 
   Fired when a file upload completes successfully (once per file being
-  uploaded). `file` contains the same information as in `startFileUpload`
-  above, with an additional field `metadata` that contains the full metadata
-  of the file provided by the Kloudless API in response to the upload. The
-  `metadata` is the same as the file metadata provided via the `success`
-  event for each file.
+  uploaded). The `file` object contains the same information as provided to
+  the `startFileUpload` event above, with an additional key `metadata`
+  whose value is the resulting [File](https://developers.kloudless.com/docs/latest/storage#files).
 
   This event is only fired when the user uploads a file via the
   Chooser's Computer option or the Saver.
@@ -906,13 +1013,13 @@ without a file extension to be selected.
 
 * `picker.close()`
 
-  This method closes the file picker window.
+  This method closes the File Picker window.
 
 
 * `picker.update(options)`
 
-  Updates the configuration options the file picker was initialized with. The
-  file picker will immediately begin using the new configuration.
+  Updates the configuration options the File Picker was initialized with. The
+  File Picker will immediately begin using the new configuration.
   `options` is an Object with the new configuration. Not all options can be
   updated in this manner. The following are not supported:
 
@@ -939,7 +1046,7 @@ without a file extension to be selected.
 ### Script tag example
 
 To start using the File Picker, simply include the JavaScript file in your
-HTML file. You can then create an element on the page to launch the file picker.
+HTML file. You can then create an element on the page to launch the File Picker.
 
 ```html
 <body>
@@ -965,8 +1072,8 @@ var picker = window.Kloudless.filePicker.picker({
 });
 ```
 
-The final step is to launch the file picker and handle the events returned from
-the file picker based on a user's actions.
+The final step is to launch the File Picker and handle the events returned from
+the File Picker based on a user's actions.
 
 **[Visit our demo of the File Picker!](https://output.jsbin.com/tuwodin/27)**
 
@@ -977,16 +1084,16 @@ picker.on('success', function(files) {
   console.log('Successfully selected files: ', files);
 });
 
-// When a user cancels the file picker
+// When a user cancels the File Picker
 picker.on('cancel', function() {
   console.log('File selection cancelled.');
 });
 
-// Launching the file picker to choose when a user clicks the 'Open File Picker'
+// Launching the File Picker to choose when a user clicks the 'Open File Picker'
 // button.
 picker.choosify(document.getElementById('file-picker-button'));
 
-// In addition, you can launch the file picker programmatically with choose()
+// In addition, you can launch the File Picker programmatically with choose()
 picker.choose();
 
 // Launching the Picker to save when a user clicks the 'Open File Picker' button
@@ -1002,7 +1109,7 @@ var files = [{
 
 picker.savify(document.getElementById('file-picker-button'), files);
 
-// In addition, you can launch the file picker programmatically with save()
+// In addition, you can launch the File Picker programmatically with save()
 var files = [{
   url: 'http://<your image url>',
   name: 'filename.extension'
@@ -1299,7 +1406,7 @@ to customize the build, or sometimes at run-time as well.
 Build-time Env Var | Run-time option | Description | Default
 ---|---|---|---
 `BASE_URL` | N.A. | URL to the Kloudless API Server | https://api.kloudless.com
-`PICKER_URL` | `pickerUrl` | The URL that the loader loads the file picker iframe from. | https://static-cdn.kloudless.com/p/platform/file-picker/v2/index.html
+`PICKER_URL` | `pickerUrl` | The URL that the loader loads the File Picker iframe from. | https://static-cdn.kloudless.com/p/platform/file-picker/v2/index.html
 
 Check out the [Self-hosting](#self-hosting) section below for an example
 that changes the `PICKER_URL` in order to self-host a customized fork
@@ -1385,7 +1492,7 @@ source code or styles, follow the steps below:
 3. Add your web app's domain to your Kloudless App's list of
    `Trusted Domains` on the
    [App Details Page](https://developers.kloudless.com/applications/*/details#trusted-domains).
-   This allows the hosted file picker to receive access tokens to the Kloudless
+   This allows the hosted File Picker to receive access tokens to the Kloudless
    API.
   
 4. Include `dist/loader/loader.min.js` in your pages that will launch
@@ -1402,7 +1509,7 @@ for the File Picker as well as the compiled HTML snippets.
 
 Feel free to add additional styles, scripts, or HTML elements you need.
 You can then run `npm run build:template` to build your customized
-file picker template. The built page will be available at
+File Picker template. The built page will be available at
 `dist/custom-index.html`. Replace
 `dist/picker/index.html` with this file, and follow the steps in the
 [section above](#hosting-the-file-picker-page) to host this page instead.
