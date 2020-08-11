@@ -142,6 +142,7 @@ const FilePicker = function () {
       // Grab the current location
       const current = manager.active().filesystem().current();
       const saves = [];
+      const errors = [];
 
       // If you can save here
       if (current.can_upload_files) {
@@ -161,9 +162,15 @@ const FilePicker = function () {
 
           // All requests are done
           if (requestCountSuccess + requestCountError
-            === fileManager.files().length) {
-            view_model.postMessage('success', saves);
-            logger.debug('Successfully uploaded files: ', saves);
+                === fileManager.files().length) {
+            if (requestCountSuccess) {
+              view_model.files.refresh();
+              view_model.postMessage('success', saves);
+              logger.debug('Successfully uploaded files: ', saves);
+            }
+            if (requestCountError) {
+              view_model.postMessage('error', errors);
+            }
           }
         };
 
@@ -212,7 +219,9 @@ const FilePicker = function () {
               view_model.postMessage('finishFileUpload', event_data);
               saveComplete(true);
             }).fail((xhr, status, err) => {
-              logger.warn('Error uploading file: ', status, err, xhr);
+              logger.error('Error uploading file: ', status, err, xhr);
+              event_data.error = xhr.responseJSON;
+              errors.push(event_data);
               saveComplete(false);
             });
           }({ name: file_data.name, url: file_data.url }));
