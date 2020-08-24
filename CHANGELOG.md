@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Refresh the current folder view after the Saver uploads a file to it.
+
+### Fixed
+
+- Fire an error event if an upload via the Saver fails.
+
 ## [2.3.3] - 2020-07-17
 
 ### Fixed

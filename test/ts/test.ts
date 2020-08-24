@@ -11,6 +11,7 @@ import filePicker, {
   ErrorEvent,
   SuccessEvent,
   SelectedEvent,
+  SaverError,
 } from '../../src/loader/js/interface';
 
 // test chooser
@@ -135,6 +136,20 @@ const error: ErrorEvent = [
     mime_type: 'image/png',
     downloadable: true,
     raw_id: 'dev-previews/prod/ZJoG_UAHQlCXJeBM/kloudless-logo.png',
+  },
+];
+
+// test error event
+const saverError: ErrorEvent = [
+  {
+    name: 'kloudless-logo.png',
+    url: 'https://a.b.c/static/kloudless-logo-white.png',
+    error: {
+      error_code: 'not_found',
+      id: '82aed4******',
+      message: 'Dropbox failed to download url',
+      status_code: 404,
+    },
   },
 ];
 

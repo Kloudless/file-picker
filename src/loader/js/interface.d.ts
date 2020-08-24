@@ -146,8 +146,9 @@ declare global {
     }
 
     type SuccessEvent = Array<FileMetadata | FolderMetadata | Task>;
-    type ErrorEvent = Array<FileMetadata | FolderMetadata | Task>;
+    type ErrorEvent = Array<FileMetadata | FolderMetadata | Task | SaverError>;
     type SelectedEvent = FileMetadata[] | FolderMetadata[];
+    type SaverStartFileUploadEvent = SaverFile;
     type StartFileUploadEvent = ChooserStartFileUploadEvent | SaverStartFileUploadEvent;
     type FinishFileUploadEvent = ChooserFinishFileUploadEvent | SaverFinishFileUploadEvent;
 
@@ -266,16 +267,20 @@ declare global {
       mime_type: string;
     }
 
-    interface SaverStartFileUploadEvent {
+    interface SaverFile {
       url: string;
       name: string;
+    }
+
+    interface SaverError extends SaverFile {
+      error: Error;
     }
 
     interface ChooserFinishFileUploadEvent extends ChooserStartFileUploadEvent {
       metadata: FileMetadata;
     }
 
-    interface SaverFinishFileUploadEvent extends SaverStartFileUploadEvent {
+    interface SaverFinishFileUploadEvent extends SaverFile {
       metadata: FileMetadata;
     }
 
@@ -328,5 +333,6 @@ export type UserMetadata = Kloudless.filePicker.UserMetadata;
 export type ParentMetadata = Kloudless.filePicker.ParentMetadata;
 export type IdsMetadata = Kloudless.filePicker.IdsMetadata;
 export type Error = Kloudless.filePicker.Error;
+export type SaverError = Kloudless.filePicker.SaverError;
 export type Account = Kloudless.filePicker.Account;
 export type Task = Kloudless.filePicker.Task;
