@@ -13,7 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Refresh the current folder view after the Saver uploads a file to it.
 - Add copy button to error dialog.
-- Pause the latest error dialog's timer.
 - Make the texts in error dialog selectable.
 
 ### Fixed
