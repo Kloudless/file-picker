@@ -814,7 +814,7 @@ without a file extension to be selected.
   Fired when the user's selections in the Chooser are processed successfully, or
   files are uploaded successfully via the Chooser's Computer option or Saver.  
   The `success` event is still fired even if only part of the items were
-  succesfully chosen or saved.
+  successfully chosen or saved.
 
   `results` is an array of [File](https://developers.kloudless.com/docs/latest/storage#files)
   or [Folder](https://developers.kloudless.com/docs/latest/storage#folders)
