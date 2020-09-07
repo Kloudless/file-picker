@@ -1157,7 +1157,7 @@ Upload Location must be configured as described for the Chooser.
 
 #### Example
 
-[Visit our JSBin example of the Dropzone!](https://output.jsbin.com/tariday/6)
+[Visit our JSBin example of the Dropzone!](https://output.jsbin.com/tariday)
 
 HTML
 
