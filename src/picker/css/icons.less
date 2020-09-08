@@ -6,6 +6,24 @@
   background-size: contain;
 }
 
+/**
+ * Icons that have different URL on hover.
+ */
+.icon__hoverable-base(@url, @hovered_url) {
+  cursor: pointer;
+  .icon__base(@url);
+
+  &:hover {
+    .icon__base(@hovered_url);
+  }
+
+  // Won't show on the UI but makes browsers to load the image first.
+  &::after {
+    background: url(@hovered_url);
+    content: '';
+  }
+}
+
 .icon {
   display: flex;
   align-items: center;
@@ -43,12 +61,7 @@
 }
 
 .icon__back {
-  .icon__base(@icon_back);
-
-  &:hover {
-    cursor: pointer;
-    .icon__base(@icon_back_hovered);
-  }
+  .icon__hoverable-base(@icon_back, @icon_back_hovered);
 }
 
 .icon__next {
@@ -56,21 +69,11 @@
 }
 
 .icon__logout {
-  .icon__base(@icon_logout);
-
-  &:hover {
-    cursor: pointer;
-    .icon__base(@icon_logout_hovered);
-  }
+  .icon__hoverable-base(@icon_logout, @icon_logout_hovered);
 }
 
 .icon__close {
-  .icon__base(@icon_close);
-
-  &:hover {
-    cursor: pointer;
-    .icon__base(@icon_close_hovered);
-  }
+  .icon__hoverable-base(@icon_close, @icon_close_hovered);
 }
 
 .icon__new-folder {
@@ -82,12 +85,7 @@
 }
 
 .icon__search {
-  .icon__base(@icon_search);
-
-  &:hover {
-    cursor: pointer;
-    .icon__base(@icon_search_hovered);
-  }
+  .icon__hoverable-base(@icon_search, @icon_search_hovered);
 }
 
 .icon__brand {
