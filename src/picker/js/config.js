@@ -10,6 +10,54 @@ import localization from './localization';
 import util from './util';
 import { TYPE_ALIAS, MIME_TYPE_ALIAS, FLAVOR } from './constants';
 
+const LINK_TAG_ID = 'custom-style-vars';
+
+const loadLessScript = () => {
+  // Create script tag:
+  // <script type="text/javascript" src="util.getBaseUrl() + less.js" />.
+  const script = document.createElement('script');
+  return new Promise((resolve, reject) => {
+    script.onload = resolve;
+    script.onreadystatechange = resolve; // for IE
+    script.onerror = reject;
+    script.setAttribute('type', 'text/javascript');
+    script.setAttribute('src', `${util.getBaseUrl()}/less.js`);
+    document.body.append(script);
+  }).catch((err) => {
+    logger.error('Loading less script fails.');
+    logger.error(err);
+    script.remove();
+    throw new Error('Loading less script fails.');
+  });
+};
+
+const loadLessStyleAndCompile = async (customStyleVars) => {
+  // Create <link> tag if not exists:
+  // <link id="LINK_TAG_ID" rel="stylesheet/less" type="text/css"
+  //       href=" util.getBaseUrl() + /less/index.less" />
+  let linkElement = document.getElementById(LINK_TAG_ID);
+  if (!linkElement) {
+    linkElement = document.createElement('link');
+    linkElement.id = LINK_TAG_ID;
+    linkElement.href = `${util.getBaseUrl()}/less/index.less`;
+    linkElement.type = 'text/css';
+    linkElement.rel = 'stylesheet/less';
+    document.head.append(linkElement);
+  }
+  try {
+    // Load <link> tag. The method is not on LESS official document.
+    // Check it at node_modules/less/dist/less.js L14165.
+    window.less.registerStylesheetsImmediately();
+    await window.less.modifyVars(customStyleVars);
+  } catch (err) {
+    logger.error('Less build fails:', customStyleVars);
+    logger.error(err);
+    if (linkElement) {
+      linkElement.remove();
+    }
+    throw Error('Less build fails.');
+  }
+};
 
 function get_query_variable(name) {
   // eslint-disable-next-line no-param-reassign, no-useless-escape
@@ -120,40 +168,19 @@ function subscribeChange(observableObj, cb) {
   });
 }
 
-let customStyleTask = null;
+let customStyleTask = Promise.resolve();
 subscribeChange(config.custom_style_vars, (newCustomStyleVars) => {
-  if (customStyleTask === null) {
-    // only need to load less.js once
-    customStyleTask = new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.onload = resolve;
-      script.onreadystatechange = resolve; // for IE
-      script.onerror = reject;
-      script.setAttribute('type', 'text/javascript');
-      script.setAttribute('src', `${util.getBaseUrl()}/less.js`);
-      document.head.append(script);
-    }).catch(() => {
-      logger.error('Failed to load less.js');
-    });
-  }
-
-  customStyleTask = customStyleTask.then(() => {
-    if (!window.less) {
-      return Promise.reject(new Error('window.less is not defined.'));
+  // Chain the current task behind the previous task to ensure they are
+  // processed in order.
+  customStyleTask = customStyleTask.then(async () => {
+    try {
+      if (!window.less) {
+        await loadLessScript();
+      }
+      await loadLessStyleAndCompile(newCustomStyleVars);
+    } catch (err) {
+      logger.error(err);
     }
-    // create style tag
-    const id = `custom-style-vars-${Math.floor(Math.random() * (10 ** 12))}`;
-    const styleElement = document.createElement('style');
-    styleElement.setAttribute('id', id);
-    styleElement.setAttribute('type', 'text/less');
-    styleElement.textContent =
-      `@import '${util.getBaseUrl()}/less/index.less';`;
-    document.head.append(styleElement);
-    return window.less.modifyVars(newCustomStyleVars);
-  }).catch((err) => {
-    logger.error(`Failed to update custom_style_vars: ${
-      JSON.stringify(newCustomStyleVars)}.`);
-    logger.error(err);
   });
 });
 
