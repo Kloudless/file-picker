@@ -1269,6 +1269,7 @@ ko.bindingHandlers.finderSelect = {
       enableShiftClick: config.multiselect(),
       enableCtrlClick: config.multiselect(),
       enableSelectAll: config.multiselect(),
+      enableTouchCtrlDefault: config.multiselect(),
     });
 
     viewModel.files.table = selector;
@@ -1278,35 +1279,40 @@ ko.bindingHandlers.finderSelect = {
       return target.is('tr') || target.closest('tr');
     };
 
-    const navigate = (event) => {
+    /**
+     * Desktop:
+     * Double click on a folder should navigate into it.
+     * Double click on a file should select it and close File Picker.
+     */
+    selector.dblclick((event) => {
+      if (util.isMobile) {
+        return;
+      }
       const tr = findClosestTr(event);
       const type = tr.attr('data-type');
-      const id = tr.attr('data-id');
-      if (type === 'folder' && id) {
+      const selectable = tr.attr('data-selectable');
+      if (type === 'folder') {
+        const id = tr.attr('data-id');
         viewModel.files.navigate(id);
-        return true;
-      }
-      return false;
-    };
-
-    const confirmSelectOrNavigate = (event) => {
-      if (!navigate(event)) {
-        // Automatically fire confirm() when double-clicking on a file
+      } else if (type === 'file' && selectable) {
         viewModel.confirm();
       }
-    };
+    });
 
-    selector.dblclick(confirmSelectOrNavigate);
     selector.click((event) => {
-      if (util.isMobile) {
-        navigate(event);
-      } else {
-        const tr = findClosestTr(event);
-        if (tr.attr('data-type') === 'folder' && !tr.attr('data-selectable')) {
-          selector.finderSelect('unHighlightAll');
-          tr.addClass('ftable__row--focus');
-          viewModel.files.chooserButtonTextKey('global/open');
-        }
+      const tr = findClosestTr(event);
+      const type = tr.attr('data-type');
+      const selectable = tr.attr('data-selectable');
+      if (util.isMobile && type === 'folder') {
+        const id = tr.attr('data-id');
+        viewModel.files.navigate(id);
+      } else if (type === 'folder' && !selectable) {
+        // Desktop:
+        // User clicks on a un-selectable folder and wants to navigate into it.
+        // Highlight it and un-highlight others.
+        selector.finderSelect('unHighlightAll');
+        tr.addClass('ftable__row--focus');
+        viewModel.files.chooserButtonTextKey('global/open');
       }
     });
 

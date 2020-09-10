@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `delete_accounts_on_logout` isn't respected when removing only one account.
 - Dropzone is not clickable or not able to process dropped files on some
   browsers.
+- File Picker closes unexpectedly when double clicking on table header or new
+  folder row.
 
 ## [2.5.1] - 2020-09-16
 
