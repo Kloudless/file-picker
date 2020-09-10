@@ -17,18 +17,19 @@
   <button id="file-chooser">Launch the File Chooser</button>
   <button id="file-chooser-renew">Reload the File Chooser configuration</button>
   <button id="folder-chooser">Launch a Chooser that only selects Folders</button>
-  <button id="dropzone-create-button">Create a Dropzone</button>
   <button id="saver">Launch the File Saver</button>
   <button id="close">Close all File Pickers</button>
   <button id="update-picker-url">Update the File Picker URL to load from production</button>
   <br>
   <br>
   <p>Drop Zone</p>
-  <div
-    id="dropzone"
-    style="border-style:dashed; border-width:1px; width:600px;height:100px">
-  </div>
-  <button id="dropzone-renew">Reload the Drop Zone configuration</button>
+  <p>
+    <button id="dropzone-create-button">Create a Dropzone</button>
+    <button id="dropzone-renew">Reload the Drop Zone configuration</button>
+  </p>
+  <div id="dropzone"></div>
+  <p></p>
+  <div class="picker-container"></div>
   <div id="logger"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"

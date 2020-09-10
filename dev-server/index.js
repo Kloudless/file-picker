@@ -55,6 +55,8 @@ import 'regenerator-runtime/runtime';
       computer: true,
       services: ['file_store'],
       types: ['folders'],
+      // enable this option to test attach mode
+      element: '.picker-container',
     },
   };
 
@@ -80,7 +82,7 @@ import 'regenerator-runtime/runtime';
     type: 'dropzone',
     objId: 'dropzone',
     pickerOptions: {
-      elementId: 'dropzone',
+      element: '#dropzone',
       // Must be true if you want to upload more than 1 file at a time.
       multiselect: true,
     },

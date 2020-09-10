@@ -57,7 +57,7 @@ picker.on('success', (files: FileMetadata[]) => {
 // Test dropzone
 const dropzone: Dropzone = filePicker.dropzone({
   app_id: 'APP_ID',
-  elementId: 'ELEMENT_ID',
+  element: '#ELEMENT_ID',
   copy_to_upload_location: 'async',
 });
 
