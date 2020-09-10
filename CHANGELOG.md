@@ -7,9 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- Minor bugfixes to the CSS styling.
+
 ### Changed
 
 - Preload icon URLs.
+- `custom_style_vars`: The `input_border_color` and `input_color` LESS
+  variables are now applied to input elements.
+
+### Add
+
+- `custom_style_vars`: Added a new LESS styling variable,
+  `loading_overlay_color`, that controls the shade of the overlay present when
+  loading responses to API requests.
 
 ## [2.4.2] - 2020-09-07
 

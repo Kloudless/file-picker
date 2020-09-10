@@ -468,19 +468,19 @@ File Picker JavaScript on the page.
 
   This project uses LESS as a CSS pre-processor. Since LESS can be run in the
   browser, we support overriding CSS global variables dynamically to customize
-  styling. For example, change the primary color by setting `@primary`:
+  styling. For example, change the primary color by setting `main_color`:
 
-  ```javascript
+  ```js
   {
     custom_style_vars: {
-      '@primary': 'black'
+      main_color: "black"
     }
   }
   ```
 
   Please refer to [variables.less](./src/picker/css/variables.less) for the
   full list of available variables. Most are related to aspects such as colors,
-  fonts, or dimensions.
+  fonts, or dimensions. Specifying the `@` prefix for each variable is optional.
 
   For further customization, we recommend forking this project and hosting
   the resources on your own, since we don't guarantee backward-compatibility 
