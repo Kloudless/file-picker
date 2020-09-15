@@ -7,21 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### Fixed
+### Added
 
-- Minor bugfixes to the CSS styling.
+- `custom_style_vars`: Added a new LESS styling variable,
+  `loading_overlay_color`, that controls the shade of the overlay present when
+  loading responses to API requests.
+- The new option, `element`, enables appending the File Picker to a DOM element
+  on the page rather than displaying it as a modal.
 
 ### Changed
 
 - Preload icon URLs.
 - `custom_style_vars`: The `input_border_color` and `input_color` LESS
   variables are now applied to input elements.
+- `elementId` in Dropzone options is deprecated. Please use `element` instead.
 
-### Add
+### Fixed
 
-- `custom_style_vars`: Added a new LESS styling variable,
-  `loading_overlay_color`, that controls the shade of the overlay present when
-  loading responses to API requests.
+- Minor bugfixes to the CSS styling.
 
 ## [2.4.2] - 2020-09-07
 

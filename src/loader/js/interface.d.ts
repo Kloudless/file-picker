@@ -42,7 +42,7 @@ declare global {
       | 'images' | 'videos' | 'audio';
     type FileExtension = string;
     type NotUpdatableOptions = 'app_id' | 'custom_css' | 'types' | 'services'
-      | 'persist' | 'create_folder' | 'account_key' | 'elementId';
+      | 'persist' | 'create_folder' | 'account_key' | 'elementId' | 'element';
     type UpdateOptions = Partial<Omit<(ChooserOptions & SaverOptions), NotUpdatableOptions>>;
     type DropzoneUpdateOptions = Partial<Omit<DropzoneOptions, NotUpdatableOptions>>;
 
@@ -68,6 +68,7 @@ declare global {
       services?: (ServiceName | ServiceGroup)[];
       account_management?: boolean;
       display_backdrop?: boolean;
+      element?: string | HTMLElement;
       // TODO: deprecate in v2
       custom_css?: string;
       /**
@@ -120,11 +121,21 @@ declare global {
       files: File[];
     }
 
-    interface DropzoneOptions extends ChooserOptions {
+    interface DropzoneDeprecatedOptions {
+      /**
+       * @deprecated Please use the `element` option instead.
+       */
       elementId: string;
+    }
+
+    interface DropzoneNewOptions {
+      element: string | HTMLElement;
+    }
+
+    type DropzoneOptions = ChooserOptions & {
       copy_to_upload_location: 'async' | 'sync';
       computer?: true;
-    }
+    } & (DropzoneDeprecatedOptions | DropzoneNewOptions);
 
     interface BuildOptions {
       pickerUrl?: string;

@@ -1,7 +1,11 @@
 @import '../../picker/css/constants.less';
 @import '../../picker/css/variables.less';
 
-.kloudless-modal-mixin() {
+.body-kloudless-modal-backdrop-active {
+  overflow: hidden;
+}
+
+.kloudless-modal {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -10,14 +14,38 @@
   margin-top: -250px;
   margin-left: -320px;
   width: 640px;
-  height: 515px;
+  height: 0;
   border: 0;
   border-radius: @border_radius;
+  opacity: 0;
   z-index: 999;
   box-shadow: 0 1px 8px 1px @primary_btn_shadow_color;
-  -webkit-transition: all 0;
-  transition: all 0;
+  transition: opacity 0.2s, height 0.2s step-end;
+}
 
+.kloudless-modal.kloudless-modal--backdrop {
+  box-shadow: 0 1px 8px 1px #4b4b4b;
+}
+
+.kloudless-modal.kloudless-modal--attached {
+  position: relative;
+  top: 0;
+  left: 0;
+  margin-top: 0;
+  margin-left: 0;
+  width: 100%;
+  z-index: auto;
+}
+
+.kloudless-modal.kloudless-modal--opened {
+  height: 515px;
+  opacity: 1;
+  transition: opacity 0.2s, height 0.2s step-start;
+}
+
+// Make the view take the full screen in modal mode on mobile screen
+.kloudless-modal.kloudless-modal--opened:not(
+[class*="kloudless-modal--attached"]) {
   @media only screen and (max-width: @MODAL_WIDTH),
     only screen and (max-device-width: @MODAL_WIDTH) {
     position: fixed;
@@ -47,22 +75,23 @@
   }
 }
 
-iframe.kloudless-modal {
-  .kloudless-modal-mixin();
+.kloudless-modal.kloudless-modal--dropzone {
+  /**
+   * The drop picker is always opened. But set its iframe opacity to almost 0
+   * before users dropping files or after uploading process succeed/canceled.
+   */
+  height: 100%;
+  // Cannot set opacity to 0 because that makes the iframe not clickable in
+  // Chrome
+  opacity: 0.000000001;
+  // Place it on top of the Dropzone text so that drag and drop works on
+  // the entire element
+  z-index: 2;
+  transition: none;
 }
 
-iframe.kloudless-modal--backdrop {
-  box-shadow: 0 1px 8px 1px #4b4b4b;
-}
-
-iframe.kloudless-modal-dropzone {
-  .kloudless-modal-mixin();
-
-  position: relative;
-  top: 0;
-  left: 0;
-  margin-top: 0;
-  margin-left: 0;
+.kloudless-modal.kloudless-modal--dropzone-dropped {
+  opacity: 1;
 }
 
 .backdrop-div {
@@ -79,14 +108,15 @@ iframe.kloudless-modal-dropzone {
   z-index: 998;
 }
 
+.backdrop-div.backdrop-div--active {
+  display: block;
+}
+
 .kloudless-dropzone-container {
   cursor: pointer;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   box-sizing: border-box;
-  width: 600px;
+  max-width: 600px;
   height: 100px;
   color: rgb(71, 71, 71);
   background-color: rgb(245, 246, 247);
@@ -97,6 +127,20 @@ iframe.kloudless-modal-dropzone {
 
   > span {
     position: absolute;
-    padding: 0 5px;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    margin: auto;
+    width: 100%;
+    height: 14px;
+    font-size: 14px;
+    text-align: center;
   }
+}
+
+.kloudless-dropzone-container.kloudless-dropzone-container--dropped {
+  max-width: 700px;
+  height: 515px;
+  border-style: none;
 }

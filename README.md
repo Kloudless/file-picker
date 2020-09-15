@@ -218,7 +218,18 @@ File Picker JavaScript on the page.
 
   The application ID is specific to the developer's application and is located
   in the developer portal on the App Details page.
-  
+
+* `element` : string or HTMLElement
+
+  Chooser: _Optional (default: null)_
+
+  Saver: _Optional (default: null)_
+
+  Specify a CSS selector string or DOM element to attach the File Picker to
+  instead of displaying the File Picker as a modal (the default). 
+  If a string is provided, it will be used to retrieve the DOM element by using
+  [document.querySelector](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector).
+
 * `retrieve_token` : boolean
 
   Chooser: _Optional (default: false)_
@@ -1032,6 +1043,7 @@ without a file extension to be selected.
   * `custom_style`
   * `custom_css` (deprecated)
   * `locale`
+  * `element`
   
 * `picker.logout(deleteAccount=false)`
 
@@ -1129,17 +1141,21 @@ It opens in place when files are dropped into it.
 
 #### Configuration
 
-The configuration is similar to the Chooser's, but with an extra option `elementId`
-as described below. The `computer` option is always set to `true`, and an
-Upload Location must be configured as described for the Chooser.
+The configuration is similar to the Chooser's, but requires the `element` option
+to indicate where to display the Dropzone, as described below. In addition, the
+`computer` option is always set to `true`, and an Upload Location must be
+configured as described for the Chooser.
 
-* `elementId` : string
+* `element` : string or HTMLElement
 
   Chooser: _Required_
 
-  The ID of the DOM element to bind the drop zone to. The drop zone will occupy
-  the entire height and width of the element and provide an area for the user to
-  drag and drop files in.
+  The DOM element to bind the Dropzone to. If a CSS selector string is provided,
+  it will be used to retrieve the DOM element by using
+  [document.querySelector](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector).
+  The drop zone will render a 600px * 100px area for the user to drag and drop
+  files in. The area's width will adjust automatically when the viewport
+  width is lower than 600px.
 
 #### Methods
 
@@ -1170,7 +1186,7 @@ JavaScript
 ```javascript
 var dropzone = window.Kloudless.filePicker.dropzone({
   app_id: 'Your App ID',
-  elementId: 'dropzone',
+  element: '#dropzone',
   multiselect: true, // To upload more than 1 file.
 
   // Chooser options below:

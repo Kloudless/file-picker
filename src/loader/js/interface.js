@@ -23,62 +23,6 @@ function isMobile() {
   return (!!navigator.userAgent.match(/(iPad|iPhone|iPod|android|Android)/g));
 }
 
-const FX = {
-  easing: {
-    linear(progress) {
-      return progress;
-    },
-    quadratic(progress) {
-      return progress ** 2;
-    },
-  },
-  animate(options) {
-    const start = new Date();
-    const id = setInterval(() => {
-      const timePassed = new Date() - start;
-      let progress = timePassed / options.duration;
-      if (progress > 1) {
-        progress = 1;
-      }
-      options.progress = progress;
-      const delta = options.delta(progress);
-      options.step(delta);
-      if (progress === 1) {
-        clearInterval(id);
-        if (typeof (options.complete) !== 'undefined') {
-          options.complete();
-        }
-      }
-    }, options.delay || 10);
-  },
-  fadeOut(element, options) {
-    const to = 1;
-    this.animate({
-      duration: options.duration,
-      delta(progress) {
-        return FX.easing.quadratic(progress);
-      },
-      complete: options.complete,
-      step(delta) {
-        element.style.opacity = to - delta;
-      },
-    });
-  },
-  fadeIn(element, options) {
-    const to = 0;
-    this.animate({
-      duration: options.duration,
-      delta(progress) {
-        progress = this.progress; // eslint-disable-line
-        return FX.easing.quadratic(progress);
-      },
-      complete: options.complete,
-      step(delta) {
-        element.style.opacity = to + delta;
-      },
-    });
-  },
-};
 /*
  * Track all variables
  *
@@ -104,7 +48,6 @@ const frames = filePicker._frames;
 const pickers = filePicker._pickers;
 const queuedAction = filePicker._queuedAction;
 let backdropDiv = null;
-let bodyOverflow = null;
 const { protocol, host } = window.location;
 
 /**
@@ -186,7 +129,7 @@ filePicker.setGlobalOptions({ pickerUrl });
 
 // Initialize an iframe.
 // eslint-disable-next-line
-const initialize_frame = function (options, elementId) {
+const initialize_frame = function (options, picker) {
   const exp_id = Math.floor(Math.random() * (10 ** 12));
   const frame = document.createElement('iframe');
 
@@ -210,17 +153,33 @@ const initialize_frame = function (options, elementId) {
   frame.setAttribute(
     'src', `${globalOptions.pickerUrl}?${queryStrings.join('&')}`,
   );
-  frame.style.display = 'none';
   frames[exp_id] = frame;
 
   const body = document.getElementsByTagName('body')[0];
 
-  if (elementId) {
-    const el = document.getElementById(elementId);
-    el.appendChild(frame);
-  } else {
-    body.appendChild(frame);
+  let container = null;
+  if (options.element) {
+    if (options.element instanceof HTMLElement) {
+      container = options.element;
+    } else {
+      container = document.querySelector(options.element);
+      if (!container) {
+        throw new Error(
+          `Cannot find the element ${options.element}`,
+        );
+      }
+    }
   }
+  if (!container) {
+    // render the view as popup modal
+    container = document.body;
+    picker.container = null;
+  } else {
+    // attach the view to a container element
+    picker.container = container;
+    addClass(frame, 'kloudless-modal--attached');
+  }
+  container.appendChild(frame);
 
   if (!backdropDiv) {
     const div = document.createElement('div');
@@ -258,7 +217,6 @@ filePicker._fileWidget.prototype._setOptions = function (options = {}) {
   this.exp_id = options.exp_id;
   this.custom_css = (options.custom_css) ? options.custom_css : false;
   // These don't need to be passed for query variables
-  this.elementId = options.elementId;
   this.flavor = (
     options.flavor === undefined) ? FLAVOR.chooser : options.flavor;
   this.multiselect = (
@@ -400,20 +358,9 @@ filePicker.picker = function (options) {
     persist: picker.persist,
     types: picker.types,
     create_folder: picker.create_folder,
-  }, picker.elementId);
+    element: options.element,
+  }, picker);
   picker.exp_id = id;
-
-  picker.defaultHandlers.close = function () {
-    const frame = frames[picker.exp_id];
-    if (frame) {
-      FX.fadeOut(frame, {
-        duration: 200,
-        complete() {
-          frame.style.display = 'none';
-        },
-      });
-    }
-  };
 
   pickers[picker.exp_id] = picker;
 
@@ -512,23 +459,15 @@ filePicker._picker.prototype._open = function (data) {
     body.scrollTop = 0;
   }
 
-  frames[this.exp_id].style.display = 'block';
-  frames[this.exp_id].style.opacity = 0;
-  addClass(body, 'kfe-active');
 
   if (data.flavor !== FLAVOR.dropzone) {
-    FX.fadeIn(frames[this.exp_id], {
-      duration: 200,
-    });
+    addClass(frames[this.exp_id], 'kloudless-modal--opened');
   }
 
-  if (this.display_backdrop) {
-    backdropDiv.style.display = 'block';
-    bodyOverflow = body.style.overflow;
-    body.style.overflow = 'hidden';
+  if (this.display_backdrop && !this.container) {
+    addClass(backdropDiv, 'backdrop-div--active');
+    addClass(body, 'body-kloudless-modal-backdrop-active');
     addClass(frames[this.exp_id], 'kloudless-modal--backdrop');
-  } else {
-    removeClass(frames[this.exp_id], 'kloudless-modal--backdrop');
   }
 
   this._fire('open');
@@ -547,8 +486,6 @@ filePicker._picker.prototype.close = function () {
 
   this.message('CLOSING');
 
-  removeClass(body, 'kfe-active');
-
   const { lastScrollTop } = filePicker._fileWidget;
   if (typeof (lastScrollTop) !== 'undefined') {
     if (isMobile()) {
@@ -556,11 +493,9 @@ filePicker._picker.prototype.close = function () {
     }
   }
 
-  if (this.display_backdrop) {
-    backdropDiv.style.display = 'none';
-    body.style.overflow = bodyOverflow;
-  }
-
+  removeClass(backdropDiv, 'backdrop-div--active');
+  removeClass(body, 'body-kloudless-modal-backdrop-active');
+  removeClass(frames[this.exp_id], 'kloudless-modal--opened');
   this._fire('close');
 };
 
@@ -637,23 +572,34 @@ filePicker.dropzone = function (options) {
 
 filePicker._dropzone = function (options = {}) {
   this.isDestroyed = false;
-  this.elementId = options.elementId;
-  delete options.elementId;
-  if (!this.elementId) {
+
+  // Migrate deprecated elementId to element
+  if (options.elementId && typeof options.element === 'undefined') {
+    options.element = `#${options.elementId}`;
+    delete options.elementId;
+  }
+
+  if (!options.element) {
     throw new Error(
-      'Please specify the elementId for the dropzone to be bound to.',
+      'Please specify the element for the dropzone to be bound to.',
     );
   }
 
   const dropzoneOptions = { ...options, computer: true };
-
+  /**
+   * The Dropzone picker is an attached file picker
+   * that sets flavors to FLAVOR.dropzone
+   */
   this.dropPicker = filePicker.picker({
     ...dropzoneOptions,
     flavor: FLAVOR.dropzone,
-    elementId: this.elementId,
   });
 
-  this.clickPicker = filePicker.picker(dropzoneOptions);
+  this.clickPicker = filePicker.picker({
+    ...dropzoneOptions,
+    // The click picker is always opened as a modal
+    element: undefined,
+  });
 
   this.dropPickerFrame = frames[this.dropPicker.exp_id];
   this.clickPickerFrame = frames[this.clickPicker.exp_id];
@@ -662,19 +608,13 @@ filePicker._dropzone = function (options = {}) {
 };
 
 filePicker._dropzone.prototype._configureFrame = function () {
-  /**
-   * The drop picker is always opened. But set its iframe opacity to 0 before
-   * users dropping files or after uploading process succeed/canceled.
-   */
-  const element = document.getElementById(this.elementId);
+  // Add class names and events for Dropzone picker
+  const element = this.dropPicker.container;
   const frame = this.dropPickerFrame;
   const dropPicker = this.dropPicker;
   const clickPicker = this.clickPicker;
-  // Cannot set opacity to 0 because that makes the iframe not clickable in
-  // Chrome.
-  const transparentOpacity = '0.000000001';
 
-  element.classList.add('kloudless-dropzone-container');
+  addClass(element, 'kloudless-dropzone-container');
   if (element.getElementsByTagName('span').length === 0) {
     // Add span only if not exists
     const content = document.createElement('span');
@@ -682,17 +622,7 @@ filePicker._dropzone.prototype._configureFrame = function () {
       'Drag and drop files here, or click to open the File Picker';
     element.appendChild(content);
   }
-
-  // Override default close handler so frame isn't set to 'display: none'
-  dropPicker.defaultHandlers.close = function () {
-    frame.style.opacity = transparentOpacity;
-  };
-
-  frame.style.display = 'block';
-  frame.style.opacity = transparentOpacity;
-  frame.style.height = '100%';
-  frame.style.width = '100%';
-  frame.setAttribute('class', 'kloudless-modal-dropzone');
+  addClass(frame, 'kloudless-modal--dropzone');
 
   frame.onload = () => {
     if (frame._hasLoadedOnce) {
@@ -706,27 +636,18 @@ filePicker._dropzone.prototype._configureFrame = function () {
     });
 
     dropPicker.on('drop', () => {
-      element.style.width = '700px';
-      element.style.height = '515px';
-      element.style['border-style'] = 'none';
-      frame.style.opacity = '1';
+      addClass(element, 'kloudless-dropzone-container--dropped');
+      addClass(frame, 'kloudless-modal--dropzone-dropped');
     });
 
-    // Since the drop event will override CSS properties, we need
-    // to retain original values so we can restore them on close.
-    const style = window.getComputedStyle(element);
-    const { height, width, 'border-style': borderStyle } = style;
-
     dropPicker.on('close', () => {
-      element.style.height = height;
-      element.style.width = width;
-      element.style['border-style'] = borderStyle;
+      removeClass(element, 'kloudless-dropzone-container--dropped');
+      removeClass(frame, 'kloudless-modal--dropzone-dropped');
       if (!this.isDestroyed) {
         dropPicker._open({
           flavor: FLAVOR.dropzone,
         });
       }
-      frame.style.opacity = transparentOpacity;
     });
     frame._hasLoadedOnce = true;
   };
