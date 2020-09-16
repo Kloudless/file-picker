@@ -535,8 +535,6 @@ filePicker._picker.prototype.savify = function (element, files) {
 
 filePicker._picker.prototype.destroy = function () {
   const frame = frames[this.exp_id];
-  delete frames[this.exp_id];
-  delete pickers[this.exp_id];
   this.close();
   this.elements.forEach((e) => {
     this.clickHandlers.forEach((handler) => {
@@ -544,6 +542,8 @@ filePicker._picker.prototype.destroy = function () {
     });
   });
   frame.parentNode.removeChild(frame);
+  delete frames[this.exp_id];
+  delete pickers[this.exp_id];
   delete queuedAction[this.exp_id];
 };
 
