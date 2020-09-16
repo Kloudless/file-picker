@@ -114,7 +114,7 @@ a full list of configuration options.
 You can also install the File Picker package from NPM:
 
 ```
-npm install @kloudless/file-picker
+npm ci @kloudless/file-picker
 ```
 
 ```javascript
@@ -1358,14 +1358,14 @@ Install [Node.js](https://nodejs.org/en/download/)
 Make sure you have nodejs >= 10.16.0 and npm >= 6.9.0.
 Then run the following commands:
 
-    npm install
+    npm ci
     npm run install-deps
 
 To develop Vue or React wrapper, you might want to install the
 corresponding storybook:
 
-    npm install --prefix=storybook-vue    # for Vue
-    npm install --prefix=storybook-react  # for React
+    npm ci --prefix=storybook-vue    # for Vue
+    npm ci --prefix=storybook-react  # for React
 
 ### Development
 
