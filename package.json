@@ -31,7 +31,7 @@
     "deploy:storybook": "npm run build:storybook && storybook-to-ghpages --remote=github --existing-output-dir=.demo",
     "build": "rm -rf dist/commonjs2 dist/loader dist/picker dist/explorer test/dist && NODE_ENV=production webpack --config config/webpack.prod.conf.js",
     "build:template": "pug src/picker/templates/index.pug -o dist/template -s && ejs-cli template/picker.ejs > dist/custom-index.html && rm -rf dist/template",
-    "prepack": "bash generate_npmignore.sh && npm install && npm run build",
+    "prepack": "bash generate_npmignore.sh && npm ci && npm run build",
     "postpack": "rm -f .npmignore",
     "dist-test": "node ./test/dist-test-server.js",
     "test:ts": "eslint --config .eslintrc-ts.js --ext .ts . && tsc test/ts/*.ts --noEmit && echo '✅  Passed type tests.'",
