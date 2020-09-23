@@ -29,6 +29,7 @@ import routerHelper from './router-helper';
 import PluploadHelper from './plupload-helper';
 import iziToastHelper from './izitoast-helper';
 import { VIEW, FLAVOR } from './constants';
+import { LOADER_FEATURES } from '../../constants';
 
 // Keep `PENDING` and `RECEIVED` to b/w compatible with v1.
 const UNREADY_STATUS = ['PENDING', 'RECEIVED', 'STARTED', 'UNKNOWN'];
@@ -152,12 +153,16 @@ const FilePicker = function () {
         let requestCountError = 0;
 
         // Save Complete Callback
-        const saveComplete = function (success) {
+        const saveComplete = (success, errorData) => {
           if (success) {
             requestCountSuccess += 1;
           } else {
             requestCountError += 1;
-            logger.warn('Error with ajax requests for save');
+            logger.warn('Error with ajax requests for save', errorData);
+            iziToastHelper.error(
+              localization.formatAndWrapMessage('global/error'),
+              { detail: JSON.stringify(errorData.error) },
+            );
           }
 
           // All requests are done
@@ -170,6 +175,9 @@ const FilePicker = function () {
             }
             if (requestCountError) {
               view_model.postMessage('error', errors);
+            }
+            if (requestCountSuccess && !requestCountError) {
+              this.initClose();
             }
           }
         };
@@ -222,7 +230,7 @@ const FilePicker = function () {
               logger.error('Error uploading file: ', status, err, xhr);
               event_data.error = xhr.responseJSON;
               errors.push(event_data);
-              saveComplete(false);
+              saveComplete(false, event_data);
             });
           }({ name: file_data.name, url: file_data.url }));
         }
@@ -337,6 +345,9 @@ const FilePicker = function () {
             this.view_model.postMessage(
               'error', selections.filter(s => s.error),
             );
+          }
+          if (requestCountSuccess && !requestCountError) {
+            this.initClose();
           }
           this.view_model.processingConfirm(false);
         }
@@ -560,6 +571,7 @@ const FilePicker = function () {
       }
       // postMessage to indicate failure.
       this.view_model.postMessage('cancel');
+      this.initClose();
     },
     /**
      * Compose action, data and some additional info to an object then send to
@@ -1254,6 +1266,17 @@ FilePicker.prototype.cleanUp = function () {
     self.view_model.files.table.finderSelect('unHighlightAll');
   }
   self.fileManager.files.removeAll(); // Saver
+};
+
+/**
+ * Send INIT_CLOSE event to tell loader that the picker can be closed.
+ * Only send this to the supported loaders or loaders that can handle
+ * unknown events.
+ */
+FilePicker.prototype.initClose = function initClose() {
+  if (config.isSupported(LOADER_FEATURES.CAN_HANDLE_UNKNOWN_EVENTS)) {
+    this.view_model.postMessage('INIT_CLOSE');
+  }
 };
 
 // File Picker initialization.

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- File Picker won't be closed when there is any error during selecting,
+  uploading, saving, or copying files and folders.
+
 ### Fixed
 
 - `delete_accounts_on_logout` isn't respected when removing only one account.
