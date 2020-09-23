@@ -38,14 +38,17 @@ function init(picker) {
     this.get('#/account/disconnect/:id', function () {
       // Do not use arrow function in order to use `this`
       logger.debug(`Account disconnection invoked for id: ${this.params.id}.`);
-
-      picker.manager.deleteAccount(this.params.id, true, (account_data) => {
-        // post message for account
-        picker.view_model.postMessage('deleteAccount',
-          account_data.account);
-        // store accounts
-        storage.storeAccounts(config.app_id, picker.manager.accounts());
-      });
+      picker.manager.deleteAccount(
+        this.params.id,
+        picker.view_model.delete_accounts_on_logout(),
+        (account_data) => {
+          // post message for account
+          picker.view_model.postMessage('deleteAccount',
+            account_data.account);
+          // store accounts
+          storage.storeAccounts(config.app_id, picker.manager.accounts());
+        },
+      );
     });
 
     // Switch to the files page.
