@@ -2,17 +2,17 @@
     loading() && !loadingNextPage()) || processingConfirm() }`)
   .container__header
     .flex-row.align-items-center
-      // ko if: $root.flavor() == 'chooser'
-      .flex-no-shrink.mr
+      .flex-no-shrink.mr(data-bind="css: {'sm-hidden': $root.flavor() != 'chooser'}")
         .icon.icon--large(data-bind=`
             click: files.toggleSearchView.bind($data, true),
-            css: { 'icon--disabled': loading}`)
+            css: { 'icon--disabled': loading, 'invisible': $root.flavor() != 'chooser'}`)
           .icon__search
-      // /ko
-      .flex-grow.mr
+      .flex-grow
         include selector
-      .flex-no-shrink
-        .icon.icon--large(data-bind='click: cancel')
+      .flex-no-shrink.ml(data-bind="css: {'sm-hidden': attachMode()}")
+        .icon.icon--large(data-bind=`
+            click: cancel,
+            css: { 'invisible': attachMode() }`)
           .icon__close
   .container__body
     .flex-col.flex-grow.h-100

@@ -25,6 +25,7 @@ import setupDropdown from './dropdown';
 import adjustBreadcrumbWidth from './breadcrumb';
 import './iexd-transport';
 import 'normalize.css';
+import 'izitoast/dist/css/iziToast.css';
 import '../css/index.less';
 import routerHelper from './router-helper';
 import PluploadHelper from './plupload-helper';
@@ -148,7 +149,12 @@ const FilePicker = function () {
 
   // View model setup.
   this.view_model = {
-    // config
+    // Whether Chooser/Saver is in attach mode. Always false for Dropzone.
+    attachMode: ko.observable(false),
+    /**
+     * Config
+     */
+    closeOnAllSuccess: config.close_on_success,
     flavor: config.flavor,
     enable_logout: config.enable_logout,
     delete_accounts_on_logout: config.delete_accounts_on_logout,
@@ -244,24 +250,18 @@ const FilePicker = function () {
             === fileManager.files().length) {
             this.stopLauncherInterval();
             if (requestCountSuccess) {
-              this.view_model.files.refresh();
-              this.view_model.postMessage(
-                'success', saves.filter(s => !s.error),
-              );
-              logger.debug('Successfully uploaded files: ',
-                saves.filter(s => !s.error));
-            }
-            if (requestCountError) {
-              this.view_model.postMessage(
-                'error', saves.filter(s => s.error),
-              );
+              // Refresh to get the newly uploaded file.
+              view_model.files.refresh();
             }
 
-            this.view_model.processingConfirm(false);
-
-            if (requestCountSuccess && !requestCountError) {
-              this.initClose();
-            }
+            this.finish(
+              saves.filter(s => !s.error),
+              saves.filter(s => s.error),
+              localization.formatAndWrapMessage(
+                'global/saverSuccess',
+                { number: requestCountSuccess },
+              ),
+            );
           }
         };
 
@@ -422,20 +422,14 @@ const FilePicker = function () {
         // All requests are done
         if (requestCountSuccess + requestCountError === selections.length) {
           this.stopLauncherInterval();
-          if (requestCountSuccess) {
-            this.view_model.postMessage(
-              'success', selections.filter(s => !s.error),
-            );
-          }
-          if (requestCountError) {
-            this.view_model.postMessage(
-              'error', selections.filter(s => s.error),
-            );
-          }
-          if (requestCountSuccess && !requestCountError) {
-            this.initClose();
-          }
-          this.view_model.processingConfirm(false);
+          this.finish(
+            selections.filter(s => !s.error),
+            selections.filter(s => s.error),
+            localization.formatAndWrapMessage(
+              'global/chooserSuccess',
+              { number: requestCountSuccess },
+            ),
+          );
         }
       };
 
@@ -662,7 +656,14 @@ const FilePicker = function () {
     },
 
     // Quit the file picker.
-    cancel: () => {
+    /**
+     * @param {Object=} options
+     * @param {Boolean=} options.fireSuccess Whether to fire success event.
+     * Defaults to false. Should only used by plupload-helper for b/w
+     * compatibility reasons.
+     * (See LOADER_FEATURES.COMPUTER_NO_SUCCESS_ON_CANCEL_OR_FAIL)
+     */
+    cancel: (options = { fireSuccess: false }) => {
       logger.debug('Quitting!');
       this.lastCancelTime = new Date();
       // Prevent launcher to run comming tasks
@@ -670,6 +671,9 @@ const FilePicker = function () {
       if (this.manager.active().account) {
         // Remove mkdir form
         this.view_model.files.rmdir();
+      }
+      if (options.success) {
+        this.view_model.postMessage('success');
       }
       // postMessage to indicate failure.
       this.view_model.postMessage('cancel');
@@ -1357,19 +1361,16 @@ FilePicker.prototype.switchViewTo = function (to) {
 
 FilePicker.prototype.cleanUp = function () {
   // File Picker will close. Clean up.
-  const self = this;
-  self.view_model.processingConfirm(false);
-  self.stopLauncherInterval();
-  self.resetRequestQueue();
+  this.view_model.processingConfirm(false);
+  this.stopLauncherInterval();
+  this.resetRequestQueue();
 
   if ($('#search-query').is(':visible')) {
     $('#search-back-button').click();
   }
-  iziToastHelper.destroy();
-  if (self.view_model.files.table) {
-    self.view_model.files.table.finderSelect('unHighlightAll');
+  if (this.view_model.files.table) {
+    this.view_model.files.table.finderSelect('unHighlightAll');
   }
-  self.fileManager.files.removeAll(); // Saver
 };
 
 /**
@@ -1381,6 +1382,65 @@ FilePicker.prototype.initClose = function initClose() {
   if (config.isSupported(LOADER_FEATURES.CAN_HANDLE_UNKNOWN_EVENTS)) {
     this.view_model.postMessage('INIT_CLOSE');
   }
+};
+
+/**
+ * Call this method when Chooser/Saver/Computer finishes.
+ * Will emit success/error event properly. If no error, it will close File
+ * Picker or show a success dialog based on config.
+ * @param {Array} successItems
+ * @param {Array} failedItems
+ * @param {String} successMessage
+ * @param {Object=} options
+ * @param {Boolean=} options.successOnAllFail Whether to fire success event
+ *  when no items succeed. Should only used by plupload-helper for b/w
+ *  compatibility reasons. Defaults to false.
+ *  (See LOADER_FEATURES.COMPUTER_NO_SUCCESS_ON_CANCEL_OR_FAIL)
+ */
+FilePicker.prototype.finish = function finish(
+  successItems, failedItems, successMessage,
+  options = { successOnAllFail: false },
+) {
+  const { view_model } = this;
+  const attachMode = view_model.attachMode();
+  const closeOnAllSuccess = view_model.closeOnAllSuccess();
+
+  view_model.processingConfirm(false);
+
+  if (options.successOnAllFail) {
+    view_model.postMessage('success', successItems);
+  } else if (successItems.length > 0) {
+    view_model.postMessage('success', successItems);
+  }
+
+  // Emit error event only when there are failed items.
+  if (failedItems.length > 0) {
+    view_model.postMessage('error', failedItems);
+    return;
+  }
+
+  /**
+   * All items succeed:
+   * - Dropzone: always close
+   * - Chooser/Saver in attach mode: don't close and show a success message
+   * - Chooser/Saver in non-attach mode: close depend on close_on_success
+   *   option.
+   */
+  if (attachMode || !closeOnAllSuccess) {
+    this.cleanUp();
+    iziToastHelper.success(successMessage);
+  } else {
+    this.initClose();
+  }
+};
+
+/**
+ * File Picker will be closed.
+ */
+FilePicker.prototype.close = function onClose() {
+  this.cleanUp();
+  iziToastHelper.destroy();
+  this.fileManager.files.removeAll(); // Saver
 };
 
 // File Picker initialization.
@@ -1542,7 +1602,16 @@ window.addEventListener('message', (message) => {
     return;
   }
 
-  const { action, data, callbackId } = JSON.parse(message.data);
+  let jsonData = {};
+  try {
+    jsonData = JSON.parse(message.data);
+  } catch (err) {
+    // Probably sent by other script. Ignore it.
+    logger.warn('message.data is not a valid JSON string. Ignore it.');
+    return;
+  }
+
+  const { action, data, callbackId } = jsonData;
   // TODO: future config options
   if (action === 'INIT') {
     // eslint-disable-next-line no-use-before-define
@@ -1556,7 +1625,7 @@ window.addEventListener('message', (message) => {
     // eslint-disable-next-line no-use-before-define
     dataMessageHandler(data);
   } else if (action === 'CLOSING') {
-    picker.cleanUp();
+    picker.close();
   } else if (action === 'LOGOUT') {
     picker.view_model.accounts.logout(false);
   } else if (action === 'LOGOUT:DELETE_ACCOUNT') {
@@ -1571,13 +1640,6 @@ window.addEventListener('message', (message) => {
 function dataMessageHandler(data) {
   // Used to initialize the file picker with data and config options.
   // Can also be used to update config options.
-
-  /*
-   * NOTE: This code is bad practice. config.flavor should be an observable
-   * that is subscribed to by any methods wanting to be notified of a change.
-   * TODO: Change this.
-   */
-
   if (!data) {
     logger.error('dataMessageHandler: No data found to configure with.');
     return;
@@ -1589,6 +1651,12 @@ function dataMessageHandler(data) {
   // Check the flavor on init call
   if (flavor) {
     config.flavor(flavor);
+  }
+
+  if (options && options.element) {
+    // Don't count Dropzone as attach mode.
+    picker.view_model.attachMode(config.flavor() !== FLAVOR.dropzone);
+    delete options.element;
   }
 
   // Primary way of updating config options

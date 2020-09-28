@@ -83,6 +83,13 @@ module.exports = {
           },
         },
       },
+      {
+        test: /\.woff2?$/,
+        loader: 'url-loader',
+        options: {
+          limit: 75 * 1024,
+        },
+      },
     ],
   },
   plugins: [

@@ -11,7 +11,11 @@
       "resume": "Resume",
       "processing": "Processing...",
       "poweredby": "Powered by Kloudless",
-      "error": "Error! Please try again or contact support."
+      "error": "An error occurred. Please try again or contact Support.",
+      "chooserSuccess": "{number} item(s) selected.",
+      "saverSuccess": "{number} file(s) uploaded.",
+      "computerSuccess": "{number} file(s) uploaded.",
+      "ok":"OK"
     },
     "files": {
       "name": "Name",

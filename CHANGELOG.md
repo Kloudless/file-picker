@@ -17,6 +17,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved handling of the `persist` option. Please refer to the `persist`
   option in the [Chooser Options](README.md#chooser-and-saver) for details.
 
+### Added
+
+- The new option, `close_on_success`, controls whether to close the File Picker
+  when all the selections in the Chooser, or files in the Computer and Saver,
+  are processed successfully.
+
+### Changed
+
+- The File Picker's Computer View won't fire a `success` event on cancellation
+  or if no items succeed, which was previously the case.
+- Options to close the File Picker are now hidden if the File Picker is launched
+  with the `element` option that attaches it to a DOM element.
+
 ---
 
 ## [2.5.4] - 2020-10-21

@@ -1,0 +1,36 @@
+// Copy from node_modules/material-icons-font/material-icons-font.css but remove
+// local sources since local font might be out of date.
+@font-face {
+  font-family: "Material Icons";
+  font-style: normal;
+  font-weight: 400;
+  src:
+    url(../../../node_modules/material-icons-font/fonts/MaterialIcons-Regular.woff2) format('woff2'),
+    url(../../../node_modules/material-icons-font/fonts/MaterialIcons-Regular.woff) format('woff');
+}
+
+.material-icons {
+  display: inline-block;
+  font-size: 24px;  /* Preferred icon size */
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}

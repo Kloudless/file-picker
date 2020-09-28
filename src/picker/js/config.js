@@ -145,6 +145,7 @@ Object.assign(config, {
   custom_style_vars: ko.observable({}),
   root_folder_id: ko.observable({}),
   mimeTypes: getMimeTypes(initTypes),
+  close_on_success: ko.observable(true),
 
   // This is introduced after 2.5.1, any loader that don't send this value
   // is counted as 2.5.1 when considering capabilities

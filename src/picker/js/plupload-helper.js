@@ -9,7 +9,7 @@ import config from './config';
 import localization from './localization';
 import util from './util';
 import iziToastHelper from './izitoast-helper';
-import { UPLOAD_ERROR_MSG_TIMEOUT } from './constants';
+import { LOADER_FEATURES } from '../../constants';
 
 // Translation keys
 const TRANSLATION_KEYS = {
@@ -69,11 +69,17 @@ class PluploadHelper {
   }
 
   static showError(msg, detail) {
-    iziToastHelper.error(msg, { detail, timeout: UPLOAD_ERROR_MSG_TIMEOUT });
+    iziToastHelper.error(msg, { detail });
   }
 
   static clearError() {
     iziToastHelper.destroy();
+  }
+
+  static supportNoSuccessOnCancelOrFail() {
+    return config.isSupported(
+      LOADER_FEATURES.COMPUTER_NO_SUCCESS_ON_CANCEL_OR_FAIL,
+    );
   }
 
   // Init data except buttons and texts.
@@ -116,22 +122,31 @@ class PluploadHelper {
   }
 
   /**
-   * Close FP and emit proper event.
-   * This won't destroy the Plupload, just reset some data.
+   * Invoke picker.finish() and clear plupload.
    * @param {plupload.Uploader} up
-   * @param {boolean=} cancel - Whether the FP is closed due to cancelling.
-   *                            Defaults to false.
    */
-  close(up, cancel = false) {
-    this.picker.view_model.postMessage('success', this.uploadedFiles);
-    if (cancel) {
-      this.picker.view_model.cancel();
-    } else if (this.failedFiles.length > 0) {
-      this.picker.view_model.postMessage('error', this.failedFiles);
-    } else {
-      this.picker.initClose();
-    }
+  finish(up) {
+    this.picker.finish(
+      this.uploadedFiles,
+      this.failedFiles,
+      localization.formatAndWrapMessage(
+        'global/computerSuccess',
+        { number: this.uploadedFiles.length },
+      ),
+      { successOnAllFail: !PluploadHelper.supportNoSuccessOnCancelOrFail() },
+    );
+    this.initData();
+    up.splice();
+  }
 
+  /**
+   * Invoke picker.cancel() and clear plupload.
+   * @param {plupload.Uploader} up
+   */
+  cancel(up) {
+    this.picker.view_model.cancel({
+      fireSuccess: !PluploadHelper.supportNoSuccessOnCancelOrFail(),
+    });
     this.initData();
     up.splice();
   }
@@ -377,7 +392,7 @@ class PluploadHelper {
                     [plupload.QUEUED, plupload.UPLOADING].includes(f.status)))
                   .map(f => f.id);
 
-                this.close(up, true);
+                this.cancel(up);
 
                 // Abort asynchronously.
                 window.setTimeout(() => {
@@ -412,7 +427,7 @@ class PluploadHelper {
                 up.start();
               }
             } else {
-              this.close(up, true);
+              this.cancel(up);
             }
           });
 
@@ -554,7 +569,7 @@ class PluploadHelper {
           // All files are either DONE or FAILED.
           logger.debug('UploadComplete');
           this.updateButton(up);
-          this.close(up);
+          this.finish(up);
         },
         StateChanged: (up) => {
           // STOPPED: 1, STARTED: 2
