@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `delete_accounts_on_logout` isn't respected when removing only one account.
+- Dropzone is not clickable or not able to process dropped files on some
+  browsers.
 
 ## [2.5.1] - 2020-09-16
 
