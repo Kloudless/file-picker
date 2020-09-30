@@ -23,11 +23,11 @@
   transition: opacity 0.2s, height 0.2s step-end;
 }
 
-.kloudless-modal.kloudless-modal--backdrop {
+.kloudless-modal--backdrop {
   box-shadow: 0 1px 8px 1px #4b4b4b;
 }
 
-.kloudless-modal.kloudless-modal--attached {
+.kloudless-modal--attached {
   position: relative;
   top: 0;
   left: 0;
@@ -37,14 +37,14 @@
   z-index: auto;
 }
 
-.kloudless-modal.kloudless-modal--opened {
+.kloudless-modal--opened {
   height: 515px;
   opacity: 1;
   transition: opacity 0.2s, height 0.2s step-start;
 }
 
 // Make the view take the full screen in modal mode on mobile screen
-.kloudless-modal.kloudless-modal--opened:not(
+.kloudless-modal--opened:not(
 [class*="kloudless-modal--attached"]) {
   @media only screen and (max-width: @MODAL_WIDTH),
     only screen and (max-device-width: @MODAL_WIDTH) {
@@ -75,7 +75,7 @@
   }
 }
 
-.kloudless-modal.kloudless-modal--dropzone {
+.kloudless-modal--dropzone {
   /**
    * The drop picker is always opened. But set its iframe opacity to almost 0
    * before users dropping files or after uploading process succeed/canceled.
@@ -83,14 +83,14 @@
   height: 100%;
   // Cannot set opacity to 0 because that makes the iframe not clickable in
   // Chrome
-  opacity: 0.000000001;
+  opacity: 0.01;
   // Place it on top of the Dropzone text so that drag and drop works on
   // the entire element
   z-index: 2;
   transition: none;
 }
 
-.kloudless-modal.kloudless-modal--dropzone-dropped {
+.kloudless-modal--dropzone-dropped {
   opacity: 1;
 }
 
@@ -116,7 +116,7 @@
   cursor: pointer;
   position: relative;
   box-sizing: border-box;
-  max-width: 600px;
+  width: 600px;
   height: 100px;
   color: rgb(71, 71, 71);
   background-color: rgb(245, 246, 247);
@@ -139,8 +139,8 @@
   }
 }
 
-.kloudless-dropzone-container.kloudless-dropzone-container--dropped {
-  max-width: 700px;
-  height: 515px;
+.kloudless-dropzone-container--dropped {
+  min-width: 700px;
+  min-height: 515px;
   border-style: none;
 }
