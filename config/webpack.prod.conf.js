@@ -108,7 +108,7 @@ module.exports = [
         template: path.resolve(srcPath, 'picker/templates/index.pug'),
         chunks: ['picker'],
       }),
-    ].concat(getPickerPlugins(distPath)),
+    ].concat(getPickerPlugins(path.join(distPath, 'picker/'))),
   }),
   // dev-server index page for dist-test
   merge(prodConfig, {

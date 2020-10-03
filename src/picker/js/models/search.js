@@ -25,7 +25,7 @@ Search.prototype.search = function (callback, errback) {
   }
 
   self.request = $.ajax({
-    url: config.getAccountUrl(self.account, 'storage', searchUrl),
+    url: config.getAccountUrl('storage', searchUrl),
     type: 'GET',
     headers: {
       Authorization: self.key.scheme + ' ' + self.key.key

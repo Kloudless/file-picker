@@ -64,7 +64,7 @@ Filesystem.prototype._init = function _init(callback) {
   const rootFolderId = this.rootMetadata().id;
   let success = false;
   return $.ajax({
-    url: config.getAccountUrl(this.id, 'storage', `/folders/${rootFolderId}`),
+    url: config.getAccountUrl('storage', `/folders/${rootFolderId}`),
     type: 'GET',
     headers: {
       Authorization: `${this.key.scheme} ${this.key.key}`,
@@ -140,7 +140,7 @@ Filesystem.prototype._getPage = function _getPage() {
     this.isLoadingNextPage(current.page !== FIRST_PAGE);
 
     let url = config.getAccountUrl(
-      this.id, 'storage', `/folders/${current.id}/contents`,
+      'storage', `/folders/${current.id}/contents`,
     );
     url += `?page=${current.page}&page_size=${PAGE_SIZE}`;
 
@@ -408,7 +408,7 @@ Filesystem.prototype.mkdir = function (folderName, callback = () => {}) {
   }
 
   this.request = $.ajax({
-    url: config.getAccountUrl(this.id, 'storage', '/folders/'),
+    url: config.getAccountUrl('storage', '/folders/'),
     type: 'POST',
     headers: {
       Authorization: `${this.key.scheme} ${this.key.key}`,

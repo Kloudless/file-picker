@@ -10,9 +10,9 @@ const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const srcPath = path.resolve(__dirname, '../src');
 const cldrPath = path.resolve(__dirname, '../bower_components/cldr-data/');
 
-const getLocalizationCopyData = (distPath) => {
-  const localeDistPath = path.resolve(distPath, 'picker/localization');
-  const cldrDistPath = path.resolve(localeDistPath, 'cldr-data');
+const getLocalizationCopyData = (pickerDistPath) => {
+  const localeDistPath = path.join(pickerDistPath, 'localization');
+  const cldrDistPath = path.join(localeDistPath, 'cldr-data');
   const copyData = [
     {
       from: path.resolve(srcPath, 'picker/localization'),
@@ -35,13 +35,13 @@ const getLocalizationCopyData = (distPath) => {
     copyData.push({
       from: path.resolve(__dirname,
         '../node_modules/@kloudless/file-picker-plupload-module/i18n/'),
-      to: path.resolve(localeDistPath, 'plupload/i18n/'),
+      to: path.join(localeDistPath, 'plupload/i18n/'),
     });
   }
   return copyData;
 };
 
-module.exports = function getPickerPlugins(distPath) {
+module.exports = function getPickerPlugins(pickerDistPath) {
   return [
     new webpack.ProvidePlugin({
       // expose jquery to global for jquery plugins
@@ -55,18 +55,18 @@ module.exports = function getPickerPlugins(distPath) {
     new CopyWebpackPlugin([
       {
         from: path.resolve(srcPath, '../node_modules/less/dist/less.min.js'),
-        to: path.resolve(distPath, 'picker/less.js'),
+        to: path.join(pickerDistPath, 'less.js'),
       },
     ]),
     // copy *.less
     new CopyWebpackPlugin([
       {
         from: path.resolve(srcPath, 'picker/css/'),
-        to: path.resolve(distPath, 'picker/less/'),
+        to: path.join(pickerDistPath, 'less/'),
       },
     ]),
     // copy localization and cldr data
-    new CopyWebpackPlugin(getLocalizationCopyData(distPath)),
+    new CopyWebpackPlugin(getLocalizationCopyData(pickerDistPath)),
     /** Attach an id to the picker script tag
      * for util.getBaseUrl() to identify the script tag
      * This plugin must be put after all HtmlWebpackPlugins

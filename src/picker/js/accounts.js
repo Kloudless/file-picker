@@ -80,7 +80,7 @@ AccountManager.prototype.deleteAccount = function deleteAccount(
   }
   if (delete_on_server) {
     let request = $.ajax({ // eslint-disable-line no-unused-vars
-      url: config.getAccountUrl(account_data.account),
+      url: config.getAccountUrl(),
       type: 'DELETE',
       headers: {
         Authorization: `${account_data.key.scheme} ${account_data.key.key}`,

@@ -15,6 +15,7 @@ const buildEnvVarDefaults = {
   PICKER_URL_V1:
     'https://static-cdn.kloudless.com/p/platform/explorer/explorer.html',
   BASE_URL: 'https://api.kloudless.com',
+
   // for development only
   KLOUDLESS_APP_ID: null,
   // 'MIT' or 'AGPL'.
@@ -23,11 +24,11 @@ const buildEnvVarDefaults = {
 };
 
 const transformDefines = {
-  BABEL_VERSION: packages.version,
+  VERSION: packages.version,
 };
 
 Object.keys(buildEnvVarDefaults).forEach((varName) => {
-  transformDefines[`BABEL_${varName}`] = (
+  transformDefines[varName] = (
     process.env[varName] || buildEnvVarDefaults[varName]);
 });
 

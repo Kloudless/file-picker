@@ -70,7 +70,7 @@ module.exports = [
       // Don't watch static json files to reduce CPU usage
       new webpack.WatchIgnorePlugin([/bower_components\/cldr-data/]),
     ].concat(getPickerPlugins(
-      path.resolve(devServerContentPath, 'dist'),
+      path.join(devServerContentPath, 'dist/picker/'),
     )),
   }),
 ];
