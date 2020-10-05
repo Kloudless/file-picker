@@ -1,0 +1,19 @@
+{
+  "name": "storybook",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "storybook": "start-storybook -p 9001 -s ./static --ci",
+    "build-storybook": "build-storybook"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "7.9.0",
+    "@storybook/addon-actions": "5.3.18",
+    "@storybook/addons": "5.3.18",
+    "@storybook/react": "5.3.18",
+    "babel-loader": "8.1.0"
+  }
+}

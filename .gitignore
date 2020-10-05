@@ -27,6 +27,7 @@ bower_components
 
 .tmp
 dist
+dev/
 
 # Mac
 .DS_Store
@@ -34,6 +35,8 @@ dist
 
 # test
 test/package-lock.json
+storybook-test/static/loader/
+storybook-test/static/picker/
 
 # tools, IDE
 .nvmrc
