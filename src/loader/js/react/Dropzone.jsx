@@ -34,7 +34,9 @@ class Dropzone extends React.Component {
 
   onRaw({ action, data }) {
     const eventHandler = DROPZONE_EVENT_HANDLER_MAPPING[action];
-    this.props[eventHandler](data); // eslint-disable-line
+    if (typeof this.props[eventHandler] === 'function') {
+      this.props[eventHandler](data);
+    }
   }
 
   initDropzone(options) {
