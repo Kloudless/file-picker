@@ -20,12 +20,11 @@ const Dropzone = {
       const options = JSON.parse(JSON.stringify(this.options));
       options.elementId = this.id;
       this.dropzone = filePicker.dropzone(options);
-      this.dropzone.on('raw', ({ action, data }) => {
-        if (action === 'dropzoneClicked') {
-          this.$emit('click', data);
-        } else {
-          this.$emit(action, data);
+      this.dropzone.on('raw', (...args) => {
+        if (args[0] === 'dropzoneClicked') {
+          args[0] = 'click';
         }
+        this.$emit(...args);
       });
     },
   },

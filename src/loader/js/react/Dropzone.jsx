@@ -32,10 +32,10 @@ class Dropzone extends React.Component {
     this.dropzone.destroy();
   }
 
-  onRaw({ action, data }) {
-    const eventHandler = DROPZONE_EVENT_HANDLER_MAPPING[action];
+  onRaw(event, ...args) {
+    const eventHandler = DROPZONE_EVENT_HANDLER_MAPPING[event];
     if (typeof this.props[eventHandler] === 'function') {
-      this.props[eventHandler](data);
+      this.props[eventHandler](...args);
     }
   }
 

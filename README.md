@@ -1423,8 +1423,8 @@ to customize the build, or sometimes at run-time as well.
 
 Build-time Env Var | Run-time option | Description | Default
 ---|---|---|---
-`BASE_URL` | N.A. | URL to the Kloudless API Server | https://api.kloudless.com
-`PICKER_URL` | `pickerUrl` | The URL that the loader loads the File Picker iframe from. | https://static-cdn.kloudless.com/p/platform/file-picker/v2/index.html
+`BASE_URL` | `baseUrl` | URL to the Kloudless API Server | https://api.kloudless.com
+`PICKER_URL` | `pickerUrl` | The URL that the loader loads the file picker iframe from. | https://static-cdn.kloudless.com/p/platform/file-picker/v2/index.html
 
 Check out the [Self-hosting](#self-hosting) section below for an example
 that changes the `PICKER_URL` in order to self-host a customized fork

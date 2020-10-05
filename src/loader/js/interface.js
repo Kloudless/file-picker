@@ -1,6 +1,7 @@
 /* eslint-disable camelcase, func-names,
                   prefer-destructuring */
-/* global PICKER_URL, VERSION, PICKER_URL_V1 */
+/* global BABEL_PICKER_URL, BABEL_VERSION, BABEL_PICKER_URL_V1,
+  BABEL_BASE_URL */
 import '../css/modal.less';
 import { FLAVOR } from '../../picker/js/constants';
 import { EVENTS_LIST, VIEW_EVENTS } from '../../constants';
@@ -34,8 +35,17 @@ function isMobile() {
  * Global Options
  */
 const globalOptions = {
-  pickerUrl: '',
-  pickerOrigin: '', // computed options
+  // Use an Immediately Invoked Function Expression to obtain the initial
+  // pickerUrl and pickerOrigin.
+  ...(() => {
+    let pickerUrl = BABEL_PICKER_URL;
+    if (pickerUrl.indexOf('://') === -1) {
+      pickerUrl = `${window.location.origin}${pickerUrl}`;
+    }
+    const url = new URL(pickerUrl);
+    return { pickerUrl, pickerOrigin: url.origin };
+  })(),
+  baseUrl: BABEL_BASE_URL,
 };
 
 const filePicker = {
@@ -49,40 +59,51 @@ const frames = filePicker._frames;
 const pickers = filePicker._pickers;
 const queuedAction = filePicker._queuedAction;
 let backdropDiv = null;
-const { protocol, host } = window.location;
 
 /**
  * setGlobalOptions()
  */
-filePicker.setGlobalOptions = ({ pickerUrl, explorerUrl }) => {
+filePicker.setGlobalOptions = ({ pickerUrl, explorerUrl, baseUrl }) => {
   // TODO-v3: remove explorerUrl
-  if (!pickerUrl && !explorerUrl) {
+  if (!pickerUrl && !explorerUrl && !baseUrl) {
     return;
   }
-  const newPickerUrl = pickerUrl || explorerUrl;
-  const oldPickerUrl = globalOptions.pickerUrl;
-  const pathParts = newPickerUrl.split('://', 2);
-  const pickerOrigin = `${pathParts[0]}://${pathParts[1].split('/')[0]}`;
-  // update existing frames when changing pickerUrl
+  let uPickerUrl;
+  let uBaseUrl;
+  try {
+    uPickerUrl = new URL(pickerUrl || explorerUrl || globalOptions.pickerUrl);
+    uBaseUrl = new URL(baseUrl || globalOptions.baseUrl);
+  } catch (err) {
+    console.error('Cannot parse pickerUrl or baseUrl as a URL.');
+    console.error(err);
+    return;
+  }
+
+  // Update existing frames' src with the newly pickerUrl and baseUrl.
   Object.keys(frames).forEach((key) => {
     const frame = frames[key];
-    const src = frame.getAttribute('src');
-    frame.setAttribute('src', src.replace(oldPickerUrl, `${newPickerUrl}`));
+    const uSrc = new URL(frame.getAttribute('src'));
+    const queryStrings = uSrc.search.slice(1).split('&').map((q) => {
+      // Replace baseUrl with the new one.
+      if (q.startsWith('baseUrl=')) {
+        return `baseUrl=${encodeURIComponent(uBaseUrl.toString())}`;
+      }
+      return q;
+    });
+    frame.setAttribute(
+      'src',
+      `${uPickerUrl.toString()}?${queryStrings.join('&')}`,
+    );
   });
-  globalOptions.pickerUrl = newPickerUrl;
-  globalOptions.pickerOrigin = pickerOrigin;
+  globalOptions.pickerUrl = uPickerUrl.toString();
+  globalOptions.pickerOrigin = uPickerUrl.origin;
+  globalOptions.baseUrl = uBaseUrl.toString();
 };
 
 /**
  * getGlobalOptions()
  */
 filePicker.getGlobalOptions = () => ({ ...globalOptions });
-
-let pickerUrl = PICKER_URL;
-if (pickerUrl.indexOf('://') === -1) {
-  pickerUrl = `${protocol}//${host}${pickerUrl}`;
-}
-filePicker.setGlobalOptions({ pickerUrl });
 
 /**
  * Set up messaging, frames, pickers.
@@ -144,13 +165,14 @@ const initialize_frame = function (options, picker) {
     `app_id=${options.app_id}`,
     `exp_id=${exp_id}`,
     `flavor=${options.flavor}`,
-    `origin=${encodeURIComponent(`${protocol}//${host}`)}`,
+    `origin=${encodeURIComponent(window.location.origin)}`,
     `custom_css=${encodeURIComponent(options.custom_css)}`,
     `services=${JSON.stringify(options.services)}`,
     `persist=${JSON.stringify(options.persist)}`,
     `account_key=${options.account_key}`,
     `create_folder=${options.create_folder}`,
     `types=${JSON.stringify(options.types)}`,
+    `baseUrl=${encodeURIComponent(globalOptions.baseUrl)}`,
   ];
 
   frame.setAttribute(
@@ -297,6 +319,10 @@ filePicker._fileWidget.prototype._fire = function (event, data) {
     return this;
   }
 
+  // Avoid calling event handler with an `undefined` argument when there is no
+  // event argument.
+  const args = data === undefined ? [] : [data];
+
   // Backward compatibility: handle close behavior in the v1 view
   if (this.options.custom_css &&
       ['success', 'cancel', 'error'].indexOf(event) !== -1) {
@@ -306,24 +332,22 @@ filePicker._fileWidget.prototype._fire = function (event, data) {
   const defaultHandler = this.defaultHandlers[event];
   if (defaultHandler) {
     window.setTimeout(() => {
-      defaultHandler.call(this, data);
+      defaultHandler(...args);
     }, 0);
   }
 
   if (this.handlers[event] !== undefined) {
-    for (let i = 0; i < this.handlers[event].length; i += 1) {
-      (function (handler) {
-        window.setTimeout(() => {
-          handler.call(this, data);
-        }, 0);
-      }(this.handlers[event][i]));
-    }
+    this.handlers[event].forEach((handler) => {
+      window.setTimeout(() => {
+        handler.apply(...args);
+      }, 0);
+    });
   }
 
   if ('raw' in this.handlers) {
     // `raw` event is used by the react/vue binding
     window.setTimeout(() => (
-      this.handlers.raw[0]({ action: event, data })
+      this.handlers.raw[0](event, ...args)
     ), 0);
   }
 
@@ -335,13 +359,12 @@ filePicker._fileWidget.prototype._fire = function (event, data) {
    */
 
 filePicker.picker = function (options) {
-
   if (options.custom_css) {
     console.warn(
       'custom_css option is deprecated.',
       'Please use custom_style_vars instead.',
     );
-    filePicker.setGlobalOptions({ pickerUrl: PICKER_URL_V1 });
+    filePicker.setGlobalOptions({ pickerUrl: BABEL_PICKER_URL_V1 });
   }
   // first step is to return a new object
   const picker = new filePicker._picker(options);
@@ -351,7 +374,7 @@ filePicker.picker = function (options) {
     picker.message('INIT', {
       options: {
         ...options,
-        loader_version: VERSION,
+        loader_version: BABEL_VERSION,
       },
     });
 
@@ -696,6 +719,6 @@ filePicker._dropzone.prototype.destroy = function () {
   this.clickPicker = null;
 };
 
-filePicker.version = VERSION;
+filePicker.version = BABEL_VERSION;
 
 export default filePicker;
