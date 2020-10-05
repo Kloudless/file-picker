@@ -3,6 +3,7 @@
 /* global PICKER_URL, VERSION, PICKER_URL_V1 */
 import '../css/modal.less';
 import { FLAVOR } from '../../picker/js/constants';
+import { EVENTS_LIST, VIEW_EVENTS } from '../../constants';
 
 /**
  * Define the module and the interface with which developers interact.
@@ -120,6 +121,8 @@ filePicker.setGlobalOptions({ pickerUrl });
     if (picker) {
       if (action === 'GET_OAUTH_PARAMS') {
         picker._getOAuthParams(callbackId, data);
+      } else if (action === 'INIT_CLOSE') {
+        picker.close();
       } else {
         picker._fire(action, data);
       }
@@ -288,7 +291,15 @@ filePicker._fileWidget.prototype._getOAuthParams = function (
 
 // Fire an event handler. Called by the message listeners.
 filePicker._fileWidget.prototype._fire = function (event, data) {
-  if (['success', 'cancel', 'error'].indexOf(event) !== -1) {
+  // Discard unknown events, except "dropzoneClicked", which relies on this
+  // method in order to be processed
+  if (!EVENTS_LIST.includes(event) && event !== VIEW_EVENTS.DROPZONE_CLICKED) {
+    return this;
+  }
+
+  // Backward compatibility: handle close behavior in the v1 view
+  if (this.options.custom_css &&
+      ['success', 'cancel', 'error'].indexOf(event) !== -1) {
     this.close();
   }
 
@@ -324,6 +335,7 @@ filePicker._fileWidget.prototype._fire = function (event, data) {
    */
 
 filePicker.picker = function (options) {
+
   if (options.custom_css) {
     console.warn(
       'custom_css option is deprecated.',
@@ -336,7 +348,12 @@ filePicker.picker = function (options) {
 
   picker.on('load', () => {
     // TODO: INIT post message with all config variables
-    picker.message('INIT', { options });
+    picker.message('INIT', {
+      options: {
+        ...options,
+        loader_version: VERSION,
+      },
+    });
 
     picker.loaded = true;
     if (queuedAction[picker.exp_id]) {

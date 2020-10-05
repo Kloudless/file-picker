@@ -4,6 +4,7 @@
 import $ from 'jquery';
 import ko from 'knockout';
 import logger from 'loglevel';
+import compareVersions from 'compare-versions';
 // check babel.config.js for actual import path
 import config from 'picker-config';
 import localization from './localization';
@@ -142,6 +143,10 @@ Object.assign(config, {
   custom_style_vars: ko.observable({}),
   root_folder_id: ko.observable({}),
   mimeTypes: getMimeTypes(initTypes),
+
+  // This is introduced after 2.5.1, any loader that don't send this value
+  // is counted as 2.5.1 when considering capabilities
+  loader_version: ko.observable('2.5.1'),
 });
 
 /**
@@ -502,6 +507,16 @@ config.localeOptions.subscribe((options) => {
   const { locale, translations, dateTimeFormat } = JSON.parse(options);
   localization.setCurrentLocale(locale, translations, dateTimeFormat);
 });
+
+/**
+ * @param {string} targetVersion last unsupported version of the feature
+ *                               (use LOADER_FEATURES map)
+ * @returns {boolean} Is this feature supported by the current loader version
+ */
+config.isSupported = function isSupported(targetVersion) {
+  const version = config.loader_version();
+  return compareVersions.compare(version, targetVersion, '>');
+};
 
 // load the default locale
 localization.loadDefaultLocaleData();

@@ -80,8 +80,10 @@ const create = filePickerType => (WrappedComponent = DefaultButton) => {
 
     onRaw({ action, data }) {
       const eventHandler = EVENT_HANDLER_MAPPING[action];
-      // eslint-disable-next-line react/destructuring-assignment
-      this.props[eventHandler](data);
+      if (typeof this.props[eventHandler] === 'function') {
+        // eslint-disable-next-line react/destructuring-assignment
+        this.props[eventHandler](data);
+      }
     }
 
     initPicker(options) {

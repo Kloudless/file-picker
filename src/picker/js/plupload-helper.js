@@ -125,6 +125,8 @@ class PluploadHelper {
       this.picker.view_model.cancel();
     } else if (this.failedFiles.length > 0) {
       this.picker.view_model.postMessage('error', this.failedFiles);
+    } else {
+      this.picker.initClose();
     }
 
     this.initData();
