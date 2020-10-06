@@ -28,6 +28,9 @@ const SELECTORS = {
   BTN_ADD: '#plupload_btn_add_files',
 };
 
+const MAX_UPLOAD_SLOTS = 6;
+const MAX_UPLOAD_RETRIES = 2;
+
 class PluploadHelper {
   constructor(picker) {
     // Resolved when document is ready.
@@ -257,10 +260,11 @@ class PluploadHelper {
       multipart: false,
       multipart_params: {},
       chunk_size: config.chunk_size,
-      max_retries: 2,
+      max_retries: MAX_UPLOAD_RETRIES,
+      delayStrategy: util.getExpBackoffDelayMs,
 
       // Parallelize
-      max_upload_slots: 6,
+      max_upload_slots: MAX_UPLOAD_SLOTS,
 
       // Misc
       // eslint-disable-next-line max-len

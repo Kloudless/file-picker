@@ -111,6 +111,15 @@ const util = {
    * @param {(null|number)} size - The file size.
    */
   getFriendlySize: size => (size === null ? '' : util.formatSize(size)),
+
+  /**
+   * Exponential Backoff
+   * A delay strategy that returns milliseconds to wait for retrying for
+   * failed requests.
+   * @param {number} n >= 1, indicates the n-th retry.
+   */
+  getExpBackoffDelayMs: n => (
+    (2 ** (n - 1)) * 1000 + Math.floor(Math.random() * 1000)),
 };
 
 export default util;
