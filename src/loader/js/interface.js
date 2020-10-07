@@ -339,7 +339,7 @@ filePicker._fileWidget.prototype._fire = function (event, data) {
   if (this.handlers[event] !== undefined) {
     this.handlers[event].forEach((handler) => {
       window.setTimeout(() => {
-        handler.apply(...args);
+        handler(...args);
       }, 0);
     });
   }
