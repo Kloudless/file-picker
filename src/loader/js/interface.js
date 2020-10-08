@@ -3,7 +3,9 @@
 /* global PICKER_URL, VERSION, PICKER_URL_V1, BASE_URL */
 import '../css/modal.less';
 import { FLAVOR } from '../../picker/js/constants';
-import { E2E_SELECTORS, EVENTS_LIST, VIEW_EVENTS } from '../../constants';
+import {
+  LOADER_E2E_SELECTORS, EVENTS_LIST, VIEW_EVENTS,
+} from '../../constants';
 
 /**
  * Define the module and the interface with which developers interact.
@@ -174,7 +176,7 @@ const initialize_frame = function (options, picker) {
     `baseUrl=${encodeURIComponent(globalOptions.baseUrl)}`,
   ];
 
-  frame.setAttribute('name', E2E_SELECTORS.IFRAME_NAME);
+  frame.setAttribute('name', LOADER_E2E_SELECTORS.IFRAME_NAME);
   frame.setAttribute(
     'src', `${globalOptions.pickerUrl}?${queryStrings.join('&')}`,
   );

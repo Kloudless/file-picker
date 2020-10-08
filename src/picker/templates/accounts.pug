@@ -12,7 +12,8 @@
       // /ko
       .flex-no-shrink.icon.icon--large(
           data-bind="css: {'invisible': attachMode()}")
-        .icon__close(data-bind='click: cancel')
+        .icon__close(
+          data-bind='click: cancel, css: $root.e2eSelectors.J_CLOSE_BTN')
 
   .container__body.container__body--scroll
     // ko if: accounts.all().length > 0

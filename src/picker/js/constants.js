@@ -83,12 +83,26 @@ const MIME_TYPE_ALIAS = {
 // Set default error message timeout as 10 seconds.
 const ERROR_MSG_TIMEOUT = 10000;
 
+// Selectors for end-to-end testing
+const E2E_SELECTORS = {
+  J_ROW: 'j-row',
+  J_CLOSE_BTN: 'j-close-btn',
+  J_SELECT_BTN: 'j-select-btn',
+  J_SAVE_BTN: 'j-save-btn',
+
+  // TODO: add to iziToast-helper.js after DEV-3728 gets merged
+  J_ERROR_DIALOG: 'j-error-dialog',
+  J_SUCCESS_DIALOG: 'j-success-dialog',
+  J_DIALOG_OK_BTN: 'j-dialog-ok-btn',
+};
+
 export {
   TYPE_ALIAS,
   MIME_TYPE_ALIAS,
   VIEW,
   FLAVOR,
   ERROR_MSG_TIMEOUT,
+  E2E_SELECTORS,
 };
 export default {
   TYPE_ALIAS,
@@ -96,4 +110,5 @@ export default {
   VIEW,
   FLAVOR,
   ERROR_MSG_TIMEOUT,
+  E2E_SELECTORS,
 };

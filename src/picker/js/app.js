@@ -30,7 +30,7 @@ import '../css/index.less';
 import routerHelper from './router-helper';
 import PluploadHelper from './plupload-helper';
 import iziToastHelper from './izitoast-helper';
-import { VIEW, FLAVOR } from './constants';
+import { VIEW, FLAVOR, E2E_SELECTORS } from './constants';
 import { LOADER_FEATURES } from '../../constants';
 
 const MAX_REQUESTS_IN_PROGRESS = 6;
@@ -156,6 +156,7 @@ const FilePicker = function () {
 
   // View model setup.
   this.view_model = {
+    e2eSelectors: E2E_SELECTORS,
     // Whether Chooser/Saver is in attach mode. Always false for Dropzone.
     attachMode: ko.observable(false),
     /**

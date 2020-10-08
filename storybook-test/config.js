@@ -1,14 +1,28 @@
 /**
+ * Common constants either used in storybook or jest.
+ * 
+ * Due to storybook's configuration, only env variables with 'STORYBOOK_' prefix
+ * are available in storybook. To provide the same interface for both jest and
+ * storybook. We modified .storybook/main.js to add the prefix for those
+ * storybook specific env vars.
+ * As a result, both *.story.js and *.test.js files can import this file to get
+ * constants defined from env vars.
+ * 
+ * The effective path:
+ *   storybook: env vars -> .storybook/main.js -> config.js -> *.story.js
+ *        jest: env vars -> config.js -> *.test.js
+ * Therefore, env vars with STORYBOOK_ are only available in storybook while
+ * those without STORYBOOK_ are only available for jest.
+ */
+const { devServerPorts } = require('../config/common');
+
+/**
  * Constants for both storybook and jest.
  */
 
-// This is a general interface to let both storybook and jest be able to access
-// env vars with the same default values.
-// For storybook, only env vars that prefixed by STORYBOOK_ are available.
-// For jest, only env vars that aren't prefixed by STORYBOOK_ are available.
 const PICKER_URL = (
   process.env.STORYBOOK_PICKER_URL || process.env.PICKER_URL
-  || 'http://localhost:8082/file-picker/v2/index.html');
+  || `http://localhost:${devServerPorts.picker}/file-picker/v2/index.html`);
 const BASE_URL = (
   process.env.STORYBOOK_BASE_URL || process.env.BASE_URL
   || 'https://api.kloudless.com');
@@ -45,6 +59,7 @@ const DEFAULT_SAVER_OPTIONS = {
     },
   ],
 };
+
 
 /**
  * Constants for jest.

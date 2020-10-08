@@ -1,0 +1,78 @@
+{
+  "page": 1,
+  "count": 2,
+  "next_page": null,
+  "objects": [
+    {
+      "id": "folder_aWQ6NmU3bXRCZUg0c0FBQUFBQUFBRExhQQ",
+      "created": null,
+      "modified": null,
+      "size": null,
+      "path": "/very-very-very-very-very-very-long-folder-name",
+      "ancestors": [
+        {
+          "type": "folder",
+          "id": "root",
+          "name": "Dropbox",
+          "id_type": "path"
+        }
+      ],
+      "parent": {
+        "type": "folder",
+        "id": "root",
+        "name": "Dropbox",
+        "id_type": "path"
+      },
+      "account": 1234567890,
+      "ids": {
+        "default": "folder_aWQ6NmU3bXRCZUg0c0FBQUFBQUFBRExhQQ",
+        "path": "folder_L3dlZGRpbmctc2NyZWVu"
+      },
+      "id_type": "default",
+      "api": "storage",
+      "name": "very-very-very-very-very-very-very-very-very-long-folder-name",
+      "type": "folder",
+      "can_create_folders": true,
+      "can_upload_files": true,
+      "can_list_recursively": true,
+      "href": "https://api.kloudless.com/v1/accounts/1234567890/storage/folders/folder_aWQ6NmU3bXRCZUg0c0FBQUFBQUFBRExhQQ",
+      "raw_id": "id:6e7mtBeH4sAAAAAAAADLaA"
+    },
+    {
+      "id": "file_aWQ6NmU3bXRCZUg0c0FBQUFBQUFBRGh1dw",
+      "created": null,
+      "modified": "2020-05-12T13:08:11Z",
+      "size": 16296,
+      "path": "/this-is-a-very-looooooooooooooooooooooooooooooooooong-file.png",
+      "ancestors": [
+        {
+          "type": "folder",
+          "id": "root",
+          "name": "Dropbox",
+          "id_type": "path"
+        }
+      ],
+      "parent": {
+        "type": "folder",
+        "id": "root",
+        "name": "Dropbox",
+        "id_type": "path"
+      },
+      "account": 1234567890,
+      "ids": {
+        "default": "file_aWQ6NmU3bXRCZUg0c0FBQUFBQUFBRGh1dw",
+        "path": "file_L3Rlc3QucG5n"
+      },
+      "id_type": "default",
+      "api": "storage",
+      "type": "file",
+      "name": "this-is-a-very-looooooooooooooooooooooooooooooooooong-file.png",
+      "mime_type": "image/png",
+      "downloadable": true,
+      "href": "https://api.kloudless.com/v1/accounts/1234567890/storage/files/file_aWQ6NmU3bXRCZUg0c0FBQUFBQUFBRGh1dw",
+      "raw_id": "id:6e7mtBeH4sAAAAAAAADhuw"
+    }
+  ],
+  "type": "object_list",
+  "api": "storage"
+}

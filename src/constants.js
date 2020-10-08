@@ -60,7 +60,7 @@ export const LOADER_FEATURES = {
   COMPUTER_NO_SUCCESS_ON_CANCEL_OR_FAIL: '2.5.4',
 };
 
-export const E2E_SELECTORS = {
+export const LOADER_E2E_SELECTORS = {
   // class name
   J_LAUNCH_BTN: 'j-launch-btn',
   // id

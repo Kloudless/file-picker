@@ -7,6 +7,7 @@ module.exports = {
     jest: true,
   },
   globals: {
+    // Jest Puppeteer exposes three globals: browser, page, context
     page: 'readonly',
     browser: 'readonly',
     context: 'readonly',

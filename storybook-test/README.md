@@ -10,6 +10,62 @@ instead, use  `window.Kloudless.filePickerVue`. In addition,
 `window.Kloudless.filePicker` can be used to access the regular JavaScript File
 Picker interface.
 
+Here is the structure of this project:
+
+```sh
+.
+├── README.md
+├── babel.config.js           # babel configuration
+├── config.js                 # env vars and constants
+├── jest-puppeteer.config.js  # puppeteer configuration
+├── jest.config.js            # jest configuration
+├── package.json
+├── static/                   # assets hosted by storybook
+├── stories/                  # put stories
+│   └── core/                 # helper methods to write stories
+└── tests/
+    ├── image/                # put image snapshot tests
+    │   ├── __image_snapshots__/  # image snapshots
+    │   │   └── __diff_output__/  # image snapshot diffs
+    │   └── core/             # helper methods to write tests and faked responses
+    ├── integration/          # put integration tests
+    │   └── core/             # helper methods to write tests
+    └── setupTests.js         # jest global setup
+```
+
+### Workflow
+
+![workflow](workflow.png)
+
+### Integration Tests
+
+Through Puppeteer API, open a browser, launch File Picker and operate it.
+Then verify the result.
+
+### Image Snapshot Tests
+
+Similar to integration tests, but perform image comparison to see whether
+UI gets changed or there is any visual regression.
+Very useful for responsiveness testing on different devices.
+
+For the first time, jest will produce the base images in
+**__image_snapshots__/** folder.
+
+The following tests will check whether the current image is the same as the
+base image. If not, jest will produce an image diff in
+**__image_snapshots__/__diff_output__/** folder.
+
+If the changes are expected, then run again jest with `-u` option to update the
+images.
+
+```
+npm run test -- -u
+```
+
+**Note**
+Try not running image tests among multiple OS as the images may be different in
+different OS even though the codes are the same.
+
 ## Install
 
 Clone this repository, and then run:
@@ -22,70 +78,88 @@ npm ci --prefix=storybook-test/
 
 In the project root, run the following commands in separate terminal windows:
 
-- Build the File Picker's "loader" and "picker" resources in watch mode.
+- Startup a webpack dev server to host File Picker's "loader" and "picker"
+  resources in watch mode.
   ```
-  npm run build:dev -- --watch
+  npm run dev:story
   ```
+  This will output 3 loader bundles - `kloudless.picker.js`, 
+  `kloudless.picker.react.js`, and `kloudless.picker.vue.js` for different
+  frameworks. They are hosted are `http://localhost:8081/sdk/`.
+  While the picker resources are hosted at `http://localhost:8082/file-picker/v2/`.
 
-- Start the Storybook server to host the loader and picker resources, as well
-  as stories.
+- Start the Storybook server.
   ```
   npm run storybook:test
   ```
-  This will watch for any changes to stories and reload the code when the
-  stories update.
-  
-  **Note**: The Storybook server won't reload if the File Picker's loader 
-  or picker source code updates. That would require refreshing the page to load
-  the latest File Picker build.
-  
+  Then you can visit `http://localhost:9001` to browse stories.
+
+  Both webpack dev server and storybook server watch for any changes to stories
+  and File Picker's source code and reload the code when update.
 
 ## How to Write Stories
 
-As the Storybook v5 documentation says:
-> A Storybook is a collection of stories. Each story represents a single visual
-  state of a component.
->
-> Technically, a story is a function that returns something that can be rendered
-  to a screen.
+A Storybook is a collection of stories. Each story represents a single visual
+state of a component. Therefore, each story will be a different option set of
+the File Picker.
 
-1. In `stories/`, create a file named `X.stories.js`, `X` can be any name.
+Please refer to Storybook Documentation about [writing stories](https://storybook.js.org/docs/react/writing-stories/introduction).
 
-2. Import the File Picker component you want to test from
-  `window.Kloudless.filePickerReact`. For example:
+For the convenience of both manual testing and automated testing. It's good to
+make options editable in each story. `createStory` and `createDropzoneStory` are
+helper methods for that (currently only supporting React binding).
 
-```javascript
-const { Chooser } = window.Kloudless.filePickerReact;
+Please check [stories/basic.stories.js](./stories/basic.stories.js) for an
+example.
+
+## How to Run Tests
+
+First, ensure the webpack dev server and storybook server is running.
+See [How to Run Storybook](#How to Run Storybook).
+
+Then, run the following command:
+
+```sh
+KLOUDLESS_APP_ID=<your App ID> KLOUDLESS_ACCOUNT_TOKEN=<token> npm run test --prefix=storybook-test
+
+# Use `-u` to confirm the snapshots changes:
+# npm run test --prefix=storybook-test -- -u
+
+# Enable watch mode:
+# npm run test --prefix=storybook-test -- --watch
 ```
 
-3. Use `createStory()` to wrap the File Picker component. `createStory()`
-  helps to handle events and input fields of global options, as well as required
-  options such as the Kloudless App ID.
+## How to Write Tests
 
-```javascript
-import { createStory } from './core';
-const WrappedChooser = createStory(Chooser);
-```
+We use [puppeteer](https://pptr.dev/) to do automated testing on stories.
+Includes snapshot testing and integration testing, located at `tests/image` and
+`tests/integration` respectively.
 
-4. Use the wrapped component the same way you would use the original component.
-  Check [our docs](../README.react.md) for more information on our React
-  component.
+We use snapshot testing to test responsiveness.
 
-Check [stories/basic.stories.js](./stories/basic.stories.js) for an example.
+`PuppeteerHelper` is a helper that wraps up common operations on File Picker.
+Use it to write tests.
 
-## How to Specify Global Options and an alternate Kloudless APP ID
+Please check [tests/integration/index.test.js](./tests/integration/index.test.js)
+and [tests/image/desktop.test.js](./tests/image/desktop.test.js) for examples.
 
-Inputs on the stories enable you to use your own Kloudless App ID.
+## Environment Variables
 
-In addition, the Base API Server URL and the File Picker URL may be different
-for Kloudless Enterprise servers that are self-hosted. Therefore, these may be
-customized as well.
+Here are the environment variables you can use in testing or storybook.
 
-By default, the base URL points to `https://api.kloudless.com` and the picker
-URL points to the Storybook server. Customize these values by running the
-Storybook commands above in the context of the following environment variables:
+| name | storybook | testing | description |
+|-|-|-|-|
+| BASE_URL | optional | optional | Defaults to https://api.kloudless.com. |
+| PICKER_URL | optional | optional | Where loader loads the File Picker iframe. <br>Defaults to http://localhost:8082/file-picker/v2/index.html. |
+| KLOUDLESS_APP_ID | optional | **required** | The launched App ID. |
+| KLOUDLESS_ACCOUNT_TOKEN | optional | **required** | The launched token. |
+| LOADER_URL | optional | x | Where to load loader scripts. <br>Defaults to http://localhost:8081/sdk. |
+| DEBUG | x | optional | Set to a truthy value to turn off puppeteer headless mode. |
+| CI | x | optional | If it's a truthy value. Jest will run the storybook and dev server before tests. Useful when running in CI server. |
 
-- `STORYBOOK_KLOUDLESS_APP_ID`: Set the default Kloudless App ID
-- `STORYBOOK_PICKER_URL`: Set the URL the loader loads the File Picker iframe
-   from.
-- `STORYBOOK_BASE_URL`: Set the default API Server base URL.
+## References
+
+- [jest-image-snapshot](https://github.com/americanexpress/jest-image-snapshot)
+- [jest](https://jestjs.io/en/versions)
+- [storybook](https://storybook.js.org/docs/react/get-started/introduction)
+- [puppeteer](https://pptr.dev/)

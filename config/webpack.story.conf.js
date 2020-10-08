@@ -10,12 +10,15 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const baseWebpackConfig = require('./webpack.base.conf');
 const getPickerPlugins = require('./picker-plugins');
 const merge = require('./merge-strategy');
+const { devServerPorts } = require('./common');
 
 const BASE_CONFIG = merge(baseWebpackConfig, {
   mode: 'development',
   devtool: '#source-map',
 });
 const SRC_PATH = path.resolve(__dirname, '../src');
+const LOADER_BASE_URL = `http://localhost:${devServerPorts.loader}/`;
+const PICKER_BASE_URL = `http://localhost:${devServerPorts.picker}/`;
 
 module.exports = [
   // react-wrapper of loader
@@ -24,7 +27,7 @@ module.exports = [
     entry: {
       'sdk/kloudless.picker.react': [
         'webpack-hot-middleware/client?reload=false&quiet=false'
-        + '&name=react-loader&path=http://localhost:8081/__webpack_hmr',
+        + `&name=react-loader&path=${LOADER_BASE_URL}__webpack_hmr`,
         path.resolve(SRC_PATH, 'loader/js/react/index.js'),
       ],
     },
@@ -34,7 +37,7 @@ module.exports = [
       library: 'filePickerReact',
       globalObject: 'window.Kloudless',
       // Tell WHR where to reload resources.
-      publicPath: 'http://localhost:8081/',
+      publicPath: LOADER_BASE_URL,
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin(),
@@ -46,7 +49,7 @@ module.exports = [
     entry: {
       'sdk/kloudless.picker.vue': [
         'webpack-hot-middleware/client?reload=false&quiet=false&name=vue-loader'
-        + '&path=http://localhost:8081/__webpack_hmr',
+        + `&path=${LOADER_BASE_URL}__webpack_hmr`,
         path.resolve(SRC_PATH, 'loader/js/vue/index.js'),
       ],
     },
@@ -56,7 +59,7 @@ module.exports = [
       library: 'filePickerVue',
       globalObject: 'window.Kloudless',
       // Tell WHR where to reload resources.
-      publicPath: 'http://localhost:8081/',
+      publicPath: LOADER_BASE_URL,
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin(),
@@ -69,14 +72,14 @@ module.exports = [
     entry: {
       'sdk/kloudless.picker': [
         'webpack-hot-middleware/client?reload=false&quiet=false&name=loader'
-        + '&path=http://localhost:8081/__webpack_hmr',
+        + `&path=${LOADER_BASE_URL}__webpack_hmr`,
         path.resolve(__dirname, 'loader-export-helper.js'),
       ],
     },
     output: {
       filename: '[name].js',
       // Tell WHR where to reload resources.
-      publicPath: 'http://localhost:8081/',
+      publicPath: LOADER_BASE_URL,
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin(),
@@ -87,15 +90,15 @@ module.exports = [
     name: 'picker',
     entry: {
       'file-picker/v2/picker': [
-        'webpack-hot-middleware/client?reload=false&quiet=false&name=picker'
-        + '&path=http://localhost:8082/__webpack_hmr',
+        'webpack-hot-middleware/client?reload=true&quiet=false&name=picker'
+        + `&path=${PICKER_BASE_URL}__webpack_hmr`,
         path.resolve(SRC_PATH, 'picker/js/app.js'),
       ],
     },
     output: {
       filename: '[name].js',
       // Tell WHR where to reload resources.
-      publicPath: 'http://localhost:8082/',
+      publicPath: PICKER_BASE_URL,
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin(),
