@@ -425,7 +425,12 @@ Object.defineProperty(filePicker._picker.prototype, 'constructor', {
 // Send a message to the picker frame
 filePicker._picker.prototype.message = function (action, data, callbackId) {
   const frame = frames[this.exp_id];
-  if (frame) {
+  /**
+   * Vue Dropzone: the element bounded with drop picker is managed by Vue
+   * and is unmounted before destroyed()/beforeDestroy() gets called.
+   * So check if the frame is exist before accessing its contentWindow.
+   */
+  if (frame && document.contains(frame)) {
     frame.contentWindow.postMessage(JSON.stringify({
       callbackId,
       action,
