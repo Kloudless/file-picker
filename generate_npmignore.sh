@@ -6,6 +6,7 @@ echo '# generate by generate_npmignore.sh' >> .npmignore
 echo 'storybook-common/' >> .npmignore
 echo 'storybook-react/' >> .npmignore
 echo 'storybook-vue/' >> .npmignore
+echo 'storybook-test/' >> .npmignore
 echo '.eslintrc.js' >> .npmignore
 echo '.eslintignore' >> .npmignore
 echo '.bowerrc' >> .npmignore
