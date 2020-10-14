@@ -59,14 +59,4 @@ module.exports = {
       'transform-define', transformDefines,
     ],
   ],
-  env: {
-    transpile: {
-      presets: [
-        ['@babel/preset-env', {
-          useBuiltIns: false,
-        }],
-        '@babel/preset-react',
-      ],
-    },
-  },
 };
