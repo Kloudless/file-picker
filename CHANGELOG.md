@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+---
+
+## [2.5.4] - 2020-10-21
+
 ### Fixed
 
+- Some IE11 issues.
 - VueJS Dropzone component: fix `TypeError: Cannot read property 'postMessage' of null`
   error on destroy.
 
