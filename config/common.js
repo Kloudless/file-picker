@@ -14,7 +14,7 @@ module.exports = {
    */
   ignorePaths: [
     new RegExp('(node_modules)|(bower_components)'),
-    new RegExp('lib/(?!(plupload/jquery.ui.plupload))'),
+    new RegExp('lib/(?!(plupload/jquery.ui.plupload|jquery.ajax-retry))'),
   ],
   /**
    * A list of paths to resolve module imports

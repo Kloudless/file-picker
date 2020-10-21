@@ -430,7 +430,7 @@ filePicker._picker.prototype.message = function (action, data, callbackId) {
    * and is unmounted before destroyed()/beforeDestroy() gets called.
    * So check if the frame is exist before accessing its contentWindow.
    */
-  if (frame && document.contains(frame)) {
+  if (frame && document.documentElement.contains(frame)) {
     frame.contentWindow.postMessage(JSON.stringify({
       callbackId,
       action,
