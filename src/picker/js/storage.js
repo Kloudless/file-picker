@@ -1,19 +1,15 @@
-/* eslint-disable */
 import config from './config';
 
-'use strict';
-
-
-var storage = {
-  container: null
+const storage = {
+  container: null,
 };
 
 // set the storage container
-if (config.persist == "local" && window.localStorage) {
+if (config.persist === 'local' && window.localStorage) {
   storage.container = window.localStorage;
-} else if (config.persist == "session" && window.sessionStorage) {
+} else if (config.persist === 'session' && window.sessionStorage) {
   storage.container = window.sessionStorage;
-} else if (config.persist == "none") {
+} else if (config.persist === 'none') {
   storage.container = null;
 } else {
   // Temporary container.
@@ -21,30 +17,29 @@ if (config.persist == "local" && window.localStorage) {
 }
 
 // Pass in accounts from an account manager
-storage.storeAccounts = function (appId, accounts) {
+storage.storeAccounts = function storeAccounts(appId, accounts) {
   if (!storage.container) return;
 
-  var serviceNames = config.all_services().map(function (service) {
-    return service.id;
-  });
+  const serviceNames = config.all_services().map(service => service.id);
 
-  var key = 'k-' + appId, appData = storage.container[key];
-  if (!appData || appData.length == 0) {
-    appData = {}
+  const key = `k-${appId}`;
+  let appData = storage.container[key];
+  if (!appData || appData.length === 0) {
+    appData = {};
   } else {
     appData = JSON.parse(appData);
   }
 
   // add accounts from the manager for currently visible services.
-  var i, account, array = [];
-  for (i = 0; i < accounts.length; i++) {
-    account = accounts[i];
+  const array = [];
+  for (let i = 0; i < accounts.length; i += 1) {
+    const account = accounts[i];
     array.push(JSON.stringify(account));
   }
   // add accounts already saved for currently invisible services.
-  for (i = 0; i < appData.accounts.length; i++) {
-    account = JSON.parse(appData.accounts[i]);
-    if (serviceNames.indexOf(account.service) == -1) {
+  for (let i = 0; i < appData.accounts.length; i += 1) {
+    const account = JSON.parse(appData.accounts[i]);
+    if (serviceNames.indexOf(account.service) === -1) {
       array.push(appData.accounts[i]);
     }
   }
@@ -55,13 +50,12 @@ storage.storeAccounts = function (appId, accounts) {
 
 // Return an array of accounts, initialize if necessary
 // the appData is stringified
-storage.loadAccounts = function (appId) {
+storage.loadAccounts = function loadAccounts(appId) {
   if (!storage.container) return [];
 
-  var serviceNames = config.all_services().map(function (service) {
-    return service.id;
-  });
-  var key = 'k-' + appId, appData = storage.container[key];
+  const serviceNames = config.all_services().map(service => service.id);
+  const key = `k-${appId}`;
+  let appData = storage.container[key];
   if (!appData || appData.length === 0) {
     appData = {};
     appData.accounts = [];
@@ -71,22 +65,26 @@ storage.loadAccounts = function (appId) {
 
   appData = JSON.parse(appData);
   // accounts also needs to be parsed
-  var i, array = [], accounts = appData.accounts;
-  for (i = 0; i < accounts.length; i++) {
-    var acc = JSON.parse(accounts[i]);
+  const array = [];
+  const { accounts } = appData;
+  for (let i = 0; i < accounts.length; i += 1) {
+    const acc = JSON.parse(accounts[i]);
     if (serviceNames.length === 0 || // Not loaded yet
-      serviceNames.indexOf(acc.service) != -1) {
+      serviceNames.indexOf(acc.service) !== -1) {
       array.push(acc);
     }
   }
   return array;
 };
 
-storage.removeAllAccounts = function (appId) {
-  if (!storage.container) return;
+storage.removeAllAccounts = function removeAllAccounts(appId) {
+  if (!storage.container) {
+    return;
+  }
 
-  var key = 'k-' + appId, appData = storage.container[key];
-  if (!appData || appData.length == 0) {
+  const key = `k-${appId}`;
+  let appData = storage.container[key];
+  if (!appData || appData.length === 0) {
     appData = {};
     appData.accounts = [];
     storage.container[key] = JSON.stringify(appData);
@@ -97,20 +95,20 @@ storage.removeAllAccounts = function (appId) {
   }
 };
 
-storage.storeId = function (pickerId) {
+storage.storeId = function storeId(pickerId) {
   if (!storage.container) {
-    return
-  };
+    return;
+  }
   const key = 'k-explorerId';
   storage.container[key] = pickerId;
-}
+};
 
-storage.loadId = function () {
+storage.loadId = function loadId() {
   if (!storage.container) {
-    return
-  };
+    return null;
+  }
   const key = 'k-explorerId';
   return storage.container[key];
-}
+};
 
 export default storage;
