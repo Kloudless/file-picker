@@ -1,24 +1,36 @@
+import logger from 'loglevel';
 import config from './config';
 
 const storage = {
   container: null,
 };
 
-// set the storage container
-if (config.persist === 'local' && window.localStorage) {
-  storage.container = window.localStorage;
-} else if (config.persist === 'session' && window.sessionStorage) {
-  storage.container = window.sessionStorage;
-} else if (config.persist === 'none') {
-  storage.container = null;
-} else {
-  // Temporary container.
+try {
+  // set the storage container
+  if (config.persist === 'local' && window.localStorage) {
+    storage.container = window.localStorage;
+  } else if (config.persist === 'session' && window.sessionStorage) {
+    storage.container = window.sessionStorage;
+  } else {
+    // "none" or window.localStorage/window.sessionStorage is falsy.
+    storage.container = {};
+  }
+} catch (err) {
+  // Chrome and Edge will throw DOMException when accessing sessionStorage or
+  // localStorage if 3rd party cookie disabled.
+  // https://blog.zok.pw/web/2015/10/21/3rd-party-cookies-in-practice/
+  logger.warn(
+    'Cannot access localStorage/sessionStorage. '
+    + 'This might be due to third-party cookies being disabled.',
+  );
   storage.container = {};
 }
 
 // Pass in accounts from an account manager
 storage.storeAccounts = function storeAccounts(appId, accounts) {
-  if (!storage.container) return;
+  if (!storage.container) {
+    return;
+  }
 
   const serviceNames = config.all_services().map(service => service.id);
 
@@ -31,18 +43,16 @@ storage.storeAccounts = function storeAccounts(appId, accounts) {
   }
 
   // add accounts from the manager for currently visible services.
-  const array = [];
-  for (let i = 0; i < accounts.length; i += 1) {
-    const account = accounts[i];
-    array.push(JSON.stringify(account));
-  }
+  const array = accounts.map(acc => JSON.stringify(acc));
+
   // add accounts already saved for currently invisible services.
-  for (let i = 0; i < appData.accounts.length; i += 1) {
-    const account = JSON.parse(appData.accounts[i]);
-    if (serviceNames.indexOf(account.service) === -1) {
-      array.push(appData.accounts[i]);
+  appData.accounts.forEach((acc) => {
+    const account = JSON.parse(acc);
+    if (!serviceNames.includes(account.service)) {
+      array.push(acc);
     }
-  }
+  });
+
   // store the final array
   appData.accounts = array;
   storage.container[key] = JSON.stringify(appData);
@@ -51,7 +61,9 @@ storage.storeAccounts = function storeAccounts(appId, accounts) {
 // Return an array of accounts, initialize if necessary
 // the appData is stringified
 storage.loadAccounts = function loadAccounts(appId) {
-  if (!storage.container) return [];
+  if (!storage.container) {
+    return [];
+  }
 
   const serviceNames = config.all_services().map(service => service.id);
   const key = `k-${appId}`;
