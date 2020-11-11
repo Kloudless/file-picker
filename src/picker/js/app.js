@@ -586,13 +586,19 @@ const FilePicker = function () {
         return;
       }
 
-      // Emit 'selected' event with selected files
-      if (selections.some(s => s.type === 'file')) {
-        logger.debug('Files selected! ', selections);
+      // Emit 'selected' event with selections
+      logger.debug('Items selected! ', selections);
+      if (config.isSupported(
+        LOADER_FEATURES.CAN_INCLUDE_FOLDERS_IN_SELECTED_EVENT_DATA,
+      )) {
+        this.view_model.postMessage('selected', selections);
+      } else {
         this.view_model.postMessage(
-          'selected', selections.filter(s => s.type === 'file'),
+          'selected',
+          selections.filter(s => s.type === 'file'),
         );
       }
+
 
       // Confirm copy to upload location
       if (copyFolder) {
