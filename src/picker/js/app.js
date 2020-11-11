@@ -1234,6 +1234,9 @@ const FilePicker = function () {
       sort: (option) => {
         this.manager.active().filesystem().sort(option);
       },
+      sortOption: () => this.manager.active().filesystem().sortOption,
+      // make it a function to prevent it be accessed before manager
+      // initializes.
       searchResult: ko.observableArray(),
       searchQuery: ko.observable(''),
       toggleSearchView: (enabled) => {

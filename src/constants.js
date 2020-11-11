@@ -66,3 +66,10 @@ export const LOADER_E2E_SELECTORS = {
   // id
   IFRAME_NAME: 'kloudless-file-picker-iframe',
 };
+
+export const SORTING = {
+  DIRECTION: {
+    ASC: 'asc',
+    DESC: 'desc',
+  },
+};

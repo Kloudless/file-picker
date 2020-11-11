@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Display the loading view instead of the Manage Accounts view before File 
   Picker completes initialization.
 
+### Changed
+- Keep sorting rule individually for each connected account.
+
 ---
 
 ## [2.6.0][2.6.1][2.6.2] - 2020-12-14

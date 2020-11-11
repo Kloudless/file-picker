@@ -3,11 +3,15 @@ import ko from 'knockout';
 import logger from 'loglevel';
 import config from '../config';
 import util from '../util';
+import { SORTING } from '../../../constants';
 
 // TODO: replace some methods by using knockouts utils library
 // http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
 
-const DEFAULT_SORT_OPTION = 'name';
+const { DIRECTION: { ASC, DESC } } = SORTING;
+
+const DEFAULT_SORT_FIELD = 'name';
+const DEFAULT_SORT_DIRECTION = ASC;
 const DEFAULT_ROOT_FOLDER_ID = 'root';
 const FIRST_PAGE = 1;
 const PAGE_SIZE = 1000;
@@ -19,7 +23,10 @@ function Filesystem(id, key, callback) {
   this.request = null; // The currently active request.
   this.getPageTask = Promise.resolve();
   this.isLoadingNextPage = ko.observable(false);
-  this.sortOption = DEFAULT_SORT_OPTION;
+  this.sortOption = {
+    field: ko.observable(DEFAULT_SORT_FIELD),
+    direction: ko.observable(DEFAULT_SORT_DIRECTION),
+  };
 
   // This is later replaced with updated folder metadata.
   this.current = ko.observable({
@@ -436,9 +443,9 @@ Filesystem.prototype.mkdir = function (folderName, callback = () => {}) {
 };
 
 // eslint-disable-next-line func-names
-Filesystem.prototype.clearSort = function () {
-  this.sortOption = null;
-  $('.icon__sort').removeClass('icon__sort--asc icon__sort--desc');
+Filesystem.prototype.resetSort = function () {
+  this.sortOption.field(DEFAULT_SORT_FIELD);
+  this.sortOption.direction(DEFAULT_SORT_DIRECTION);
 };
 
 /**
@@ -451,27 +458,25 @@ Filesystem.prototype.clearSort = function () {
  * 4. Compare by name.
  */
 // eslint-disable-next-line func-names
-Filesystem.prototype.sort = function (option) {
-  const self = this;
-  const _option = option || self.sortOption;
-  if (!_option) {
+Filesystem.prototype.sort = function (field) {
+  if (!field && !this.sortOption.field()) {
     return;
   }
-  const reverse = !!option;
-  self.sortOption = _option;
 
-  const element = $(`#sort-${_option}`);
-  let direction = 'asc';
-  if (reverse && element.hasClass('icon__sort--asc')) {
-    direction = 'desc';
-  } else if (!reverse && element.hasClass('icon__sort--desc')) {
-    direction = 'desc';
+  if (field) {
+    if (field === this.sortOption.field()) {
+      if (this.sortOption.direction() === ASC) {
+        this.sortOption.direction(DESC);
+      } else {
+        this.sortOption.direction(ASC);
+      }
+    } else {
+      this.sortOption.field(field);
+    }
   }
-  $('.icon__sort').removeClass('icon__sort--asc icon__sort--desc');
-  element.addClass(`icon__sort--${direction}`);
 
-  const factor = direction === 'asc' ? 1 : -1;
-  self.current().children.sort((left, right) => {
+  const factor = this.sortOption.direction() === ASC ? 1 : -1;
+  this.current().children.sort((left, right) => {
     if (left.type === 'newfolder') {
       return -1;
     }
@@ -485,16 +490,18 @@ Filesystem.prototype.sort = function (option) {
     }
     const lname = left.name.toLowerCase();
     const rname = right.name.toLowerCase();
-    if (_option === 'name') {
+    if (this.sortOption.field() === 'name') {
       if (lname === rname) {
         return 0;
       }
       return lname < rname ? -1 * factor : 1 * factor;
     }
-    if (_option === 'recent' && left.modified !== right.modified) {
+
+    if (this.sortOption.field() === 'recent'
+      && left.modified !== right.modified) {
       return left.modified > right.modified ? 1 * factor : -1 * factor;
     }
-    if (_option === 'largest' && left.size !== right.size) {
+    if (this.sortOption.field() === 'largest' && left.size !== right.size) {
       return left.size > right.size ? 1 * factor : -1 * factor;
     }
     if (lname === rname) {
@@ -502,6 +509,20 @@ Filesystem.prototype.sort = function (option) {
     }
     return lname < rname ? -1 : 1;
   });
+};
+
+ko.bindingHandlers.sort = {
+  update(element, valueAccessor, allBindings, viewModel) {
+    const field = valueAccessor();
+    const sortingField = viewModel.sortOption().field();
+    const sortingDirection = viewModel.sortOption().direction();
+
+    element.classList.remove(`icon__sort--${ASC}`);
+    element.classList.remove(`icon__sort--${DESC}`);
+    if (field === sortingField) {
+      element.classList.add(`icon__sort--${sortingDirection}`);
+    }
+  },
 };
 
 export default Filesystem;

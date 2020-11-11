@@ -20,6 +20,10 @@ module.exports = {
   },
   extends: [
     'airbnb-base',
+    'plugin:react/recommended',
+  ],
+  plugins: [
+    'react',
   ],
   // add your custom rules here
   rules: {
