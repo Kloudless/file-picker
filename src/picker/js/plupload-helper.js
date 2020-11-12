@@ -251,7 +251,7 @@ class PluploadHelper {
 
       // Filters
       filters: {
-        max_file_size: '50000mb',
+        max_file_size: config.max_size(),
         prevent_duplicates: false, // unique_names instead.
         mime_types: filtered_types,
         max_file_count: config.multiselect() ? undefined : 1,
@@ -495,9 +495,15 @@ class PluploadHelper {
         },
         Error: (up, args) => {
           logger.debug('Error');
-          // file extension error
-          // eslint-disable-next-line eqeqeq
-          if (args.code == plupload.FILE_EXTENSION_ERROR) {
+          if (args.code === plupload.FILE_SIZE_ERROR) {
+            // file size exceeds
+            const msg = localization.formatAndWrapMessage(
+              'computer/exceedMaxSize',
+              { file: args.file.name, maxSize: config.max_size() },
+            );
+            PluploadHelper.showError(msg);
+          } else if (args.code === plupload.FILE_EXTENSION_ERROR) {
+            // file extension error
             const filter_msg = localization.formatAndWrapMessage(
               'computer/pleaseUploadFilesOfTypes',
               { types: types.join(', ') },
@@ -539,6 +545,9 @@ class PluploadHelper {
               up.removeFile(args.file);
               up.start();
             }
+          } else {
+            const msg = localization.formatAndWrapMessage('global/error');
+            PluploadHelper.showError(msg, { detail: JSON.stringify(args) });
           }
         },
         UploadComplete: (up) => {

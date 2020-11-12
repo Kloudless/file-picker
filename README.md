@@ -794,6 +794,19 @@ in the array without the period (`.`) prefix. For example,
 Include `''` to allow files with the MIME type `application/octet-stream` or
 without a file extension to be selected.
 
+* `max_size` : number
+
+  Chooser: _Optional (default: 0)_
+
+  The maximum size (in bytes) of files that can be selected, or uploaded in the
+  case of local uploads via the Computer option. This limit applies per file
+  selected, and not collectively.
+
+  Set to `0` to disable this limit.
+
+  Files with an unknown size, such as Google Docs, can still be selected
+  regardless of this option.
+
 
 #### Saver Options
 
@@ -1046,6 +1059,7 @@ without a file extension to be selected.
   * `custom_css` (deprecated)
   * `locale`
   * `element`
+  * `max_size`
   
 * `picker.logout(deleteAccount=false)`
 

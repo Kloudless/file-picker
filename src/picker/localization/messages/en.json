@@ -36,7 +36,9 @@
       "cannotUploadFiles": "Files cannot be saved to this folder. Please choose again.",
       "confirmCopyFolder": "Are you sure to copy the folder '{folderName}'?",
       "confirmCopy": "You have selected {folderNum} folders and {fileNum} files. Are you sure to copy them?",
-      "forbidCopyRootFolder": "Copying all data at once is not allowed."
+      "forbidCopyRootFolder": "Copying all data at once is not allowed.",
+      "exceedMaxSize": "'{file}' cannot be uploaded because it exceeds the max allowed size of {maxSize} bytes.",
+      "multiselectExceedMaxSize": "Some files were ignored because they exceed the max allowed size of {maxSize} bytes."
     },
     "accounts": {
       "confirmRemove": "You will no longer be able to browse this account. Are you sure you would like to remove it? (Note that this does not log you out of the account on this browser)",
@@ -89,7 +91,8 @@
       "disconnect": "Uploading has been paused due to disconnection.",
       "error": "Uploading has been paused due to errors when uploading the file '{file}'. Resume to retry.",
       "uploadFail": "Failed to upload the file '{file}'. Please try again or contact Support.",
-      "pleaseUploadFilesOfTypes": "Please upload files of the following types: {types}."
+      "pleaseUploadFilesOfTypes": "Please upload files of the following types: {types}.",
+      "exceedMaxSize": "'{file}' isn't allowed because it exceeds max size ({maxSize} bytes)."
     },
     "addConfirm": {
       "confirm": "Confirm account connection",

@@ -113,6 +113,7 @@ Object.assign(config, {
   origin: get_query_variable('origin'),
   persist: JSON.parse(get_query_variable('persist')),
   services: JSON.parse(get_query_variable('services')),
+  max_size: ko.observable(0),
 
   /* options that can be updated by config.update() */
   account_management: ko.observable(true),
