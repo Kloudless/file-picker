@@ -114,7 +114,7 @@ a full list of configuration options.
 You can also install the File Picker package from NPM:
 
 ```
-npm ci @kloudless/file-picker
+npm install @kloudless/file-picker
 ```
 
 ```javascript
