@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { action } from '@storybook/addon-actions';
 import {
   object, text, boolean, number,
 } from '@storybook/addon-knobs';
@@ -33,7 +32,10 @@ function genEventHandlers(name) {
     };
   return Object.keys(eventHandlerMapping).reduce((result, event) => {
     const eventHandler = eventHandlerMapping[event];
-    result[eventHandler] = action(`(${name}) ${eventHandler} called`);
+    result[eventHandler] = (...args) => {
+      console.log(`(${name}) ${eventHandler} called:`);
+      console.dir(args);
+    };
     return result;
   }, {});
 }
