@@ -902,9 +902,9 @@ without a file extension to be selected.
   being called (not to be confused with this `close` event handler).
   The `success` or `cancel` events will also be fired if appropriate.
 
-* `selected(files)`
+* `selected(results)`
 
-  Fired when the user selects files from the
+  Fired when the user selects files or folders from the
   File Picker, but before the list is sent to the Kloudless API for additional
   processing. This means this event fires before the `success` event,
   and allows you to perform any action while waiting to get the final list.
@@ -913,8 +913,9 @@ without a file extension to be selected.
   equivalent to the `success` event (since nothing needs to happen on the
   server after the selections are made), so this event serves no purpose then.
 
-  `files` is an array of
-  [File](https://developers.kloudless.com/docs/latest/storage#files) objects.
+  `results` is an array of [File](https://developers.kloudless.com/docs/latest/storage#files)
+  or [Folder](https://developers.kloudless.com/docs/latest/storage#folders)
+  objects.
 
   This event is not fired when the user uses the Chooser's Computer option or
   the Saver. See `startFileUpload` and `finishFileUpload` for events fired

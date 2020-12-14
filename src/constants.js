@@ -50,4 +50,7 @@ export const LOADER_FEATURES = {
    * unknown events well, sending them could cause script errors
    */
   CAN_HANDLE_UNKNOWN_EVENTS: '2.5.1',
+
+  // Include folders in selected event data.
+  CAN_INCLUDE_FOLDERS_IN_SELECTED_EVENT_DATA: '2.5.4',
 };
