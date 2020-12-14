@@ -1445,6 +1445,39 @@ ko.bindingHandlers.finderSelect = {
     };
     selector.finderSelect('addHook', 'highlight:after', onHighlightChange);
     selector.finderSelect('addHook', 'unHighlight:after', onHighlightChange);
+    selector.finderSelect('addHook', 'highlight:after', (els) => {
+      const maxSize = config.max_size();
+      if (!maxSize) {
+        return;
+      }
+      const oversizeFiles = els.filter((i, el) => {
+        if (el.getAttribute('data-type') === 'file') {
+          const file = ko.dataFor(el);
+          return file.size && file.size > maxSize;
+        }
+        return false;
+      });
+      if (oversizeFiles.length > 0) {
+        // Show proper error message depends on whether it's a multiple
+        // selection.
+        if (els.length === 1) {
+          const filename = ko.dataFor(oversizeFiles[0]).name;
+          iziToastHelper.error(
+            localization.formatAndWrapMessage(
+              'files/exceedMaxSize',
+              { maxSize, file: filename },
+            ),
+          );
+        } else {
+          iziToastHelper.error(
+            localization.formatAndWrapMessage(
+              'files/multiselectExceedMaxSize', { maxSize },
+            ),
+          );
+        }
+        selector.finderSelect('unHighlight', oversizeFiles);
+      }
+    });
   },
   update(element, valueAccessor, allBindings, viewModel) {
     ko.unwrap(valueAccessor());
