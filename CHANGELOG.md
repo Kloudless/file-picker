@@ -9,26 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Chooser: Introduced the new option, `max_size`, to limit the size of the
   selected file.
-### Changed
-- Include folder selections in the `selected` event.
-
-### Changed
-
-- Improved handling of the `persist` option. Please refer to the `persist`
-  option in the [Chooser Options](README.md#chooser-and-saver) for details.
-
-### Added
-
 - The new option, `close_on_success`, controls whether to close the File Picker
   when all the selections in the Chooser, or files in the Computer and Saver,
   are processed successfully.
 
 ### Changed
-
+- Include folder selections in the `selected` event.
+- Improved handling of the `persist` option. Please refer to the `persist`
+  option in the [Chooser Options](README.md#chooser-and-saver) for details.
 - The File Picker's Computer View won't fire a `success` event on cancellation
   or if no items succeed, which was previously the case.
 - Options to close the File Picker are now hidden if the File Picker is launched
   with the `element` option that attaches it to a DOM element.
+- Failed local uploads can now be removed from the list of uploads to be retried.
+- Improved state management for uploads from the local machine.
+- File Picker's Computer View won't fire success event on cancel or no items
+  succeed, to be consistent with other modes.
+- Remove the cancel button in attach mode.
 
 ---
 

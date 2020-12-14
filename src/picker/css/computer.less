@@ -38,6 +38,35 @@
   font-size: @font_size_md;
 }
 
+.plupload__cell-action {
+  width: 20px;
+  font-size: @font_size_md;
+}
+
+.plupload__file-status {
+  width: 100%;
+  color: @main_color;
+}
+
+.plupload__file-status--uploading::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: @font_size_md;
+  background: url(@icon_loading);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.plupload__file-status--done {
+  color: @main_color;
+}
+
+.plupload__file-status--failed {
+  color: @error_text_color;
+}
+
 .plupload__cell-scroll {
   display: none;
   padding-right: 0;
@@ -109,13 +138,8 @@
   .word-break();
 }
 
-.plupload__file-percent,
 .plupload__total-percent {
   color: @main_color;
-}
-
-.plupload__file-percent {
-  width: 100%;
 }
 
 .plupload__footer {

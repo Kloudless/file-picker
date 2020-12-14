@@ -16,7 +16,6 @@ const TRANSLATION_KEYS = {
   UPLOAD: 'global/upload',
   PAUSE: 'global/pause',
   RESUME: 'global/resume',
-  PROCESSING: 'global/processing',
 };
 
 // Selectors
@@ -50,22 +49,57 @@ class PluploadHelper {
    *   name: <string>,
    *   size: <number>,
    *   mime_type: <string>,
-   *   error?: <Kloudless Error Object>
+   *   error?: <Kloudless Error Object>,
+   *   metadata?: <Kloudless File/Folder Object>
    * }
+   * `error` is presented if file.status is plupload.FAILED.
+   * `metadata` is presented if file.status is plupload.DONE.
    * @param {plupload.File} file
-   * @param {Object=} error - The error object returns by Kloudless API server.
    */
-  static formatFileObject(file, error) {
+  static formatFileObject(file) {
     const result = {
       id: file.id,
       name: file.name,
       size: file.size,
       mime_type: file.type,
     };
-    if (error) {
-      result.error = error;
+    if (file.status === plupload.FAILED) {
+      result.error = file._error || {};
+    }
+    if (file.status === plupload.DONE) {
+      result.metadata = file._metadata || {};
     }
     return result;
+  }
+
+  /**
+   * @param {plupload.Uploader} up
+   * @param {plupload.File} file
+   * @param {string} response
+   */
+  static handleFileError(up, file, response) {
+    up.stop();
+    // Force update file status.
+    file.status = plupload.FAILED;
+    up.trigger('UploadProgress', file);
+    if (config.uploads_pause_on_error()) {
+      const msg = localization.formatAndWrapMessage(
+        'computer/error', { file: file.name },
+      );
+      PluploadHelper.showError(msg, response);
+    } else {
+      const msg = localization.formatAndWrapMessage(
+        'computer/uploadFail', { file: file.name },
+      );
+      PluploadHelper.showError(msg, response);
+      try {
+        file._error = JSON.parse(response);
+      } catch (ex) {
+        // Response may be "" when there is no network.
+        logger.error(`Un-expected response format: ${response}`);
+      }
+      up.start();
+    }
   }
 
   static showError(msg, detail) {
@@ -87,13 +121,6 @@ class PluploadHelper {
     // Record the files that are dropped into Dropzone before Plupload
     // setup.
     this.files = [];
-    // The list of Kloudless file metadata that are uploaded successfully.
-    this.uploadedFiles = [];
-    /**
-     * The files that are failed to upload. See
-     * PluploadHelper.formatFileObject() for the format.
-     * */
-    this.failedFiles = [];
     // Used to determine whether to show 'Resume' or 'Upload' for the button.
     this.hasStarted = false;
   }
@@ -103,39 +130,28 @@ class PluploadHelper {
   }
 
   /**
-   * @param {Object} file - The file object that is formatted by
-   *  PluploadHelper.formatFileObject().
-   */
-  addFailedFile(file) {
-    const index = this.failedFiles.findIndex(f => f.id === file.id);
-    if (index > -1) {
-      this.failedFiles.splice(index, 1);
-    }
-    this.failedFiles.push(file);
-  }
-
-  removeFailedFile(fileId) {
-    const index = this.failedFiles.findIndex(file => file.id === fileId);
-    if (index > -1) {
-      this.failedFiles.splice(index, 1);
-    }
-  }
-
-  /**
-   * Invoke picker.finish() and clear plupload.
+   * Close FP and emit proper event.
+   * This won't destroy the Plupload, just reset some data.
    * @param {plupload.Uploader} up
    */
   finish(up) {
+    const successFiles = up.files.filter(f => f.status === plupload.DONE)
+      .map(f => f._metadata || {});
+    const failedFiles = up.files.filter(f => f.status === plupload.FAILED)
+      .map(f => PluploadHelper.formatFileObject(f));
     this.picker.finish(
-      this.uploadedFiles,
-      this.failedFiles,
+      successFiles,
+      failedFiles,
       localization.formatAndWrapMessage(
         'global/computerSuccess',
-        { number: this.uploadedFiles.length },
+        { number: successFiles.length },
       ),
-      { successOnAllFail: !PluploadHelper.supportNoSuccessOnCancelOrFail() },
+      {
+        successOnAllFail: !PluploadHelper.supportNoSuccessOnCancelOrFail(),
+      },
     );
     this.initData();
+    // Removed all the files.
     up.splice();
   }
 
@@ -148,6 +164,7 @@ class PluploadHelper {
       fireSuccess: !PluploadHelper.supportNoSuccessOnCancelOrFail(),
     });
     this.initData();
+    // Removed all the files.
     up.splice();
   }
 
@@ -184,16 +201,7 @@ class PluploadHelper {
     this.buttons.addMore.removeAttr('disabled');
 
     if (up.state === plupload.STARTED) {
-      const isProcessing = up.total.percent === 100;
-      if (isProcessing) {
-        // All the file data are uploaded but server hasn't response yet.
-        // Disable buttons to prevent users performing any actions.
-        this.buttons.upload.attr('disabled', true);
-        this.buttons.addMore.attr('disabled', true);
-        this.buttons.upload.text(this.texts.processing);
-      } else {
-        this.buttons.upload.text(this.texts.pause);
-      }
+      this.buttons.upload.text(this.texts.pause);
     } else {
       // up.state === plupload.STOPPED
       this.buttons.upload.text(
@@ -230,7 +238,6 @@ class PluploadHelper {
       pause: null,
       upload: null,
       resume: null,
-      processing: null,
     };
   }
 
@@ -331,9 +338,6 @@ class PluploadHelper {
           this.texts.resume = localization.formatAndWrapMessage(
             TRANSLATION_KEYS.RESUME,
           );
-          this.texts.processing = localization.formatAndWrapMessage(
-            TRANSLATION_KEYS.PROCESSING,
-          );
 
           this.buttons.cancel = $(SELECTORS.BTN_CANCEL);
           this.buttons.upload = $(SELECTORS.BTN_UPLOAD);
@@ -351,6 +355,14 @@ class PluploadHelper {
               up.stop();
             } else {
               PluploadHelper.clearError();
+              // Set the failed file status to QUEUED so plupload will re-upload
+              // it.
+              up.files.filter(
+                f => f.status === plupload.FAILED,
+              ).forEach((f) => {
+                f.status = plupload.QUEUED;
+                up.trigger('UploadProgress', f);
+              });
               up.start();
               this.hasStarted = true;
             }
@@ -491,14 +503,8 @@ class PluploadHelper {
            */
           // eslint-disable-next-line eqeqeq
           if (info.status == 200 || info.status == 201) {
-            const responseData = JSON.parse(info.response);
-            if (Object.keys(responseData).length > 5) {
-              this.uploadedFiles.push(responseData);
-              this.removeFailedFile(file.id);
-            }
-
+            file._metadata = JSON.parse(info.response);
             const data = PluploadHelper.formatFileObject(file);
-            data.metadata = responseData;
             this.picker.view_model.postMessage('finishFileUpload', data);
           }
         },
@@ -526,40 +532,10 @@ class PluploadHelper {
             PluploadHelper.showError(filter_msg);
             // eslint-disable-next-line eqeqeq
           } else if (args.code == plupload.HTTP_ERROR) {
-            up.stop();
-            logger.error(`Error uploading file '${args.file.name}': ${
-              args.response}`);
-            if (config.uploads_pause_on_error()) {
-              const msg = localization.formatAndWrapMessage(
-                'computer/error', { file: args.file.name },
-              );
-              PluploadHelper.showError(msg, args.response);
-              // Reset file progress to 0.
-              args.file.offset = 0;
-              args.file.loaded = 0;
-              args.file.percent = 0;
-              args.file.status = plupload.UPLOADING;
-              up.trigger('UploadProgress', args.file);
-              // Set the file status to QUEUED so users can re-upload it.
-              args.file.status = plupload.QUEUED;
-              up.trigger('UploadProgress', args.file);
-            } else {
-              const msg = localization.formatAndWrapMessage(
-                'computer/uploadFail', { file: args.file.name },
-              );
-              PluploadHelper.showError(msg, args.response);
-              let error = {};
-              try {
-                error = JSON.parse(args.response);
-              } catch (ex) {
-                logger.error(`Un-expected response format: ${args.response}`);
-              }
-              const file = PluploadHelper.formatFileObject(args.file, error);
-              this.addFailedFile(file);
-              // TODO: DEV-3117: fix xhr racing issue.
-              up.removeFile(args.file);
-              up.start();
-            }
+            // Suppose this kind of error only happens when uploading files.
+            PluploadHelper.handleFileError(
+              up, args.file, args.response || args.message,
+            );
           } else {
             const msg = localization.formatAndWrapMessage('global/error');
             PluploadHelper.showError(msg, { detail: JSON.stringify(args) });
@@ -569,11 +545,34 @@ class PluploadHelper {
           // All files are either DONE or FAILED.
           logger.debug('UploadComplete');
           this.updateButton(up);
-          this.finish(up);
+
+          // Don't finish in the following cases:
+          // 1. Users remove all the files.
+          // 2. uploads_pause_on_error is enabled and there are failures.
+          if (
+            up.files.length > 0
+            && (
+              config.uploads_pause_on_error() === false
+              || !up.files.some(f => f.status === plupload.FAILED)
+            )
+          ) {
+            this.finish(up);
+          }
         },
         StateChanged: (up) => {
           // STOPPED: 1, STARTED: 2
           logger.debug(`StateChanged: ${up.state}`);
+          if (up.state === plupload.STOPPED) {
+            // The file status remains 'uploading' when plupload pauses so we
+            // have to manually remove the loading spinner. The spinner will be
+            // added back by _handleFileStatus() in jquery.ui.plupload.js when
+            // uploads resume.
+            document.querySelectorAll(
+              '.plupload__file-status--uploading',
+            ).forEach((el) => {
+              el.classList.remove('plupload__file-status--uploading');
+            });
+          }
           this.updateButton(up);
         },
         FilesRemoved: (up) => {
