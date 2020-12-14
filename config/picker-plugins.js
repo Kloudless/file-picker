@@ -10,11 +10,38 @@ const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const srcPath = path.resolve(__dirname, '../src');
 const cldrPath = path.resolve(__dirname, '../bower_components/cldr-data/');
 
-
-module.exports = function getPickerPlugins(distPath) {
+const getLocalizationCopyData = (distPath) => {
   const localeDistPath = path.resolve(distPath, 'picker/localization');
   const cldrDistPath = path.resolve(localeDistPath, 'cldr-data');
+  const copyData = [
+    {
+      from: path.resolve(srcPath, 'picker/localization'),
+      to: localeDistPath,
+    },
+    {
+      context: cldrPath,
+      from: 'main/**/@(numbers|ca-gregorian|timeZoneNames).json',
+      to: cldrDistPath,
+    },
+    {
+      context: cldrPath,
+      from: 'supplemental/@(likelySubtags|numberingSystems|timeData|weekData)'
+        + '.json',
+      to: cldrDistPath,
+    },
+  ];
 
+  if (process.env.BUILD_LICENSE === 'AGPL') {
+    copyData.push({
+      from: path.resolve(__dirname,
+        '../node_modules/@kloudless/file-picker-plupload-module/i18n/'),
+      to: path.resolve(localeDistPath, 'plupload/i18n/'),
+    });
+  }
+  return copyData;
+};
+
+module.exports = function getPickerPlugins(distPath) {
   return [
     new webpack.ProvidePlugin({
       // expose jquery to global for jquery plugins
@@ -22,7 +49,7 @@ module.exports = function getPickerPlugins(distPath) {
       jQuery: 'jquery',
       'window.jQuery': 'jquery',
       // expose mOxie to global for plupload
-      mOxie: ['plupload/moxie', 'mOxie'],
+      mOxie: ['@kloudless/file-picker-plupload-module/moxie', 'mOxie'],
     }),
     // copy less.js
     new CopyWebpackPlugin([
@@ -39,27 +66,7 @@ module.exports = function getPickerPlugins(distPath) {
       },
     ]),
     // copy localization and cldr data
-    new CopyWebpackPlugin([
-      {
-        from: path.resolve(srcPath, 'picker/localization'),
-        to: localeDistPath,
-      },
-      {
-        from: path.resolve(__dirname, '../lib/plupload/i18n/'),
-        to: path.resolve(localeDistPath, 'plupload/i18n/'),
-      },
-      {
-        context: cldrPath,
-        from: 'main/**/@(numbers|ca-gregorian|timeZoneNames).json',
-        to: cldrDistPath,
-      },
-      {
-        context: cldrPath,
-        from: 'supplemental/@(likelySubtags|numberingSystems|timeData|weekData)'
-          + '.json',
-        to: cldrDistPath,
-      },
-    ]),
+    new CopyWebpackPlugin(getLocalizationCopyData(distPath)),
     /** Attach an id to the picker script tag
      * for util.getBaseUrl() to identify the script tag
      * This plugin must be put after all HtmlWebpackPlugins

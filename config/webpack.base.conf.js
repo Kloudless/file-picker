@@ -36,6 +36,68 @@ function getStyleLoaders(fileType, viewType) {
   return result;
 }
 
+function getRules() {
+  const rules = [
+    {
+      test: /\.css$/,
+      use: getStyleLoaders('css', 'picker'),
+    },
+    {
+      test: /loader\/css\/.*\.less$/,
+      use: getStyleLoaders('less', 'loader'),
+    },
+    {
+      test: /picker\/css\/.*\.less$/,
+      use: getStyleLoaders('less', 'picker'),
+    },
+    {
+      test: /\.jsx?$/,
+      use: 'babel-loader',
+    },
+    {
+      test: /\.pug$/,
+      use: {
+        loader: 'pug-loader',
+        options: {
+          pretty: isDevelopment,
+        },
+      },
+    },
+    {
+      test: /\.png$/,
+      use: {
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+        },
+      },
+    },
+    {
+      test: /\.woff2?$/,
+      loader: 'url-loader',
+      options: {
+        limit: 75 * 1024,
+        // Enable a CommonJS module syntax
+        // eslint-disable-next-line max-len
+        // REF: https://stackoverflow.com/questions/59070216/webpack-file-loader-outputs-object-module
+        esModule: false,
+        outputPath: 'font',
+      },
+    },
+  ];
+
+  if (process.env.BUILD_LICENSE !== 'AGPL') {
+    rules.push(
+      {
+        // eslint-disable-next-line max-len
+        test: /(@kloudless\/file-picker-plupload-module\/*)|(plupload-helper\.js)/,
+        use: 'null-loader',
+      },
+    );
+  }
+  return rules;
+}
+
 module.exports = {
   context: root,
   resolve: {
@@ -48,53 +110,7 @@ module.exports = {
     },
   },
   module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: getStyleLoaders('css', 'picker'),
-      },
-      {
-        test: /loader\/css\/.*\.less$/,
-        use: getStyleLoaders('less', 'loader'),
-      },
-      {
-        test: /picker\/css\/.*\.less$/,
-        use: getStyleLoaders('less', 'picker'),
-      },
-      {
-        test: /\.jsx?$/,
-        use: 'babel-loader',
-      },
-      {
-        test: /\.pug$/,
-        use: {
-          loader: 'pug-loader',
-          options: {
-            pretty: isDevelopment,
-          },
-        },
-      },
-      {
-        test: /\.png$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-          },
-        },
-      },
-      {
-        test: /\.woff2?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 75 * 1024,
-          // Enable a CommonJS module syntax
-          // REF: https://stackoverflow.com/questions/59070216/webpack-file-loader-outputs-object-module
-          esModule: false,
-          outputPath: 'font',
-        },
-      },
-    ],
+    rules: getRules(),
   },
   plugins: [
     new MiniCssExtractPlugin({

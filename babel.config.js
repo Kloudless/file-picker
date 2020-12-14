@@ -17,6 +17,9 @@ const buildEnvVarDefaults = {
   BASE_URL: 'https://api.kloudless.com',
   // for development only
   KLOUDLESS_APP_ID: null,
+  // 'MIT' or 'AGPL'.
+  // The MIT build excludes the plupload module.
+  BUILD_LICENSE: 'MIT',
 };
 
 const transformDefines = {

@@ -1,4 +1,4 @@
-/* global mOxie, BABEL_VERSION */
+/* global mOxie, BABEL_VERSION, BABEL_BUILD_LICENSE */
 /* eslint-disable func-names, camelcase, no-alert */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -81,7 +81,16 @@ const services = ko.pureComputed(() => {
 const FilePicker = function () {
   this.manager = new AccountManager();
   this.fileManager = new FileManager();
-  this.pluploadHelper = new PluploadHelper(this);
+  logger.info('BUILD_LICENSE:  ', BABEL_BUILD_LICENSE);
+
+  if (BABEL_BUILD_LICENSE === 'AGPL') {
+    // Plupload is inited successfully.
+    this.pluploadHelper = new PluploadHelper(this);
+  } else {
+    // Plupload is excluded.
+    this.pluploadHelper = null;
+  }
+
   this.router = routerHelper.init(this);
 
   this.requestsToLaunch = [];
@@ -1295,28 +1304,42 @@ FilePicker.prototype.switchViewTo = function (to) {
 
   if (to === VIEW.dropzone) {
     const dz = $('#dropzone');
-    dz.on('click', () => {
-      this.view_model.postMessage('dropzoneClicked');
-    });
 
-    // Make sure to only load the dropzone once
-    if (!dropzoneLoaded) {
-      const dropzone = new mOxie.FileDrop({
-        drop_zone: dz.get(0),
+    if (BABEL_BUILD_LICENSE !== 'AGPL') {
+      dz.on('click', () => {
+        throw new Error('Dropzone mode is disabled for this build.');
+      });
+      dz.on('dragover', (e) => {
+        e.preventDefault();
+      });
+      dz.on('drop', (e) => {
+        e.preventDefault();
+        throw new Error('Dropzone mode is disabled for this build.');
+      });
+    } else {
+      dz.on('click', () => {
+        this.view_model.postMessage('dropzoneClicked');
       });
 
-      // Because templates are re-rendered on view change, don't add
-      // dropped files to the computer view uploader immediately.
-      // Instead, add it to a queue that will be processed after
-      // the router switches to the computer view.
-      dropzone.ondrop = () => {
-        this.view_model.postMessage('drop');
-        this.pluploadHelper.addFiles(dropzone.files);
-        this.router.setLocation('#/computer');
-      };
+      // Make sure to only load the dropzone once
+      if (!dropzoneLoaded) {
+        const dropzone = new mOxie.FileDrop({
+          drop_zone: dz.get(0),
+        });
 
-      dropzone.init();
-      dropzoneLoaded = true;
+        // Because templates are re-rendered on view change, don't add
+        // dropped files to the computer view uploader immediately.
+        // Instead, add it to a queue that will be processed after
+        // the router switches to the computer view.
+        dropzone.ondrop = () => {
+          this.view_model.postMessage('drop');
+          this.pluploadHelper.addFiles(dropzone.files);
+          this.router.setLocation('#/computer');
+        };
+
+        dropzone.init();
+        dropzoneLoaded = true;
+      }
     }
   }
 
@@ -1717,7 +1740,8 @@ function dataMessageHandler(data) {
     }, 0);
   }
 
-  if (config.visible_computer() && !loadedDropConfig
+  if (BABEL_BUILD_LICENSE === 'AGPL'
+    && config.visible_computer() && !loadedDropConfig
     && !config.upload_location_uri()) {
     // Looking up chunk size. Since the drop location doesn't really
     // change we look it up based on that. The /drop end point for the
@@ -1744,6 +1768,10 @@ function dataMessageHandler(data) {
       logger.warn('Disabling Computer since no Upload Location set.');
       config.computer(false);
     });
+  } else if (BABEL_BUILD_LICENSE !== 'AGPL'
+      && config.visible_computer()) {
+    logger.warn('Computer view is disabled for this build.');
+    config.computer(false);
   }
 }
 

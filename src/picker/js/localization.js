@@ -1,3 +1,4 @@
+/* global BABEL_BUILD_LICENSE */
 import $ from 'jquery';
 import ko from 'knockout';
 import globalize from 'globalize';
@@ -16,7 +17,8 @@ import util from './util';
  * Localization module that provides translation and localization services.
  */
 
-// ref: lib/plupload/i18n & cldr-data/main
+// ref: node_modules/@kloudless/file-picker-plupload-module/i18n/
+// & cldr-data/main
 const supportedLocales = {
   ar: { cldr: 'ar', plupload: 'ar' },
   az: { cldr: 'az', plupload: 'az' },
@@ -176,12 +178,14 @@ const locUtil = {
     const effectiveLocale = this.getEffectiveLocale(locale);
     isTestLocale(locale === 'TEST');
 
-    // Load the plupload i18n script now.  Don't need to wait on this;
-    // plupload will handle it.
-    // Append the timestamp on the end to force re-execution of the script.
-    const name = resolvePluploadFileName(effectiveLocale);
-    const now = Date.now();
-    $.getScript(`${PLUPLOAD_I18N_URL}${name}?timestamp=${now}`);
+    if (BABEL_BUILD_LICENSE === 'AGPL') {
+      // Load the plupload i18n script only for AGPL build.
+      // Don't need to wait on this; plupload will handle it.
+      // Append the timestamp on the end to force re-execution of the script.
+      const name = resolvePluploadFileName(effectiveLocale);
+      const now = Date.now();
+      $.getScript(`${PLUPLOAD_I18N_URL}${name}?timestamp=${now}`);
+    }
 
     if (loadedLocales[effectiveLocale]) {
       // this locale has already been loaded

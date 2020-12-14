@@ -26,7 +26,8 @@ node_modules
 bower_components
 
 .tmp
-dist
+dist/*
+test/dist
 dev/
 
 # Mac
