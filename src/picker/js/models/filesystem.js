@@ -42,13 +42,13 @@ function Filesystem(id, key, callback) {
   // It is deliberately not a computed observable so that the state remains
   // unchanged until we set it ourselves, so we can use it for comparisons.
   this.rootMetadata = ko.observable({
-    id: config.root_folder_id()[this.id] || DEFAULT_ROOT_FOLDER_ID
+    id: config.root_folder_id()[this.id] || DEFAULT_ROOT_FOLDER_ID,
   });
 
   config.root_folder_id.subscribe((newRootFolderIds) => {
-    let newRootFolderId = newRootFolderIds[this.id] || DEFAULT_ROOT_FOLDER_ID;
+    const newRootFolderId = newRootFolderIds[this.id] || DEFAULT_ROOT_FOLDER_ID;
     if (newRootFolderId !== this.rootMetadata().id) {
-      this.rootMetadata({id: newRootFolderId});
+      this.rootMetadata({ id: newRootFolderId });
       this._init(callback);
     }
   }, this);
@@ -119,12 +119,6 @@ Filesystem.prototype.refresh = function (force = false, callback = () => {}) {
     return;
   }
 
-  if (force) {
-    // Reset sorting rule.
-    this.clearSort();
-    this.sortOption = DEFAULT_SORT_OPTION;
-  }
-
   // reset page
   this.current().page = FIRST_PAGE;
   this.getPage(callback);
@@ -166,12 +160,24 @@ Filesystem.prototype._getPage = function _getPage() {
       logger.debug('Received new data.');
 
       let newChildren;
+      let newLoaded;
       if (current.page === FIRST_PAGE || current.page === data.next_page) {
         newChildren = [];
+        // If there're no old items, we don't need to highlight new items to
+        // distinguish them.
+        newLoaded = false;
       } else {
-        // Do not sort when loading the next page.
-        this.clearSort();
         newChildren = current.children();
+        // set the old items newLoaded to false
+        newChildren = ko.utils.arrayMap(newChildren, (obj) => {
+          if (obj.newLoaded === undefined) {
+            obj.newLoaded = ko.observable(false);
+          }
+          obj.newLoaded(false);
+          return obj;
+        });
+
+        newLoaded = true;
       }
 
       current.page = data.next_page;
@@ -180,6 +186,7 @@ Filesystem.prototype._getPage = function _getPage() {
       data.objects = data.objects.map((obj) => {
         obj.parent_obs = this.current();
         obj.friendlySize = util.getFriendlySize(obj.size);
+        obj.newLoaded = ko.observable(newLoaded);
         return obj;
       });
 
@@ -217,11 +224,16 @@ Filesystem.prototype._getPage = function _getPage() {
 };
 
 Filesystem.prototype.getPage = function getPage(callback = () => {}) {
-  // Ensure there is only one request on the fly.
-  this.getPageTask = this.getPageTask
-    .then(() => this._getPage())
-    .then(() => callback(null))
-    .catch(callback);
+  if (this.isLoadingNextPage()) {
+    // Don't trigger multiple _getPage() when loading the next page.
+    this.getPageTask = this.getPageTask.then(() => callback(null));
+  } else {
+    // Ensure there is only one request on the fly.
+    this.getPageTask = this.getPageTask
+      .then(() => this._getPage())
+      .then(() => callback(null))
+      .catch(callback);
+  }
 };
 
 // eslint-disable-next-line func-names

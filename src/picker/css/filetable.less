@@ -43,6 +43,12 @@
   }
 }
 
+// applied for new loaded file and folder row
+.ftable__row--new-loaded {
+  color: @new_loaded_text_color;
+  background-color: @new_loaded_bg_color;
+}
+
 // applied for selected file and folder row
 .ftable__row--selected {
   color: @selected_text_color;
@@ -61,6 +67,14 @@
 
   &:hover {
     background-color: @section_primary_bg_color;
+  }
+}
+
+.ftable__row--disabled.ftable__row--new-loaded {
+  cursor: unset;
+  background-color: @new_loaded_bg_color;
+  &:hover {
+    background-color: @new_loaded_bg_color;
   }
 }
 

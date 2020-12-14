@@ -26,6 +26,7 @@ const OPTIONS = {
 };
 
 const FILES = [{
+  // eslint-disable-next-line max-len
   url: 'https://s3-us-west-2.amazonaws.com/static-assets.kloudless.com/logo_mark.png',
   name: 'kloudless-logo.png',
 }];

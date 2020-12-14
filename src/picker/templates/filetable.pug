@@ -62,10 +62,16 @@
               'data-id': id,
               'data-selectable': !$data.disabled()
             },
-            css: {"ftable__row--disabled": $data.disabled() && $data.type == 'file' }`)
+            css: {
+              "ftable__row--disabled": $data.disabled() && $data.type == 'file',
+              'ftable__row--new-loaded': $data.newLoaded
+            }`)
           td
             .icon
-              div(data-bind="css: {'icon__folder': type === 'folder', 'icon__file': type === 'file'}")
+              div(data-bind=`css: {
+                'icon__folder': type === 'folder',
+                'icon__file': type === 'file'
+              }`)
           td
             .ie-fix-wrap
               div(data-bind='text: name')
