@@ -10,7 +10,8 @@
       // ko ifnot: accounts.all().length > 0
       .flex-grow(data-bind='translate: "accounts/chooseAccount"')
       // /ko
-      .flex-no-shrink.icon.icon--large
+      .flex-no-shrink.icon.icon--large(
+          data-bind="css: {'invisible': attachMode()}")
         .icon__close(data-bind='click: cancel')
 
   .container__body.container__body--scroll

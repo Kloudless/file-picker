@@ -572,6 +572,18 @@ File Picker JavaScript on the page.
   specified for services that do not support the `parents`
   [query parameter](https://developers.kloudless.com/docs/latest/storage#locate-files-search).
 
+* `close_on_success` : boolean (default: true)
+
+  Defaults to `true`, which closes the File Picker when all the selections in
+  the Chooser have been processed successfully, or when all the files in the
+  Computer view or the Saver have been uploaded successfully.
+
+  If `false`, the user will see a success message rather than the File
+  Picker closing.
+
+  For the Chooser and the Saver, if the `element` option is specified, this
+  option will always be `false`. For the Dropzone, this option is always `true`.
+
 #### Chooser Options
 
 * `multiselect` : boolean

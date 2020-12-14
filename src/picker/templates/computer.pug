@@ -4,10 +4,11 @@
       .flex-no-shrink.mr.sm-hidden
         //- an empty icon
         .icon.icon--large
-      .flex-grow.mr
+      .flex-grow
         include selector
-      .flex-no-shrink
-        #plupload_btn_cancel.icon.icon--large
+      .flex-no-shrink.ml(data-bind="css: {'sm-hidden': attachMode()}")
+        #plupload_btn_cancel.icon.icon--large(
+            data-bind="css: {'invisible': attachMode()}")
           .icon__close
   .container__body
     #computer_uploader.h-100

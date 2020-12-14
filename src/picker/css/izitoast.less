@@ -1,12 +1,88 @@
+// override styles in izitoast/dist/css/iziToast.css
 .iziToast {
-  // override styles in izitoast/dist/css/iziToast.css
   // to allow user to select text
-  -webkit-touch-callout: default /* iOS Safari */;
+  -webkit-touch-callout: default; // iOS Safari
   user-select: text;
   cursor: text;
+
+  // override other styles
+  max-width: 100%;
+  border-radius: @border_radius !important;
+  box-shadow: @dialog_shadow_color 0 8px 20px;
+
+  &::after {
+    box-shadow: none !important;
+  }
 }
 
-.iziToast__details-toggle-button {
+// override styles in izitoast/dist/css/iziToast.css
+.iziToast-overlay {
+  background-color: @dialog_overlay_color !important;
+}
+
+// override styles in izitoast/dist/css/iziToast.css
+.iziToast-texts {
+  overflow-wrap: break-word;
+}
+
+.iziToast-theme-custom-success {
+  background-color: @dialog_success_bg_color !important;
+
+  .iziToast-title {
+    color: @dialog_success_title_color !important;
+  }
+
+  .iziToast-message {
+    color: @dialog_success_message_color !important;
+  }
+
+  .iziToast-icon {
+    color: @dialog_success_icon_color !important;
+  }
+}
+
+.iziToast-theme-custom-error {
+  background-color: @dialog_error_bg_color !important;
+
+  .iziToast-title {
+    color: @dialog_error_title_color !important;
+  }
+
+  .iziToast-icon {
+    color: @dialog_error_icon_color !important;
+  }
+
+  .iziToast-message {
+    color: @dialog_error_message_color !important;
+  }
+}
+
+.iziToast__details-toggle-btn {
   cursor: pointer;
+
+  // disable border highlight when focus
+  &:focus {
+    outline: none;
+  }
 }
 
+.iziToast__ok-btn {
+  color: @primary_btn_text_color !important;
+  background-color: @primary_btn_color !important;
+  border-radius: @border_radius;
+
+  &:hover {
+    background-color: @primary_btn_hover_color !important;
+  }
+}
+
+.iziToast__copy-btn {
+  color: @secondary_btn_text_color !important;
+  background-color: @secondary_btn_color !important;
+  border: 1px solid @dialog_btn_border_color !important;
+  border-radius: @border_radius !important;
+
+  &:hover {
+    background-color: @secondary_btn_hover_color !important;
+  }
+}

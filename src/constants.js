@@ -53,4 +53,9 @@ export const LOADER_FEATURES = {
 
   // Include folders in selected event data.
   CAN_INCLUDE_FOLDERS_IN_SELECTED_EVENT_DATA: '2.5.4',
+
+  // In previous version, File Picker's Computer View still fires success event
+  // when cancel or no items succeed while other modes behave differently.
+  // We change to not fire success event on cancel or all items fail.
+  COMPUTER_NO_SUCCESS_ON_CANCEL_OR_FAIL: '2.5.4',
 };
