@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Include folder selections in the `selected` event.
 
+### Changed
+
+- Improved handling of the `persist` option. Please refer to the `persist`
+  option in the [Chooser Options](README.md#chooser-and-saver) for details.
+
 ---
 
 ## [2.5.4] - 2020-10-21

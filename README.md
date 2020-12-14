@@ -263,9 +263,17 @@ File Picker JavaScript on the page.
 
   Saver: "none", "local", "session" (default: "local")
 
-  This option specifies account persistence for the File Picker in either
-  localStorage, sessionStorage, or no storage. The File Picker will always fall
-  back to localStorage if an invalid option is given.
+  This option specifies how to persist connected account information, such as
+  Bearer tokens to access the Kloudless API.
+
+  * `local`: [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage)
+  * `session`: [sessionStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage)
+  * `none`: No storage. Data only persists in memory, within each File
+    Picker instance.
+
+  The File Picker will fall back to `local` if an invalid option is specified,
+  and fall back to `none` if either `localStorage` or `sessionStorage` are not
+  accessible.
 
 * `services` : array
 
