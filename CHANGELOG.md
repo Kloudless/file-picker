@@ -27,9 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   with the `element` option that attaches it to a DOM element.
 - Failed local uploads can now be removed from the list of uploads to be retried.
 - Improved state management for uploads from the local machine.
-- File Picker's Computer View won't fire success event on cancel or no items
-  succeed, to be consistent with other modes.
-- Remove the cancel button in attach mode.
 
 ## [2.5.4] - 2020-10-21
 
