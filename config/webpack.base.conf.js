@@ -88,6 +88,10 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 75 * 1024,
+          // Enable a CommonJS module syntax
+          // REF: https://stackoverflow.com/questions/59070216/webpack-file-loader-outputs-object-module
+          esModule: false,
+          outputPath: 'font',
         },
       },
     ],
