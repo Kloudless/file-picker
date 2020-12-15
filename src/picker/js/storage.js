@@ -36,22 +36,24 @@ storage.storeAccounts = function storeAccounts(appId, accounts) {
 
   const key = `k-${appId}`;
   let appData = storage.container[key];
-  if (!appData || appData.length === 0) {
-    appData = {};
-  } else {
+  try {
     appData = JSON.parse(appData);
+  } catch (err) {
+    appData = {};
   }
 
   // add accounts from the manager for currently visible services.
   const array = accounts.map(acc => JSON.stringify(acc));
 
   // add accounts already saved for currently invisible services.
-  appData.accounts.forEach((acc) => {
-    const account = JSON.parse(acc);
-    if (!serviceNames.includes(account.service)) {
-      array.push(acc);
-    }
-  });
+  if (appData.accounts) {
+    appData.accounts.forEach((acc) => {
+      const account = JSON.parse(acc);
+      if (!serviceNames.includes(account.service)) {
+        array.push(acc);
+      }
+    });
+  }
 
   // store the final array
   appData.accounts = array;

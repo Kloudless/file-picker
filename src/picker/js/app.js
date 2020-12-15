@@ -1527,21 +1527,11 @@ ko.bindingHandlers.finderSelect = {
       if (oversizeFiles.length > 0) {
         // Show proper error message depends on whether it's a multiple
         // selection.
-        if (els.length === 1) {
-          const filename = ko.dataFor(oversizeFiles[0]).name;
-          iziToastHelper.error(
-            localization.formatAndWrapMessage(
-              'files/exceedMaxSize',
-              { maxSize, file: filename },
-            ),
-          );
-        } else {
-          iziToastHelper.error(
-            localization.formatAndWrapMessage(
-              'files/multiselectExceedMaxSize', { maxSize },
-            ),
-          );
-        }
+        const msgKey = els.length === 1
+          ? 'files/exceedMaxSize' : 'files/multiselectExceedMaxSize';
+        iziToastHelper.error(
+          localization.formatAndWrapMessage(msgKey, { maxSize }),
+        );
         selector.finderSelect('unHighlight', oversizeFiles);
       }
     });

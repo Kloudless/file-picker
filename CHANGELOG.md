@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [2.6.0] - 2020-12-14
+## [2.6.0][2.6.1][2.6.2] - 2020-12-14
 ### Added
 - Chooser: Introduced the new option, `max_size`, to limit the size of the
   selected file.
