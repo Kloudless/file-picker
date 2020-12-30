@@ -1231,8 +1231,19 @@ const FilePicker = function () {
           }
         });
       },
-      sort: (option) => {
-        this.manager.active().filesystem().sort(option);
+      sort: (field) => {
+        const { view_model: viewModel } = this;
+        const fs = this.manager.active().filesystem();
+        const currentView = viewModel.current();
+        // always call fs.sort() to get current filetable-sort-icon updated,
+        // also in order to force the main filetable to sync with search view
+        // with respect to the sort option and direction.
+        fs.sort(field);
+        if (currentView === VIEW.search) {
+          const searchResult = [...viewModel.files.searchResult()];
+          searchResult.sort(fs.getSortCompareFunction());
+          viewModel.files.searchResult(searchResult);
+        }
       },
       sortOption: () => this.manager.active().filesystem().sortOption,
       // make it a function to prevent it be accessed before manager
@@ -1260,6 +1271,10 @@ const FilePicker = function () {
           viewModel.files.searchResult.removeAll();
           return;
         }
+
+        // reset filetable sort option and update list
+        fs.resetSort();
+
         const s = new Search(fs.id, fs.key, searchQuery, fs.rootMetadata().id);
         s.search(
           () => {

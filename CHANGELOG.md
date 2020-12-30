@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Display the loading view instead of the Manage Accounts view before File
   Picker completes initialization.
 - Upper case file extensions are not correctly detected.
+- Ordering doesn't work on search results.
 
 ### Changed
 - Keep sorting rule individually for each connected account.
@@ -17,7 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [2.6.0][2.6.1][2.6.2] - 2020-12-14
+
 ### Added
+
 - Chooser: Introduced the new option, `max_size`, to limit the size of the
   selected file.
 - The new option, `close_on_success`, controls whether to close the File Picker
@@ -25,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   are processed successfully.
 
 ### Changed
+
 - Include folder selections in the `selected` event.
 - Improved handling of the `persist` option. Please refer to the `persist`
   option in the [Chooser Options](README.md#chooser-and-saver) for details.
