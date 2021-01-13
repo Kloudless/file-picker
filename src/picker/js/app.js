@@ -713,10 +713,12 @@ const FilePicker = function () {
         if (Array.isArray(data)) {
           // eslint-disable-next-line no-param-reassign
           data = [...data];
-        } else {
+        } else if (data !== null && typeof data === 'object') {
           // eslint-disable-next-line no-param-reassign
           data = { ...data };
         }
+        // do nothing to primitive type object
+
         if (['selected', 'success', 'addAccount'].includes(action)
           && (config.account_key || config.retrieve_token())
           && config.user_data().trusted) {
