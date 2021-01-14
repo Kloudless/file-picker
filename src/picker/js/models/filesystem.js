@@ -271,7 +271,7 @@ Filesystem.prototype.filterChildren = function (data, excludeDisabled = false) {
   const createDirectLink = config.link() && config.link_options().direct;
   const result = data.map((child) => {
     const { type: childType, mime_type: mimeType, name } = child;
-    const ext = getExt(name);
+    const ext = getExt(name).toLowerCase();
     const allowedTypes = config.types();
     const allowedMIMETypes = config.mimeTypes;
 
