@@ -1,9 +1,10 @@
 /* global plupload */
 /* eslint-disable camelcase */
 
-import 'plupload/moxie';
-import 'plupload/plupload.dev';
-import 'plupload/jquery.ui.plupload/jquery.ui.plupload';
+import '@kloudless/file-picker-plupload-module/moxie';
+import '@kloudless/file-picker-plupload-module/plupload.dev';
+// eslint-disable-next-line max-len
+import '@kloudless/file-picker-plupload-module/jquery.ui.plupload/jquery.ui.plupload';
 import logger from 'loglevel';
 import config from './config';
 import localization from './localization';

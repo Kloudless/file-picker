@@ -14,6 +14,6 @@ echo 'bower.json' >> .npmignore
 echo 'webpack.loader.config.js' >> .npmignore
 echo 'Gruntfile.js' >> .npmignore
 echo '!.gitignore' >> .npmignore
-echo '!dist' >> .npmignore
+echo '!dist/commonjs2' >> .npmignore
 echo '!react.js' >> .npmignore
 echo '!vue.js' >> .npmignore

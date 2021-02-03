@@ -2,7 +2,6 @@
  * Export common variables used by webpack, babel, and jest configs
  */
 
-
 module.exports = {
   /**
    * A list of paths in regexp format to specify which files / folders
@@ -13,8 +12,13 @@ module.exports = {
    * 2. 'transformIgnorePatterns' option in jest.conf.js
    */
   ignorePaths: [
-    new RegExp('(node_modules)|(bower_components)'),
-    new RegExp('lib/(?!(plupload/jquery.ui.plupload|jquery.ajax-retry))'),
+    new RegExp('(bower_components)'),
+    new RegExp(
+      // eslint-disable-next-line max-len
+      'node_modules/@kloudless/file-picker-plupload-module/(?!(jquery.ui.plupload))',
+    ),
+    new RegExp('node_modules/(?!(@kloudless/file-picker-plupload-module))'),
+    new RegExp('lib/(?!(jquery.ajax-retry))'),
   ],
   /**
    * A list of paths to resolve module imports
