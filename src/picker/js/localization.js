@@ -1,4 +1,4 @@
-/* global BABEL_BUILD_LICENSE */
+/* global BUILD_LICENSE */
 import $ from 'jquery';
 import ko from 'knockout';
 import globalize from 'globalize';
@@ -178,7 +178,7 @@ const locUtil = {
     const effectiveLocale = this.getEffectiveLocale(locale);
     isTestLocale(locale === 'TEST');
 
-    if (BABEL_BUILD_LICENSE === 'AGPL') {
+    if (BUILD_LICENSE === 'AGPL') {
       // Load the plupload i18n script only for AGPL build.
       // Don't need to wait on this; plupload will handle it.
       // Append the timestamp on the end to force re-execution of the script.

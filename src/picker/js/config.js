@@ -1,4 +1,4 @@
-/* global BABEL_BASE_URL */
+/* global BASE_URL */
 /* eslint-disable camelcase */
 
 import $ from 'jquery';
@@ -122,7 +122,7 @@ Object.assign(config, {
     // logic only.
     rateLimit: 500,
   }),
-  base_url: (get_query_variable('baseUrl') || String(BABEL_BASE_URL))
+  base_url: (get_query_variable('baseUrl') || String(BASE_URL))
     .replace(/\/$/, ''),
   chunk_size: 5 * 1024 * 1024,
   computer: ko.observable(initFlavor === FLAVOR.dropzone),
@@ -485,13 +485,8 @@ function toggleComputer(computerEnabled) {
 /*
  * Create API server URLs
  */
-config.getAccountUrl = function getAccountUrl(accountId, api, path) {
-  let url = `${config.base_url}/${config.api_version}/accounts/`;
-  if (!accountId) {
-    return url;
-  }
-
-  url += `${accountId}/`;
+config.getAccountUrl = function getAccountUrl(api, path) {
+  let url = `${config.base_url}/${config.api_version}/accounts/me/`;
 
   if (config.api_version === 'v0') {
     api = ''; // eslint-disable-line no-param-reassign

@@ -1,4 +1,4 @@
-/* global mOxie, BABEL_VERSION, BABEL_BUILD_LICENSE */
+/* global mOxie, BABEL_VERSION, BUILD_LICENSE */
 /* eslint-disable func-names, camelcase, no-alert */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -59,9 +59,7 @@ let loadedDropConfig = false;
 // Set Kloudless source header
 $.ajaxSetup({
   headers: {
-    // VERSION will be replaced by Babel.
-    // eslint-disable-next-line prefer-template
-    'X-Kloudless-Source': 'file-picker/' + BABEL_VERSION,
+    'X-Kloudless-Source': `file-picker/${VERSION}`,
   },
 });
 
@@ -81,9 +79,9 @@ const services = ko.pureComputed(() => {
 const FilePicker = function () {
   this.manager = new AccountManager();
   this.fileManager = new FileManager();
-  logger.info('BUILD_LICENSE:  ', BABEL_BUILD_LICENSE);
+  logger.info('BUILD_LICENSE:  ', BUILD_LICENSE);
 
-  if (BABEL_BUILD_LICENSE === 'AGPL') {
+  if (BUILD_LICENSE === 'AGPL') {
     // Plupload is inited successfully.
     this.pluploadHelper = new PluploadHelper(this);
   } else {
@@ -220,7 +218,6 @@ const FilePicker = function () {
 
       // If you can save here
       if (current.can_upload_files) {
-        const accountId = manager.active().filesystem().id;
         const authKey = manager.active().filesystem().key;
 
         const isCancelled = this.getCancelTimeComparator();
@@ -310,7 +307,7 @@ const FilePicker = function () {
             view_model.postMessage('startFileUpload', event_data);
             $.ajax({
               url: config.getAccountUrl(
-                accountId, 'storage', `/files/?overwrite=${overwrite}`,
+                'storage', `/files/?overwrite=${overwrite}`,
               ),
               type: 'POST',
               contentType: 'application/json',
@@ -450,7 +447,7 @@ const FilePicker = function () {
         this.addActiveRequest();
 
         $.ajax({
-          url: config.getAccountUrl(accountId, 'storage', '/links/'),
+          url: config.getAccountUrl('storage', '/links/'),
           type: 'POST',
           headers: {
             Authorization: `${authKey.scheme} ${authKey.key}`,
@@ -478,7 +475,7 @@ const FilePicker = function () {
         callbacks.onComplete = callbacks.onComplete || (() => {});
         setTimeout(() => {
           $.ajax({
-            url: config.getAccountUrl(accountId, 'tasks', `/${task_id}`),
+            url: config.getAccountUrl('tasks', `/${task_id}`),
             type: 'GET',
             headers: { Authorization: `${authKey.scheme} ${authKey.key}` },
           }).done((data) => {
@@ -516,7 +513,7 @@ const FilePicker = function () {
         const queryStrings = Object.keys(queryParams)
           .map(key => `${key}=${queryParams[key]}`).join('&');
         const url = config.getAccountUrl(
-          accountId, 'storage',
+          'storage',
           `/${type === 'file' ? 'files' : 'folders'}` +
           `/${selections[selection_index].id}/copy?${queryStrings}`,
         );
@@ -1305,7 +1302,7 @@ FilePicker.prototype.switchViewTo = function (to) {
   if (to === VIEW.dropzone) {
     const dz = $('#dropzone');
 
-    if (BABEL_BUILD_LICENSE !== 'AGPL') {
+    if (BUILD_LICENSE !== 'AGPL') {
       dz.on('click', () => {
         throw new Error('Dropzone mode is disabled for this build.');
       });
@@ -1740,7 +1737,7 @@ function dataMessageHandler(data) {
     }, 0);
   }
 
-  if (BABEL_BUILD_LICENSE === 'AGPL'
+  if (BUILD_LICENSE === 'AGPL'
     && config.visible_computer() && !loadedDropConfig
     && !config.upload_location_uri()) {
     // Looking up chunk size. Since the drop location doesn't really
@@ -1768,7 +1765,7 @@ function dataMessageHandler(data) {
       logger.warn('Disabling Computer since no Upload Location set.');
       config.computer(false);
     });
-  } else if (BABEL_BUILD_LICENSE !== 'AGPL'
+  } else if (BUILD_LICENSE !== 'AGPL'
       && config.visible_computer()) {
     logger.warn('Computer view is disabled for this build.');
     config.computer(false);

@@ -4,7 +4,7 @@ import { createStory, createDropzoneStory } from './core';
 const { filePickerReact } = window.Kloudless;
 
 export default {
-  title: 'Basic',
+  title: 'E2E Test',
 };
 
 const ChooserStory = createStory(filePickerReact.Chooser);

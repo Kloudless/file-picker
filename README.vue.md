@@ -296,7 +296,7 @@ You have to include CSS files and set `class` or `style` props on your own.
 First, install dependencies as shown below. This only needs to be
 done once:
 ```shell
-$ npm install --prefix storybook-vue/
+$ npm ci --prefix storybook-vue/
 ```
 
 Then, start up the testing server:

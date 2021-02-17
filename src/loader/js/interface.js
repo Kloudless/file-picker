@@ -1,10 +1,9 @@
 /* eslint-disable camelcase, func-names,
                   prefer-destructuring */
-/* global BABEL_PICKER_URL, BABEL_VERSION, BABEL_PICKER_URL_V1,
-  BABEL_BASE_URL */
+/* global PICKER_URL, VERSION, PICKER_URL_V1, BASE_URL */
 import '../css/modal.less';
 import { FLAVOR } from '../../picker/js/constants';
-import { EVENTS_LIST, VIEW_EVENTS } from '../../constants';
+import { E2E_SELECTORS, EVENTS_LIST, VIEW_EVENTS } from '../../constants';
 
 /**
  * Define the module and the interface with which developers interact.
@@ -38,14 +37,14 @@ const globalOptions = {
   // Use an Immediately Invoked Function Expression to obtain the initial
   // pickerUrl and pickerOrigin.
   ...(() => {
-    let pickerUrl = BABEL_PICKER_URL;
+    let pickerUrl = PICKER_URL;
     if (pickerUrl.indexOf('://') === -1) {
       pickerUrl = `${window.location.origin}${pickerUrl}`;
     }
     const url = new URL(pickerUrl);
     return { pickerUrl, pickerOrigin: url.origin };
   })(),
-  baseUrl: BABEL_BASE_URL,
+  baseUrl: BASE_URL,
 };
 
 const filePicker = {
@@ -175,6 +174,7 @@ const initialize_frame = function (options, picker) {
     `baseUrl=${encodeURIComponent(globalOptions.baseUrl)}`,
   ];
 
+  frame.setAttribute('name', E2E_SELECTORS.IFRAME_NAME);
   frame.setAttribute(
     'src', `${globalOptions.pickerUrl}?${queryStrings.join('&')}`,
   );
@@ -365,7 +365,7 @@ filePicker.picker = function (options) {
       'custom_css option is deprecated.',
       'Please use custom_style_vars instead.',
     );
-    filePicker.setGlobalOptions({ pickerUrl: BABEL_PICKER_URL_V1 });
+    filePicker.setGlobalOptions({ pickerUrl: PICKER_URL_V1 });
   }
   // first step is to return a new object
   const picker = new filePicker._picker(options);
@@ -375,7 +375,7 @@ filePicker.picker = function (options) {
     picker.message('INIT', {
       options: {
         ...options,
-        loader_version: BABEL_VERSION,
+        loader_version: VERSION,
       },
     });
 
@@ -726,6 +726,6 @@ filePicker._dropzone.prototype.destroy = function () {
   this.clickPicker = null;
 };
 
-filePicker.version = BABEL_VERSION;
+filePicker.version = VERSION;
 
 export default filePicker;

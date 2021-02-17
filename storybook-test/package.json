@@ -10,10 +10,9 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@babel/core": "7.9.0",
+    "@babel/plugin-transform-modules-commonjs": "7.12.1",
     "@storybook/addon-actions": "5.3.18",
     "@storybook/addons": "5.3.18",
-    "@storybook/react": "5.3.18",
-    "babel-loader": "8.1.0"
+    "@storybook/react": "5.3.18"
   }
 }

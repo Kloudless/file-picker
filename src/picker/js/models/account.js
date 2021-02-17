@@ -130,25 +130,19 @@ Account.prototype.data_from_key = function ({ key }, callback = () => {}) {
     headers: {
       Authorization: `${key.scheme} ${key.key}`,
     },
-  }).done((data) => {
+  }).done((account) => {
     logger.debug('Retrieving account succeeded.');
 
-    const accts = data.objects;
-    if (accts.length === 0) {
-      callback(null);
+    account.account_name = account.account;
+    account.account = account.id;
+
+    if (key.scheme === 'AccountKey') {
+      account.account_key = key.key;
     } else {
-      const acct = accts[0];
-      acct.account_name = acct.account;
-      acct.account = acct.id;
-
-      if (key.scheme === 'AccountKey') {
-        acct.account_key = key.key;
-      } else {
-        acct.bearer_token = key.key;
-      }
-
-      callback(acct);
+      account.bearer_token = key.key;
     }
+
+    callback(account);
   }).fail((err) => {
     callback(null, (err && err.status === 403));
   }).always(() => {

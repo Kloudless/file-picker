@@ -59,3 +59,10 @@ export const LOADER_FEATURES = {
   // We change to not fire success event on cancel or all items fail.
   COMPUTER_NO_SUCCESS_ON_CANCEL_OR_FAIL: '2.5.4',
 };
+
+export const E2E_SELECTORS = {
+  // class name
+  J_LAUNCH_BTN: 'j-launch-btn',
+  // id
+  IFRAME_NAME: 'kloudless-file-picker-iframe',
+};

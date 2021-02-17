@@ -256,7 +256,7 @@ for more details.
 First, install dependencies as shown below. This only needs to be
 done once:
 ```shell
-$ npm install --prefix storybook-react/
+$ npm ci --prefix storybook-react/
 ```
 
 Then, start up the testing server:

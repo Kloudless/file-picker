@@ -24,6 +24,7 @@
   "license": "(MIT OR AGPL-3.0-only)",
   "scripts": {
     "dev": "NODE_ENV=development node ./dev-server/dev-server.js",
+    "dev:story": "NODE_ENV=development node ./config/story-dev-server.js",
     "install-deps": "bower install",
     "storybook:test": "npm run storybook --prefix storybook-test/",
     "storybook:vue": "npm run storybook --prefix storybook-vue/",
@@ -105,9 +106,9 @@
     "stylelint-order": "^3.1.0",
     "typescript": "3.7.2",
     "url-loader": "4.1.0",
-    "webpack": "^4.29.6",
-    "webpack-cli": "3.3.0",
-    "webpack-dev-middleware": "3.7.0",
+    "webpack": "4.43.0",
+    "webpack-cli": "3.3.11",
+    "webpack-dev-middleware": "3.7.2",
     "webpack-hot-middleware": "2.25.0",
     "webpack-merge": "4.2.1"
   }

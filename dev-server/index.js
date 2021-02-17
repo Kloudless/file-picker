@@ -1,4 +1,4 @@
-/* global BABEL_KLOUDLESS_APP_ID */
+/* global KLOUDLESS_APP_ID */
 /* eslint-disable func-names, no-console */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -115,7 +115,7 @@ import 'regenerator-runtime/runtime';
     global = window.Kloudless.filePicker, name, type = 'chooser',
     pickerOptions, elementId, objId,
   }) {
-    const appId = BABEL_KLOUDLESS_APP_ID || window.appId;
+    const appId = KLOUDLESS_APP_ID || window.appId;
     const options = { app_id: appId, ...pickerOptions };
 
     function createEvents(picker) {
