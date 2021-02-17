@@ -3,6 +3,10 @@
  */
 
 module.exports = {
+  devServerPorts: {
+    loader: 8081,
+    picker: 8082,
+  },
   /**
    * A list of paths in regexp format to specify which files / folders
    * babel should ignore.

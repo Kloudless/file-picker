@@ -1,0 +1,23 @@
+{
+  "id": 1234567890,
+  "account": "this-is-a-very-loooooooooooooooooooong-account@kloudless.com",
+  "service": "dropbox",
+  "internal_use": false,
+  "created": "2020-05-15T03:24:56.887056Z",
+  "modified": "2020-10-07T10:29:23.282659Z",
+  "service_name": "Dropbox",
+  "admin": false,
+  "apis": [
+    "sharing",
+    "events",
+    "storage"
+  ],
+  "effective_scope": "gdrive:normal.events.default:kloudless gdrive:normal.storage.default:kloudless gdrive:normal.sharing.default:kloudless",
+  "api": "core",
+  "type": "account",
+  "enabled": true,
+  "object_definitions": {},
+  "custom_properties": {},
+  "proxy_connection": null,
+  "active": true
+}

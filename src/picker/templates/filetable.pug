@@ -63,8 +63,9 @@
               'data-selectable': !$data.disabled()
             },
             css: {
-              "ftable__row--disabled": $data.disabled() && $data.type == 'file',
-              'ftable__row--new-loaded': $data.newLoaded
+              'ftable__row--disabled': $data.disabled() && $data.type == 'file',
+              'ftable__row--new-loaded': $data.newLoaded,
+              [$root.e2eSelectors.J_ROW]: true
             }`)
           td
             .icon
@@ -93,15 +94,14 @@
                 .icon__loading
         // /ko
 
-
-
   .ftable__footer
     .flex-row.justify-content-center
       //- chooser button
       // ko if: flavor() == 'chooser' || flavor() == 'dropzone'
       button.btn.btn--primary(data-bind=`
         click: confirm, translate: files.chooserButtonTextKey,
-        enable: files.enableChooserButton`)
+        enable: files.enableChooserButton,
+        css: e2eSelectors.J_SELECT_BTN`)
       // /ko
 
       //- saver button
@@ -114,12 +114,15 @@
             translate: { placeholder: { message: "files/fileName" }}`)
         button.btn.btn--primary(
             type="submit",
-            data-bind='translate: {html: { message: files.saverButtonTextKey() }}')
+            data-bind=`
+              translate: {html: { message: files.saverButtonTextKey() }},
+              css: e2eSelectors.J_SAVE_BTN`)
       // /ko
       // ko ifnot: files.all().length == 1
       button.btn.btn--primary(
         data-bind=`
           click: save,
-          translate: {html: { message: files.saverButtonTextKey() }}`)
+          translate: {html: { message: files.saverButtonTextKey() }},
+          css: e2eSelectors.J_SAVE_BTN`)
       // /ko
       // /ko

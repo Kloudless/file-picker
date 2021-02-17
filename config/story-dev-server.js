@@ -7,6 +7,14 @@ const express = require('express');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
+const { devServerPorts } = require('./common');
+
+// BUILD_LICENSE defaults to AGPL.
+// If it's not AGPL then some tests or stories may fail due to plupload
+// being disabled.
+if (!process.env.BUILD_LICENSE) {
+  process.env.BUILD_LICENSE = 'AGPL';
+}
 
 const webpackDevConfig = require('./webpack.story.conf');
 
@@ -35,21 +43,25 @@ app.use(webpackHotMiddleware(compiler, {
 }));
 
 // Listen on 2 ports to host loader and picker separately.
-app.listen(8081, () => {
-  console.log('Loader hosted at http://localhost:8081/sdk/kloudless.picker.js');
+app.listen(devServerPorts.loader, () => {
   console.log(
-    'React binding hosted at '
-    + 'http://localhost:8081/sdk/kloudless.picker.react.js',
+    'Loader hosted at '
+    + `http://localhost:${devServerPorts.loader}/sdk/kloudless.picker.js`,
   );
   console.log(
-    'Vue binding hosted at ' +
-    'http://localhost:8081/sdk/kloudless.picker.vue.js',
+    'React binding hosted at '
+    + `http://localhost:${devServerPorts.loader}/sdk/kloudless.picker.react.js`,
+  );
+  console.log(
+    'Vue binding hosted at '
+    + `http://localhost:${devServerPorts.loader}/sdk/kloudless.picker.vue.js`,
   );
   console.log('Webpack bundles are compiling...');
 });
-app.listen(8082, () => {
+app.listen(devServerPorts.picker, () => {
   console.log(
-    'View page hosted at http://localhost:8082/file-picker/v2/index.html',
+    'View page hosted at '
+    + `http://localhost:${devServerPorts.picker}/file-picker/v2/index.html`,
   );
   console.log('Webpack bundles are compiling...');
 });

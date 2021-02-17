@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { action } from '@storybook/addon-actions';
-import { EVENTS, E2E_SELECTORS } from '../../../src/constants';
+import { EVENTS, LOADER_E2E_SELECTORS } from '../../../src/constants';
 import {
   TextInput, Grid, GridCell, TextArea,
 } from './components';
@@ -70,7 +70,7 @@ const createStory = (WrappedComponent, storyOptions = {}) => {
       return (
         <WrappedComponent
           // eslint-disable-next-line max-len
-          className={`${E2E_SELECTORS.J_LAUNCH_BTN} mdl-button mdl-js-button mdl-button--raised`}
+          className={`${LOADER_E2E_SELECTORS.J_LAUNCH_BTN} mdl-button mdl-js-button mdl-button--raised`}
           title="Click to open the File Picker"
           {...restProps}
         />);
