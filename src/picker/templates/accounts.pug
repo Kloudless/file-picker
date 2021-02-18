@@ -1,4 +1,10 @@
-.container
+.container(data-bind="css: {'container--is-loading': !$root.initComplete()}")
+  // ko ifnot: $root.initComplete
+  .container__loading-wrapper
+    .container__loading
+      .container__loading-icon
+  // /ko
+  // ko if: $root.initComplete
   .container__header
     .flex-row.align-items-center
       .flex-no-shrink(data-bind="css: {'invisible': accounts.all().length === 0}")
@@ -77,4 +83,5 @@
             .service-list__text(data-bind='text: service.name')
           // /ko
           // /ko
+  // /ko
   include footer

@@ -118,7 +118,9 @@ Account.prototype.disconnect = function () { // eslint-disable-line func-names
 
 // Get this account's metadata
 // eslint-disable-next-line func-names
-Account.prototype.data_from_key = function ({ key }, callback = () => {}) {
+Account.prototype.data_from_key = function (
+  { key }, callback = () => {},
+) {
   const self = this;
   if (self.request !== null) {
     self.request.abort();
