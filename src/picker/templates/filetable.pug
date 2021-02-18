@@ -11,17 +11,17 @@
             .flex-row.align-items-center
               div(data-bind='translate: "files/name"')
               .icon.icon--small
-                #sort-name.icon__sort
+                .icon__sort(data-bind='sort: "name"')
           th.ftable__th.sm-hidden(data-bind='click: function(){sort("largest")}')
             .flex-row.align-items-center
               div(data-bind='translate: "files/size"')
               .icon.icon--small
-                #sort-largest.icon__sort
+                .icon__sort(data-bind='sort: "largest"')
           th.ftable__th.sm-hidden(data-bind='click: function(){sort("recent")}')
             .flex-row.align-items-center
               div(data-bind='translate: "files/updated"')
               .icon.icon--small
-                #sort-recent.icon__sort
+                .icon__sort(data-bind='sort: "recent"')
 
       //- create folder
       tbody

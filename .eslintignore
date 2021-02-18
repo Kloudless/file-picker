@@ -5,3 +5,4 @@ lib
 dev-server/localization
 !.eslintrc.js
 !.eslintrc-ts.js
+storybook-test/static/style/material.min.js

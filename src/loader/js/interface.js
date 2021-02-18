@@ -75,8 +75,10 @@ filePicker.setGlobalOptions = ({ pickerUrl, explorerUrl, baseUrl }) => {
     uPickerUrl = new URL(pickerUrl || explorerUrl || globalOptions.pickerUrl);
     uBaseUrl = new URL(baseUrl || globalOptions.baseUrl);
   } catch (err) {
+    /* eslint-disable no-console */
     console.error('Cannot parse pickerUrl or baseUrl as a URL.');
     console.error(err);
+    /* eslint-enable no-console */
     return;
   }
 
