@@ -233,7 +233,7 @@ config.update = function update(data) {
 /*
  * Get user_data
  */
-function retrieveConfig() {
+export async function retrieveConfig() {
   const query_params = { app_id: config.app_id };
   if (config.account_key || config.retrieve_token()) {
     // Only do origin check if we need to.
@@ -242,21 +242,18 @@ function retrieveConfig() {
   if (config.upload_location_uri()) {
     query_params.upload_location_uri = config.upload_location_uri();
   }
-  $.get(
+  await $.get(
     `${config.base_url}/file-picker/config/`,
     query_params,
     (config_data) => {
       config.user_data((config_data && config_data.user_data) || {});
     },
-  );
+  ).fail((xhr, status, err) => {
+    logger.error('Failed to retrieve config: ', status, err, xhr);
+  });
 }
-config.retrieve_token.subscribe(retrieveConfig);
-retrieveConfig();
 
-/*
- * Get service data
- */
-config._retrievedServices = false;
+config.retrieve_token.subscribe(retrieveConfig);
 
 /*
  * compare function for sorting service order
@@ -335,104 +332,115 @@ function getServiceOrderCompare() {
     return leftIndex < rightIndex ? -1 : 1;
   };
 }
+
 const serviceOrderCompare = getServiceOrderCompare();
 
-$.get(
-  `${config.base_url}/${config.api_version}/public/services`,
-  {
-    apis: 'storage',
-    app_id: config.app_id,
-    retrieve_properties: true,
-  },
-  (serviceData) => {
-    config._retrievedServices = true;
+/**
+ * Initialize all services
+ *
+ * @return {Promise}
+ */
+export const initServices = () => new Promise((resolve) => {
+  $.get(
+    `${config.base_url}/${config.api_version}/public/services`,
+    {
+      apis: 'storage',
+      app_id: config.app_id,
+      retrieve_properties: true,
+    },
+    (serviceData) => {
+      if (!config.services) {
+        config.services = ['file_store'];
+      } else if (config.services.indexOf('all') > -1) {
+        config.services = ['file_store', 'object_store', 'construction'];
+      }
 
-    if (!config.services) {
-      config.services = ['file_store'];
-    } else if (config.services.indexOf('all') > -1) {
-      config.services = ['file_store', 'object_store', 'construction'];
-    }
+      const requiredFeatures = ['storage.folders.list', 'storage.folders.read'];
+      const capabilityFilter = (service) => {
+        const { capabilities } = service.properties;
+        return requiredFeatures.reduce((prevResult, currFeature) => {
+          const capabilityItems = capabilities[currFeature];
+          const supportsCurrFeature = capabilityItems.reduce(
+            ({ foundAdminFalse, result }, c) => {
+              // if there is an object with admin:false in it,
+              // we just use its result, ignoring other objects.
+              // if we haven't found an admin-false object, search for the one
+              // with the only key 'result' in it. Use its result.
+              // For other cases, just pass result to the next iteration.
+              if (foundAdminFalse) {
+                return { foundAdminFalse, result };
+              }
+              if (c.admin === false) {
+                return { foundAdminFalse: true, result: c.result };
+              }
 
-    const requiredFeatures = ['storage.folders.list', 'storage.folders.read'];
-    const capabilityFilter = (service) => {
-      const { capabilities } = service.properties;
-      return requiredFeatures.reduce((prevResult, currFeature) => {
-        const capablityItems = capabilities[currFeature];
-        const supportsCurrFeature = capablityItems.reduce(
-          ({ foundAdminFalse, result }, c) => {
-            // if there is an object with admin:false in it,
-            // we just use its result, ignoring other objects.
-            // if we haven't found an admin-false object, search for the one
-            // with the only key 'result' in it. Use its result.
-            // For other cases, just pass result to the next iteration.
-            if (foundAdminFalse) {
-              return { foundAdminFalse, result };
-            }
-            if (c.admin === false) {
-              return { foundAdminFalse: true, result: c.result };
-            }
-
-            if (Object.keys(c).length === 1 &&
-                typeof c.admin === 'undefined' && c.result === true) {
+              if (Object.keys(c).length === 1 &&
+                  typeof c.admin === 'undefined' && c.result === true) {
+                // foundAdminFalse must be false here.
+                return { foundAdminFalse, result: true };
+              }
               // foundAdminFalse must be false here.
-              return { foundAdminFalse, result: true };
-            }
-            // foundAdminFalse must be false here.
-            return { foundAdminFalse, result };
-          }, { foundAdminFalse: false, result: false },
-        );
-        return supportsCurrFeature.result && prevResult;
-      }, true);
-    };
-    const filteredServiceData = serviceData.objects.filter(capabilityFilter);
-
-    ko.utils.arrayForEach(filteredServiceData, (serviceDatum) => {
-      // eslint-disable-next-line no-use-before-define
-      const serviceCategory = getServiceCategory(serviceDatum);
-      let localeName = localization.formatAndWrapMessage(
-        `serviceNames/${serviceDatum.name}`,
-      );
-      if (localeName.indexOf('/') > -1) {
-        localeName = serviceDatum.friendly_name;
-      }
-
-      const service = {
-        id: serviceDatum.name,
-        name: localeName,
-        logo: serviceDatum.logo_url || (
-          `${config.static_path}/webapp/sources/${serviceDatum.name}.png`
-        ),
-        category: serviceCategory,
-        visible: false,
+              return { foundAdminFalse, result };
+            }, { foundAdminFalse: false, result: false },
+          );
+          return supportsCurrFeature.result && prevResult;
+        }, true);
       };
+      const filteredServiceData = serviceData.objects.filter(capabilityFilter);
 
-      if (config.services.indexOf(serviceDatum.name) > -1
-        || config.services.indexOf(serviceCategory) > -1) {
-        service.visible = true;
+      ko.utils.arrayForEach(filteredServiceData, (serviceDatum) => {
+        // eslint-disable-next-line no-use-before-define
+        const serviceCategory = getServiceCategory(serviceDatum);
+        let localeName = localization.formatAndWrapMessage(
+          `serviceNames/${serviceDatum.name}`,
+        );
+        if (localeName.indexOf('/') > -1) {
+          localeName = serviceDatum.friendly_name;
+        }
+
+        const service = {
+          id: serviceDatum.name,
+          name: localeName,
+          logo: serviceDatum.logo_url || (
+            `${config.static_path}/webapp/sources/${serviceDatum.name}.png`
+          ),
+          category: serviceCategory,
+          visible: false,
+        };
+
+        if (config.services.indexOf(serviceDatum.name) > -1
+            || config.services.indexOf(serviceCategory) > -1) {
+          service.visible = true;
+        }
+        config.all_services.push(service);
+      });
+
+      config.all_services.sort(serviceOrderCompare);
+
+      // eslint-disable-next-line no-use-before-define
+      config.visible_computer.subscribe(toggleComputer);
+      // eslint-disable-next-line no-use-before-define
+      toggleComputer(config.visible_computer());
+
+      function getServiceCategory(service) {
+        const objStoreServices = ['s3', 'azure', 's3_compatible'];
+
+        if (objStoreServices.includes(service.name)) {
+          return 'object_store';
+        }
+        if (service.category === 'construction') {
+          return 'construction';
+        }
+        return 'file_store';
       }
-      config.all_services.push(service);
-    });
-
-    config.all_services.sort(serviceOrderCompare);
-
-    // eslint-disable-next-line no-use-before-define
-    config.visible_computer.subscribe(toggleComputer);
-    // eslint-disable-next-line no-use-before-define
-    toggleComputer(config.visible_computer());
-
-    function getServiceCategory(service) {
-      const objStoreServices = ['s3', 'azure', 's3_compatible'];
-
-      if (objStoreServices.includes(service.name)) {
-        return 'object_store';
-      }
-      if (service.category === 'construction') {
-        return 'construction';
-      }
-      return 'file_store';
-    }
-  },
-);
+    },
+  ).fail((xhr, status, err) => {
+    logger.error('Failed to initialize services: ', status, err, xhr);
+  }).always(() => {
+    // always resolve even if the request fails.
+    resolve();
+  });
+});
 
 config.types = ko.computed(() => {
   const flavor = config.flavor();

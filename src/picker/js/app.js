@@ -12,7 +12,7 @@ import 'cldrjs';
 import ko from 'knockout';
 import logger from 'loglevel';
 import debounce from 'lodash.debounce';
-import config from './config';
+import config, { initServices, retrieveConfig } from './config';
 import storage from './storage';
 import AccountManager from './accounts';
 import FileManager from './files';
@@ -776,7 +776,7 @@ const FilePicker = function () {
 
       // add new accounts because data may have changed
       let active;
-      accounts.forEach((account) => {
+      const tasks = accounts.map(account => new Promise((resolve) => {
         // eslint-disable-next-line no-unused-vars
         const created = new Account(
           account,
@@ -800,22 +800,23 @@ const FilePicker = function () {
             } else if (config.flavor() !== FLAVOR.dropzone) {
               this.router.setLocation('#/files');
             }
+            resolve();
           },
           (err) => {
             /**
-             * If the account errors on getting metadata due to invalid token,
-             * it will be removed from the storage.
-             *
-             * If there is no account metadata that means this account object
-             * is created by config.tokens, so there's no need to update
-             * the account manager.
-             */
+               * If the account errors on getting metadata due to invalid token,
+               * it will be removed from the storage.
+               *
+               * If there is no account metadata that means this account object
+               * is created by config.tokens, so there's no need to update
+               * the account manager.
+               */
             if (err && err.invalidToken === true && account.account) {
               logger.warn('failed to load account from localStorage');
               this.manager.removeAccount(account.account);
               // store accounts
               storage.storeAccounts(config.app_id, this.manager.accounts());
-            // else if it errors on folder contents, we should show an error
+              // else if it errors on folder contents, we should show an error
             } else if (err) {
               logger.warn('failed to refresh filesystem', err);
               const msg = localization.formatAndWrapMessage('files/error');
@@ -834,9 +835,11 @@ const FilePicker = function () {
             if (this.manager.accounts().length === 0) {
               this.router.setLocation('#/accounts');
             }
+            resolve();
           },
         );
-      });
+      }));
+      return Promise.all(tasks);
     },
 
     setLocation: (path) => {
@@ -856,6 +859,8 @@ const FilePicker = function () {
       }
       return activeAccount.filesystem().isLoadingNextPage();
     }),
+
+    initComplete: ko.observable(false),
 
     localizedConfirmPopup(token, variables) {
       try {
@@ -1579,22 +1584,44 @@ const error_message = localization.formatAndWrapMessage('global/error');
 
 let first_account = true;
 
-const accountSub = config.all_services.subscribe(() => {
-  // This is only for the initial load.
-  if (!config._retrievedServices) {
-    return;
-  }
-
-  accountSub.dispose();
-
+/**
+ * Initialize connected accounts from localStorage or sessionStorage
+ *
+ * @returns {Promise<void>}
+ */
+const initAccounts = async () => {
   // Default to the accounts page if no accounts in local storage
   // storage.removeAllAccounts(config.app_id);
   const accounts = storage.loadAccounts(config.app_id);
 
   if (accounts.length > 0) {
-    picker.view_model.sync(accounts, true);
+    await picker.view_model.sync(accounts, true);
   }
-});
+};
+
+function initAjaxSetting() {
+  $(document).ajaxStart(() => {
+    picker.view_model.loading(true);
+  });
+
+  $(document).ajaxStop(() => {
+    picker.view_model.loading(false);
+  });
+}
+
+const initProcess = async () => {
+  initAjaxSetting();
+  const retrieveConfigComplete = retrieveConfig();
+  // initAccounts() has dependency on initServices()
+  await initServices();
+  await initAccounts();
+  // retrieveConfig() doesn't have dependency on initServices()
+  // and initAccounts(), but we still wait it before initComplete be set to true
+  await retrieveConfigComplete;
+  picker.view_model.initComplete(true);
+};
+
+initProcess();
 
 // Expose hooks for debugging.
 if (config.debug) {
@@ -1773,13 +1800,6 @@ function dataMessageHandler(data) {
   }
 }
 
-$(document).ajaxStart(() => {
-  picker.view_model.loading(true);
-});
-
-$(document).ajaxStop(() => {
-  picker.view_model.loading(false);
-});
 
 const onResize = debounce(() => {
   // force re-evaluate breadcrumb's width
