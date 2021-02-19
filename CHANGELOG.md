@@ -7,8 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Fixed
-- Display the loading view instead of the Manage Accounts view before File 
+- Display the loading view instead of the Manage Accounts view before File
   Picker completes initialization.
+- Upper case file extensions are not correctly detected.
 
 ### Changed
 - Keep sorting rule individually for each connected account.
@@ -33,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   with the `element` option that attaches it to a DOM element.
 - Failed local uploads can now be removed from the list of uploads to be retried.
 - Improved state management for uploads from the local machine.
-- The sorting rule will be kept and applied after new items are loaded. 
+- The sorting rule will be kept and applied after new items are loaded.
 
 ## [2.5.4] - 2020-10-21
 
