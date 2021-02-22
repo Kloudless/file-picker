@@ -451,11 +451,6 @@ Filesystem.prototype.resetSort = function () {
 /**
  * Sort this.current().children() by this.sortOption and current sorting
  * direction.
- * The priority:
- * 1. The item whose id is `newfolder`.
- * 2. The item whose type is `folder`.
- * 3. Compare by this.sortOption.
- * 4. Compare by name.
  */
 // eslint-disable-next-line func-names
 Filesystem.prototype.sort = function (field) {
@@ -474,9 +469,22 @@ Filesystem.prototype.sort = function (field) {
       this.sortOption.field(field);
     }
   }
+  this.current().children.sort(this.getSortCompareFunction());
+};
 
+/**
+ * This function returns the compare function w.r.t this.sortOption.field()
+ * and this.sortOption.direction().
+ * The priority:
+ * 1. The item whose id is `newfolder`.
+ * 2. The item whose type is `folder`.
+ * 3. Compare by this.sortOption.field()
+ * 4. Compare by name.
+*/
+// eslint-disable-next-line func-names
+Filesystem.prototype.getSortCompareFunction = function () {
   const factor = this.sortOption.direction() === ASC ? 1 : -1;
-  this.current().children.sort((left, right) => {
+  return ((left, right) => {
     if (left.type === 'newfolder') {
       return -1;
     }
