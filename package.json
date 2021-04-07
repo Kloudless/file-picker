@@ -53,7 +53,7 @@
     "@babel/core": "7.4.0",
     "@babel/preset-env": "7.4.1",
     "@babel/preset-react": "7.0.0",
-    "@kloudless/file-picker-plupload-module": "git+https://github.com/Kloudless/file-picker-plupload-module.git#7d6e6c2",
+    "@kloudless/file-picker-plupload-module": "git+https://github.com/Kloudless/file-picker-plupload-module.git#ea5957b",
     "@storybook/storybook-deployer": "2.8.1",
     "@typescript-eslint/eslint-plugin": "2.9.0",
     "@typescript-eslint/parser": "2.9.0",
