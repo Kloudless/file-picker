@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.5] - 2021-04-07
+### Fixed
+- Upgrade @kloudless/file-picker-plupload-module to 1.0.2 to fix the multipart
+upload problem.
+
 ## [2.6.4] - 2021-03-30
 ### Changed
 - Upgrade @kloudless/file-picker-plupload-module to 1.0.1.
