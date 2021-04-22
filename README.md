@@ -1096,6 +1096,16 @@ without a file extension to be selected.
      
   This method isn't impacted by the `delete_accounts_on_logout` option. 
 
+* `picker.destroy()`
+  
+  Destroy the file picker instance. It includes closing the file picker, 
+  removing the EventListener, and removing the DOM including the file picker
+  iframe. 
+  
+  This method won't clean up localStorage/sessionStorage, so the 
+  authentication tokens won't be removed.
+  
+
 ### Script tag example
 
 To start using the File Picker, simply include the JavaScript file in your
